@@ -2,8 +2,8 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getAuth } from 'firebase/auth';
 
 export const PRICES = {
-  monthly: 'price_1T3D1eQOEsasHN6b1ns5Pbwi',
-  yearly:  'price_1T3D2DQOEsasHN6bPwZbJjpZ',
+  monthly: 'price_1T52eZ3mGGLWOr1rrTeZ6VYX',
+  yearly:  'price_1T52eZ3mGGLWOr1rAh5KuyUQ',
 };
 
 export const redirectToCheckout = async ({ priceId, promoCode }) => {

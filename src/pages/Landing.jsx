@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 
 const styles = `
   @keyframes scroll {
@@ -265,10 +266,10 @@ const Landing = () => {
             AILETTER
           </div>
           <div className="hidden md:flex items-center gap-4">
-            <select value={uiLang} onChange={e => setUiLang(e.target.value)}
-              className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-xs font-bold outline-none text-gray-300 hover:text-white uppercase cursor-pointer">
-              <option value="en">EN</option><option value="uk">UA</option><option value="it">IT</option><option value="de">DE</option>
-            </select>
+            <LanguageSwitcher
+  value={uiLang}
+  onChange={setUiLang}
+/>
             {user ? (
               <Link to="/dashboard" className="flex items-center gap-2 px-5 py-2 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-500/20">
                 <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center font-bold text-[10px]">{user.displayName?.[0]?.toUpperCase() || 'U'}</div>
