@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
+import HeroMockup from '../components/landing/HeroMockup';
 
 const styles = `
   @keyframes scroll {
@@ -361,30 +362,16 @@ const Landing = () => {
       </section>
 
       {/* ─── APP MOCKUP ─── */}
-      <section className="py-16 md:py-24 px-4 md:px-6 z-10 relative">
-        <div className="max-w-5xl mx-auto">
-          <div className="relative rounded-2xl md:rounded-3xl border border-white/10 bg-[#1e293b]/30 p-2 md:p-4 shadow-2xl">
-            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl md:rounded-3xl blur opacity-20 animate-pulse" />
-            <div className="relative rounded-xl md:rounded-2xl overflow-hidden bg-[#0f172a] border border-white/5 aspect-video flex shadow-2xl">
-              <div className="hidden sm:flex w-32 md:w-64 bg-[#1e293b] border-r border-white/5 flex-col p-4 md:p-6 gap-3 md:gap-4">
-                <div className="h-6 md:h-8 w-16 md:w-24 bg-indigo-500/20 rounded-lg" />
-                <div className="h-3 md:h-4 w-20 md:w-32 bg-white/5 rounded mt-4 md:mt-8" />
-                <div className="h-3 md:h-4 w-16 md:w-24 bg-white/5 rounded" />
-                <div className="h-3 md:h-4 w-18 md:w-28 bg-white/5 rounded" />
-                <div className="mt-auto h-10 md:h-12 w-full bg-indigo-600/20 rounded-xl border border-indigo-500/30" />
-              </div>
-              <div className="flex-1 p-4 md:p-12 flex gap-4 md:gap-8">
-                <div className="flex-1 space-y-3 md:space-y-6">
-                  <div className="h-6 md:h-8 w-1/2 bg-white/10 rounded-lg" />
-                  <div className="h-20 md:h-32 w-full bg-white/5 rounded-xl md:rounded-2xl border border-dashed border-white/10" />
-                  <div className="h-28 md:h-48 w-full bg-white/5 rounded-xl md:rounded-2xl" />
-                </div>
-                <div className="hidden lg:block w-[35%] bg-white rounded shadow-2xl transform rotate-1" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<section className="py-16 md:py-24 px-4 md:px-6 z-10 relative">
+  <div className="max-w-5xl mx-auto">
+    <div className="relative rounded-2xl md:rounded-3xl p-[2px] shadow-2xl" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }}>
+      <div className="absolute -inset-2 rounded-3xl blur-xl opacity-25 pointer-events-none" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }} />
+      <div className="relative rounded-2xl overflow-hidden">
+        <HeroMockup />
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* ─── COMPARISON ─── */}
       <section className="py-16 md:py-24 px-4 md:px-6 relative z-10 bg-[#1e293b]/20">
