@@ -2,13 +2,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
-// ✅ Актуальні моделі (лютий 2026)
-// ❌ gemini-1.5-* — ВІДКЛЮЧЕНІ Google, повертають 404
-// ❌ gemini-2.0-flash-exp — прибрана з v1beta API
 const MODELS = [
-  { id: "gemini-2.0-flash",      temp: 0.7 }, // основна стабільна
-  { id: "gemini-2.0-flash-lite", temp: 0.6 }, // легша резервна
-  { id: "gemini-2.5-flash",      temp: 0.7 }, // найновіша (якщо є доступ)
+  { id: "gemini-2.0-flash",      temp: 0.7 },
+  { id: "gemini-2.0-flash-lite", temp: 0.6 },
+  { id: "gemini-2.5-flash",      temp: 0.7 },
 ];
 
 let modelIndex = 0;
@@ -19,59 +16,60 @@ async function tryModel(modelFn) {
   while (modelIndex < MODELS.length) {
     const current = MODELS[modelIndex];
     try {
-      console.log(`🌟 Using model: ${current.id} (${modelIndex + 1}/${MODELS.length})`);
+      console.log(`🌟 Using model: ${current.id}`);
       return await modelFn(current.id, current.temp);
     } catch (error) {
       console.warn(`❌ ${current.id} failed:`, error);
-
-      const is429 = error.status === 429 || error.message?.includes('429');
-      const is404 = error.status === 404 || error.message?.includes('404');
-
-      if (is429 || is404) {
+      const isCritical = error.status === 429 || error.status === 404 || error.status === 503;
+      
+      if (isCritical) {
         modelIndex++;
         if (modelIndex < MODELS.length) {
-          const wait = is429
-            ? parseFloat(error.message?.match(/in ([\d.]+)s/)?.[1] || 10) * 1000
-            : 500;
-          console.log(`⏳ Switching to ${MODELS[modelIndex].id}...`);
-          await sleep(wait);
+          await sleep(1000);
           continue;
         }
       }
-
       throw error;
     }
   }
-  throw new Error("All models exhausted");
+  throw new Error("AI is busy. Please try again.");
 }
 
 export const generateLetter = async (userProfile, jobDescription, cvFilePart, settings) => {
   const { language, tone, length } = settings;
 
-  const paragraphCount =
-    length === 'Short'    ? 3 :
-    length === 'Detailed' ? 6 :
-                            4;
+  // Визначаємо жорсткий ліміт слів залежно від вибору
+  const wordLimit = 
+    length === 'Short'    ? '150-200' :
+    length === 'Detailed' ? '300-400' :
+                            '200-300'; // Standard
 
   const lang = language === 'Auto' ? 'the same language as the job description' : language;
 
-  const promptText = `Write a cover letter in ${lang} with exactly ${paragraphCount} paragraphs and ${tone || 'professional'} tone.
+  // 👇 ОНОВЛЕНИЙ ПРОМПТ: ФОКУС НА СТИСЛІСТЬ ТА ЗАВЕРШЕНІСТЬ
+  const promptText = `
+    Role: You are an expert career coach helping a candidate apply for a job.
+    Task: Write a high-impact cover letter in ${lang}.
+    
+    STRICT CONSTRAINTS:
+    1. Length: Keep it approximately ${wordLimit} words. Concise and punchy.
+    2. Finish: You MUST include the sign-off "Sincerely, [Name]". NEVER cut off the text.
+    3. Content: No fluff. No generic cliches like "I am writing to apply". Start immediately with value.
+    
+    Tone: ${tone || 'Professional, Confident, and Direct'}.
+    
+    Structure:
+    - Opening: Hook the reader immediately with why you fit.
+    - Middle: Connect 1-2 key achievements from the CV directly to the Job Description problems.
+    - Closing: Brief call to action (interview request) and sign-off.
 
-Paragraph 1: Express interest in the specific role and company.
-Paragraph 2: Highlight the most relevant experience from the candidate profile.
-Paragraph 3: Explain why this candidate fits this specific job.
-${paragraphCount >= 4 ? 'Paragraph 4: Closing — express enthusiasm, mention availability for interview.' : ''}
-${paragraphCount >= 5 ? 'Paragraph 5: Additional value the candidate brings.' : ''}
-${paragraphCount >= 6 ? 'Paragraph 6: Strong final closing statement.' : ''}
-
-Start with: Dear Hiring Manager,
-End with: Sincerely, [candidate full name]
-
-Do not add a subject line. Do not use markdown. Write full complete sentences.
-
-JOB: ${jobDescription}
-
-CANDIDATE: Name: ${userProfile.fullName}, Role: ${userProfile.profession}, Location: ${userProfile.location}, Email: ${userProfile.email}
+    Job Description: 
+    ${jobDescription.substring(0, 2000)} 
+    
+    Candidate Profile: 
+    Name: ${userProfile.fullName}
+    Role: ${userProfile.profession}
+    Skills/Experience: ${JSON.stringify(userProfile)}
   `.trim();
 
   const contents = [promptText, ...(cvFilePart ? [cvFilePart] : [])];
@@ -79,43 +77,43 @@ CANDIDATE: Name: ${userProfile.fullName}, Role: ${userProfile.profession}, Locat
   return await tryModel(async (modelId, temp) => {
     const m = genAI.getGenerativeModel({
       model: modelId,
-      generationConfig: { temperature: temp, maxOutputTokens: 3000 },
+      generationConfig: { 
+        temperature: temp, 
+        // 👇 4000 достатньо для буфера, але промпт не дасть написати зайвого
+        maxOutputTokens: 4000 
+      },
     });
+    
     const response = await m.generateContent(contents);
-    const text = response.response.text();
-    // Прибрати Subject рядок якщо модель все одно додала
-    return text.replace(/^(Subject:|Oggetto:|RE:|Betreff:|Тема:).*?\n+/gmi, "").trim();
+    let text = response.response.text();
+    
+    // Чистка від сміття
+    text = text.replace(/^(Subject:|Oggetto:|RE:|Betreff:|Тема:).*?\n+/gmi, "").trim();
+    text = text.replace(/```html|```/g, ""); // Прибираємо код, якщо раптом є
+    
+    return text;
   });
 };
 
 export const parseCV = async (cvFilePart) => {
-  const promptText = `Extract details from this CV. Return ONLY valid JSON, no markdown, no explanation:
+  const promptText = `Analyze this CV and extract details into valid JSON only:
 {
-  "fullName": "",
-  "email": "",
-  "phone": "",
-  "location": "",
-  "linkedin": "",
-  "profession": "",
-  "skills": "",
-  "experience": ""
+  "fullName": "Name Surname",
+  "email": "email@example.com",
+  "phone": "+123...",
+  "location": "City, Country",
+  "linkedin": "url",
+  "profession": "Current Job Title",
+  "skills": "List of top 5 skills",
+  "experience": "Summary of most recent role"
 }`;
 
   return await tryModel(async (modelId) => {
     const m = genAI.getGenerativeModel({
       model: modelId,
-      generationConfig: { responseMimeType: "application/json", temperature: 0.1 },
+      generationConfig: { responseMimeType: "application/json", maxOutputTokens: 4000 },
     });
     const response = await m.generateContent([promptText, cvFilePart]);
-    const clean = response.response.text().replace(/```json|```/g, "").trim();
-    return JSON.parse(clean);
+    return JSON.parse(response.response.text());
   });
 };
-
-// Скинути fallback індекс (викликай з консолі браузера якщо треба)
-if (typeof window !== "undefined") {
-  window.resetGeminiModels = () => {
-    modelIndex = 0;
-    console.log("🔄 Gemini models reset to", MODELS[0].id);
-  };
-}
