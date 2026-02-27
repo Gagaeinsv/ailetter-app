@@ -22,7 +22,8 @@ const MobileTemplatesTab = ({
   setSelectedTemplate, 
   setActiveTab, 
   isPro, 
-  setShowUpgrade 
+  setShowUpgrade,
+  dict
 }) => {
 
   const handleSelect = (templateId, isLocked) => {
@@ -61,8 +62,8 @@ const MobileTemplatesTab = ({
 
   return (
     <div className="min-h-[100dvh] bg-[#0f172a] pt-20 pb-24 px-4 overflow-y-auto">
-      <h2 className="text-2xl font-black text-white mb-2">Оберіть шаблон</h2>
-      <p className="text-gray-400 text-sm mb-6">Натисніть, щоб застосувати</p>
+      <h2 className="text-2xl font-black text-white mb-2">{dict?.templatesSection || 'Templates'}</h2>
+<p className="text-gray-400 text-sm mb-6">{dict?.templatesHint || 'Tap to apply'}</p>
 
       <div className="grid grid-cols-2 gap-4">
         {TEMPLATES.map((t) => {
