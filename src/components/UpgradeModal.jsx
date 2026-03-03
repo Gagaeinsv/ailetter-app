@@ -1,9 +1,55 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { redirectToCheckout, PRICES } from '../stripe'; // Імпорт налаштувань Stripe
+import { useLanguage } from '../context/LanguageContext';
+import { redirectToCheckout, PRICES } from '../stripe';
+
+const T = {
+  en: {
+    title: 'Upgrade to AIletter Pro',
+    sub: 'Unlimited generations · No watermark · All templates',
+    monthly: 'Monthly', yearly: 'Yearly', save: 'Save 46%',
+    promo: 'Promo code (optional)',
+    warning: (price) => `Your promo discount applies to the first billing period only. After it ends, you will be automatically charged ${price} unless you cancel before renewal. You can cancel anytime.`,
+    btn: (price) => `✦ Upgrade — ${price}`,
+    loading: '⏳ Redirecting to Stripe...',
+    secure: 'Secure payment via Stripe · Cancel anytime',
+  },
+  uk: {
+    title: 'Перейти на AIletter Pro',
+    sub: 'Необмежені генерації · Без водяного знаку · Всі шаблони',
+    monthly: 'Щомісяця', yearly: 'Щороку', save: 'Знижка 46%',
+    promo: 'Промокод (необовязково)',
+    warning: (price) => `Знижка за промокодом діє лише на перший розрахунковий період. Після його закінчення з вас автоматично спишеться ${price}, якщо ви не скасуєте підписку. Скасувати можна будь-коли.`,
+    btn: (price) => `✦ Оновити — ${price}`,
+    loading: '⏳ Перенаправлення на Stripe...',
+    secure: 'Безпечна оплата через Stripe · Скасувати будь-коли',
+  },
+  it: {
+    title: 'Passa ad AIletter Pro',
+    sub: 'Generazioni illimitate · Nessuna filigrana · Tutti i template',
+    monthly: 'Mensile', yearly: 'Annuale', save: 'Risparmia 46%',
+    promo: 'Codice promozionale (opzionale)',
+    warning: (price) => `Lo sconto promozionale si applica solo al primo periodo di fatturazione. Al termine, ti verrà addebitato automaticamente ${price} a meno che tu non annulli prima del rinnovo. Puoi annullare in qualsiasi momento.`,
+    btn: (price) => `✦ Aggiorna — ${price}`,
+    loading: '⏳ Reindirizzamento a Stripe...',
+    secure: 'Pagamento sicuro via Stripe · Annulla quando vuoi',
+  },
+  de: {
+    title: 'Auf AIletter Pro upgraden',
+    sub: 'Unbegrenzte Generierungen · Kein Wasserzeichen · Alle Vorlagen',
+    monthly: 'Monatlich', yearly: 'Jährlich', save: '46% sparen',
+    promo: 'Aktionscode (optional)',
+    warning: (price) => `Der Rabatt gilt nur für den ersten Abrechnungszeitraum. Danach wird automatisch ${price} abgebucht, sofern Sie nicht vor der Verlängerung kündigen. Sie können jederzeit kündigen.`,
+    btn: (price) => `✦ Upgraden — ${price}`,
+    loading: '⏳ Weiterleitung zu Stripe...',
+    secure: 'Sichere Zahlung über Stripe · Jederzeit kündigen',
+  },
+};
 
 const UpgradeModal = ({ onClose }) => {
   const { user } = useAuth();
+  const { uiLang } = useLanguage();
+  const t = T[uiLang] || T.en;
   const [billing, setBilling] = useState('yearly');
   const [promo, setPromo] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,9 +59,7 @@ const UpgradeModal = ({ onClose }) => {
     if (!user) return;
     setLoading(true);
     setError('');
-    
     try {
-      // Виклик Stripe Checkout
       await redirectToCheckout({
         priceId: billing === 'yearly' ? PRICES.yearly : PRICES.monthly,
         promoCode: promo || null,
@@ -37,6 +81,9 @@ const UpgradeModal = ({ onClose }) => {
     '🚫  No watermark on PDF',
   ];
 
+  const price = billing === 'yearly' ? '€39/year' : '€6/month';
+  const hasPromo = promo.trim().length > 0;
+
   return (
     <div
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
@@ -48,8 +95,8 @@ const UpgradeModal = ({ onClose }) => {
         <div style={{ background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', padding: '28px 32px 24px', position: 'relative' }}>
           <button onClick={onClose} style={{ position: 'absolute', top: 14, right: 14, background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', width: 30, height: 30, borderRadius: '50%', cursor: 'pointer', fontSize: 18, lineHeight: '30px', textAlign: 'center' }}>×</button>
           <span style={{ background: 'rgba(255,255,255,0.2)', padding: '3px 10px', borderRadius: 20, fontSize: 10, fontWeight: 900, color: 'white', textTransform: 'uppercase', letterSpacing: '0.1em' }}>PRO</span>
-          <h2 style={{ color: 'white', fontSize: 24, fontWeight: 900, margin: '8px 0 4px' }}>Upgrade to AIletter Pro</h2>
-          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, margin: 0 }}>Unlimited generations · No watermark · All templates</p>
+          <h2 style={{ color: 'white', fontSize: 24, fontWeight: 900, margin: '8px 0 4px' }}>{t.title}</h2>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, margin: 0 }}>{t.sub}</p>
         </div>
 
         <div style={{ padding: '24px 32px 28px' }}>
@@ -57,8 +104,8 @@ const UpgradeModal = ({ onClose }) => {
           {/* Billing toggle */}
           <div style={{ display: 'flex', background: '#1e293b', borderRadius: 12, padding: 4, border: '1px solid #334155', marginBottom: 20 }}>
             {[
-              { key: 'monthly', label: 'Monthly', price: '€6/mo' },
-              { key: 'yearly',  label: 'Yearly',  price: '€39/yr', badge: 'Save 46%' },
+              { key: 'monthly', label: t.monthly, price: '€6/mo' },
+              { key: 'yearly',  label: t.yearly,  price: '€39/yr', badge: t.save },
             ].map(opt => (
               <button key={opt.key} onClick={() => setBilling(opt.key)}
                 style={{ flex: 1, padding: '10px 8px', borderRadius: 9, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s',
@@ -71,7 +118,7 @@ const UpgradeModal = ({ onClose }) => {
             ))}
           </div>
 
-          {/* Features List */}
+          {/* Features */}
           <div style={{ background: '#1e293b', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 14, padding: '16px 20px', marginBottom: 20 }}>
             {proFeatures.map((f, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '5px 0', fontSize: 13, color: '#e2e8f0' }}>
@@ -80,30 +127,39 @@ const UpgradeModal = ({ onClose }) => {
             ))}
           </div>
 
-          {/* Promo code Input */}
+          {/* Promo code */}
           <input
             value={promo}
             onChange={e => setPromo(e.target.value.toUpperCase())}
-            placeholder="Promo code (optional)"
+            placeholder={t.promo}
             style={{ width: '100%', background: '#1e293b', border: '1px solid #334155', borderRadius: 10, padding: '11px 14px', fontSize: 13, color: 'white', outline: 'none', marginBottom: 14, boxSizing: 'border-box', fontFamily: 'inherit' }}
             onFocus={e => e.target.style.borderColor = '#6366f1'}
             onBlur={e => e.target.style.borderColor = '#334155'}
           />
 
-          {/* Error Message */}
+          {/* ── Promo warning ── */}
+          {hasPromo && (
+            <div style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)', borderRadius: 10, padding: '10px 14px', marginBottom: 14, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <span style={{ fontSize: 14, flexShrink: 0 }}>⚠️</span>
+              <p style={{ margin: 0, fontSize: 11, color: '#fbbf24', lineHeight: 1.5 }}>
+                {t.warning(price)}
+              </p>
+            </div>
+          )}
+
           {error && <p style={{ color: '#f87171', fontSize: 12, marginBottom: 10, textAlign: 'center' }}>{error}</p>}
 
-          {/* Upgrade Button */}
+          {/* Upgrade button */}
           <button onClick={handleUpgrade} disabled={loading}
             style={{ width: '100%', padding: 16, background: 'linear-gradient(135deg, #6366f1, #7c3aed)', border: 'none', borderRadius: 14, color: 'white', fontWeight: 900, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, boxShadow: '0 8px 24px rgba(99,102,241,0.35)', transition: 'transform 0.1s' }}
             onMouseDown={e => !loading && (e.currentTarget.style.transform = 'scale(0.98)')}
             onMouseUp={e => !loading && (e.currentTarget.style.transform = 'scale(1)')}
           >
-            {loading ? '⏳ Redirecting to Stripe...' : `✦ Upgrade — ${billing === 'yearly' ? '€39/year' : '€6/month'}`}
+            {loading ? t.loading : t.btn(price)}
           </button>
 
           <p style={{ textAlign: 'center', fontSize: 11, color: '#475569', marginTop: 10 }}>
-            Secure payment via Stripe · Cancel anytime
+            {t.secure}
           </p>
         </div>
       </div>

@@ -15,8 +15,8 @@ const getStripe = () => {
 };
 
 const ALLOWED_PRICES = [
-  "price_1T52eZ3mGGLWOr1rrTeZ6VYX", // monthly
-  "price_1T52eZ3mGGLWOr1rAh5KuyUQ", // yearly
+  "price_1T5qR73mGGLWOr1rveS7lc2A", // monthly
+  "price_1T5qSg3mGGLWOr1rmmkQNJgu", // yearly
 ];
 
 const ALLOWED_ORIGINS = [
