@@ -1,7 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
 const MODELS = [
   { id: "gemini-2.0-flash",      temp: 0.7 },
   { id: "gemini-2.0-flash-lite", temp: 0.6 },
@@ -12,6 +8,26 @@ let modelIndex = 0;
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// Викликає наш Vercel API route замість Gemini напряму
+async function callGemini({ modelId, temperature, maxOutputTokens, contents, responseMimeType }) {
+  const response = await fetch("/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ modelId, temperature, maxOutputTokens, contents, responseMimeType }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const error = new Error(data.error?.message || "Gemini API error");
+    error.status = response.status;
+    throw error;
+  }
+
+  // Повертаємо текст так само як раніше
+  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+}
+
 async function tryModel(modelFn) {
   while (modelIndex < MODELS.length) {
     const current = MODELS[modelIndex];
@@ -21,7 +37,7 @@ async function tryModel(modelFn) {
     } catch (error) {
       console.warn(`❌ ${current.id} failed:`, error);
       const isCritical = error.status === 429 || error.status === 404 || error.status === 503;
-      
+
       if (isCritical) {
         modelIndex++;
         if (modelIndex < MODELS.length) {
@@ -38,15 +54,13 @@ async function tryModel(modelFn) {
 export const generateLetter = async (userProfile, jobDescription, cvFilePart, settings) => {
   const { language, tone, length } = settings;
 
-  // Визначаємо жорсткий ліміт слів залежно від вибору
-  const wordLimit = 
-    length === 'Short'    ? '150-200' :
-    length === 'Detailed' ? '300-400' :
-                            '200-300'; // Standard
+  const wordLimit =
+    length === "Short"    ? "150-200" :
+    length === "Detailed" ? "300-400" :
+                            "200-300";
 
-  const lang = language === 'Auto' ? 'the same language as the job description' : language;
+  const lang = language === "Auto" ? "the same language as the job description" : language;
 
-  // 👇 ОНОВЛЕНИЙ ПРОМПТ: ФОКУС НА СТИСЛІСТЬ ТА ЗАВЕРШЕНІСТЬ
   const promptText = `
     Role: You are an expert career coach helping a candidate apply for a job.
     Task: Write a high-impact cover letter in ${lang}.
@@ -56,7 +70,7 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
     2. Finish: You MUST include the sign-off "Sincerely, [Name]". NEVER cut off the text.
     3. Content: No fluff. No generic cliches like "I am writing to apply". Start immediately with value.
     
-    Tone: ${tone || 'Professional, Confident, and Direct'}.
+    Tone: ${tone || "Professional, Confident, and Direct"}.
     
     Structure:
     - Opening: Hook the reader immediately with why you fit.
@@ -75,22 +89,16 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
   const contents = [promptText, ...(cvFilePart ? [cvFilePart] : [])];
 
   return await tryModel(async (modelId, temp) => {
-    const m = genAI.getGenerativeModel({
-      model: modelId,
-      generationConfig: { 
-        temperature: temp, 
-        // 👇 4000 достатньо для буфера, але промпт не дасть написати зайвого
-        maxOutputTokens: 4000 
-      },
+    let text = await callGemini({
+      modelId,
+      temperature: temp,
+      maxOutputTokens: 4000,
+      contents,
     });
-    
-    const response = await m.generateContent(contents);
-    let text = response.response.text();
-    
-    // Чистка від сміття
+
     text = text.replace(/^(Subject:|Oggetto:|RE:|Betreff:|Тема:).*?\n+/gmi, "").trim();
-    text = text.replace(/```html|```/g, ""); // Прибираємо код, якщо раптом є
-    
+    text = text.replace(/```html|```/g, "");
+
     return text;
   });
 };
@@ -109,11 +117,14 @@ export const parseCV = async (cvFilePart) => {
 }`;
 
   return await tryModel(async (modelId) => {
-    const m = genAI.getGenerativeModel({
-      model: modelId,
-      generationConfig: { responseMimeType: "application/json", maxOutputTokens: 4000 },
+    const text = await callGemini({
+      modelId,
+      temperature: 0.2,
+      maxOutputTokens: 4000,
+      contents: [promptText, cvFilePart],
+      responseMimeType: "application/json",
     });
-    const response = await m.generateContent([promptText, cvFilePart]);
-    return JSON.parse(response.response.text());
+
+    return JSON.parse(text);
   });
 };

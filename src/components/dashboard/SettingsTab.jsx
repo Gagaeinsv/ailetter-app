@@ -1,5 +1,6 @@
 // src/components/dashboard/SettingsTab.jsx
 import React, { useState } from 'react';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const inputClass = "w-full bg-[#0f172a] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#475569] focus:outline-none focus:border-[#6366f1] transition-all mt-1";
 const labelClass = "text-xs font-semibold text-[#64748b] uppercase tracking-widest";
@@ -8,6 +9,23 @@ const TEMPLATE_LIST = ['Influx','Iconic','Minimal','Nova','Breeze','Enfold','Mod
 
 const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, settings, setSettings, showNotification, history, setHistory, isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate }) => {
   const [settingsTab, setSettingsTab] = useState('profile');
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError]     = useState(null);
+
+  const openPortal = async () => {
+    setPortalLoading(true);
+    setPortalError(null);
+    try {
+      const fn = httpsCallable(getFunctions(), 'createPortalSession');
+      const result = await fn();
+      window.location.href = result.data.url;
+    } catch (err) {
+      console.error('Portal error:', err);
+      setPortalError('Could not open billing portal. Please try again.');
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   return (
     <div className="h-full flex overflow-hidden">
@@ -141,6 +159,25 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
                   {isPro ? 'Pro' : 'Free'}
                 </span>
               </div>
+
+              {/* ── Manage subscription (тільки для Pro) ── */}
+              {isPro && (
+                <div className="bg-[#1e293b] rounded-2xl border border-[#334155] p-6 space-y-3">
+                  <p className="text-sm font-bold text-white">Billing & Subscription</p>
+                  <p className="text-xs text-[#64748b]">Cancel, update your card, or view payment history via Stripe.</p>
+                  <button
+                    onClick={openPortal}
+                    disabled={portalLoading}
+                    className="w-full py-3 border border-[#334155] hover:border-[#6366f1] text-[#94a3b8] hover:text-white rounded-xl font-semibold text-sm transition-all disabled:opacity-50"
+                  >
+                    {portalLoading ? 'Opening...' : 'Manage subscription →'}
+                  </button>
+                  {portalError && (
+                    <p className="text-xs text-red-400">{portalError}</p>
+                  )}
+                </div>
+              )}
+
               {!isPro && (
                 <div className="bg-gradient-to-br from-[#6366f1]/20 to-[#a855f7]/10 rounded-2xl border border-[#6366f1]/30 p-6 space-y-4">
                   <p className="font-black text-white text-lg">Pro Plan</p>

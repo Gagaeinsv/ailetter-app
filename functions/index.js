@@ -25,6 +25,7 @@ const ALLOWED_ORIGINS = [
   "https://my-ai-project-93644.web.app",
   "https://my-ai-project-93644.firebaseapp.com",
   "https://my-cv-ai.vercel.app",
+  "https://myailetter.vercel.app", // ✅ новий домен
 ];
 
 
@@ -152,7 +153,7 @@ exports.createCheckoutSession = onCall(
       throw new Error("invalid-price-id");
 
     const referer = request.rawRequest?.headers?.referer || "";
-    const origin  = ALLOWED_ORIGINS.find(o => referer.startsWith(o)) || "https://my-cv-ai.vercel.app";
+    const origin  = ALLOWED_ORIGINS.find(o => referer.startsWith(o)) || "https://myailetter.vercel.app";
 
     const params = {
       mode: "subscription",
@@ -202,3 +203,27 @@ exports.verifyPlan = onCall(async (request) => {
 
   return { isPro, plan: data.plan };
 });
+
+
+/* ─────────────── CUSTOMER PORTAL ─────────────── */
+exports.createPortalSession = onCall(
+  { secrets: ["STRIPE_SECRET"] },
+  async (request) => {
+    if (!request.auth) throw new Error("unauthenticated");
+
+    const stripe = getStripe();
+    const uid = request.auth.uid;
+
+    const userDoc = await db.collection("users").doc(uid).get();
+    const customerId = userDoc.data()?.stripeCustomerId;
+
+    if (!customerId) throw new Error("no-customer");
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: "https://myailetter.vercel.app/dashboard",
+    });
+
+    return { url: session.url };
+  }
+);
