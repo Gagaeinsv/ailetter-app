@@ -8,7 +8,6 @@ let modelIndex = 0;
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// Викликає наш Vercel API route замість Gemini напряму
 async function callGemini({ modelId, temperature, maxOutputTokens, contents, responseMimeType }) {
   const response = await fetch("/api/generate", {
     method: "POST",
@@ -24,7 +23,6 @@ async function callGemini({ modelId, temperature, maxOutputTokens, contents, res
     throw error;
   }
 
-  // Повертаємо текст так само як раніше
   return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 }
 
@@ -32,12 +30,11 @@ async function tryModel(modelFn) {
   while (modelIndex < MODELS.length) {
     const current = MODELS[modelIndex];
     try {
-      console.log(`🌟 Using model: ${current.id}`);
+      console.log(`Using model: ${current.id}`);
       return await modelFn(current.id, current.temp);
     } catch (error) {
-      console.warn(`❌ ${current.id} failed:`, error);
+      console.warn(`${current.id} failed:`, error);
       const isCritical = error.status === 429 || error.status === 404 || error.status === 503;
-
       if (isCritical) {
         modelIndex++;
         if (modelIndex < MODELS.length) {
@@ -64,23 +61,23 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
   const promptText = `
     Role: You are an expert career coach helping a candidate apply for a job.
     Task: Write a high-impact cover letter in ${lang}.
-    
+
     STRICT CONSTRAINTS:
     1. Length: Keep it approximately ${wordLimit} words. Concise and punchy.
     2. Finish: You MUST include the sign-off "Sincerely, [Name]". NEVER cut off the text.
     3. Content: No fluff. No generic cliches like "I am writing to apply". Start immediately with value.
-    
+
     Tone: ${tone || "Professional, Confident, and Direct"}.
-    
+
     Structure:
     - Opening: Hook the reader immediately with why you fit.
     - Middle: Connect 1-2 key achievements from the CV directly to the Job Description problems.
     - Closing: Brief call to action (interview request) and sign-off.
 
-    Job Description: 
-    ${jobDescription.substring(0, 2000)} 
-    
-    Candidate Profile: 
+    Job Description:
+    ${jobDescription.substring(0, 2000)}
+
+    Candidate Profile:
     Name: ${userProfile.fullName}
     Role: ${userProfile.profession}
     Skills/Experience: ${JSON.stringify(userProfile)}
@@ -126,5 +123,33 @@ export const parseCV = async (cvFilePart) => {
     });
 
     return JSON.parse(text);
+  });
+};
+
+export const generateLinkedInVersion = async (coverLetter, userProfile, jobDescription) => {
+  const promptText = `
+    You are an expert career coach. Based on the cover letter below, create a SHORT LinkedIn connection note or job application message.
+
+    STRICT CONSTRAINTS:
+    1. Length: Maximum 300 characters (LinkedIn limit for connection notes).
+    2. Tone: Confident, direct, human. No buzzwords.
+    3. No greetings like "Dear Hiring Manager". Start with value immediately.
+    4. End with a subtle call to action (e.g. "Would love to connect.")
+    5. Output ONLY the message text. No explanations, no quotes around it.
+
+    Original Cover Letter:
+    ${coverLetter.substring(0, 1500)}
+
+    Candidate: ${userProfile.fullName}, ${userProfile.profession}
+    Job: ${jobDescription.substring(0, 300)}
+  `.trim();
+
+  return await tryModel(async (modelId, temp) => {
+    return await callGemini({
+      modelId,
+      temperature: temp,
+      maxOutputTokens: 200,
+      contents: [promptText],
+    });
   });
 };

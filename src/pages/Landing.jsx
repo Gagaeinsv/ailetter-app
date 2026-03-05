@@ -288,28 +288,23 @@ const Landing = () => {
         )}
       </header>
 
-      {/* ─── HERO + MOCKUP (split layout) ─── */}
+      {/* ─── HERO + MOCKUP ─── */}
       <section className="relative pt-20 md:pt-16 z-10">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 py-12 md:py-16 lg:py-20">
-
-            {/* Left — text */}
             <div className="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
               <div className="fu fu1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-5">
                 <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
                 {t('badge')}
               </div>
-
               <h1 className="fu fu2 text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.08] tracking-tight mb-5">
                 <span className="text-white block">{t('heroTitle1')}</span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-glow block">{t('heroTitle2')}</span>
                 <span className="text-white block">{t('heroTitle3')}</span>
               </h1>
-
               <p className="fu fu3 text-gray-400 text-base md:text-lg leading-relaxed mb-8 max-w-md mx-auto lg:mx-0">
                 {t('heroSubtitle')}
               </p>
-
               <div className="fu fu4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-6">
                 <Link to={user ? '/dashboard' : '/login'}
                   className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25 text-sm">
@@ -317,14 +312,12 @@ const Landing = () => {
                 </Link>
                 <p className="text-xs text-gray-500">{t('ctaSubtext')}</p>
               </div>
-
               {user && (
                 <div className="fu fu4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-green-300 text-xs font-bold mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                   {t('welcomeBack')}, {user.displayName?.split(' ')[0] || 'User'} 👋
                 </div>
               )}
-
               <div className="fu fu5 flex flex-wrap items-center justify-center lg:justify-start gap-2">
                 {[t('feature1'), t('feature2'), t('feature3')].map((feat, i) => (
                   <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.04] rounded-full border border-white/[0.07] text-xs font-medium text-gray-400">
@@ -333,8 +326,6 @@ const Landing = () => {
                 ))}
               </div>
             </div>
-
-            {/* Right — Mockup */}
             <div className="fu fu3 w-full lg:flex-1 lg:max-w-[640px]">
               <div className="relative rounded-2xl p-[1.5px]" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }}>
                 <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-20 pointer-events-none" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }} />
@@ -482,10 +473,24 @@ const Landing = () => {
               AILETTER
             </div>
             <p className="text-gray-600 text-xs">{t('footerDesc')}</p>
-            <div className="flex gap-5 text-xs text-gray-500">
+            <div className="flex items-center gap-5 text-xs text-gray-500">
               <a href="#" className="hover:text-white transition-colors">Twitter</a>
               <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
               <a href="#" className="hover:text-white transition-colors">Email</a>
+              {/* ✅ Product Hunt бейдж */}
+              <a
+                href="https://www.producthunt.com/products/ailetter-2/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-ailetter&#0045;2"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1173518&theme=neutral"
+                  alt="AIletter on Product Hunt"
+                  style={{ width: '120px', height: '26px' }}
+                  width="120"
+                  height="26"
+                />
+              </a>
             </div>
           </div>
           <div className="border-t border-white/[0.05] pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-700">

@@ -8,8 +8,7 @@ const T = {
     title: 'Upgrade to AIletter Pro',
     sub: 'Unlimited generations · No watermark · All templates',
     monthly: 'Monthly', yearly: 'Yearly', save: 'Save 46%',
-    promo: 'Promo code (optional)',
-    warning: (price) => `Your promo discount applies to the first billing period only. After it ends, you will be automatically charged ${price} unless you cancel before renewal. You can cancel anytime.`,
+    warning: (price) => `You will be automatically charged ${price} each billing period unless you cancel before renewal. You can cancel anytime.`,
     btn: (price) => `✦ Upgrade — ${price}`,
     loading: '⏳ Redirecting to Stripe...',
     secure: 'Secure payment via Stripe · Cancel anytime',
@@ -18,8 +17,7 @@ const T = {
     title: 'Перейти на AIletter Pro',
     sub: 'Необмежені генерації · Без водяного знаку · Всі шаблони',
     monthly: 'Щомісяця', yearly: 'Щороку', save: 'Знижка 46%',
-    promo: 'Промокод (необовязково)',
-    warning: (price) => `Знижка за промокодом діє лише на перший розрахунковий період. Після його закінчення з вас автоматично спишеться ${price}, якщо ви не скасуєте підписку. Скасувати можна будь-коли.`,
+    warning: (price) => `З вас автоматично списуватиметься ${price} щокожного розрахункового періоду, якщо ви не скасуєте підписку до оновлення. Скасувати можна будь-коли.`,
     btn: (price) => `✦ Оновити — ${price}`,
     loading: '⏳ Перенаправлення на Stripe...',
     secure: 'Безпечна оплата через Stripe · Скасувати будь-коли',
@@ -28,8 +26,7 @@ const T = {
     title: 'Passa ad AIletter Pro',
     sub: 'Generazioni illimitate · Nessuna filigrana · Tutti i template',
     monthly: 'Mensile', yearly: 'Annuale', save: 'Risparmia 46%',
-    promo: 'Codice promozionale (opzionale)',
-    warning: (price) => `Lo sconto promozionale si applica solo al primo periodo di fatturazione. Al termine, ti verrà addebitato automaticamente ${price} a meno che tu non annulli prima del rinnovo. Puoi annullare in qualsiasi momento.`,
+    warning: (price) => `Ti verrà addebitato automaticamente ${price} a ogni periodo di fatturazione a meno che tu non annulli prima del rinnovo. Puoi annullare in qualsiasi momento.`,
     btn: (price) => `✦ Aggiorna — ${price}`,
     loading: '⏳ Reindirizzamento a Stripe...',
     secure: 'Pagamento sicuro via Stripe · Annulla quando vuoi',
@@ -38,8 +35,7 @@ const T = {
     title: 'Auf AIletter Pro upgraden',
     sub: 'Unbegrenzte Generierungen · Kein Wasserzeichen · Alle Vorlagen',
     monthly: 'Monatlich', yearly: 'Jährlich', save: '46% sparen',
-    promo: 'Aktionscode (optional)',
-    warning: (price) => `Der Rabatt gilt nur für den ersten Abrechnungszeitraum. Danach wird automatisch ${price} abgebucht, sofern Sie nicht vor der Verlängerung kündigen. Sie können jederzeit kündigen.`,
+    warning: (price) => `Es wird automatisch ${price} pro Abrechnungszeitraum abgebucht, sofern Sie nicht vor der Verlängerung kündigen. Sie können jederzeit kündigen.`,
     btn: (price) => `✦ Upgraden — ${price}`,
     loading: '⏳ Weiterleitung zu Stripe...',
     secure: 'Sichere Zahlung über Stripe · Jederzeit kündigen',
@@ -51,7 +47,6 @@ const UpgradeModal = ({ onClose }) => {
   const { uiLang } = useLanguage();
   const t = T[uiLang] || T.en;
   const [billing, setBilling] = useState('yearly');
-  const [promo, setPromo] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -62,7 +57,6 @@ const UpgradeModal = ({ onClose }) => {
     try {
       await redirectToCheckout({
         priceId: billing === 'yearly' ? PRICES.yearly : PRICES.monthly,
-        promoCode: promo || null,
       });
     } catch (e) {
       console.error(e);
@@ -73,16 +67,15 @@ const UpgradeModal = ({ onClose }) => {
 
   const proFeatures = [
     '∞  Unlimited generations',
-    '🎨  All 5 templates',
+    '🎨  All 16 templates',
     '📄  DOCX + PDF export',
     '🕐  Unlimited history',
     '⚡  Priority AI model',
-    '🔗  LinkedIn version generator',
+    '🔗  LinkedIn note generator',
     '🚫  No watermark on PDF',
   ];
 
   const price = billing === 'yearly' ? '€39/year' : '€6/month';
-  const hasPromo = promo.trim().length > 0;
 
   return (
     <div
@@ -127,25 +120,13 @@ const UpgradeModal = ({ onClose }) => {
             ))}
           </div>
 
-          {/* Promo code */}
-          <input
-            value={promo}
-            onChange={e => setPromo(e.target.value.toUpperCase())}
-            placeholder={t.promo}
-            style={{ width: '100%', background: '#1e293b', border: '1px solid #334155', borderRadius: 10, padding: '11px 14px', fontSize: 13, color: 'white', outline: 'none', marginBottom: 14, boxSizing: 'border-box', fontFamily: 'inherit' }}
-            onFocus={e => e.target.style.borderColor = '#6366f1'}
-            onBlur={e => e.target.style.borderColor = '#334155'}
-          />
-
-          {/* ── Promo warning ── */}
-          {hasPromo && (
-            <div style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)', borderRadius: 10, padding: '10px 14px', marginBottom: 14, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 14, flexShrink: 0 }}>⚠️</span>
-              <p style={{ margin: 0, fontSize: 11, color: '#fbbf24', lineHeight: 1.5 }}>
-                {t.warning(price)}
-              </p>
-            </div>
-          )}
+          {/* Auto-billing notice — always visible */}
+          <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 10, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <span style={{ fontSize: 14, flexShrink: 0 }}>ℹ️</span>
+            <p style={{ margin: 0, fontSize: 11, color: '#a5b4fc', lineHeight: 1.5 }}>
+              {t.warning(price)}
+            </p>
+          </div>
 
           {error && <p style={{ color: '#f87171', fontSize: 12, marginBottom: 10, textAlign: 'center' }}>{error}</p>}
 

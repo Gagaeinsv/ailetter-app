@@ -1,32 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   TemplateInfluxInline, TemplateIconicInline, TemplateEnfoldInline, 
   TemplateModernInline, TemplateMinimalInline, TemplateNovaInline, 
   TemplateBreezeInline, TemplateExecutiveInline, TemplateNordicInline, 
   TemplateBerlinInline, TemplateOnyxInline, TemplateGenericProInline 
 } from '../templates/Templates';
-import { Loader2, Copy, Sparkles, FileText, Download, Lock, RefreshCw, Save, Check, PenLine, Settings2 } from 'lucide-react'; 
-
-// Зберігаємо ваші оригінальні іконки (або замінюємо на lucide для єдиного стилю - тут я використав lucide для краси, але логіка та сама)
+import { Loader2, Copy, Sparkles, FileText, Download, Lock, RefreshCw, Save, Check, PenLine, Settings2, Linkedin } from 'lucide-react';
+import LinkedInModal from './LinkedInModal';
 
 const DashboardTab = (props) => {
   const {
-    contactInfo, setContactInfo, // Додано setContactInfo для редагування контактів
+    contactInfo, setContactInfo,
     jobDescription, setJobDescription,
     cvFile, fileName, handleFileChange, handleAutoFill, parsingCV,
     settings, setSettings, selectedTemplate, setSelectedTemplate,
     handleGenerate, loading, generatedLetter, setGeneratedLetter,
-    downloadPDF, downloadDOCX, // Додано downloadDOCX
+    downloadPDF, downloadDOCX,
     editMode, setEditMode, editText, setEditText,
     dict, TEMPLATES, todayStr, placeholderText,
     showNotification, handleSaveToHistory,
-    documentRef, 
-    isPro, 
+    documentRef,
+    isPro,
     setShowUpgrade,
   } = props;
 
+  const [showLinkedIn, setShowLinkedIn] = useState(false);
+
   const renderTemplate = () => {
-    // Якщо режим редагування, показуємо відредагований текст у шаблоні
     const textToShow = editMode ? editText : (generatedLetter || placeholderText);
     const p = { contact: contactInfo, text: textToShow, date: todayStr };
 
@@ -61,35 +61,32 @@ const DashboardTab = (props) => {
   return (
     <div className="flex h-full w-full overflow-hidden bg-[#0f172a]">
 
-      {/* ── LEFT COLUMN: INPUTS (Ширина фіксована або 40-50%) ── */}
+      {/* ── LEFT COLUMN ── */}
       <div className="w-[450px] flex-shrink-0 flex flex-col border-r border-[#1e293b] bg-[#0f172a] h-full overflow-hidden">
-        
-        {/* Scrollable Content */}
+
         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-          
+
           {/* Header */}
           <div>
             <div className="flex items-center gap-3 mb-2">
-               <div className="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">1</div>
-               <h1 className="text-xl font-bold text-white">{dict.step1 || 'Your Data'}</h1>
+              <div className="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">1</div>
+              <h1 className="text-xl font-bold text-white">{dict.step1 || 'Your Data'}</h1>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed ml-11">{dict.step1Desc || 'Upload your CV and paste the job description.'}</p>
           </div>
 
-          {/* CV Upload Section */}
+          {/* CV Upload */}
           <div className="bg-[#1e293b] p-5 rounded-2xl border border-[#334155]/50 hover:border-indigo-500/30 transition-colors group">
             <div className="flex justify-between items-center mb-3">
               <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-400 transition-colors">{dict.cvSection || 'RESUME / CV'}</label>
               {fileName && <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 truncate max-w-[120px]">{fileName}</span>}
             </div>
-            
             <div className="flex gap-3">
-               <label className="flex-1 cursor-pointer bg-[#0f172a] hover:bg-slate-900 border border-dashed border-slate-600 hover:border-indigo-500 rounded-xl flex flex-col items-center justify-center py-4 transition-all">
-                  <span className="text-xs font-medium text-slate-400 hover:text-white transition-colors">{fileName ? 'Replace PDF' : (dict.cvUploadBtn || 'Upload PDF')}</span>
-                  <input type="file" className="hidden" accept=".pdf" onChange={handleFileChange} />
-               </label>
-
-               <button
+              <label className="flex-1 cursor-pointer bg-[#0f172a] hover:bg-slate-900 border border-dashed border-slate-600 hover:border-indigo-500 rounded-xl flex flex-col items-center justify-center py-4 transition-all">
+                <span className="text-xs font-medium text-slate-400 hover:text-white transition-colors">{fileName ? 'Replace PDF' : (dict.cvUploadBtn || 'Upload PDF')}</span>
+                <input type="file" className="hidden" accept=".pdf" onChange={handleFileChange} />
+              </label>
+              <button
                 onClick={handleAutoFill}
                 disabled={parsingCV || !cvFile}
                 className="w-1/3 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 rounded-xl flex flex-col items-center justify-center gap-1 text-[10px] font-bold uppercase transition-all disabled:opacity-40 disabled:cursor-not-allowed"
@@ -100,23 +97,23 @@ const DashboardTab = (props) => {
             </div>
           </div>
 
-          {/* Contact Info Inputs (Якщо потрібно редагувати ім'я/професію вручну) */}
+          {/* Contact Info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-bold uppercase text-slate-500 ml-1">Full Name</label>
-              <input 
-                value={contactInfo?.fullName || ''} 
-                onChange={(e) => setContactInfo({...contactInfo, fullName: e.target.value})}
-                placeholder="Your Name" 
+              <input
+                value={contactInfo?.fullName || ''}
+                onChange={e => setContactInfo({ ...contactInfo, fullName: e.target.value })}
+                placeholder="Your Name"
                 className="w-full bg-[#1e293b] border border-[#334155] rounded-xl px-3 py-2.5 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
               />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold uppercase text-slate-500 ml-1">Role</label>
-              <input 
-                value={contactInfo?.profession || ''} 
-                onChange={(e) => setContactInfo({...contactInfo, profession: e.target.value})}
-                placeholder="Current Role" 
+              <input
+                value={contactInfo?.profession || ''}
+                onChange={e => setContactInfo({ ...contactInfo, profession: e.target.value })}
+                placeholder="Current Role"
                 className="w-full bg-[#1e293b] border border-[#334155] rounded-xl px-3 py-2.5 text-sm text-white focus:border-indigo-500 outline-none transition-colors"
               />
             </div>
@@ -134,7 +131,7 @@ const DashboardTab = (props) => {
           </div>
         </div>
 
-        {/* Generate Button Area */}
+        {/* Generate Button */}
         <div className="p-6 border-t border-[#1e293b] bg-[#0f172a]/95 backdrop-blur shrink-0 z-10">
           <button
             onClick={handleGenerate}
@@ -147,49 +144,37 @@ const DashboardTab = (props) => {
         </div>
       </div>
 
-
-      {/* ── RIGHT COLUMN: PREVIEW & TOOLS ── */}
+      {/* ── RIGHT COLUMN ── */}
       <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#0f172a] relative">
-        
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
 
-        {/* Toolbar (Mac-style Header) */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
+
+        {/* Toolbar */}
         <div className="h-16 border-b border-[#1e293b] flex items-center justify-between px-6 shrink-0 bg-[#0f172a]/80 backdrop-blur-md z-20">
-          
-          {/* Window Controls */}
+
           <div className="flex items-center gap-4">
-             <div className="flex gap-1.5 group">
-               <div className="w-3 h-3 rounded-full bg-[#ff5f57] border border-[#e0443e] group-hover:flex items-center justify-center text-[8px] text-black/50"></div>
-               <div className="w-3 h-3 rounded-full bg-[#febc2e] border border-[#d89e24]"></div>
-               <div className="w-3 h-3 rounded-full bg-[#28c840] border border-[#1aab29]"></div>
-             </div>
-             <div className="h-4 w-px bg-[#334155] mx-2"></div>
-             <span className="text-xs font-medium text-slate-400 select-none">AIletter Preview</span>
+            <div className="flex gap-1.5 group">
+              <div className="w-3 h-3 rounded-full bg-[#ff5f57] border border-[#e0443e]" />
+              <div className="w-3 h-3 rounded-full bg-[#febc2e] border border-[#d89e24]" />
+              <div className="w-3 h-3 rounded-full bg-[#28c840] border border-[#1aab29]" />
+            </div>
+            <div className="h-4 w-px bg-[#334155] mx-2" />
+            <span className="text-xs font-medium text-slate-400 select-none">AIletter Preview</span>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex items-center gap-2">
-            
+
             {generatedLetter && (
               <>
-                <button 
-                  onClick={handleGenerate} 
-                  title={dict.regenerate} 
-                  className="p-2 text-slate-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-all"
-                >
+                <button onClick={handleGenerate} title={dict.regenerate} className="p-2 text-slate-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-all">
                   <RefreshCw className="w-4 h-4" />
                 </button>
-                
-                <button 
-                  onClick={handleSaveToHistory} 
-                  title="Save to History" 
-                  className="p-2 text-slate-400 hover:text-indigo-400 hover:bg-[#1e293b] rounded-lg transition-all"
-                >
+
+                <button onClick={handleSaveToHistory} title="Save to History" className="p-2 text-slate-400 hover:text-indigo-400 hover:bg-[#1e293b] rounded-lg transition-all">
                   <Save className="w-4 h-4" />
                 </button>
 
-                <div className="h-4 w-px bg-[#334155] mx-1"></div>
+                <div className="h-4 w-px bg-[#334155] mx-1" />
 
                 <button
                   onClick={() => {
@@ -198,8 +183,8 @@ const DashboardTab = (props) => {
                     setEditMode(!editMode);
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    editMode 
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
+                    editMode
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
                       : 'bg-[#1e293b] text-slate-300 hover:text-white border border-[#334155]'
                   }`}
                 >
@@ -208,7 +193,7 @@ const DashboardTab = (props) => {
               </>
             )}
 
-            {/* Export Buttons */}
+            {/* Export buttons */}
             <div className="flex items-center bg-[#1e293b] rounded-lg p-0.5 border border-[#334155] ml-2">
               <button
                 onClick={downloadPDF}
@@ -218,7 +203,7 @@ const DashboardTab = (props) => {
                 <Download className="w-3.5 h-3.5" />
                 PDF
               </button>
-              <div className="w-px h-3 bg-[#334155]"></div>
+              <div className="w-px h-3 bg-[#334155]" />
               <button
                 onClick={() => isPro ? downloadDOCX() : setShowUpgrade(true)}
                 disabled={!generatedLetter}
@@ -230,98 +215,97 @@ const DashboardTab = (props) => {
                 DOCX
               </button>
             </div>
-            
-            {generatedLetter && (
-              <button 
-                onClick={copyToClipboard} 
-                className="ml-2 p-2 text-slate-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-all"
-                title="Copy Text"
-              >
-                <Copy className="w-4 h-4" />
-              </button>
-            )}
 
+            {generatedLetter && (
+              <>
+                <button onClick={copyToClipboard} className="ml-2 p-2 text-slate-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-all" title="Copy Text">
+                  <Copy className="w-4 h-4" />
+                </button>
+
+                {/* LinkedIn Button */}
+                <button
+                  onClick={() => setShowLinkedIn(true)}
+                  className="ml-1 flex items-center gap-1.5 px-3 py-1.5 bg-[#0077b5]/10 hover:bg-[#0077b5]/20 border border-[#0077b5]/30 text-[#38bdf8] rounded-lg text-xs font-bold transition-all"
+                  title="Generate LinkedIn Note"
+                >
+                  <Linkedin className="w-3.5 h-3.5" />
+                  LinkedIn
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Quick Settings Bar (Filters) */}
+        {/* Quick Settings Bar */}
         <div className="border-b border-[#1e293b] bg-[#0f172a]/50 backdrop-blur p-2 flex gap-4 shrink-0 overflow-x-auto items-center z-10 pl-6" style={{ scrollbarWidth: 'none' }}>
-           <div className="flex items-center gap-2 text-slate-500">
-             <Settings2 className="w-3.5 h-3.5" />
-             <span className="text-[10px] font-bold uppercase tracking-wider">Settings:</span>
-           </div>
+          <div className="flex items-center gap-2 text-slate-500">
+            <Settings2 className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Settings:</span>
+          </div>
 
-           {/* Tone Selector */}
-           <div className="flex bg-[#1e293b] rounded-lg p-0.5 border border-[#334155]">
-             {['Professional', 'Friendly', 'Formal'].map(t => (
-               <button 
-                 key={t} 
-                 onClick={() => setSettings({ ...settings, tone: t })}
-                 className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all ${
-                   settings.tone === t 
-                     ? 'bg-[#6366f1] text-white shadow-sm' 
-                     : 'text-slate-400 hover:text-white hover:bg-slate-700'
-                 }`}
-               >
-                 {t}
-               </button>
-             ))}
-           </div>
-
-           {/* Language Selector */}
-           <div className="relative group">
-             <select
-                value={settings.language}
-                onChange={e => setSettings({ ...settings, language: e.target.value })}
-                className="appearance-none bg-[#1e293b] border border-[#334155] text-slate-300 hover:text-white text-[10px] font-bold py-1.5 pl-3 pr-8 rounded-lg outline-none cursor-pointer focus:border-indigo-500 transition-colors"
+          <div className="flex bg-[#1e293b] rounded-lg p-0.5 border border-[#334155]">
+            {['Professional', 'Friendly', 'Formal'].map(t => (
+              <button
+                key={t}
+                onClick={() => setSettings({ ...settings, tone: t })}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all ${
+                  settings.tone === t ? 'bg-[#6366f1] text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                }`}
               >
-                <option>Auto</option>
-                <option>English</option>
-                <option>Ukrainian</option>
-                <option>Italiano</option>
-                <option>Deutsch</option>
-              </select>
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">▼</div>
-           </div>
+                {t}
+              </button>
+            ))}
+          </div>
 
-           <div className="h-4 w-px bg-[#334155] mx-2"></div>
+          <div className="relative group">
+            <select
+              value={settings.language}
+              onChange={e => setSettings({ ...settings, language: e.target.value })}
+              className="appearance-none bg-[#1e293b] border border-[#334155] text-slate-300 hover:text-white text-[10px] font-bold py-1.5 pl-3 pr-8 rounded-lg outline-none cursor-pointer focus:border-indigo-500 transition-colors"
+            >
+              <option>Auto</option>
+              <option>English</option>
+              <option>Ukrainian</option>
+              <option>Italiano</option>
+              <option>Deutsch</option>
+            </select>
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">▼</div>
+          </div>
 
-           {/* Templates Selector */}
-           <div className="flex gap-2 items-center">
-             <span className="text-[10px] font-bold text-slate-500 uppercase">Template:</span>
-             <div className="flex gap-2">
-               {TEMPLATES.slice(0, 4).map(t => (
-                 <button
-                   key={t.id}
-                   onClick={() => handleTemplateClick(t)}
-                   className={`group relative px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${
-                     selectedTemplate === t.id
-                       ? 'bg-white border-white text-black shadow-md'
-                       : 'bg-[#1e293b] border-[#334155] text-slate-400 hover:border-indigo-500 hover:text-white'
-                   } ${t.pro && !isPro ? 'opacity-70' : ''}`}
-                 >
-                   {t.pro && !isPro && <Lock className="w-2.5 h-2.5 absolute -top-1 -right-1 text-amber-400 bg-[#0f172a] rounded-full p-px" />}
-                   {t.name}
-                 </button>
-               ))}
-               <button onClick={() => props.setActiveTab && props.setActiveTab('templates')} className="text-[10px] text-indigo-400 hover:text-indigo-300 underline underline-offset-2">
-                 View All
-               </button>
-             </div>
-           </div>
+          <div className="h-4 w-px bg-[#334155] mx-2" />
+
+          <div className="flex gap-2 items-center">
+            <span className="text-[10px] font-bold text-slate-500 uppercase">Template:</span>
+            <div className="flex gap-2">
+              {TEMPLATES.slice(0, 4).map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => handleTemplateClick(t)}
+                  className={`group relative px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${
+                    selectedTemplate === t.id
+                      ? 'bg-white border-white text-black shadow-md'
+                      : 'bg-[#1e293b] border-[#334155] text-slate-400 hover:border-indigo-500 hover:text-white'
+                  } ${t.pro && !isPro ? 'opacity-70' : ''}`}
+                >
+                  {t.pro && !isPro && <Lock className="w-2.5 h-2.5 absolute -top-1 -right-1 text-amber-400 bg-[#0f172a] rounded-full p-px" />}
+                  {t.name}
+                </button>
+              ))}
+              <button onClick={() => props.setActiveTab && props.setActiveTab('templates')} className="text-[10px] text-indigo-400 hover:text-indigo-300 underline underline-offset-2">
+                View All
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Document Preview Area */}
+        {/* Document Preview */}
         <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-[#0b1120] relative custom-scrollbar">
-          
+
           {editMode ? (
-            // Editor Mode
             <div className="flex w-full max-w-[1200px] gap-6 h-full">
-              {/* Preview Side */}
               <div className="flex-1 bg-white shadow-2xl rounded-sm opacity-50 pointer-events-none h-fit scale-[0.9] origin-top">
                 {renderTemplate()}
               </div>
-              {/* Text Editor Side */}
               <div className="flex-1 flex flex-col h-full bg-[#1e293b] rounded-xl border border-[#334155] shadow-2xl overflow-hidden">
                 <div className="bg-[#0f172a] px-4 py-3 border-b border-[#334155] flex items-center gap-2">
                   <PenLine className="w-4 h-4 text-indigo-400" />
@@ -335,8 +319,7 @@ const DashboardTab = (props) => {
               </div>
             </div>
           ) : (
-            // Normal Preview Mode
-            <div className="w-full max-w-[210mm] transition-transform duration-500 ease-out transform translate-y-0" ref={documentRef}>
+            <div className="w-full max-w-[210mm] transition-transform duration-500 ease-out" ref={documentRef}>
               <div className="bg-white text-black shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] rounded-sm min-h-[297mm]">
                 {renderTemplate()}
               </div>
@@ -344,22 +327,32 @@ const DashboardTab = (props) => {
           )}
 
           {!generatedLetter && !loading && (
-             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <div className="bg-[#1e293b]/80 backdrop-blur border border-[#334155] p-6 rounded-2xl flex flex-col items-center gap-4 max-w-sm text-center">
-                   <div className="w-16 h-16 bg-[#0f172a] rounded-full flex items-center justify-center border border-[#334155]">
-                      <Sparkles className="w-8 h-8 text-indigo-500 animate-pulse" />
-                   </div>
-                   <div>
-                      <h3 className="text-white font-bold text-lg mb-1">Ready to Create?</h3>
-                      <p className="text-slate-400 text-sm">Fill in your details on the left and click Generate to see the magic happen.</p>
-                   </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <div className="bg-[#1e293b]/80 backdrop-blur border border-[#334155] p-6 rounded-2xl flex flex-col items-center gap-4 max-w-sm text-center">
+                <div className="w-16 h-16 bg-[#0f172a] rounded-full flex items-center justify-center border border-[#334155]">
+                  <Sparkles className="w-8 h-8 text-indigo-500 animate-pulse" />
                 </div>
-             </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg mb-1">Ready to Create?</h3>
+                  <p className="text-slate-400 text-sm">Fill in your details on the left and click Generate to see the magic happen.</p>
+                </div>
+              </div>
+            </div>
           )}
-
         </div>
-
       </div>
+
+      {/* LinkedIn Modal */}
+      {showLinkedIn && (
+        <LinkedInModal
+          onClose={() => setShowLinkedIn(false)}
+          coverLetter={generatedLetter}
+          contactInfo={contactInfo}
+          jobDescription={jobDescription}
+          isPro={isPro}
+          setShowUpgrade={setShowUpgrade}
+        />
+      )}
     </div>
   );
 };
