@@ -131,7 +131,7 @@ export const generateLinkedInVersion = async (coverLetter, userProfile, jobDescr
     You are an expert career coach. Based on the cover letter below, create a SHORT LinkedIn connection note or job application message.
 
     STRICT CONSTRAINTS:
-    1. Length: Maximum 300 characters (LinkedIn limit for connection notes).
+    1. Length: Maximum 1500 characters (LinkedIn limit for connection notes).
     2. Tone: Confident, direct, human. No buzzwords.
     3. No greetings like "Dear Hiring Manager". Start with value immediately.
     4. End with a subtle call to action (e.g. "Would love to connect.")
