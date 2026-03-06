@@ -63,14 +63,25 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
     Task: Write a cover letter in ${lang} for the candidate below.
 
     ══════════════════════════════════════════
+    SALUTATION — CRITICAL RULES:
+    ══════════════════════════════════════════
+    - ALWAYS use "Dear Hiring Manager," as the salutation.
+    - NEVER write "[Hiring Manager Name]", "[Name]", or any bracket placeholder.
+    - NEVER leave the salutation blank.
+    - In Italian: "Gentile Hiring Manager,"
+    - In German: "Sehr geehrte Damen und Herren,"
+    - In Ukrainian: "Шановний менеджер з найму,"
+
+    ══════════════════════════════════════════
     OPENING SENTENCE — CRITICAL RULES:
     ══════════════════════════════════════════
-    The FIRST sentence is the most important. It MUST immediately hook the reader.
+    The FIRST sentence after the salutation is the most important. It MUST immediately hook the reader.
 
-    ✅ GOOD openings (use this style):
-    - Start with a specific achievement: "In my last role, I reduced delivery times by 30% managing a cross-functional team of 8 — exactly the kind of result [Company] needs."
-    - Start with a direct connection to their need: "You need someone who can coordinate complex digital projects across multiple clients — that's been my day-to-day for the past [X] years."
-    - Start with a bold, confident statement: "Three languages, five years of client-facing project management, and a track record of on-time delivery — I'm ready to bring this to [Company]."
+    ✅ GOOD openings — use one of these styles:
+    - Lead with a NUMBER or CONCRETE RESULT: "Eight team members, three languages, five years of delivery — that's what I bring to this role."
+    - Make a direct match to their specific need: "You need someone who can juggle multiple client projects without dropping a deadline — that's been my job description for the past five years."
+    - Open with a bold, specific statement of value: "Cross-functional teams, tight deadlines, demanding clients — I don't just manage these situations, I thrive in them."
+    - Reference something specific about the company or role: "The complexity of managing international client accounts in a multilingual environment is exactly where I perform best."
 
     ❌ FORBIDDEN openings — NEVER use these or any variation:
     - "Con la mia comprovata esperienza..." / "With my proven experience..."
@@ -80,18 +91,20 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
     - "I am the ideal candidate..."
     - "I am pleased to submit my application..."
     - "Having [X] years of experience..."
+    - "Successfully coordinating..." or any gerund (-ing) as the very first word
     - Any sentence starting with "I am" or "I have" as the first words
 
     ══════════════════════════════════════════
     FULL LETTER RULES:
     ══════════════════════════════════════════
     1. Length: Approximately ${wordLimit} words. Concise and punchy.
-    2. Finish: MUST include sign-off "Sincerely, [Name]". NEVER cut off mid-sentence.
+    2. Finish: MUST end with "Sincerely," on one line, then "${userProfile.fullName}" on the next. NEVER cut off mid-sentence.
     3. No fluff, no buzzwords, no hollow phrases.
     4. Tone: ${tone || "Professional, Confident, and Direct"}.
 
     Structure:
-    - Opening: Hook the reader with a specific achievement or direct connection to their need.
+    - Salutation: "Dear Hiring Manager," (adapted to language — see rules above)
+    - Opening: Hook with a specific result, number, or direct match to their need.
     - Middle: Connect 1-2 key achievements from the CV to the specific problems in the Job Description.
     - Closing: Brief, confident call to action (request for interview) + sign-off.
 
@@ -157,11 +170,11 @@ export const generateLinkedInVersion = async (coverLetter, jobDescription, conta
     This goes in the "Cover Letter" field when applying via LinkedIn Easy Apply.
 
     STRICT CONSTRAINTS:
-    1. Length: 150–200 words. No more.
+    1. Length: 150–200 words. No more, no less. Count carefully.
     2. Tone: Confident, direct, human. No buzzwords or hollow phrases.
     3. FORBIDDEN first words: "With my experience", "Con la mia esperienza", "I am writing",
-       "I am the ideal", "Having X years", "I am pleased". NEVER start with these.
-    4. START with a strong hook: a concrete result, a direct match to their need, or a bold statement.
+       "I am the ideal", "Having X years", "I am pleased", "Successfully". NEVER start with these.
+    4. START with a strong hook: a concrete result, a number, or a direct match to their specific need.
     5. Highlight 2–3 key strengths that directly match the job description.
     6. End with a clear, natural call to action (e.g. "Happy to share more — looking forward to connecting.")
     7. Output ONLY the message body. No subject line, no "Dear...", no explanations.
