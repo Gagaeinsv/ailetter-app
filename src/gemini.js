@@ -59,25 +59,50 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
   const lang = language === "Auto" ? "the same language as the job description" : language;
 
   const promptText = `
-    Role: You are an expert career coach helping a candidate apply for a job.
-    Task: Write a high-impact cover letter in ${lang}.
+    Role: You are an expert career coach writing a high-impact cover letter.
+    Task: Write a cover letter in ${lang} for the candidate below.
 
-    STRICT CONSTRAINTS:
-    1. Length: Keep it approximately ${wordLimit} words. Concise and punchy.
-    2. Finish: You MUST include the sign-off "Sincerely, [Name]". NEVER cut off the text.
-    3. Content: No fluff. No generic cliches like "I am writing to apply". Start immediately with value.
+    ══════════════════════════════════════════
+    OPENING SENTENCE — CRITICAL RULES:
+    ══════════════════════════════════════════
+    The FIRST sentence is the most important. It MUST immediately hook the reader.
 
-    Tone: ${tone || "Professional, Confident, and Direct"}.
+    ✅ GOOD openings (use this style):
+    - Start with a specific achievement: "In my last role, I reduced delivery times by 30% managing a cross-functional team of 8 — exactly the kind of result [Company] needs."
+    - Start with a direct connection to their need: "You need someone who can coordinate complex digital projects across multiple clients — that's been my day-to-day for the past [X] years."
+    - Start with a bold, confident statement: "Three languages, five years of client-facing project management, and a track record of on-time delivery — I'm ready to bring this to [Company]."
+
+    ❌ FORBIDDEN openings — NEVER use these or any variation:
+    - "Con la mia comprovata esperienza..." / "With my proven experience..."
+    - "Mit meiner Erfahrung..." / "Avec mon expérience..."
+    - "З моїм досвідом..."
+    - "I am writing to apply for..."
+    - "I am the ideal candidate..."
+    - "I am pleased to submit my application..."
+    - "Having [X] years of experience..."
+    - Any sentence starting with "I am" or "I have" as the first words
+
+    ══════════════════════════════════════════
+    FULL LETTER RULES:
+    ══════════════════════════════════════════
+    1. Length: Approximately ${wordLimit} words. Concise and punchy.
+    2. Finish: MUST include sign-off "Sincerely, [Name]". NEVER cut off mid-sentence.
+    3. No fluff, no buzzwords, no hollow phrases.
+    4. Tone: ${tone || "Professional, Confident, and Direct"}.
 
     Structure:
-    - Opening: Hook the reader immediately with why you fit.
-    - Middle: Connect 1-2 key achievements from the CV directly to the Job Description problems.
-    - Closing: Brief call to action (interview request) and sign-off.
+    - Opening: Hook the reader with a specific achievement or direct connection to their need.
+    - Middle: Connect 1-2 key achievements from the CV to the specific problems in the Job Description.
+    - Closing: Brief, confident call to action (request for interview) + sign-off.
 
-    Job Description:
+    ══════════════════════════════════════════
+    JOB DESCRIPTION:
+    ══════════════════════════════════════════
     ${jobDescription.substring(0, 2000)}
 
-    Candidate Profile:
+    ══════════════════════════════════════════
+    CANDIDATE PROFILE:
+    ══════════════════════════════════════════
     Name: ${userProfile.fullName}
     Role: ${userProfile.profession}
     Skills/Experience: ${JSON.stringify(userProfile)}
@@ -126,29 +151,35 @@ export const parseCV = async (cvFilePart) => {
   });
 };
 
-export const generateLinkedInVersion = async (coverLetter, userProfile, jobDescription) => {
+export const generateLinkedInVersion = async (coverLetter, jobDescription, contactInfo) => {
   const promptText = `
-    You are an expert career coach. Based on the cover letter below, create a SHORT LinkedIn connection note or job application message.
+    You are an expert career coach. Write a SHORT LinkedIn Easy Apply message.
+    This goes in the "Cover Letter" field when applying via LinkedIn Easy Apply.
 
     STRICT CONSTRAINTS:
-    1. Length: Maximum 1500 characters (LinkedIn limit for connection notes).
-    2. Tone: Confident, direct, human. No buzzwords.
-    3. No greetings like "Dear Hiring Manager". Start with value immediately.
-    4. End with a subtle call to action (e.g. "Would love to connect.")
-    5. Output ONLY the message text. No explanations, no quotes around it.
+    1. Length: 150–200 words. No more.
+    2. Tone: Confident, direct, human. No buzzwords or hollow phrases.
+    3. FORBIDDEN first words: "With my experience", "Con la mia esperienza", "I am writing",
+       "I am the ideal", "Having X years", "I am pleased". NEVER start with these.
+    4. START with a strong hook: a concrete result, a direct match to their need, or a bold statement.
+    5. Highlight 2–3 key strengths that directly match the job description.
+    6. End with a clear, natural call to action (e.g. "Happy to share more — looking forward to connecting.")
+    7. Output ONLY the message body. No subject line, no "Dear...", no explanations.
 
-    Original Cover Letter:
-    ${coverLetter.substring(0, 1500)}
+    Candidate: ${contactInfo?.fullName || contactInfo?.name || 'the candidate'}, ${contactInfo?.profession || ''}
 
-    Candidate: ${userProfile.fullName}, ${userProfile.profession}
-    Job: ${jobDescription.substring(0, 300)}
+    Job Description:
+    ${jobDescription.substring(0, 800)}
+
+    Full Cover Letter (use for context and achievements — do NOT copy sentences directly):
+    ${coverLetter.substring(0, 1200)}
   `.trim();
 
   return await tryModel(async (modelId, temp) => {
     return await callGemini({
       modelId,
-      temperature: temp,
-      maxOutputTokens: 200,
+      temperature: temp + 0.05,
+      maxOutputTokens: 350,
       contents: [promptText],
     });
   });

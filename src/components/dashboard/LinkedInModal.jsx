@@ -1,117 +1,186 @@
-import React, { useState } from 'react';
-import { Linkedin, Copy, Check, X, Sparkles, Loader2, Lock } from 'lucide-react';
-import { generateLinkedInVersion } from '../../gemini';
+const MODELS = [
+  { id: "gemini-2.0-flash",      temp: 0.7 },
+  { id: "gemini-2.0-flash-lite", temp: 0.6 },
+  { id: "gemini-2.5-flash",      temp: 0.7 },
+];
 
-const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPro, setShowUpgrade }) => {
-  const [text, setText] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [error, setError] = useState('');
+let modelIndex = 0;
 
-  const MAX_CHARS = 300;
-  const remaining = MAX_CHARS - text.length;
-  const isOverLimit = remaining < 0;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  const handleGenerate = async () => {
-    if (!isPro) { onClose(); setShowUpgrade(true); return; }
-    setLoading(true);
-    setError('');
+async function callGemini({ modelId, temperature, maxOutputTokens, contents, responseMimeType }) {
+  const response = await fetch("/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ modelId, temperature, maxOutputTokens, contents, responseMimeType }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const error = new Error(data.error?.message || "Gemini API error");
+    error.status = response.status;
+    throw error;
+  }
+
+  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+}
+
+async function tryModel(modelFn) {
+  while (modelIndex < MODELS.length) {
+    const current = MODELS[modelIndex];
     try {
-      const result = await generateLinkedInVersion(coverLetter, contactInfo, jobDescription);
-      setText(result.trim());
-    } catch (e) {
-      setError('AI is busy. Please try again.');
-    } finally {
-      setLoading(false);
+      console.log(`Using model: ${current.id}`);
+      return await modelFn(current.id, current.temp);
+    } catch (error) {
+      console.warn(`${current.id} failed:`, error);
+      const isCritical = error.status === 429 || error.status === 404 || error.status === 503;
+      if (isCritical) {
+        modelIndex++;
+        if (modelIndex < MODELS.length) {
+          await sleep(1000);
+          continue;
+        }
+      }
+      throw error;
     }
-  };
+  }
+  throw new Error("AI is busy. Please try again.");
+}
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+export const generateLetter = async (userProfile, jobDescription, cvFilePart, settings) => {
+  const { language, tone, length } = settings;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#1e293b] border border-[#334155] rounded-2xl w-full max-w-md shadow-2xl">
+  const wordLimit =
+    length === "Short"    ? "150-200" :
+    length === "Detailed" ? "300-400" :
+                            "200-300";
 
-        {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-[#334155]">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-[#0077b5] rounded-xl flex items-center justify-center">
-              <Linkedin className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-white font-bold text-sm">LinkedIn Note</h2>
-              <p className="text-slate-400 text-xs">Short connection message · max 300 chars</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="p-2 text-slate-500 hover:text-white hover:bg-[#334155] rounded-lg transition-all">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+  const lang = language === "Auto" ? "the same language as the job description" : language;
 
-        {/* Body */}
-        <div className="p-5 space-y-4">
+  const promptText = `
+    Role: You are an expert career coach writing a high-impact cover letter.
+    Task: Write a cover letter in ${lang} for the candidate below.
 
-          {!isPro && (
-            <div className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
-              <Lock className="w-4 h-4 text-amber-400 shrink-0" />
-              <p className="text-xs text-amber-300">LinkedIn Note is a <span className="font-bold">Pro</span> feature. Upgrade to generate.</p>
-            </div>
-          )}
+    ══════════════════════════════════════════
+    OPENING SENTENCE — CRITICAL RULES:
+    ══════════════════════════════════════════
+    The FIRST sentence is the most important. It MUST immediately hook the reader.
 
-          {/* Text area */}
-          <div className="relative">
-            <textarea
-              value={text}
-              onChange={e => setText(e.target.value)}
-              placeholder={isPro ? "Click Generate to create your LinkedIn note..." : "Upgrade to Pro to use this feature."}
-              disabled={!isPro}
-              rows={5}
-              className="w-full bg-[#0f172a] border border-[#334155] rounded-xl p-4 text-sm text-slate-200 focus:border-indigo-500 outline-none resize-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            />
-            {/* Char counter */}
-            {text && (
-              <span className={`absolute bottom-3 right-3 text-[10px] font-bold ${isOverLimit ? 'text-red-400' : remaining < 50 ? 'text-amber-400' : 'text-slate-500'}`}>
-                {remaining}
-              </span>
-            )}
-          </div>
+    ✅ GOOD openings (use this style):
+    - Start with a specific achievement: "In my last role, I reduced delivery times by 30% managing a cross-functional team of 8 — exactly the kind of result [Company] needs."
+    - Start with a direct connection to their need: "You need someone who can coordinate complex digital projects across multiple clients — that's been my day-to-day for the past [X] years."
+    - Start with a bold, confident statement: "Three languages, five years of client-facing project management, and a track record of on-time delivery — I'm ready to bring this to [Company]."
 
-          {error && <p className="text-xs text-red-400">{error}</p>}
+    ❌ FORBIDDEN openings — NEVER use these or any variation:
+    - "Con la mia comprovata esperienza..." / "With my proven experience..."
+    - "Mit meiner Erfahrung..." / "Avec mon expérience..."
+    - "З моїм досвідом..."
+    - "I am writing to apply for..."
+    - "I am the ideal candidate..."
+    - "I am pleased to submit my application..."
+    - "Having [X] years of experience..."
+    - Any sentence starting with "I am" or "I have" as the first words
 
-          {isOverLimit && (
-            <p className="text-xs text-red-400">Message is too long. LinkedIn limit is 300 characters.</p>
-          )}
-        </div>
+    ══════════════════════════════════════════
+    FULL LETTER RULES:
+    ══════════════════════════════════════════
+    1. Length: Approximately ${wordLimit} words. Concise and punchy.
+    2. Finish: MUST include sign-off "Sincerely, [Name]". NEVER cut off mid-sentence.
+    3. No fluff, no buzzwords, no hollow phrases.
+    4. Tone: ${tone || "Professional, Confident, and Direct"}.
 
-        {/* Footer */}
-        <div className="flex gap-3 p-5 pt-0">
-          <button
-            onClick={handleGenerate}
-            disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 rounded-xl font-bold text-sm text-white transition-all"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {loading ? 'Generating...' : 'Generate'}
-          </button>
+    Structure:
+    - Opening: Hook the reader with a specific achievement or direct connection to their need.
+    - Middle: Connect 1-2 key achievements from the CV to the specific problems in the Job Description.
+    - Closing: Brief, confident call to action (request for interview) + sign-off.
 
-          {text && !isOverLimit && (
-            <button
-              onClick={handleCopy}
-              className="flex items-center gap-2 px-4 py-3 bg-[#0f172a] hover:bg-[#334155] border border-[#334155] rounded-xl text-sm font-bold text-slate-300 hover:text-white transition-all"
-            >
-              {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
-          )}
-        </div>
+    ══════════════════════════════════════════
+    JOB DESCRIPTION:
+    ══════════════════════════════════════════
+    ${jobDescription.substring(0, 2000)}
 
-      </div>
-    </div>
-  );
+    ══════════════════════════════════════════
+    CANDIDATE PROFILE:
+    ══════════════════════════════════════════
+    Name: ${userProfile.fullName}
+    Role: ${userProfile.profession}
+    Skills/Experience: ${JSON.stringify(userProfile)}
+  `.trim();
+
+  const contents = [promptText, ...(cvFilePart ? [cvFilePart] : [])];
+
+  return await tryModel(async (modelId, temp) => {
+    let text = await callGemini({
+      modelId,
+      temperature: temp,
+      maxOutputTokens: 4000,
+      contents,
+    });
+
+    text = text.replace(/^(Subject:|Oggetto:|RE:|Betreff:|Тема:).*?\n+/gmi, "").trim();
+    text = text.replace(/```html|```/g, "");
+
+    return text;
+  });
 };
 
-export default LinkedInModal;
+export const parseCV = async (cvFilePart) => {
+  const promptText = `Analyze this CV and extract details into valid JSON only:
+{
+  "fullName": "Name Surname",
+  "email": "email@example.com",
+  "phone": "+123...",
+  "location": "City, Country",
+  "linkedin": "url",
+  "profession": "Current Job Title",
+  "skills": "List of top 5 skills",
+  "experience": "Summary of most recent role"
+}`;
+
+  return await tryModel(async (modelId) => {
+    const text = await callGemini({
+      modelId,
+      temperature: 0.2,
+      maxOutputTokens: 4000,
+      contents: [promptText, cvFilePart],
+      responseMimeType: "application/json",
+    });
+
+    return JSON.parse(text);
+  });
+};
+
+export const generateLinkedInVersion = async (coverLetter, jobDescription, contactInfo) => {
+  const promptText = `
+    You are an expert career coach. Write a SHORT LinkedIn Easy Apply message.
+    This goes in the "Cover Letter" field when applying via LinkedIn Easy Apply.
+
+    STRICT CONSTRAINTS:
+    1. Length: 150–200 words. No more.
+    2. Tone: Confident, direct, human. No buzzwords or hollow phrases.
+    3. FORBIDDEN first words: "With my experience", "Con la mia esperienza", "I am writing",
+       "I am the ideal", "Having X years", "I am pleased". NEVER start with these.
+    4. START with a strong hook: a concrete result, a direct match to their need, or a bold statement.
+    5. Highlight 2–3 key strengths that directly match the job description.
+    6. End with a clear, natural call to action (e.g. "Happy to share more — looking forward to connecting.")
+    7. Output ONLY the message body. No subject line, no "Dear...", no explanations.
+
+    Candidate: ${contactInfo?.fullName || contactInfo?.name || 'the candidate'}, ${contactInfo?.profession || ''}
+
+    Job Description:
+    ${jobDescription.substring(0, 800)}
+
+    Full Cover Letter (use for context and achievements — do NOT copy sentences directly):
+    ${coverLetter.substring(0, 1200)}
+  `.trim();
+
+  return await tryModel(async (modelId, temp) => {
+    return await callGemini({
+      modelId,
+      temperature: temp + 0.05,
+      maxOutputTokens: 350,
+      contents: [promptText],
+    });
+  });
+};
