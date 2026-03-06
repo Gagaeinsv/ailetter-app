@@ -179,7 +179,7 @@ export const generateLinkedInVersion = async (coverLetter, jobDescription, conta
     return await callGemini({
       modelId,
       temperature: temp + 0.05,
-      maxOutputTokens: 350,
+      maxOutputTokens: 1000,
       contents: [promptText],
     });
   });
