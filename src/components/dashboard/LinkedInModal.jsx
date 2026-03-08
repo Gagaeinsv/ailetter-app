@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { X, Linkedin, Copy, Check, Sparkles, Lock } from 'lucide-react';
 import { generateLinkedInVersion } from '../../gemini';
 
-const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPro, setShowUpgrade }) => {
+const LinkedInModal = ({
+  onClose,
+  coverLetter,
+  contactInfo,
+  jobDescription,
+  isPro,
+  setShowUpgrade
+}) => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
 
-  const wordCount = message.trim() ? message.trim().split(/\s+/).length : 0;
+  const textareaRef = useRef(null);
+
+  const wordCount = message.trim()
+    ? message.trim().split(/\s+/).length
+    : 0;
 
   const handleGenerate = async () => {
     if (!isPro) {
@@ -16,17 +27,40 @@ const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPr
       setShowUpgrade(true);
       return;
     }
+
     setLoading(true);
     setError('');
+
     try {
-      const result = await generateLinkedInVersion(coverLetter, jobDescription, contactInfo);
+      const result = await generateLinkedInVersion(
+        coverLetter,
+        jobDescription,
+        contactInfo
+      );
+
       setMessage(result);
+
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.style.height = 'auto';
+          textareaRef.current.style.height =
+            textareaRef.current.scrollHeight + 'px';
+        }
+      }, 0);
     } catch (err) {
       setError('Generation failed. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTextarea = (e) => {
+    setMessage(e.target.value);
+
+    const el = textareaRef.current;
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
   };
 
   const handleCopy = () => {
@@ -37,7 +71,7 @@ const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-lg bg-[#0f172a] border border-[#1e293b] rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-lg bg-[#0f172a] border border-[#1e293b] rounded-2xl shadow-2xl">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#1e293b]">
@@ -45,11 +79,17 @@ const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPr
             <div className="w-8 h-8 rounded-lg bg-[#0077b5]/15 flex items-center justify-center">
               <Linkedin className="w-4 h-4 text-[#0077b5]" />
             </div>
+
             <div>
-              <h2 className="text-white font-bold text-sm">LinkedIn Easy Apply Message</h2>
-              <p className="text-gray-500 text-xs">~150–200 words, ready to paste</p>
+              <h2 className="text-white font-bold text-sm">
+                LinkedIn Easy Apply Message
+              </h2>
+              <p className="text-gray-500 text-xs">
+                ~150–200 words, ready to paste
+              </p>
             </div>
           </div>
+
           <button
             onClick={onClose}
             className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 transition-all"
@@ -65,8 +105,10 @@ const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPr
           {!message && !loading && (
             <div className="bg-[#0077b5]/8 border border-[#0077b5]/20 rounded-xl p-4 text-sm text-gray-400 leading-relaxed">
               Generates a concise cover message for the{' '}
-              <span className="text-[#0077b5] font-semibold">LinkedIn Easy Apply</span> field —
-              short, impactful, and tailored to the job description you entered.
+              <span className="text-[#0077b5] font-semibold">
+                LinkedIn Easy Apply
+              </span>{' '}
+              field — short, impactful, and tailored to the job description you entered.
             </div>
           )}
 
@@ -75,7 +117,8 @@ const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPr
             <div className="flex items-center gap-3 bg-amber-500/8 border border-amber-500/20 rounded-xl p-4">
               <Lock className="w-4 h-4 text-amber-400 flex-shrink-0" />
               <p className="text-xs text-amber-300">
-                LinkedIn Easy Apply message is a <span className="font-bold">Pro</span> feature.
+                LinkedIn Easy Apply message is a{' '}
+                <span className="font-bold">Pro</span> feature.
               </p>
             </div>
           )}
@@ -84,11 +127,12 @@ const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPr
           {message && (
             <div className="relative">
               <textarea
+                ref={textareaRef}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={9}
-                className="w-full bg-[#1e293b] border border-[#334155] text-gray-200 text-sm rounded-xl p-4 resize-none focus:outline-none focus:border-[#0077b5]/50 leading-relaxed"
+                onChange={handleTextarea}
+                className="w-full min-h-[120px] max-h-[320px] overflow-y-auto bg-[#1e293b] border border-[#334155] text-gray-200 text-sm rounded-xl p-4 resize-none focus:outline-none focus:border-[#0077b5]/50 leading-relaxed"
               />
+
               <div className="absolute bottom-3 right-3 text-xs text-gray-600">
                 {wordCount} words
               </div>
@@ -125,7 +169,12 @@ const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPr
                 onClick={handleCopy}
                 className="flex items-center gap-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-2.5 rounded-xl transition-all text-sm"
               >
-                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                {copied ? (
+                  <Check className="w-4 h-4 text-green-400" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             )}
@@ -134,7 +183,9 @@ const LinkedInModal = ({ onClose, coverLetter, contactInfo, jobDescription, isPr
           {/* Tip */}
           {message && (
             <p className="text-xs text-gray-600 text-center">
-              Paste this in the <span className="text-gray-500">Cover Letter</span> field when applying via LinkedIn Easy Apply.
+              Paste this in the{' '}
+              <span className="text-gray-500">Cover Letter</span>{' '}
+              field when applying via LinkedIn Easy Apply.
             </p>
           )}
         </div>
