@@ -187,7 +187,7 @@ export const parseCV = async (cvFilePart) => {
     const text = await callGemini({
       modelId,
       temperature: 0.2,
-      maxOutputTokens: 4000,
+      maxOutputTokens: 8192,
       contents: [promptText, cvFilePart],
       responseMimeType: "application/json",
     });
