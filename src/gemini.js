@@ -24,7 +24,7 @@ async function callGemini({ modelId, temperature, maxOutputTokens, contents, res
   return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 }
 
-// ✅ FIX #1 — modelIndex локальний, не глобальний
+// FIX #1 — modelIndex локальний, не глобальний
 async function tryModel(modelFn) {
   let modelIndex = 0;
   while (modelIndex < MODELS.length) {
@@ -58,15 +58,16 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
 
   const lang = language === "Auto" ? "the same language as the job description" : language;
 
-  // ✅ FIX #3 — userProfile структурований, не JSON blob
+  // FIX #3 — userProfile структурований, не JSON blob
   const candidateProfile = `
 - Full Name: ${userProfile.fullName || "Not provided"}
 - Current Role: ${userProfile.profession || "Not provided"}
 - Location: ${userProfile.location || "Not specified"}
 - Key Skills: ${Array.isArray(userProfile.skills) ? userProfile.skills.join(", ") : (userProfile.skills || "Not provided")}
-- Recent Experience: ${userProfile.experience || "Not provided"}
+- Recent Experience: ${Array.isArray(userProfile.experience) ? userProfile.experience.map(e => `${e.title} at ${e.company} (${e.duration}): ${(e.achievements || []).join("; ")}`).join(" | ") : (userProfile.experience || "Not provided")}
 - Email: ${userProfile.email || "Not provided"}
 - LinkedIn: ${userProfile.linkedin || "Not provided"}
+- Languages: ${Array.isArray(userProfile.languages) ? userProfile.languages.join(", ") : (userProfile.languages || "Not provided")}
   `.trim();
 
   const promptText = `
@@ -105,7 +106,7 @@ The FIRST sentence after the salutation MUST immediately hook the reader.
 ATS OPTIMIZATION:
 ══════════════════════════════════════════
 - Mirror the EXACT keywords and phrases from the Job Description where relevant.
-- Do NOT paraphrase: if the JD says "cross-functional collaboration", use those exact words.
+- Do NOT paraphrase key terms: if the JD says "cross-functional collaboration", use those exact words.
 - Do NOT keyword-stuff; use each key phrase at most once naturally.
 - Include at least 2-3 quantified achievements (numbers, percentages, concrete results).
 
@@ -142,11 +143,7 @@ CANDIDATE PROFILE:
 ${candidateProfile}
   `.trim();
 
-  // ✅ FIX #2 — contents як правильний формат для Gemini
-  const parts = [{ text: promptText }];
-  if (cvFilePart) parts.push(cvFilePart);
-
-  const contents = [{ role: "user", parts }];
+  const contents = [promptText, ...(cvFilePart ? [cvFilePart] : [])];
 
   return await tryModel(async (modelId, temp) => {
     let text = await callGemini({
@@ -187,23 +184,15 @@ export const parseCV = async (cvFilePart) => {
 }`;
 
   return await tryModel(async (modelId) => {
-    // ✅ FIX #2 — правильний формат contents
-    const contents = [
-      {
-        role: "user",
-        parts: [{ text: promptText }, cvFilePart],
-      },
-    ];
-
     const text = await callGemini({
       modelId,
       temperature: 0.2,
       maxOutputTokens: 4000,
-      contents,
+      contents: [promptText, cvFilePart],
       responseMimeType: "application/json",
     });
 
-    // ✅ FIX #8 — очищення JSON обгортки
+    // FIX #8 — очищення JSON обгортки
     const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
     return JSON.parse(cleaned);
   });
@@ -237,9 +226,9 @@ ${coverLetter.substring(0, 1200)}
   return await tryModel(async (modelId) => {
     return await callGemini({
       modelId,
-      temperature: 0.65, // ✅ FIX #7 — фіксована температура для точного короткого тексту
+      temperature: 0.65,
       maxOutputTokens: 1000,
-      contents: [{ role: "user", parts: [{ text: promptText }] }],
+      contents: [promptText],
     });
   });
 };
