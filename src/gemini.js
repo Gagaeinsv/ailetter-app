@@ -1,7 +1,7 @@
 const MODELS = [
-  { id: "gemini-2.0-flash",      temp: 0.7 },
-  { id: "gemini-2.0-flash-lite", temp: 0.6 },
-  { id: "gemini-2.5-flash",      temp: 0.7 },
+  { id: "gemini-2.5-flash-preview-05-20", temp: 0.7 },
+  { id: "gemini-2.5-flash",               temp: 0.7 },
+  { id: "gemini-2.0-flash-lite-001",      temp: 0.6 },
 ];
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
