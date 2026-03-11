@@ -1,7 +1,7 @@
-// src/components/dashboard/mobile/MobileDashboardTab.jsx
 import React, { useState } from 'react';
 import JobUrlInput from '../JobUrlInput';
 import LinkedInModal from '../LinkedInModal';
+import AISuggestions from '../AISuggestions';
 
 const IconMagic    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>;
 const IconDownload = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
@@ -134,6 +134,14 @@ const MobileDashboardTab = ({
               <button onClick={() => setShowUpgrade(true)} className="text-[#6366f1] font-bold">Upgrade Pro</button>
             </p>
           )}
+
+          {/* ── AI SUGGESTIONS (inputs view) ── */}
+          {generatedLetter && jobDescription && (
+            <AISuggestions
+              coverLetter={generatedLetter}
+              jobDescription={jobDescription}
+            />
+          )}
         </div>
       )}
 
@@ -171,6 +179,14 @@ const MobileDashboardTab = ({
               {generatedLetter || '...'}
             </div>
           </div>
+
+          {/* ── AI SUGGESTIONS (preview view) ── */}
+          {generatedLetter && jobDescription && (
+            <AISuggestions
+              coverLetter={generatedLetter}
+              jobDescription={jobDescription}
+            />
+          )}
 
           <div>
             <button onClick={() => setEditMode(!editMode)}

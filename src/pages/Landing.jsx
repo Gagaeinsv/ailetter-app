@@ -96,16 +96,12 @@ const FAQS = {
 const TRANSLATIONS = {
   en: {
     badge: "V2.5 Now Live",
-    heroTitle1: "Get Hired",
-    heroTitle2: "10x Faster",
-    heroTitle3: "with AI",
+    heroTitle1: "Get Hired", heroTitle2: "10x Faster", heroTitle3: "with AI",
     heroSubtitle: "Upload your CV, paste the job description, and get a tailored, ATS-optimized cover letter in 30 seconds.",
-    ctaButton: "Generate For Free",
-    ctaSubtext: "No credit card · 5 free generations",
+    ctaButton: "Generate For Free", ctaSubtext: "No credit card · 5 free generations",
     trust: "Trusted by candidates hired at",
     feature1: "ATS Optimized", feature2: "30 Seconds", feature3: "4 Languages",
-    compareTitle: "Why switch to AIletter?",
-    oldWay: "The Old Way", newWay: "With AIletter",
+    compareTitle: "Why switch to AIletter?", oldWay: "The Old Way", newWay: "With AIletter",
     old1: "2+ hours per application", new1: "30 seconds per application",
     old2: "Generic copy-paste templates", new2: "Hyper-personalized content",
     old3: "Stress & writer's block", new3: "Confidence & speed",
@@ -117,20 +113,16 @@ const TRANSLATIONS = {
     faqTitle: "Common questions",
     footerDesc: "The future of job applications.",
     login: "Login", openApp: "Open App", welcomeBack: "Welcome back",
-    terms: "Terms of Service", privacy: "Privacy Policy",
+    terms: "Terms of Service", privacy: "Privacy Policy", linkedinGen: "LinkedIn Generator",
   },
   uk: {
     badge: "V2.5 Вже доступно",
-    heroTitle1: "Отримай офер",
-    heroTitle2: "у 10 разів",
-    heroTitle3: "швидше",
+    heroTitle1: "Отримай офер", heroTitle2: "у 10 разів", heroTitle3: "швидше",
     heroSubtitle: "Завантаж CV, встав вакансію та отримай персоналізований супровідний лист за 30 секунд.",
-    ctaButton: "Створити безкоштовно",
-    ctaSubtext: "Картка не потрібна · 5 безкоштовних спроб",
+    ctaButton: "Створити безкоштовно", ctaSubtext: "Картка не потрібна · 5 безкоштовних спроб",
     trust: "Нашим користувачам довіряють в",
     feature1: "Проходить ATS", feature2: "30 Секунд", feature3: "4 Мови",
-    compareTitle: "Чому AIletter?",
-    oldWay: "Старий спосіб", newWay: "З AIletter",
+    compareTitle: "Чому AIletter?", oldWay: "Старий спосіб", newWay: "З AIletter",
     old1: "2+ години на заявку", new1: "30 секунд на заявку",
     old2: "Шаблонні фрази", new2: "Персоналізований контент",
     old3: "Стрес та муки творчості", new3: "Впевненість та швидкість",
@@ -142,20 +134,16 @@ const TRANSLATIONS = {
     faqTitle: "Часті запитання",
     footerDesc: "Майбутнє пошуку роботи.",
     login: "Увійти", openApp: "Відкрити додаток", welcomeBack: "З поверненням",
-    terms: "Умови використання", privacy: "Політика конфіденційності",
+    terms: "Умови використання", privacy: "Політика конфіденційності", linkedinGen: "LinkedIn Генератор",
   },
   it: {
     badge: "V2.5 Ora disponibile",
-    heroTitle1: "Assunto",
-    heroTitle2: "10 volte",
-    heroTitle3: "più veloce",
+    heroTitle1: "Assunto", heroTitle2: "10 volte", heroTitle3: "più veloce",
     heroSubtitle: "Carica il CV, incolla l'offerta di lavoro e ottieni una lettera personalizzata in 30 secondi.",
-    ctaButton: "Genera gratis",
-    ctaSubtext: "Nessuna carta · 5 generazioni gratis",
+    ctaButton: "Genera gratis", ctaSubtext: "Nessuna carta · 5 generazioni gratis",
     trust: "Candidati assunti da",
     feature1: "Ottimizzato ATS", feature2: "30 Secondi", feature3: "4 Lingue",
-    compareTitle: "Perché AIletter?",
-    oldWay: "Il vecchio modo", newWay: "Con AIletter",
+    compareTitle: "Perché AIletter?", oldWay: "Il vecchio modo", newWay: "Con AIletter",
     old1: "2+ ore per candidatura", new1: "30 secondi per candidatura",
     old2: "Template generici", new2: "Contenuto personalizzato",
     old3: "Stress e blocco creativo", new3: "Fiducia e velocità",
@@ -167,20 +155,16 @@ const TRANSLATIONS = {
     faqTitle: "Domande frequenti",
     footerDesc: "Il futuro delle candidature.",
     login: "Accedi", openApp: "Apri l'app", welcomeBack: "Bentornato",
-    terms: "Termini di servizio", privacy: "Privacy Policy",
+    terms: "Termini di servizio", privacy: "Privacy Policy", linkedinGen: "LinkedIn Generator",
   },
   de: {
     badge: "V2.5 Jetzt verfügbar",
-    heroTitle1: "Eingestellt",
-    heroTitle2: "10x schneller",
-    heroTitle3: "mit KI",
+    heroTitle1: "Eingestellt", heroTitle2: "10x schneller", heroTitle3: "mit KI",
     heroSubtitle: "Lebenslauf hochladen, Stellenbeschreibung einfügen und in 30 Sekunden ein maßgeschneidertes Anschreiben erhalten.",
-    ctaButton: "Kostenlos generieren",
-    ctaSubtext: "Keine Kreditkarte · 5 kostenlose Generierungen",
+    ctaButton: "Kostenlos generieren", ctaSubtext: "Keine Kreditkarte · 5 kostenlose Generierungen",
     trust: "Vertrauen von Kandidaten bei",
     feature1: "ATS-optimiert", feature2: "30 Sekunden", feature3: "4 Sprachen",
-    compareTitle: "Warum AIletter?",
-    oldWay: "Der alte Weg", newWay: "Mit AIletter",
+    compareTitle: "Warum AIletter?", oldWay: "Der alte Weg", newWay: "Mit AIletter",
     old1: "2+ Stunden pro Bewerbung", new1: "30 Sekunden pro Bewerbung",
     old2: "Generische Vorlagen", new2: "Personalisierter Inhalt",
     old3: "Stress & Schreibblockade", new3: "Selbstvertrauen & Geschwindigkeit",
@@ -192,7 +176,7 @@ const TRANSLATIONS = {
     faqTitle: "Häufige Fragen",
     footerDesc: "Die Zukunft der Bewerbungen.",
     login: "Anmelden", openApp: "App öffnen", welcomeBack: "Willkommen zurück",
-    terms: "Nutzungsbedingungen", privacy: "Datenschutz",
+    terms: "Nutzungsbedingungen", privacy: "Datenschutz", linkedinGen: "LinkedIn Generator",
   },
 };
 
@@ -256,6 +240,13 @@ const Landing = () => {
           </div>
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher value={uiLang} onChange={setUiLang} />
+            {/* ── LinkedIn Generator link ── */}
+            <Link
+              to="/linkedin-message"
+              className="px-3 py-2 text-xs font-bold text-[#38bdf8] hover:text-white hover:bg-[#0077b5]/10 rounded-lg transition-all border border-[#0077b5]/20"
+            >
+              LinkedIn ↗
+            </Link>
             {user ? (
               <Link to="/dashboard" className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all">
                 <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black">{user.displayName?.[0]?.toUpperCase() || 'U'}</div>
@@ -279,6 +270,14 @@ const Landing = () => {
                 </button>
               ))}
             </div>
+            {/* ── LinkedIn Generator mobile menu ── */}
+            <Link
+              to="/linkedin-message"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center w-full py-3 bg-[#0077b5]/10 border border-[#0077b5]/20 text-[#38bdf8] rounded-xl text-sm font-bold"
+            >
+              LinkedIn Easy Apply Generator ↗
+            </Link>
             {user ? (
               <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 rounded-xl text-sm font-black uppercase tracking-widest">{t('openApp')}</Link>
             ) : (
@@ -477,7 +476,6 @@ const Landing = () => {
               <a href="#" className="hover:text-white transition-colors">Twitter</a>
               <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
               <a href="#" className="hover:text-white transition-colors">Email</a>
-              {/* ✅ Product Hunt бейдж */}
               <a
                 href="https://www.producthunt.com/products/ailetter-2/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-ailetter&#0045;2"
                 target="_blank"
@@ -498,6 +496,10 @@ const Landing = () => {
             <div className="flex gap-5">
               <Link to="/terms" className="hover:text-gray-400 transition-colors">{t('terms')}</Link>
               <Link to="/privacy" className="hover:text-gray-400 transition-colors">{t('privacy')}</Link>
+              {/* ── LinkedIn Generator footer link ── */}
+              <Link to="/linkedin-message" className="hover:text-indigo-400 transition-colors text-indigo-600">
+                {t('linkedinGen')}
+              </Link>
             </div>
           </div>
         </div>

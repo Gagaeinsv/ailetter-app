@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import LinkedInGeneratorPage from './pages/LinkedInGeneratorPage';
 
 // ── Private route — redirect to landing if not logged in ──
 const PrivateRoute = ({ children }) => {
@@ -39,13 +40,14 @@ function App() {
       <LanguageProvider>
         <Router>
           <Routes>
-            <Route path="/"           element={<Landing />} />
-            <Route path="/login"      element={<Login />} />
-            <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
-            <Route path="/dashboard"  element={<DashboardRoute />} />
-            <Route path="/terms"      element={<TermsOfService />} />
-            <Route path="/privacy"    element={<PrivacyPolicy />} />
-            <Route path="*"           element={<Navigate to="/" />} />
+            <Route path="/"                  element={<Landing />} />
+            <Route path="/login"             element={<Login />} />
+            <Route path="/onboarding"        element={<PrivateRoute><Onboarding /></PrivateRoute>} />
+            <Route path="/dashboard"         element={<DashboardRoute />} />
+            <Route path="/terms"             element={<TermsOfService />} />
+            <Route path="/privacy"           element={<PrivacyPolicy />} />
+            <Route path="/linkedin-message"  element={<LinkedInGeneratorPage />} />
+            <Route path="*"                  element={<Navigate to="/" />} />
           </Routes>
         </Router>
       </LanguageProvider>

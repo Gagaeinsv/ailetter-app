@@ -1,4 +1,3 @@
-// src/components/dashboard/Sidebar.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconDash, IconTemplate, IconHist, IconSettings } from '../ui/Icons';
@@ -60,11 +59,21 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
             {item.label}
           </button>
         ))}
+
+        {/* LinkedIn Generator */}
+        <a
+          href="/linkedin-message"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all text-[#38bdf8] hover:text-white hover:bg-[#0077b5]/10 border border-transparent hover:border-[#0077b5]/20"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn Generator ↗
+        </a>
       </nav>
 
       {/* Bottom */}
       <div className="p-4 border-t border-[#334155] space-y-3">
-        {/* Language switcher */}
         <div className="flex gap-1.5 bg-[#0f172a] rounded-xl p-1 border border-[#334155]">
           {['en', 'uk', 'de', 'it'].map(lang => (
             <button
@@ -105,13 +114,10 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
 
       {/* ── MOBILE topbar (< md) ── */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#1e293b] border-b border-[#334155] flex items-center justify-between px-4 h-14">
-        {/* Logo */}
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
           <span className="bg-[#6366f1] w-7 h-7 rounded-lg flex items-center justify-center text-white text-[9px] font-black">AI</span>
           <span className="text-base font-black text-white">{dict.logo}</span>
         </div>
-
-        {/* Tab pills — scrollable */}
         <div className="flex gap-1 overflow-x-auto scrollbar-none mx-2 flex-1" style={{ scrollbarWidth: 'none' }}>
           {navItems.map(item => (
             <button
@@ -123,8 +129,6 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
             </button>
           ))}
         </div>
-
-        {/* Burger */}
         <button
           onClick={() => setMobileOpen(true)}
           className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 shrink-0"
@@ -138,9 +142,7 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
       {/* ── MOBILE drawer ── */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop */}
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          {/* Drawer */}
           <aside className="relative z-10 w-72 max-w-[85vw] bg-[#1e293b] flex flex-col h-full shadow-2xl animate-slide-in-left">
             <div className="flex items-center justify-between px-5 pt-5 pb-0">
               <span className="text-xs font-black text-[#475569] uppercase tracking-widest">Menu</span>

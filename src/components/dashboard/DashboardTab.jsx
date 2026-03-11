@@ -8,6 +8,7 @@ import {
 import { Loader2, Copy, Sparkles, FileText, Download, Lock, RefreshCw, Save, Check, PenLine, Settings2, Linkedin } from 'lucide-react';
 import LinkedInModal from './LinkedInModal';
 import JobUrlInput from './JobUrlInput';
+import AISuggestions from './AISuggestions';
 
 const DashboardTab = (props) => {
   const {
@@ -125,10 +126,7 @@ const DashboardTab = (props) => {
             <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 ml-1">
               {dict.jobSection || 'JOB DESCRIPTION'}
             </label>
-
-            {/* URL Import */}
             <JobUrlInput onParsed={(text) => setJobDescription(text)} />
-
             <textarea
               className="flex-1 w-full bg-[#1e293b] border border-[#334155] rounded-2xl p-4 text-sm text-slate-200 focus:border-indigo-500 outline-none resize-none placeholder-slate-600 transition-all leading-relaxed custom-scrollbar"
               placeholder={dict.jobPlaceholder || "Paste the job description here..."}
@@ -136,6 +134,15 @@ const DashboardTab = (props) => {
               onChange={e => setJobDescription(e.target.value)}
             />
           </div>
+
+          {/* ── AI SUGGESTIONS ── */}
+          {generatedLetter && jobDescription && (
+            <AISuggestions
+              coverLetter={generatedLetter}
+              jobDescription={jobDescription}
+            />
+          )}
+
         </div>
 
         {/* Generate Button */}
@@ -158,7 +165,6 @@ const DashboardTab = (props) => {
 
         {/* Toolbar */}
         <div className="h-16 border-b border-[#1e293b] flex items-center justify-between px-6 shrink-0 bg-[#0f172a]/80 backdrop-blur-md z-20">
-
           <div className="flex items-center gap-4">
             <div className="flex gap-1.5 group">
               <div className="w-3 h-3 rounded-full bg-[#ff5f57] border border-[#e0443e]" />
@@ -170,19 +176,15 @@ const DashboardTab = (props) => {
           </div>
 
           <div className="flex items-center gap-2">
-
             {generatedLetter && (
               <>
                 <button onClick={handleGenerate} title={dict.regenerate} className="p-2 text-slate-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-all">
                   <RefreshCw className="w-4 h-4" />
                 </button>
-
                 <button onClick={handleSaveToHistory} title="Save to History" className="p-2 text-slate-400 hover:text-indigo-400 hover:bg-[#1e293b] rounded-lg transition-all">
                   <Save className="w-4 h-4" />
                 </button>
-
                 <div className="h-4 w-px bg-[#334155] mx-1" />
-
                 <button
                   onClick={() => {
                     if (!editMode) setEditText(generatedLetter);
@@ -200,7 +202,6 @@ const DashboardTab = (props) => {
               </>
             )}
 
-            {/* Export buttons */}
             <div className="flex items-center bg-[#1e293b] rounded-lg p-0.5 border border-[#334155] ml-2">
               <button
                 onClick={downloadPDF}
@@ -228,12 +229,9 @@ const DashboardTab = (props) => {
                 <button onClick={copyToClipboard} className="ml-2 p-2 text-slate-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-all" title="Copy Text">
                   <Copy className="w-4 h-4" />
                 </button>
-
-                {/* LinkedIn Button */}
                 <button
                   onClick={() => setShowLinkedIn(true)}
                   className="ml-1 flex items-center gap-1.5 px-3 py-1.5 bg-[#0077b5]/10 hover:bg-[#0077b5]/20 border border-[#0077b5]/30 text-[#38bdf8] rounded-lg text-xs font-bold transition-all"
-                  title="Generate LinkedIn Note"
                 >
                   <Linkedin className="w-3.5 h-3.5" />
                   LinkedIn
@@ -307,7 +305,6 @@ const DashboardTab = (props) => {
 
         {/* Document Preview */}
         <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-[#0b1120] relative custom-scrollbar">
-
           {editMode ? (
             <div className="flex w-full max-w-[1200px] gap-6 h-full">
               <div className="flex-1 bg-white shadow-2xl rounded-sm opacity-50 pointer-events-none h-fit scale-[0.9] origin-top">

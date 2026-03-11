@@ -24,7 +24,6 @@ async function callGemini({ modelId, temperature, maxOutputTokens, contents, res
   return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 }
 
-// FIX #1 — modelIndex локальний, не глобальний
 async function tryModel(modelFn) {
   let modelIndex = 0;
   while (modelIndex < MODELS.length) {
@@ -58,22 +57,30 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
 
   const lang = language === "Auto" ? "the same language as the job description" : language;
 
-  // FIX #3 — userProfile структурований, не JSON blob
   const candidateProfile = `
 - Full Name: ${userProfile.fullName || "Not provided"}
 - Current Role: ${userProfile.profession || "Not provided"}
 - Location: ${userProfile.location || "Not specified"}
 - Key Skills: ${Array.isArray(userProfile.skills) ? userProfile.skills.join(", ") : (userProfile.skills || "Not provided")}
-- Recent Experience: ${Array.isArray(userProfile.experience) ? userProfile.experience.map(e => `${e.title} at ${e.company} (${e.duration}): ${(e.achievements || []).join("; ")}`).join(" | ") : (userProfile.experience || "Not provided")}
+- Recent Experience: ${
+    Array.isArray(userProfile.experience)
+      ? userProfile.experience.map(e =>
+          `${e.title} at ${e.company} (${e.duration}): ${(e.achievements || []).join("; ")}`
+        ).join(" | ")
+      : (userProfile.experience || "Not provided")
+  }
+- Education: ${userProfile.education || "Not specified"}
+- Languages: ${Array.isArray(userProfile.languages) ? userProfile.languages.join(", ") : (userProfile.languages || "Not specified")}
+- Certifications: ${Array.isArray(userProfile.certifications) ? userProfile.certifications.join(", ") : (userProfile.certifications || "None")}
 - Email: ${userProfile.email || "Not provided"}
 - LinkedIn: ${userProfile.linkedin || "Not provided"}
-- Languages: ${Array.isArray(userProfile.languages) ? userProfile.languages.join(", ") : (userProfile.languages || "Not provided")}
   `.trim();
 
   const promptText = `
 You are an expert career coach and professional copywriter specializing in modern, ATS-friendly cover letters.
 
-TASK: Write a highly personalized, concise, results-oriented cover letter in ${lang} for the candidate below.
+TASK:
+Write a highly personalized, concise, results-oriented cover letter in ${lang} for the candidate below.
 
 ══════════════════════════════════════════
 SALUTATION — CRITICAL RULES:
@@ -99,14 +106,14 @@ The FIRST sentence after the salutation MUST immediately hook the reader.
 - "Mit meiner Erfahrung..." / "З моїм досвідом..."
 - "I am writing to apply..." / "I am the ideal candidate..."
 - "I am pleased to submit..." / "Having [X] years of experience..."
-- Any gerund (-ing word) as the very first word (e.g. "Successfully...", "Managing...")
+- Any gerund (-ing) as the very first word (e.g. "Successfully...", "Managing...")
 - Any sentence starting with "I am" or "I have" as the first words
 
 ══════════════════════════════════════════
 ATS OPTIMIZATION:
 ══════════════════════════════════════════
 - Mirror the EXACT keywords and phrases from the Job Description where relevant.
-- Do NOT paraphrase key terms: if the JD says "cross-functional collaboration", use those exact words.
+- Do NOT paraphrase: if the JD says "cross-functional collaboration", use those exact words.
 - Do NOT keyword-stuff; use each key phrase at most once naturally.
 - Include at least 2-3 quantified achievements (numbers, percentages, concrete results).
 
@@ -119,14 +126,16 @@ FULL LETTER RULES:
 4. No fluff, no buzzwords, no hollow phrases not backed by evidence.
 5. Do NOT invent degrees, certifications, or tools not mentioned in the CV or job description.
 
-STRUCTURE:
-- Salutation (adapted to language)
+Structure:
+- Salutation (adapted to language — see rules above)
 - Opening: Hook with result, number, or direct match to their need
 - Body (1-2 paragraphs): Align 3-5 key requirements from JD with candidate experience + quantified achievements
 - Closing: Reaffirm motivation + call to action for interview
 - Sign-off: "Sincerely," + candidate name
 
+══════════════════════════════════════════
 OUTPUT FORMAT — STRICTLY:
+══════════════════════════════════════════
 - Plain text only. No markdown, no bullet points, no asterisks, no headers.
 - Blank line between each paragraph.
 - Do NOT add any comment, explanation, or meta-text before or after the letter.
@@ -149,7 +158,7 @@ ${candidateProfile}
     let text = await callGemini({
       modelId,
       temperature: temp,
-      maxOutputTokens: 4000,
+      maxOutputTokens: 8192,
       contents,
     });
 
@@ -161,7 +170,9 @@ ${candidateProfile}
 };
 
 export const parseCV = async (cvFilePart) => {
-  const promptText = `Analyze this CV and extract details into valid JSON only, no markdown, no backticks:
+  const promptText = `Analyze this CV and extract details into valid JSON only.
+Return ONLY raw JSON — no markdown, no backticks, no explanation.
+
 {
   "fullName": "Name Surname",
   "email": "email@example.com",
@@ -180,19 +191,18 @@ export const parseCV = async (cvFilePart) => {
   ],
   "education": "Degree, University, Year",
   "languages": ["Language 1", "Language 2"],
-  "certifications": ["Cert 1"]
+  "certifications": ["Cert 1", "Cert 2"]
 }`;
 
   return await tryModel(async (modelId) => {
     const text = await callGemini({
       modelId,
       temperature: 0.2,
-      maxOutputTokens: 8192,
+      maxOutputTokens: 4000,
       contents: [promptText, cvFilePart],
       responseMimeType: "application/json",
     });
 
-    // FIX #8 — очищення JSON обгортки
     const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
     return JSON.parse(cleaned);
   });
@@ -204,22 +214,22 @@ You are an expert career coach. Write a SHORT LinkedIn Easy Apply message.
 This goes in the "Cover Letter" field when applying via LinkedIn Easy Apply.
 
 STRICT CONSTRAINTS:
-1. Length: 150-200 words. No more, no less. Count carefully.
+1. Length: 150–200 words. No more, no less. Count carefully.
 2. Tone: Confident, direct, human. No buzzwords or hollow phrases.
 3. FORBIDDEN first words: "With my experience", "Con la mia esperienza", "I am writing",
    "I am the ideal", "Having X years", "I am pleased", "Successfully". NEVER start with these.
 4. START with a strong hook: a concrete result, a number, or a direct match to their specific need.
-5. Highlight 2-3 key strengths that directly match the job description.
+5. Highlight 2–3 key strengths that directly match the job description.
 6. End with a clear, natural call to action (e.g. "Happy to share more — looking forward to connecting.")
 7. Output ONLY the message body. No subject line, no "Dear...", no explanations.
-8. Do NOT copy any sentence directly from the Full Cover Letter. Rephrase all achievements in a shorter, more conversational style.
+8. Do NOT copy any sentence directly from the Full Cover Letter — rephrase all achievements in a shorter, more conversational style.
 
 Candidate: ${contactInfo?.fullName || contactInfo?.name || "the candidate"}, ${contactInfo?.profession || ""}
 
 Job Description:
 ${jobDescription.substring(0, 800)}
 
-Full Cover Letter (use for context and achievements only — do NOT copy sentences directly):
+Full Cover Letter (context and achievements only — do NOT copy sentences):
 ${coverLetter.substring(0, 1200)}
   `.trim();
 
@@ -228,6 +238,41 @@ ${coverLetter.substring(0, 1200)}
       modelId,
       temperature: 0.65,
       maxOutputTokens: 1000,
+      contents: [promptText],
+    });
+  });
+};
+
+export const generateSuggestions = async (coverLetter, jobDescription) => {
+  const promptText = `
+You are a senior career coach reviewing a cover letter.
+
+Analyze the cover letter against the job description and give exactly 3 short, specific, actionable suggestions to strengthen the application.
+
+RULES:
+- Each suggestion must be max 20 words.
+- Be specific: reference actual skills, tools, or phrases from the job description.
+- Focus on what is MISSING or WEAK — not what is already good.
+- Do NOT rewrite the letter, only advise what to change or add.
+- Do NOT number the suggestions, do NOT use bullet symbols.
+
+OUTPUT FORMAT — exactly 3 lines, each on its own line, no prefix, no numbering:
+Suggestion one here
+Suggestion two here
+Suggestion three here
+
+Job Description:
+${jobDescription.substring(0, 1000)}
+
+Cover Letter:
+${coverLetter.substring(0, 1200)}
+  `.trim();
+
+  return await tryModel(async (modelId) => {
+    return await callGemini({
+      modelId,
+      temperature: 0.4,
+      maxOutputTokens: 200,
       contents: [promptText],
     });
   });
