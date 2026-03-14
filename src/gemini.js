@@ -223,6 +223,8 @@ STRICT CONSTRAINTS:
 6. End with a clear, natural call to action (e.g. "Happy to share more — looking forward to connecting.")
 7. Output ONLY the message body. No subject line, no "Dear...", no explanations.
 8. Do NOT copy any sentence directly from the Full Cover Letter — rephrase all achievements in a shorter, more conversational style.
+9. Do NOT use any emoji or special symbols (no 🟡, ✅, ⭐, etc.). Plain text only.
+10. Write the COMPLETE message — never cut off mid-sentence. Finish properly.
 
 Candidate: ${contactInfo?.fullName || contactInfo?.name || "the candidate"}, ${contactInfo?.profession || ""}
 
@@ -237,7 +239,7 @@ ${coverLetter.substring(0, 1200)}
     return await callGemini({
       modelId,
       temperature: 0.65,
-      maxOutputTokens: 1000,
+      maxOutputTokens: 2048, // ← було 1000, збільшив
       contents: [promptText],
     });
   });
