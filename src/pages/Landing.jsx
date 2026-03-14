@@ -240,11 +240,7 @@ const Landing = () => {
           </div>
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher value={uiLang} onChange={setUiLang} />
-            {/* ── LinkedIn Generator link ── */}
-            <Link
-              to="/linkedin-message"
-              className="px-3 py-2 text-xs font-bold text-[#38bdf8] hover:text-white hover:bg-[#0077b5]/10 rounded-lg transition-all border border-[#0077b5]/20"
-            >
+            <Link to="/linkedin-message" className="px-3 py-2 text-xs font-bold text-[#38bdf8] hover:text-white hover:bg-[#0077b5]/10 rounded-lg transition-all border border-[#0077b5]/20">
               LinkedIn ↗
             </Link>
             {user ? (
@@ -270,12 +266,8 @@ const Landing = () => {
                 </button>
               ))}
             </div>
-            {/* ── LinkedIn Generator mobile menu ── */}
-            <Link
-              to="/linkedin-message"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center w-full py-3 bg-[#0077b5]/10 border border-[#0077b5]/20 text-[#38bdf8] rounded-xl text-sm font-bold"
-            >
+            <Link to="/linkedin-message" onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center w-full py-3 bg-[#0077b5]/10 border border-[#0077b5]/20 text-[#38bdf8] rounded-xl text-sm font-bold">
               LinkedIn Easy Apply Generator ↗
             </Link>
             {user ? (
@@ -291,6 +283,8 @@ const Landing = () => {
       <section className="relative pt-20 md:pt-16 z-10">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 py-12 md:py-16 lg:py-20">
+
+            {/* Left — text */}
             <div className="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
               <div className="fu fu1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-5">
                 <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
@@ -325,14 +319,17 @@ const Landing = () => {
                 ))}
               </div>
             </div>
-            <div className="fu fu3 w-full lg:flex-1 lg:max-w-[640px]">
+
+            {/* ✅ Right — mockup з фіксованою висотою */}
+            <div className="fu fu3 w-full lg:flex-1 lg:max-w-[640px] overflow-hidden">
               <div className="relative rounded-2xl p-[1.5px]" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }}>
                 <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-20 pointer-events-none" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }} />
-                <div className="relative rounded-2xl overflow-hidden">
+                <div className="relative rounded-2xl overflow-hidden" style={{ maxHeight: 420 }}>
                   <HeroMockup />
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
@@ -476,18 +473,8 @@ const Landing = () => {
               <a href="#" className="hover:text-white transition-colors">Twitter</a>
               <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
               <a href="#" className="hover:text-white transition-colors">Email</a>
-              <a
-                href="https://www.producthunt.com/products/ailetter-2/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-ailetter&#0045;2"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1173518&theme=neutral"
-                  alt="AIletter on Product Hunt"
-                  style={{ width: '120px', height: '26px' }}
-                  width="120"
-                  height="26"
-                />
+              <a href="https://www.producthunt.com/products/ailetter-2/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-ailetter&#0045;2" target="_blank" rel="noopener noreferrer">
+                <img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1173518&theme=neutral" alt="AIletter on Product Hunt" style={{ width: '120px', height: '26px' }} width="120" height="26" />
               </a>
             </div>
           </div>
@@ -496,10 +483,7 @@ const Landing = () => {
             <div className="flex gap-5">
               <Link to="/terms" className="hover:text-gray-400 transition-colors">{t('terms')}</Link>
               <Link to="/privacy" className="hover:text-gray-400 transition-colors">{t('privacy')}</Link>
-              {/* ── LinkedIn Generator footer link ── */}
-              <Link to="/linkedin-message" className="hover:text-indigo-400 transition-colors text-indigo-600">
-                {t('linkedinGen')}
-              </Link>
+              <Link to="/linkedin-message" className="hover:text-indigo-400 transition-colors text-indigo-600">{t('linkedinGen')}</Link>
             </div>
           </div>
         </div>

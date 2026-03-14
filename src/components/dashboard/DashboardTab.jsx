@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   TemplateInfluxInline, TemplateIconicInline, TemplateEnfoldInline, 
   TemplateModernInline, TemplateMinimalInline, TemplateNovaInline, 
@@ -9,6 +9,7 @@ import { Loader2, Copy, Sparkles, FileText, Download, Lock, RefreshCw, Save, Che
 import LinkedInModal from './LinkedInModal';
 import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
+
 
 const DashboardTab = (props) => {
   const {
@@ -27,9 +28,48 @@ const DashboardTab = (props) => {
   } = props;
 
   const [showLinkedIn, setShowLinkedIn] = useState(false);
+  const [displayedLetter, setDisplayedLetter] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const typingRef = useRef(null);
+
+  useEffect(() => {
+    if (!generatedLetter) {
+      setDisplayedLetter('');
+      setIsTyping(false);
+      return;
+    }
+
+    if (typingRef.current) clearTimeout(typingRef.current);
+
+    setDisplayedLetter('');
+    setIsTyping(true);
+    let i = 0;
+
+    const type = () => {
+      if (i >= generatedLetter.length) {
+        setIsTyping(false);
+        return;
+      }
+      const char = generatedLetter[i];
+      const speed = char === '\n' ? 15 : 8;
+      typingRef.current = setTimeout(() => {
+        setDisplayedLetter(generatedLetter.slice(0, i + 1));
+        i++;
+        type();
+      }, speed);
+    };
+
+    type();
+
+    return () => {
+      if (typingRef.current) clearTimeout(typingRef.current);
+    };
+  }, [generatedLetter]);
 
   const renderTemplate = () => {
-    const textToShow = editMode ? editText : (generatedLetter || placeholderText);
+    const textToShow = editMode
+      ? editText
+      : ((isTyping ? displayedLetter : generatedLetter) || placeholderText);
     const p = { contact: contactInfo, text: textToShow, date: todayStr };
 
     switch (selectedTemplate) {
@@ -324,8 +364,15 @@ const DashboardTab = (props) => {
             </div>
           ) : (
             <div className="w-full max-w-[210mm] transition-transform duration-500 ease-out" ref={documentRef}>
-              <div className="bg-white text-black shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] rounded-sm min-h-[297mm]">
+              <div className="bg-white text-black shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] rounded-sm min-h-[297mm] relative">
                 {renderTemplate()}
+                {/* Typewriter cursor indicator */}
+                {isTyping && (
+                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-indigo-600/90 backdrop-blur px-3 py-1.5 rounded-full shadow-lg pointer-events-none">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                    <span className="text-white text-[10px] font-bold uppercase tracking-wider">Writing...</span>
+                  </div>
+                )}
               </div>
             </div>
           )}

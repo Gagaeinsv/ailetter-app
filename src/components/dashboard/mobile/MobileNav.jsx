@@ -33,11 +33,12 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
     <>
       {/* ── TOP HEADER ── */}
       <div className="h-14 bg-[#1e293b] border-b border-[#334155] flex items-center justify-between px-4 fixed top-0 left-0 right-0 z-50 shadow-md shrink-0">
-        <div className="flex items-center gap-2">
+        {/* ✅ Логотип веде на лендінг */}
+        <a href="/" className="flex items-center gap-2 no-underline">
           <span className="bg-[#6366f1] w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-black">AI</span>
           <span className="font-black text-white tracking-tight text-sm">AILETTER</span>
           {isPro && <span className="text-[9px] font-black text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">PRO</span>}
-        </div>
+        </a>
         <button onClick={() => setOpen(true)} className="p-2 text-gray-300 active:scale-95 transition-transform">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
@@ -113,6 +114,13 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
                   <IconStar /> Upgrade to Pro
                 </button>
               )}
+              {/* ✅ Посилання на лендінг у drawer footer */}
+              <a
+                href="/"
+                className="w-full py-2.5 flex items-center justify-center gap-2 text-gray-500 font-bold text-xs hover:text-gray-300 rounded-xl transition-colors"
+              >
+                ← Back to Homepage
+              </a>
               <button onClick={logout}
                 className="w-full py-3 flex items-center justify-center gap-2 text-red-400 font-bold text-sm hover:bg-red-500/10 rounded-xl transition-colors">
                 <IconLogOut /> Log out
