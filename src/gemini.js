@@ -278,7 +278,7 @@ ${coverLetter.substring(0, 1200)}
     return await callGemini({
       modelId,
       temperature: 0.4,
-      maxOutputTokens: 200,
+      maxOutputTokens: 500,
       contents: [promptText],
     });
   });
