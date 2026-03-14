@@ -122,7 +122,7 @@ FULL LETTER RULES:
 ══════════════════════════════════════════
 1. Length: Approximately ${wordLimit} words. Concise and punchy.
 2. Tone: ${tone || "Professional, Confident, and Direct"}.
-3. Finish: MUST end with "Sincerely," on one line, then "${userProfile.fullName}" on the next.
+3. Do NOT include any closing signature or sign-off. The template will add it automatically.
 4. No fluff, no buzzwords, no hollow phrases not backed by evidence.
 5. Do NOT invent degrees, certifications, or tools not mentioned in the CV or job description.
 
@@ -131,7 +131,7 @@ Structure:
 - Opening: Hook with result, number, or direct match to their need
 - Body (1-2 paragraphs): Align 3-5 key requirements from JD with candidate experience + quantified achievements
 - Closing: Reaffirm motivation + call to action for interview
-- Sign-off: "Sincerely," + candidate name
+- NO sign-off, NO "Sincerely,", NO candidate name at the end
 
 ══════════════════════════════════════════
 OUTPUT FORMAT — STRICTLY:
@@ -140,6 +140,7 @@ OUTPUT FORMAT — STRICTLY:
 - Blank line between each paragraph.
 - Do NOT add any comment, explanation, or meta-text before or after the letter.
 - Do NOT output a subject line.
+- Do NOT end with a signature or name.
 
 ══════════════════════════════════════════
 JOB DESCRIPTION:
@@ -164,6 +165,9 @@ ${candidateProfile}
 
     text = text.replace(/^(Subject:|Oggetto:|RE:|Betreff:|Тема:).*?\n+/gmi, "").trim();
     text = text.replace(/```html|```/g, "");
+
+    // Remove closing signature — template adds it automatically
+    text = text.replace(/\n{0,2}(sincerely|best regards|kind regards|yours faithfully|cordiali saluti|met vriendelijke groet|mit freundlichen grüßen|з повагою|щиро ваш)[,.]?\s*\n[\w\s\-'.]+$/gi, "").trim();
 
     return text;
   });
@@ -239,7 +243,7 @@ ${coverLetter.substring(0, 1200)}
     return await callGemini({
       modelId,
       temperature: 0.65,
-      maxOutputTokens: 2048, // ← було 1000, збільшив
+      maxOutputTokens: 2048,
       contents: [promptText],
     });
   });
