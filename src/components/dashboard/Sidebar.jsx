@@ -23,7 +23,7 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
       {/* Logo */}
       <div className="p-5 border-b border-[#334155]">
         <div className="flex items-center gap-2.5 cursor-pointer group mb-4" onClick={() => navigate('/')}>
-          <span className="bg-[#6366f1] w-8 h-8 rounded-lg flex items-center justify-center text-white text-[10px] font-black shadow-lg shadow-[#6366f1]/30 group-hover:bg-[#4f46e5] transition-colors">AI</span>
+          <img src="/android-chrome-192x192.png" alt="AIletter" className="w-8 h-8 rounded-lg shadow-lg shadow-[#6366f1]/30" />
           <span className="text-lg font-black tracking-tight text-white group-hover:text-[#a5b4fc] transition-colors">{dict.logo}</span>
         </div>
         {/* User card */}
@@ -115,7 +115,7 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
       {/* ── MOBILE topbar (< md) ── */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#1e293b] border-b border-[#334155] flex items-center justify-between px-4 h-14">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-          <span className="bg-[#6366f1] w-7 h-7 rounded-lg flex items-center justify-center text-white text-[9px] font-black">AI</span>
+          <img src="/android-chrome-192x192.png" alt="AIletter" className="w-7 h-7 rounded-lg" />
           <span className="text-base font-black text-white">{dict.logo}</span>
         </div>
         <div className="flex gap-1 overflow-x-auto scrollbar-none mx-2 flex-1" style={{ scrollbarWidth: 'none' }}>

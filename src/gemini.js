@@ -83,6 +83,20 @@ TASK:
 Write a highly personalized, concise, results-oriented cover letter in ${lang} for the candidate below.
 
 ══════════════════════════════════════════
+GENDER & GRAMMAR — CRITICAL:
+══════════════════════════════════════════
+- Infer the candidate's gender from their full name.
+- Apply correct grammatical gender agreement throughout the ENTIRE letter, in ANY language that has grammatical gender (Ukrainian, Italian, German, French, Spanish, Portuguese, Polish, Czech, and others).
+- Use the correct verb forms, adjective endings, past tense agreements, and pronouns that match the candidate's inferred gender.
+- Examples:
+  Ukrainian female: "досвідчена", "впевнена", "працювала" — not "досвідчений", "впевнений", "працював"
+  Italian female: "esperta", "motivata", "sono stata" — not "esperto", "motivato", "sono stato"
+  German female: "geehrte Bewerberin", "ich bin überzeugt" with feminine context
+  French female: "motivée", "expérimentée" — not "motivé", "expérimenté"
+- If gender cannot be determined from the name — default to masculine grammatical forms.
+- This rule applies even if the language is set to "Auto".
+
+══════════════════════════════════════════
 SALUTATION — CRITICAL RULES:
 ══════════════════════════════════════════
 - ALWAYS use "Dear Hiring Manager," as the salutation.
@@ -115,7 +129,7 @@ ATS OPTIMIZATION:
 - Mirror the EXACT keywords and phrases from the Job Description where relevant.
 - Do NOT paraphrase: if the JD says "cross-functional collaboration", use those exact words.
 - Do NOT keyword-stuff; use each key phrase at most once naturally.
-- Include at least 2-3 quantified achievements (numbers, percentages, concrete results).
+- Use quantified achievements ONLY if they exist in the CV. Never invent numbers or percentages.
 
 ══════════════════════════════════════════
 FULL LETTER RULES:
@@ -124,12 +138,12 @@ FULL LETTER RULES:
 2. Tone: ${tone || "Professional, Confident, and Direct"}.
 3. Do NOT include any closing signature or sign-off. The template will add it automatically.
 4. No fluff, no buzzwords, no hollow phrases not backed by evidence.
-5. Do NOT invent degrees, certifications, or tools not mentioned in the CV or job description.
+5. Do NOT invent ANY facts: no degrees, certifications, tools, company names, OR metrics/percentages that are not explicitly stated in the CV or job description. If no metrics exist in the CV — describe achievements qualitatively, never fabricate numbers.
 
 Structure:
 - Salutation (adapted to language — see rules above)
 - Opening: Hook with result, number, or direct match to their need
-- Body (1-2 paragraphs): Align 3-5 key requirements from JD with candidate experience + quantified achievements
+- Body (1-2 paragraphs): Align 3-5 key requirements from JD with candidate experience + quantified achievements (only if real)
 - Closing: Reaffirm motivation + call to action for interview
 - NO sign-off, NO "Sincerely,", NO candidate name at the end
 
@@ -227,8 +241,9 @@ STRICT CONSTRAINTS:
 6. End with a clear, natural call to action (e.g. "Happy to share more — looking forward to connecting.")
 7. Output ONLY the message body. No subject line, no "Dear...", no explanations.
 8. Do NOT copy any sentence directly from the Full Cover Letter — rephrase all achievements in a shorter, more conversational style.
-9. Do NOT use any emoji or special symbols (no 🟡, ✅, ⭐, etc.). Plain text only.
+9. Do NOT use any emoji or special symbols. Plain text only.
 10. Write the COMPLETE message — never cut off mid-sentence. Finish properly.
+11. Do NOT invent metrics or percentages not present in the cover letter or job description.
 
 Candidate: ${contactInfo?.fullName || contactInfo?.name || "the candidate"}, ${contactInfo?.profession || ""}
 

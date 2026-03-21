@@ -235,8 +235,8 @@ const Landing = () => {
       <header className="fixed w-full top-0 z-50 border-b border-white/[0.06] bg-[#0f172a]/85 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2 font-black tracking-tighter text-base">
-            <span className="bg-gradient-to-br from-indigo-500 to-purple-600 w-7 h-7 rounded-lg flex items-center justify-center text-white text-[9px] shadow-lg shadow-indigo-500/30">AI</span>
-            AILETTER
+            <img src="/android-chrome-192x192.png" alt="AIletter" className="w-7 h-7 rounded-lg" />
+            AIletter
           </div>
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher value={uiLang} onChange={setUiLang} />
@@ -465,8 +465,8 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
             <div className="flex items-center gap-2 font-black tracking-tighter text-base">
-              <span className="bg-gray-800 w-7 h-7 rounded-lg flex items-center justify-center text-white text-[9px]">AI</span>
-              AILETTER
+              <img src="/android-chrome-192x192.png" alt="AIletter" className="w-7 h-7 rounded-lg" />
+               AIletter
             </div>
             <p className="text-gray-600 text-xs">{t('footerDesc')}</p>
             <div className="flex items-center gap-5 text-xs text-gray-500">

@@ -6,7 +6,6 @@ const Login = () => {
   const { signInWithGoogle, user, isNewUser } = useAuth();
   const navigate = useNavigate();
 
-  // Якщо юзер вже залогінений — одразу редіректимо
   useEffect(() => {
     if (user) {
       navigate(isNewUser ? '/onboarding' : '/dashboard');
@@ -16,8 +15,6 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       await signInWithGoogle();
-      // Після успішного логіну — navigate спрацює через useEffect вище
-      // але додаємо fallback на випадок якщо useEffect не спрацює вчасно
     } catch (error) {
       console.error('Login failed', error);
       alert('Sign in failed. Please try again.');
@@ -27,10 +24,8 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4 font-sans relative overflow-hidden">
 
-      {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 md:w-[600px] md:h-[600px] bg-indigo-600/10 rounded-full blur-[80px] md:blur-[120px] pointer-events-none" />
 
-      {/* Back to home */}
       <Link
         to="/"
         className="absolute top-4 left-4 md:top-6 md:left-6 flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-white transition-colors"
@@ -45,9 +40,9 @@ const Login = () => {
 
         {/* Logo */}
         <div className="mb-6 md:mb-8 flex justify-center">
-          <Link to="/" className="flex items-center gap-2 text-xl md:text-2xl font-black tracking-tighter text-white">
-            <span className="bg-indigo-600 w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center text-white text-[9px] md:text-[10px]">AI</span>
-            AILETTER
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src="/android-chrome-192x192.png" alt="AIletter" className="w-9 h-9 md:w-10 md:h-10 rounded-xl" />
+            <span className="text-xl md:text-2xl font-black tracking-tighter text-white">AIletter</span>
           </Link>
         </div>
 

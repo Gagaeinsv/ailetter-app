@@ -33,10 +33,9 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
     <>
       {/* ── TOP HEADER ── */}
       <div className="h-14 bg-[#1e293b] border-b border-[#334155] flex items-center justify-between px-4 fixed top-0 left-0 right-0 z-50 shadow-md shrink-0">
-        {/* ✅ Логотип веде на лендінг */}
         <a href="/" className="flex items-center gap-2 no-underline">
-          <span className="bg-[#6366f1] w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-black">AI</span>
-          <span className="font-black text-white tracking-tight text-sm">AILETTER</span>
+          <img src="/android-chrome-192x192.png" alt="AIletter" className="w-7 h-7 rounded-lg" />
+          <span className="font-black text-white tracking-tight text-sm">AIletter</span>
           {isPro && <span className="text-[9px] font-black text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">PRO</span>}
         </a>
         <button onClick={() => setOpen(true)} className="p-2 text-gray-300 active:scale-95 transition-transform">
@@ -50,15 +49,16 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setOpen(false)} />
           <div className="relative bg-[#1e293b] w-[80%] max-w-[300px] h-full shadow-2xl flex flex-col border-l border-[#334155]">
 
-            {/* Drawer header */}
             <div className="h-14 flex items-center justify-between px-5 border-b border-[#334155] shrink-0">
-              <span className="font-black text-white">Menu</span>
+              <div className="flex items-center gap-2">
+                <img src="/android-chrome-192x192.png" alt="AIletter" className="w-6 h-6 rounded-md" />
+                <span className="font-black text-white text-sm">AIletter</span>
+              </div>
               <button onClick={() => setOpen(false)} className="p-1.5 text-gray-400 bg-[#0f172a] rounded-full">
                 <IconX />
               </button>
             </div>
 
-            {/* Nav links */}
             <div className="flex-1 overflow-y-auto p-4 space-y-1">
               {navItems.map(item => (
                 <button key={item.id} onClick={() => go(item.id)}
@@ -72,7 +72,6 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
                 </button>
               ))}
 
-              {/* LinkedIn Generator */}
               <a
                 href="/linkedin-message"
                 target="_blank"
@@ -84,7 +83,6 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
                 <span className="font-bold text-sm">LinkedIn Generator ↗</span>
               </a>
 
-              {/* ── LANGUAGE SWITCHER ── */}
               <div className="pt-4 pb-1">
                 <div className="flex items-center gap-2 px-4 mb-2">
                   <IconGlobe />
@@ -106,7 +104,6 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
               </div>
             </div>
 
-            {/* Footer */}
             <div className="p-4 border-t border-[#334155] space-y-2 shrink-0">
               {!isPro && (
                 <button onClick={() => { setShowUpgrade(true); setOpen(false); }}
@@ -114,11 +111,7 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
                   <IconStar /> Upgrade to Pro
                 </button>
               )}
-              {/* ✅ Посилання на лендінг у drawer footer */}
-              <a
-                href="/"
-                className="w-full py-2.5 flex items-center justify-center gap-2 text-gray-500 font-bold text-xs hover:text-gray-300 rounded-xl transition-colors"
-              >
+              <a href="/" className="w-full py-2.5 flex items-center justify-center gap-2 text-gray-500 font-bold text-xs hover:text-gray-300 rounded-xl transition-colors">
                 ← Back to Homepage
               </a>
               <button onClick={logout}
@@ -130,7 +123,7 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
         </div>
       )}
 
-      {/* ── BOTTOM NAV (portrait only) ── */}
+      {/* ── BOTTOM NAV ── */}
       <div className="landscape:hidden h-20 bg-[#1e293b] border-t border-[#334155] flex items-start justify-around px-2 fixed bottom-0 left-0 right-0 z-40 pt-3 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
         {navItems.map(item => (
           <button key={item.id} onClick={() => setActiveTab(item.id)}
