@@ -1,19 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Sparkles, Loader2 } from "lucide-react";
 import { generateSuggestions } from "../../gemini";
 
+const initialState = { suggestions: [], loading: false, error: null };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'START':   return { suggestions: [], loading: true,  error: null };
+    case 'SUCCESS': return { suggestions: action.payload, loading: false, error: null };
+    case 'ERROR':   return { ...state, loading: false, error: action.payload };
+    default:        return state;
+  }
+}
+
 export default function AISuggestions({ coverLetter, jobDescription }) {
-  const [suggestions, setSuggestions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     if (!coverLetter || !jobDescription) return;
 
     let cancelled = false;
-    setLoading(true);
-    setError(null);
-    setSuggestions([]);
+    dispatch({ type: 'START' });
 
     generateSuggestions(coverLetter, jobDescription)
       .then((text) => {
@@ -23,47 +31,70 @@ export default function AISuggestions({ coverLetter, jobDescription }) {
           .map((l) => l.trim())
           .filter((l) => l.length > 0)
           .slice(0, 3);
-        setSuggestions(lines);
+        dispatch({ type: 'SUCCESS', payload: lines });
       })
       .catch(() => {
-        if (!cancelled) setError("Could not load suggestions.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) dispatch({ type: 'ERROR', payload: 'Could not load suggestions.' });
       });
 
     return () => { cancelled = true; };
   }, [coverLetter, jobDescription]);
 
+  const { suggestions, loading, error } = state;
+
   if (!coverLetter || !jobDescription) return null;
 
   return (
-    <div className="mt-4 bg-[#1e293b] border border-[#334155] rounded-xl p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles size={16} className="text-violet-400" />
-        <span className="text-sm font-semibold text-white">AI Suggestions</span>
-      </div>
-
-      {loading && (
-        <div className="flex items-center gap-2 text-sm text-gray-400">
-          <Loader2 size={14} className="animate-spin" />
-          Analyzing your letter...
+    <div className="mt-4 bg-[#1e293b] border border-[#334155] rounded-xl overflow-hidden">
+      {/* Header — клікабельний для collapse */}
+      <button
+        onClick={() => setCollapsed(c => !c)}
+        className="w-full flex items-center justify-between gap-2 px-4 py-3 hover:bg-[#334155]/30 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Sparkles size={14} className="text-violet-400 shrink-0" />
+          <span className="text-sm font-semibold text-white">AI Suggestions</span>
+          {!loading && suggestions.length > 0 && (
+            <span className="text-[10px] font-black text-violet-400 bg-violet-400/10 px-2 py-0.5 rounded-full">
+              {suggestions.length}
+            </span>
+          )}
         </div>
-      )}
+        <svg
+          width="14" height="14"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+          className={`text-gray-500 transition-transform duration-200 ${collapsed ? '-rotate-90' : ''}`}
+        >
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
 
-      {error && (
-        <p className="text-sm text-red-400">{error}</p>
-      )}
+      {/* Body */}
+      {!collapsed && (
+        <div className="px-4 pb-4">
+          {loading && (
+            <div className="flex items-center gap-2 text-sm text-gray-400 py-2">
+              <Loader2 size={13} className="animate-spin shrink-0" />
+              <span>Analyzing your letter...</span>
+            </div>
+          )}
 
-      {!loading && suggestions.length > 0 && (
-        <ul className="space-y-2">
-          {suggestions.map((s, i) => (
-            <li key={i} className="flex gap-2 text-sm text-gray-300">
-              <span className="text-violet-400 mt-0.5">›</span>
-              <span>{s}</span>
-            </li>
-          ))}
-        </ul>
+          {error && (
+            <p className="text-sm text-red-400 py-1">{error}</p>
+          )}
+
+          {!loading && suggestions.length > 0 && (
+            <ul className="space-y-2.5">
+              {suggestions.map((s, i) => (
+                <li key={i} className="flex gap-2.5 text-sm text-gray-300 leading-relaxed">
+                  <span className="text-violet-400 mt-0.5 shrink-0 font-bold">›</span>
+                  {/* Повний текст — без обрізання */}
+                  <span className="break-words">{s}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
     </div>
   );

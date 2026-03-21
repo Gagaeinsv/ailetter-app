@@ -103,6 +103,7 @@ const Dashboard = () => {
       setContactInfo(updated);
       localStorage.setItem('userProfile', JSON.stringify(updated));
       showNotification('Auto-filled ✓');
+    // eslint-disable-next-line no-unused-vars
     } catch (e) {
       alert('AI Error: Could not parse CV');
     } finally {
