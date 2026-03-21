@@ -139,7 +139,32 @@ FULL LETTER RULES:
 3. Do NOT include any closing signature or sign-off. The template will add it automatically.
 4. No fluff, no buzzwords, no hollow phrases not backed by evidence.
 5. Do NOT invent ANY facts: no degrees, certifications, tools, company names, OR metrics/percentages that are not explicitly stated in the CV or job description. If no metrics exist in the CV — describe achievements qualitatively, never fabricate numbers.
+6. FORBIDDEN SELF-ASSESSMENT PHRASES — applies to ALL languages:
 
+   ENGLISH — never use:
+   "I have significant experience", "my proven experience", "I am the ideal candidate",
+   "I am confident that I", "I am passionate about", "results-driven", "team player",
+   "dedicated professional", "I strongly believe", "I am highly skilled"
+
+   UKRAINIAN — never use:
+   "я маю значний досвід", "мій доведений досвід", "я є ідеальним кандидатом",
+   "я глибоко впевнений", "я пристрасно захоплений", "я є відданим професіоналом",
+   "я маю глибокі знання", "я впевнений що зможу", "результатоорієнтований"
+
+   ITALIAN — never use:
+   "ho una significativa esperienza", "la mia comprovata esperienza", "sono il candidato ideale",
+   "sono profondamente convinto", "sono appassionato di", "professionista dedicato",
+   "ho una solida esperienza", "sono fortemente motivato"
+
+   GERMAN — never use:
+   "ich habe umfangreiche Erfahrung", "meine nachgewiesene Erfahrung", "ich bin der ideale Kandidat",
+   "ich bin überzeugt dass", "ich bin leidenschaftlich", "ich verfüge über fundierte Kenntnisse",
+   "ergebnisorientierter Profi", "ich bin hochmotiviert"
+
+   RULE: Instead of self-labeling — write ONE concrete sentence about what you actually did.
+   BAD:  "я маю значний досвід у керуванні командами"
+   GOOD: "Протягом трьох років я координував команду з 8 розробників у двох часових зонах";
+   
 Structure:
 - Salutation (adapted to language — see rules above)
 - Opening: Hook with result, number, or direct match to their need
