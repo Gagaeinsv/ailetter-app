@@ -28,9 +28,13 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
         </div>
         {/* User card */}
         <div className="flex items-center gap-3 p-3 bg-[#0f172a]/60 rounded-xl border border-[#334155]">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-bold text-sm shrink-0">
-            {user?.displayName?.[0] || 'U'}
-          </div>
+          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-bold text-sm">
+  {user?.photoURL ? (
+    <img src={user.photoURL} alt={user.displayName || 'U'} className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; }} />
+  ) : (
+    user?.displayName?.[0]?.toUpperCase() || 'U'
+  )}
+</div>
           <div className="overflow-hidden min-w-0">
             <p className="text-[13px] font-bold text-white truncate">{user?.displayName || 'User'}</p>
             {planLoading ? (
