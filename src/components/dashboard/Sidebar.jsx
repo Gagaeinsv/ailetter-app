@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconDash, IconTemplate, IconHist, IconSettings } from '../ui/Icons';
 
-// ── Винесено ЗА межі Sidebar щоб React не перестворював при кожному рендері ──
 const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, logout, dict, uiLang, setUiLang, navItems, handleNav, navigate }) => (
   <>
-    {/* Logo */}
+    {/* ── Logo + Language switcher ── */}
     <div className="p-5 border-b border-[#334155]">
       <div className="flex items-center gap-2.5 cursor-pointer group mb-4" onClick={() => navigate('/')}>
         <img src="/android-chrome-192x192.png" alt="AIletter" className="w-8 h-8 rounded-lg shadow-lg shadow-[#6366f1]/30" />
         <span className="text-lg font-black tracking-tight text-white group-hover:text-[#a5b4fc] transition-colors">{dict.logo}</span>
       </div>
+
       {/* User card */}
       <div className="flex items-center gap-3 p-3 bg-[#0f172a]/60 rounded-xl border border-[#334155]">
         <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-bold text-sm">
@@ -72,22 +72,8 @@ const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, l
       </a>
     </nav>
 
-    {/* Bottom */}
+    {/* Bottom — без language switcher */}
     <div className="p-4 border-t border-[#334155] space-y-3">
-      <div className="flex gap-1.5 bg-[#0f172a] rounded-xl p-1 border border-[#334155]">
-        {['en', 'uk', 'de', 'it'].map(lang => (
-          <button
-            key={lang}
-            onClick={() => setUiLang(lang)}
-            className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${
-              uiLang === lang ? 'bg-[#6366f1] text-white' : 'text-[#475569] hover:text-white'
-            }`}
-          >
-            {lang}
-          </button>
-        ))}
-      </div>
-
       {!planLoading && isPro && (
         <div className="w-full py-2 px-4 text-xs font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
           ✅ Pro Active
@@ -106,7 +92,6 @@ const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, l
           Loading...
         </div>
       )}
-
       <button
         onClick={logout}
         className="w-full py-2.5 px-4 text-xs font-semibold text-[#64748b] hover:text-[#94a3b8] border border-[#334155] rounded-xl hover:border-[#475569] transition-all"
@@ -133,7 +118,6 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
     setMobileOpen(false);
   };
 
-  // Пропси які передаємо в SidebarContent
   const contentProps = {
     user, activeTab, isPro, planLoading, setShowUpgrade,
     logout, dict, uiLang, setUiLang, navItems, handleNav, navigate,
@@ -165,9 +149,23 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
             </button>
           ))}
         </div>
+        {/* Language switcher — right side of header */}
+        <div className="flex gap-0.5 bg-[#0f172a] rounded-lg p-0.5 border border-[#334155] shrink-0">
+          {['en', 'uk', 'de', 'it'].map(lang => (
+            <button
+              key={lang}
+              onClick={() => setUiLang(lang)}
+              className={`px-1.5 py-1 rounded-md text-[9px] font-black uppercase transition-all ${
+                uiLang === lang ? 'bg-[#6366f1] text-white' : 'text-[#475569] hover:text-white'
+              }`}
+            >
+              {lang}
+            </button>
+          ))}
+        </div>
         <button
           onClick={() => setMobileOpen(true)}
-          className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 shrink-0"
+          className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 shrink-0 ml-1"
         >
           <span className="w-5 h-0.5 bg-[#94a3b8] rounded-full" />
           <span className="w-5 h-0.5 bg-[#94a3b8] rounded-full" />

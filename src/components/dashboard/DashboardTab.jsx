@@ -25,6 +25,7 @@ const DashboardTab = (props) => {
     documentRef,
     isPro,
     setShowUpgrade,
+    uiLang, setUiLang,
   } = props;
 
   const [showLinkedIn, setShowLinkedIn] = useState(false);
@@ -175,7 +176,7 @@ const DashboardTab = (props) => {
             />
           </div>
 
-          {/* ── AI SUGGESTIONS ── */}
+          {/* AI Suggestions */}
           {generatedLetter && jobDescription && (
             <AISuggestions
               coverLetter={generatedLetter}
@@ -206,7 +207,7 @@ const DashboardTab = (props) => {
         {/* Toolbar */}
         <div className="h-16 border-b border-[#1e293b] flex items-center justify-between px-6 shrink-0 bg-[#0f172a]/80 backdrop-blur-md z-20">
           <div className="flex items-center gap-4">
-            <div className="flex gap-1.5 group">
+            <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-[#ff5f57] border border-[#e0443e]" />
               <div className="w-3 h-3 rounded-full bg-[#febc2e] border border-[#d89e24]" />
               <div className="w-3 h-3 rounded-full bg-[#28c840] border border-[#1aab29]" />
@@ -242,6 +243,7 @@ const DashboardTab = (props) => {
               </>
             )}
 
+            {/* Export */}
             <div className="flex items-center bg-[#1e293b] rounded-lg p-0.5 border border-[#334155] ml-2">
               <button
                 onClick={downloadPDF}
@@ -265,19 +267,27 @@ const DashboardTab = (props) => {
             </div>
 
             {generatedLetter && (
-              <>
-                <button onClick={copyToClipboard} className="ml-2 p-2 text-slate-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-all" title="Copy Text">
-                  <Copy className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setShowLinkedIn(true)}
-                  className="ml-1 flex items-center gap-1.5 px-3 py-1.5 bg-[#0077b5]/10 hover:bg-[#0077b5]/20 border border-[#0077b5]/30 text-[#38bdf8] rounded-lg text-xs font-bold transition-all"
-                >
-                  <Linkedin className="w-3.5 h-3.5" />
-                  LinkedIn
-                </button>
-              </>
+              <button onClick={copyToClipboard} className="ml-2 p-2 text-slate-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-all" title="Copy Text">
+                <Copy className="w-4 h-4" />
+              </button>
             )}
+
+            {/* Language switcher — right side of toolbar */}
+            <div className="flex gap-0.5 bg-[#1e293b] rounded-lg p-0.5 border border-[#334155] ml-2">
+              {['EN', 'UK', 'DE', 'IT'].map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => setUiLang(lang.toLowerCase())}
+                  className={`px-2 py-1 rounded-md text-[9px] font-black uppercase transition-all ${
+                    uiLang === lang.toLowerCase()
+                      ? 'bg-[#6366f1] text-white'
+                      : 'text-slate-500 hover:text-white'
+                  }`}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -302,7 +312,7 @@ const DashboardTab = (props) => {
             ))}
           </div>
 
-          <div className="relative group">
+          <div className="relative">
             <select
               value={settings.language}
               onChange={e => setSettings({ ...settings, language: e.target.value })}
@@ -366,7 +376,6 @@ const DashboardTab = (props) => {
             <div className="w-full max-w-[210mm] transition-transform duration-500 ease-out" ref={documentRef}>
               <div className="bg-white text-black shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] rounded-sm min-h-[297mm] relative">
                 {renderTemplate()}
-                {/* Typewriter cursor indicator */}
                 {isTyping && (
                   <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-indigo-600/90 backdrop-blur px-3 py-1.5 rounded-full shadow-lg pointer-events-none">
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />

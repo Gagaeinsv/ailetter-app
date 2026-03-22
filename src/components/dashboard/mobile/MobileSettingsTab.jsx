@@ -33,6 +33,10 @@ const MobileSettingsTab = ({
     { key: 'privacy',     label: dict.tabPrivacy     || 'Privacy' },
   ];
 
+  const handleManageSubscription = () => {
+    window.open('https://billing.stripe.com/p/login/test_00000000', '_blank');
+  };
+
   return (
     <div className="h-full flex flex-col overflow-hidden bg-[#0f172a]">
 
@@ -63,7 +67,6 @@ const MobileSettingsTab = ({
         {/* ── Profile ── */}
         {activeSection === 'profile' && (
           <Section title={dict.tabProfile || 'Profile'}>
-            {/* Avatar card */}
             <div className="flex items-center gap-4 p-4 bg-[#1e293b] rounded-2xl border border-[#334155]">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-black text-2xl shrink-0">
                 {contactInfo.fullName?.[0] || user?.displayName?.[0] || 'U'}
@@ -186,7 +189,36 @@ const MobileSettingsTab = ({
               }`}>{isPro ? '✦ Pro' : 'Free'}</span>
             </div>
 
-            {!isPro && (
+            {isPro ? (
+              /* ── Pro — управління підпискою ── */
+              <div className="bg-[#1e293b] border border-[#334155] rounded-2xl p-5 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg">✦</div>
+                  <div>
+                    <p className="font-black text-white text-sm">Pro Plan Active</p>
+                    <p className="text-xs text-[#64748b]">Unlimited generations & all features</p>
+                  </div>
+                </div>
+                <div className="border-t border-[#334155] pt-4 space-y-2">
+                  <button
+                    onClick={handleManageSubscription}
+                    className="w-full py-3 bg-[#0f172a] border border-[#334155] text-[#94a3b8] hover:text-white hover:border-[#475569] rounded-xl font-bold text-sm transition-all active:scale-95"
+                  >
+                    Manage Subscription ↗
+                  </button>
+                  <button
+                    onClick={handleManageSubscription}
+                    className="w-full py-3 border border-red-500/20 text-red-400 hover:bg-red-500/10 rounded-xl font-bold text-sm transition-all active:scale-95"
+                  >
+                    Cancel Subscription
+                  </button>
+                  <p className="text-[10px] text-[#475569] text-center">
+                    You'll be redirected to the Stripe billing portal
+                  </p>
+                </div>
+              </div>
+            ) : (
+              /* ── Free — upgrade ── */
               <div className="bg-gradient-to-br from-[#6366f1]/20 to-[#a855f7]/10 border border-[#6366f1]/30 rounded-2xl p-5 space-y-4">
                 <p className="font-black text-white text-lg">Pro — from €6/mo</p>
                 <ul className="space-y-2">
@@ -244,7 +276,6 @@ const MobileSettingsTab = ({
           </Section>
         )}
 
-        {/* Bottom padding */}
         <div className="h-4" />
       </div>
     </div>
