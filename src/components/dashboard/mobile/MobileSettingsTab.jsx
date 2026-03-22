@@ -1,5 +1,6 @@
 // src/components/dashboard/mobile/MobileSettingsTab.jsx
 import React, { useState } from 'react';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const inputClass = "w-full bg-[#0f172a] border border-[#334155] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#6366f1] transition-all mt-1.5";
 const labelClass = "text-[10px] font-black text-[#64748b] uppercase tracking-widest";
@@ -25,6 +26,23 @@ const MobileSettingsTab = ({
   isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate
 }) => {
   const [activeSection, setActiveSection] = useState('profile');
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState(null);
+
+  const openPortal = async () => {
+    setPortalLoading(true);
+    setPortalError(null);
+    try {
+      const fn = httpsCallable(getFunctions(), 'createPortalSession');
+      const result = await fn();
+      window.location.href = result.data.url;
+    } catch (err) {
+      console.error('Portal error:', err);
+      setPortalError('Could not open billing portal. Please try again.');
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   const sections = [
     { key: 'profile',     label: dict.tabProfile     || 'Profile' },
@@ -33,36 +51,24 @@ const MobileSettingsTab = ({
     { key: 'privacy',     label: dict.tabPrivacy     || 'Privacy' },
   ];
 
-  const handleManageSubscription = () => {
-    window.open('https://billing.stripe.com/p/login/test_00000000', '_blank');
-  };
-
   return (
     <div className="h-full flex flex-col overflow-hidden bg-[#0f172a]">
 
       {/* Horizontal tabs */}
-      <div
-        className="flex shrink-0 bg-[#1e293b] border-b border-[#334155] px-3 py-2 gap-2 overflow-x-auto"
-        style={{ scrollbarWidth: 'none' }}
-      >
+      <div className="flex shrink-0 bg-[#1e293b] border-b border-[#334155] px-3 py-2 gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
         {sections.map(s => (
           <button
             key={s.key}
             onClick={() => setActiveSection(s.key)}
             className={`shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              activeSection === s.key
-                ? 'bg-[#6366f1] text-white'
-                : 'text-[#64748b] bg-[#0f172a]'
+              activeSection === s.key ? 'bg-[#6366f1] text-white' : 'text-[#64748b] bg-[#0f172a]'
             }`}
           >{s.label}</button>
         ))}
       </div>
 
       {/* Content */}
-      <div
-        className="flex-1 overflow-y-auto p-4"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: '#334155 transparent' }}
-      >
+      <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: 'thin', scrollbarColor: '#334155 transparent' }}>
 
         {/* ── Profile ── */}
         {activeSection === 'profile' && (
@@ -78,30 +84,13 @@ const MobileSettingsTab = ({
                 </p>
               </div>
             </div>
-
             <Card>
-              <div>
-                <label className={labelClass}>{dict.labelName || 'Name'}</label>
-                <input value={contactInfo.fullName || ''} onChange={e => setContactInfo({ ...contactInfo, fullName: e.target.value })} className={inputClass} />
-              </div>
-              <div>
-                <label className={labelClass}>{dict.labelTitle || 'Title'}</label>
-                <input value={contactInfo.profession || ''} onChange={e => setContactInfo({ ...contactInfo, profession: e.target.value })} className={inputClass} />
-              </div>
-              <div>
-                <label className={labelClass}>{dict.labelEmail || 'Email'}</label>
-                <input value={contactInfo.email || ''} onChange={e => setContactInfo({ ...contactInfo, email: e.target.value })} className={inputClass} type="email" />
-              </div>
-              <div>
-                <label className={labelClass}>{dict.labelPhone || 'Phone'}</label>
-                <input value={contactInfo.phone || ''} onChange={e => setContactInfo({ ...contactInfo, phone: e.target.value })} className={inputClass} type="tel" />
-              </div>
-              <div>
-                <label className={labelClass}>{dict.labelLocation || 'Location'}</label>
-                <input value={contactInfo.location || ''} onChange={e => setContactInfo({ ...contactInfo, location: e.target.value })} className={inputClass} />
-              </div>
+              <div><label className={labelClass}>{dict.labelName || 'Name'}</label><input value={contactInfo.fullName || ''} onChange={e => setContactInfo({ ...contactInfo, fullName: e.target.value })} className={inputClass} /></div>
+              <div><label className={labelClass}>{dict.labelTitle || 'Title'}</label><input value={contactInfo.profession || ''} onChange={e => setContactInfo({ ...contactInfo, profession: e.target.value })} className={inputClass} /></div>
+              <div><label className={labelClass}>{dict.labelEmail || 'Email'}</label><input value={contactInfo.email || ''} onChange={e => setContactInfo({ ...contactInfo, email: e.target.value })} className={inputClass} type="email" /></div>
+              <div><label className={labelClass}>{dict.labelPhone || 'Phone'}</label><input value={contactInfo.phone || ''} onChange={e => setContactInfo({ ...contactInfo, phone: e.target.value })} className={inputClass} type="tel" /></div>
+              <div><label className={labelClass}>{dict.labelLocation || 'Location'}</label><input value={contactInfo.location || ''} onChange={e => setContactInfo({ ...contactInfo, location: e.target.value })} className={inputClass} /></div>
             </Card>
-
             <div className="flex gap-3">
               <button onClick={saveProfile} className="flex-1 py-3.5 bg-[#6366f1] rounded-2xl font-black text-sm uppercase tracking-widest active:scale-95 transition-all shadow-lg shadow-[#6366f1]/20">
                 {dict.saveChanges || 'Save'}
@@ -133,43 +122,29 @@ const MobileSettingsTab = ({
                 <label className={labelClass}>{dict.prefLang || 'Letter Language'}</label>
                 <select value={settings.language} onChange={e => setSettings({ ...settings, language: e.target.value })} className={inputClass}>
                   <option value="Auto">Auto Match</option>
-                  <option>English</option>
-                  <option>Ukrainian</option>
-                  <option>Italiano</option>
-                  <option>Deutsch</option>
+                  <option>English</option><option>Ukrainian</option><option>Italiano</option><option>Deutsch</option>
                 </select>
               </div>
               <div>
                 <label className={labelClass}>{dict.prefTone || 'Default Tone'}</label>
                 <div className="flex gap-2 mt-2">
                   {['Professional', 'Friendly', 'Formal'].map(t => (
-                    <button
-                      key={t}
-                      onClick={() => setSettings({ ...settings, tone: t })}
-                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
-                        settings.tone === t
-                          ? 'bg-[#6366f1] text-white border-[#6366f1]'
-                          : 'text-[#64748b] border-[#334155]'
-                      }`}
-                    >{t}</button>
+                    <button key={t} onClick={() => setSettings({ ...settings, tone: t })}
+                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${settings.tone === t ? 'bg-[#6366f1] text-white border-[#6366f1]' : 'text-[#64748b] border-[#334155]'}`}>
+                      {t}
+                    </button>
                   ))}
                 </div>
               </div>
             </Card>
-
             <Card>
               <label className={labelClass}>{dict.prefTemplate || 'Default Template'}</label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {TEMPLATE_LIST.map(t => (
-                  <button
-                    key={t}
-                    onClick={() => setSelectedTemplate(t.toLowerCase())}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
-                      selectedTemplate === t.toLowerCase()
-                        ? 'bg-white text-[#0f172a] border-white'
-                        : 'border-[#334155] text-[#64748b]'
-                    }`}
-                  >{t}</button>
+                  <button key={t} onClick={() => setSelectedTemplate(t.toLowerCase())}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedTemplate === t.toLowerCase() ? 'bg-white text-[#0f172a] border-white' : 'border-[#334155] text-[#64748b]'}`}>
+                    {t}
+                  </button>
                 ))}
               </div>
             </Card>
@@ -184,13 +159,12 @@ const MobileSettingsTab = ({
                 <p className="font-black text-white">{isPro ? 'Pro Plan' : (dict.planCurrent || 'Free Plan')}</p>
                 <p className="text-xs text-[#64748b] mt-0.5">{isPro ? 'Unlimited generations' : (dict.planLimit || '5/month')}</p>
               </div>
-              <span className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest ${
-                isPro ? 'bg-emerald-500/20 text-emerald-400' : 'bg-[#334155] text-[#94a3b8]'
-              }`}>{isPro ? '✦ Pro' : 'Free'}</span>
+              <span className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest ${isPro ? 'bg-emerald-500/20 text-emerald-400' : 'bg-[#334155] text-[#94a3b8]'}`}>
+                {isPro ? '✦ Pro' : 'Free'}
+              </span>
             </div>
 
             {isPro ? (
-              /* ── Pro — управління підпискою ── */
               <div className="bg-[#1e293b] border border-[#334155] rounded-2xl p-5 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg">✦</div>
@@ -199,26 +173,19 @@ const MobileSettingsTab = ({
                     <p className="text-xs text-[#64748b]">Unlimited generations & all features</p>
                   </div>
                 </div>
+                <p className="text-xs text-[#64748b]">Cancel, update your card, or view payment history via Stripe.</p>
                 <div className="border-t border-[#334155] pt-4 space-y-2">
                   <button
-                    onClick={handleManageSubscription}
-                    className="w-full py-3 bg-[#0f172a] border border-[#334155] text-[#94a3b8] hover:text-white hover:border-[#475569] rounded-xl font-bold text-sm transition-all active:scale-95"
+                    onClick={openPortal}
+                    disabled={portalLoading}
+                    className="w-full py-3 border border-[#334155] hover:border-[#6366f1] text-[#94a3b8] hover:text-white rounded-xl font-semibold text-sm transition-all active:scale-95 disabled:opacity-50"
                   >
-                    Manage Subscription ↗
+                    {portalLoading ? 'Opening...' : 'Manage subscription →'}
                   </button>
-                  <button
-                    onClick={handleManageSubscription}
-                    className="w-full py-3 border border-red-500/20 text-red-400 hover:bg-red-500/10 rounded-xl font-bold text-sm transition-all active:scale-95"
-                  >
-                    Cancel Subscription
-                  </button>
-                  <p className="text-[10px] text-[#475569] text-center">
-                    You'll be redirected to the Stripe billing portal
-                  </p>
+                  {portalError && <p className="text-xs text-red-400 text-center">{portalError}</p>}
                 </div>
               </div>
             ) : (
-              /* ── Free — upgrade ── */
               <div className="bg-gradient-to-br from-[#6366f1]/20 to-[#a855f7]/10 border border-[#6366f1]/30 rounded-2xl p-5 space-y-4">
                 <p className="font-black text-white text-lg">Pro — from €6/mo</p>
                 <ul className="space-y-2">
@@ -228,10 +195,8 @@ const MobileSettingsTab = ({
                     </li>
                   ))}
                 </ul>
-                <button
-                  onClick={() => setShowUpgrade(true)}
-                  className="w-full py-4 bg-[#6366f1] rounded-xl font-black text-sm uppercase tracking-widest active:scale-95 transition-all shadow-lg shadow-[#6366f1]/20"
-                >
+                <button onClick={() => setShowUpgrade(true)}
+                  className="w-full py-4 bg-[#6366f1] rounded-xl font-black text-sm uppercase tracking-widest active:scale-95 transition-all shadow-lg shadow-[#6366f1]/20">
                   {dict.planUpgrade || '✦ Upgrade to Pro'}
                 </button>
               </div>
@@ -243,9 +208,7 @@ const MobileSettingsTab = ({
         {activeSection === 'privacy' && (
           <Section title={dict.privTitle || 'Privacy'}>
             <Card>
-              <p className="text-sm text-[#94a3b8] leading-relaxed">
-                {dict.privDesc || 'Your data is stored locally and never sold to third parties.'}
-              </p>
+              <p className="text-sm text-[#94a3b8] leading-relaxed">{dict.privDesc || 'Your data is stored locally and never sold to third parties.'}</p>
               <label className="flex items-center justify-between cursor-pointer pt-3 border-t border-[#334155]">
                 <span className="text-sm text-[#94a3b8] font-medium">{dict.privToggle || 'Save history locally'}</span>
                 <div className="relative">
@@ -255,16 +218,9 @@ const MobileSettingsTab = ({
                 </div>
               </label>
             </Card>
-
             <div className="space-y-3">
               <button
-                onClick={() => {
-                  if (window.confirm('Delete all history?')) {
-                    setHistory([]);
-                    localStorage.removeItem('letterHistory');
-                    showNotification(dict.deleted || 'Deleted');
-                  }
-                }}
+                onClick={() => { if (window.confirm('Delete all history?')) { setHistory([]); localStorage.removeItem('letterHistory'); showNotification(dict.deleted || 'Deleted'); } }}
                 className="w-full py-3.5 border border-[#334155] text-[#94a3b8] rounded-xl font-semibold text-sm transition-all active:bg-[#334155]/30"
               >
                 {dict.deleteHistory || 'Delete all history'}
