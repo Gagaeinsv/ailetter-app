@@ -100,7 +100,6 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
                 <p className="text-xs text-[#64748b] mt-1">Set your defaults for every new letter</p>
               </div>
               <div className="bg-[#1e293b] rounded-2xl border border-[#334155] p-6 space-y-4">
-                {/* UI Language */}
                 <div>
                   <label className={labelClass}>Interface Language</label>
                   <select value={uiLang} onChange={e => setUiLang(e.target.value)} className={inputClass}>
@@ -160,7 +159,6 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
                 </span>
               </div>
 
-              {/* ── Manage subscription (тільки для Pro) ── */}
               {isPro && (
                 <div className="bg-[#1e293b] rounded-2xl border border-[#334155] p-6 space-y-3">
                   <p className="text-sm font-bold text-white">Billing & Subscription</p>
@@ -172,9 +170,7 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
                   >
                     {portalLoading ? 'Opening...' : 'Manage subscription →'}
                   </button>
-                  {portalError && (
-                    <p className="text-xs text-red-400">{portalError}</p>
-                  )}
+                  {portalError && <p className="text-xs text-red-400">{portalError}</p>}
                 </div>
               )}
 

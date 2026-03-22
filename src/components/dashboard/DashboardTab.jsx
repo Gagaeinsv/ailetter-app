@@ -9,6 +9,7 @@ import { Loader2, Copy, Sparkles, FileText, Download, Lock, RefreshCw, Save, Che
 import LinkedInModal from './LinkedInModal';
 import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
+import ReviewModal from './ReviewModal';
 
 
 const DashboardTab = (props) => {
@@ -26,9 +27,11 @@ const DashboardTab = (props) => {
     isPro,
     setShowUpgrade,
     uiLang, setUiLang,
+    user,
   } = props;
 
   const [showLinkedIn, setShowLinkedIn] = useState(false);
+  const [showReview, setShowReview]     = useState(false);
   const [displayedLetter, setDisplayedLetter] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const typingRef = useRef(null);
@@ -182,6 +185,16 @@ const DashboardTab = (props) => {
               coverLetter={generatedLetter}
               jobDescription={jobDescription}
             />
+          )}
+
+          {/* Leave a Review — тільки Pro після генерації */}
+          {generatedLetter && isPro && (
+            <button
+              onClick={() => setShowReview(true)}
+              className="w-full flex items-center justify-center gap-2 py-2.5 bg-amber-500/8 hover:bg-amber-500/15 border border-amber-500/20 text-amber-400 hover:text-amber-300 rounded-xl text-xs font-bold transition-all"
+            >
+              ⭐ Enjoying AIletter? Leave a review
+            </button>
           )}
 
         </div>
@@ -411,6 +424,14 @@ const DashboardTab = (props) => {
           jobDescription={jobDescription}
           isPro={isPro}
           setShowUpgrade={setShowUpgrade}
+        />
+      )}
+
+      {/* Review Modal */}
+      {showReview && (
+        <ReviewModal
+          onClose={() => setShowReview(false)}
+          user={user}
         />
       )}
     </div>

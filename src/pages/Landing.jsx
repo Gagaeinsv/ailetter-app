@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import HeroMockup from '../components/landing/HeroMockup';
+import { useReviews } from '../hooks/useReviews';
 
 const styles = `
   @keyframes landingScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
@@ -48,15 +49,6 @@ const Stars = ({ n = 5 }) => (
     ))}
   </div>
 );
-
-const REVIEWS = [
-  { name: 'Olena M.', role: 'UX Designer → Google', text: 'Got 3 interview calls within a week. The letters felt genuinely personalized, not templated.', stars: 5, avatar: 'O', color: 'from-indigo-500 to-purple-600' },
-  { name: 'Marco B.', role: 'Product Manager → Spotify', text: "I was spending 2 hours per application. Now it's literally 30 seconds and the quality is better.", stars: 5, avatar: 'M', color: 'from-green-500 to-teal-600' },
-  { name: 'Anna K.', role: 'Data Analyst → Amazon', text: 'The Ukrainian language support is flawless. Finally an AI tool that actually works for us.', stars: 5, avatar: 'A', color: 'from-orange-500 to-red-600' },
-  { name: 'Dmitri V.', role: 'Software Engineer → Netflix', text: 'Used it for 12 applications. Got 4 interviews. The ATS optimization really works.', stars: 5, avatar: 'D', color: 'from-blue-500 to-indigo-600' },
-  { name: 'Sofia R.', role: 'Marketing → Meta', text: 'The different tone options are a game-changer. Professional for corporate, friendly for startups.', stars: 5, avatar: 'S', color: 'from-pink-500 to-rose-600' },
-  { name: 'Taras H.', role: 'Finance → Deutsche Bank', text: 'Switched from ChatGPT prompting to AIletter. Night and day difference in output quality.', stars: 5, avatar: 'T', color: 'from-purple-500 to-violet-600' },
-];
 
 const FAQS = {
   en: [
@@ -197,6 +189,7 @@ const Landing = () => {
   const { uiLang, setUiLang } = useLanguage();
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { reviews: REVIEWS } = useReviews();
 
   useEffect(() => {
     document.title = 'AIletter — AI Cover Letter Generator | Get Hired 10x Faster';
@@ -231,7 +224,7 @@ const Landing = () => {
       <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
       <div className="fixed top-1/4 right-0 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
 
-      {/* ─── HEADER ─── */}
+      {/* HEADER */}
       <header className="fixed w-full top-0 z-50 border-b border-white/[0.06] bg-[#0f172a]/85 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2 font-black tracking-tighter text-base">
@@ -279,12 +272,10 @@ const Landing = () => {
         )}
       </header>
 
-      {/* ─── HERO + MOCKUP ─── */}
+      {/* HERO */}
       <section className="relative pt-20 md:pt-16 z-10">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 py-12 md:py-16 lg:py-20">
-
-            {/* Left — text */}
             <div className="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
               <div className="fu fu1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-5">
                 <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
@@ -295,9 +286,7 @@ const Landing = () => {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-glow block">{t('heroTitle2')}</span>
                 <span className="text-white block">{t('heroTitle3')}</span>
               </h1>
-              <p className="fu fu3 text-gray-400 text-base md:text-lg leading-relaxed mb-8 max-w-md mx-auto lg:mx-0">
-                {t('heroSubtitle')}
-              </p>
+              <p className="fu fu3 text-gray-400 text-base md:text-lg leading-relaxed mb-8 max-w-md mx-auto lg:mx-0">{t('heroSubtitle')}</p>
               <div className="fu fu4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-6">
                 <Link to={user ? '/dashboard' : '/login'}
                   className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25 text-sm">
@@ -319,8 +308,6 @@ const Landing = () => {
                 ))}
               </div>
             </div>
-
-            {/* ✅ Right — mockup з фіксованою висотою */}
             <div className="fu fu3 w-full lg:flex-1 lg:max-w-[640px] overflow-hidden">
               <div className="relative rounded-2xl p-[1.5px]" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }}>
                 <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-20 pointer-events-none" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }} />
@@ -329,12 +316,11 @@ const Landing = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* ─── LOGO SCROLL ─── */}
+      {/* LOGO SCROLL */}
       <section className="py-6 border-y border-white/[0.05] bg-[#0f172a]/60 relative overflow-hidden z-10">
         <p className="text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">{t('trust')}</p>
         <div className="relative w-full overflow-hidden">
@@ -352,7 +338,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ─── HOW IT WORKS ─── */}
+      {/* HOW IT WORKS */}
       <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto z-10 relative">
         <div className="text-center mb-10 md:mb-14">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black">{t('stepsTitle')}</h2>
@@ -373,7 +359,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ─── COMPARISON ─── */}
+      {/* COMPARISON */}
       <section className="py-16 md:py-20 px-4 md:px-6 relative z-10 bg-[#1e293b]/20">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-10">{t('compareTitle')}</h2>
@@ -403,7 +389,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ─── REVIEWS ─── */}
+      {/* REVIEWS */}
       <section className="py-16 md:py-20 px-4 md:px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
@@ -434,7 +420,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ─── FAQ ─── */}
+      {/* FAQ */}
       <section className="py-16 md:py-20 px-4 md:px-6 relative z-10 bg-[#1e293b]/20">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-10">{t('faqTitle')}</h2>
@@ -444,7 +430,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ─── BOTTOM CTA ─── */}
+      {/* BOTTOM CTA */}
       <section className="py-16 md:py-20 px-4 md:px-6 relative z-10">
         <div className="max-w-xl mx-auto text-center">
           <div className="glass rounded-2xl p-8 md:p-10 border border-indigo-500/15">
@@ -460,13 +446,13 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
+      {/* FOOTER */}
       <footer className="border-t border-white/[0.05] bg-[#0f172a] pt-10 pb-6 px-4 md:px-6 z-10 relative">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
             <div className="flex items-center gap-2 font-black tracking-tighter text-base">
               <img src="/android-chrome-192x192.png" alt="AIletter" className="w-7 h-7 rounded-lg" />
-               AIletter
+              AIletter
             </div>
             <p className="text-gray-600 text-xs">{t('footerDesc')}</p>
             <div className="flex items-center gap-5 text-xs text-gray-500">
