@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { generateLetter, parseCV } from '../gemini';
+import { generateLetter, parseCV, extractCompanyName } from '../gemini';
 import html2pdf from 'html2pdf.js';
 import { usePlan } from '../hooks/usePlan';
 import UpgradeModal from '../components/UpgradeModal';
@@ -13,6 +13,7 @@ import DashboardTab from '../components/dashboard/DashboardTab';
 import TemplatesTab from '../components/dashboard/TemplatesTab';
 import HistoryTab from '../components/dashboard/HistoryTab';
 import SettingsTab from '../components/dashboard/SettingsTab';
+import FollowUpModal from '../components/dashboard/FollowUpModal';
 
 // Mobile Components
 import MobileNav from '../components/dashboard/mobile/MobileNav';
@@ -35,6 +36,11 @@ const Dashboard = () => {
   const [activeTab, setActiveTab]     = useState('dashboard');
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [toast, setToast]             = useState({ show: false, msg: '' });
+
+  // ── Follow-up State ──
+  const [followUpEntry, setFollowUpEntry] = useState(null); // запис для якого показуємо banner
+  const [showFollowUpModal, setShowFollowUpModal] = useState(false);
+  const [followUpModalEntry, setFollowUpModalEntry] = useState(null);
 
   // ── Letter State ──
   const [contactInfo, setContactInfo] = useState({
@@ -75,6 +81,18 @@ const Dashboard = () => {
     if (savedHistory) setHistory(JSON.parse(savedHistory));
   }, [user]);
 
+  // ── Follow-up banner check ──
+  useEffect(() => {
+    if (!history.length) return;
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const pending = history.find(h =>
+      h.sentDate &&
+      !h.followUpSent &&
+      new Date(h.sentDate).getTime() < sevenDaysAgo
+    );
+    setFollowUpEntry(pending || null);
+  }, [history]);
+
   // ── Notifications ──
   const showNotification = (msg) => {
     setToast({ show: true, msg });
@@ -103,7 +121,6 @@ const Dashboard = () => {
       setContactInfo(updated);
       localStorage.setItem('userProfile', JSON.stringify(updated));
       showNotification('Auto-filled ✓');
-    // eslint-disable-next-line no-unused-vars
     } catch (e) {
       alert('AI Error: Could not parse CV');
     } finally {
@@ -121,13 +138,11 @@ const Dashboard = () => {
     if (!jobDescription) return alert('Paste job description');
     if (planLoading) return showNotification('Checking plan...');
 
-    // 👑 "РЕЖИМ БОГА": Перевірка вашого email
     const isAdmin = user?.email === 'gagatinsv@gmail.com';
 
-    // Якщо це НЕ адмін, НЕ Pro і ліміт вичерпано — показуємо вікно оплати
-    if (!isAdmin && !isPro && getMonthlyCount() >= 5) { 
-        setShowUpgrade(true); 
-        return; 
+    if (!isAdmin && !isPro && getMonthlyCount() >= 5) {
+      setShowUpgrade(true);
+      return;
     }
 
     setLoading(true);
@@ -137,12 +152,10 @@ const Dashboard = () => {
       setGeneratedLetter(text);
       setEditMode(false);
 
-      // Рахуємо ліміти тільки якщо це НЕ адмін і НЕ Pro
       if (!isAdmin && !isPro) {
         const key = `gen_count_${new Date().getMonth()}_${new Date().getFullYear()}`;
         const newCount = getMonthlyCount() + 1;
         localStorage.setItem(key, String(newCount));
-        
         const left = 5 - newCount;
         if (left <= 0) {
           showNotification('Monthly limit reached — upgrade for unlimited');
@@ -157,7 +170,7 @@ const Dashboard = () => {
     }
   };
 
-  // ── PDF — доступний для всіх, free отримує watermark ──
+  // ── PDF ──
   const downloadPDF = () => {
     if (!generatedLetter) {
       showNotification('Generate a letter first');
@@ -165,38 +178,28 @@ const Dashboard = () => {
     }
 
     const element = documentRef.current;
+    let watermarkEl = null;
 
-    // ... всередині функції downloadPDF ...
-
-  // Для free — додаємо watermark (оновлена версія: акуратно знизу)
-  let watermarkEl = null;
-  if (!isPro) {
-    watermarkEl = document.createElement('div');
-    watermarkEl.id = 'pdf-watermark';
-    
-    // ЗМІНЕНИЙ CSS:
-    watermarkEl.style.cssText = `
-      position: absolute;
-      bottom: 15px;                  /* Відступ від нижнього краю */
-      left: 50%;                     /* Центр по горизонталі */
-      transform: translateX(-50%);   /* Точне центрування */
-      font-size: 12px;               /* Невеликий, акуратний шрифт */
-      font-weight: 500;
-      color: rgba(100, 116, 139, 0.6); /* Сірий колір, не надто яскравий */
-      font-family: sans-serif;
-      pointer-events: none;
-      z-index: 1000;
-      white-space: nowrap;
-    `;
-    
-    // Текст теж можна зробити більш "професійним"
-    watermarkEl.innerHTML = 'Generated with <b>AIletter.app</b> (Free Plan)';
-    
-    element.style.position = 'relative';
-    element.appendChild(watermarkEl);
-  }
-
-  // ... далі йде const opt = { ... }
+    if (!isPro) {
+      watermarkEl = document.createElement('div');
+      watermarkEl.id = 'pdf-watermark';
+      watermarkEl.style.cssText = `
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        font-weight: 500;
+        color: rgba(100, 116, 139, 0.6);
+        font-family: sans-serif;
+        pointer-events: none;
+        z-index: 1000;
+        white-space: nowrap;
+      `;
+      watermarkEl.innerHTML = 'Generated with <b>AIletter.app</b> (Free Plan)';
+      element.style.position = 'relative';
+      element.appendChild(watermarkEl);
+    }
 
     const opt = {
       margin: 0,
@@ -211,7 +214,6 @@ const Dashboard = () => {
       .from(element)
       .save()
       .then(() => {
-        // Прибираємо watermark після збереження
         if (watermarkEl && element.contains(watermarkEl)) {
           element.removeChild(watermarkEl);
         }
@@ -221,24 +223,15 @@ const Dashboard = () => {
       });
   };
 
-  // ── DOCX — тільки Pro ──
+  // ── DOCX ──
   const downloadDOCX = async () => {
-    if (!isPro) {
-      setShowUpgrade(true);
-      return;
-    }
-    if (!generatedLetter) {
-      showNotification('Generate a letter first');
-      return;
-    }
+    if (!isPro) { setShowUpgrade(true); return; }
+    if (!generatedLetter) { showNotification('Generate a letter first'); return; }
 
     try {
-      // Динамічний імпорт щоб не збільшувати bundle для всіх
       const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = await import('docx');
-
       const { fullName, profession, email, phone, location, linkedin } = contactInfo;
 
-      // Парсимо текст листа на параграфи
       const paragraphs = generatedLetter
         .split('\n')
         .map(line => line.trim())
@@ -251,48 +244,28 @@ const Dashboard = () => {
         });
 
       const doc = new Document({
-        styles: {
-          default: {
-            document: {
-              run: { font: 'Calibri', size: 24, color: '1e293b' },
-            },
-          },
-        },
+        styles: { default: { document: { run: { font: 'Calibri', size: 24, color: '1e293b' } } } },
         sections: [{
-          properties: {
-            page: {
-              margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }, // 1 inch margins
-            },
-          },
+          properties: { page: { margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } },
           children: [
-            // Ім'я та контакти зверху
             new Paragraph({
               children: [new TextRun({ text: fullName || 'Your Name', bold: true, size: 36, font: 'Calibri', color: '4f46e5' })],
               heading: HeadingLevel.HEADING_1,
               spacing: { after: 80 },
             }),
             new Paragraph({
-              children: [new TextRun({
-                text: [profession, email, phone, location, linkedin].filter(Boolean).join('  ·  '),
-                size: 20, font: 'Calibri', color: '64748b',
-              })],
+              children: [new TextRun({ text: [profession, email, phone, location, linkedin].filter(Boolean).join('  ·  '), size: 20, font: 'Calibri', color: '64748b' })],
               spacing: { after: 400 },
             }),
-            // Дата
             new Paragraph({
               children: [new TextRun({ text: todayStr, size: 22, font: 'Calibri', color: '94a3b8' })],
               alignment: AlignmentType.RIGHT,
               spacing: { after: 400 },
             }),
-            // Сам лист
             ...paragraphs,
-            // Footer
             new Paragraph({ text: '', spacing: { before: 400 } }),
             new Paragraph({
-              children: [new TextRun({
-                text: 'Generated with AIletter.app',
-                size: 18, font: 'Calibri', color: 'cbd5e1',
-              })],
+              children: [new TextRun({ text: 'Generated with AIletter.app', size: 18, font: 'Calibri', color: 'cbd5e1' })],
               alignment: AlignmentType.CENTER,
             }),
           ],
@@ -314,19 +287,40 @@ const Dashboard = () => {
   };
 
   // ── History ──
-  const handleSaveToHistory = () => {
+  const handleSaveToHistory = async () => {
     if (!generatedLetter) return;
+
+    // Витягуємо назву компанії асинхронно
+    let company = 'Unknown';
+    try {
+      company = await extractCompanyName(jobDescription);
+    } catch (e) {
+      console.warn('Could not extract company name:', e);
+    }
+
     const entry = {
-      id:   Date.now(),
-      date: new Date().toLocaleDateString(),
-      job:  jobDescription.substring(0, 60) + '...',
-      text: generatedLetter,
-      lang: settings.language,
+      id:            Date.now(),
+      date:          new Date().toLocaleDateString(),
+      sentDate:      new Date().toISOString(), // дата збереження = дата відправки
+      job:           jobDescription.substring(0, 60) + '...',
+      jobDescription,
+      text:          generatedLetter,
+      lang:          settings.language,
+      company,
+      followUpSent:  false,
     };
     const updated = [entry, ...history];
     setHistory(updated);
     localStorage.setItem('letterHistory', JSON.stringify(updated));
-    showNotification('Saved to history ✓');
+    showNotification(`Saved ✓ — follow-up reminder in 7 days`);
+  };
+
+  const markFollowUpSent = (id) => {
+    const updated = history.map(h => h.id === id ? { ...h, followUpSent: true } : h);
+    setHistory(updated);
+    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    setFollowUpEntry(null);
+    showNotification('Follow-up marked as sent ✓');
   };
 
   const deleteHistoryItem = (id) => {
@@ -338,12 +332,7 @@ const Dashboard = () => {
   };
 
   const duplicateHistoryItem = (item) => {
-    const copy = {
-      ...item,
-      id:   Date.now(),
-      date: new Date().toLocaleDateString(),
-      job:  '[Copy] ' + item.job
-    };
+    const copy = { ...item, id: Date.now(), date: new Date().toLocaleDateString(), job: '[Copy] ' + item.job };
     const updated = [copy, ...history];
     setHistory(updated);
     localStorage.setItem('letterHistory', JSON.stringify(updated));
@@ -369,27 +358,19 @@ const Dashboard = () => {
 
   // ── All props ──
   const props = {
-    // Auth
     user, logout,
-    // Navigation
     activeTab, setActiveTab,
-    // Contact & Job
     contactInfo, setContactInfo,
     jobDescription, setJobDescription,
-    // CV
     cvFile, setCvFile, fileName, setFileName, handleFileChange, handleAutoFill, parsingCV,
-    // Settings & Templates
     settings, setSettings,
     selectedTemplate, setSelectedTemplate,
     TEMPLATES,
-    // Letter
     generatedLetter, setGeneratedLetter,
     loading, handleGenerate,
     editMode, setEditMode,
     editText, setEditText,
-    // Export
     documentRef, downloadPDF, downloadDOCX,
-    // History
     history, setHistory,
     historySearch, setHistorySearch,
     historyFilter, setHistoryFilter,
@@ -397,14 +378,14 @@ const Dashboard = () => {
     deleteHistoryItem,
     duplicateHistoryItem,
     getFilteredHistory,
-    // Plan
+    markFollowUpSent,
     isPro, planLoading, setShowUpgrade,
-    // UI
     dict, showNotification,
     todayStr, placeholderText,
     uiLang, setUiLang,
-    // Profile
     saveProfile,
+    // Follow-up
+    onFollowUp: (entry) => { setFollowUpModalEntry(entry); setShowFollowUpModal(true); },
   };
 
   return (
@@ -419,8 +400,56 @@ const Dashboard = () => {
 
       {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
 
+      {/* ── Follow-up Banner ── */}
+      {followUpEntry && activeTab === 'dashboard' && (
+        <div className="fixed top-4 right-4 z-[90] max-w-sm bg-[#1e293b] border border-amber-500/30 rounded-2xl p-4 shadow-2xl">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">⏰</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-bold text-sm">Time for a follow-up!</p>
+              <p className="text-gray-400 text-xs mt-0.5 truncate">
+                You applied to <span className="text-amber-400">{followUpEntry.company}</span> 7+ days ago
+              </p>
+              <div className="flex gap-2 mt-3">
+                {isPro ? (
+                  <button
+                    onClick={() => { setFollowUpModalEntry(followUpEntry); setShowFollowUpModal(true); }}
+                    className="flex-1 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-lg transition-all"
+                  >
+                    Generate Follow-up
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setShowUpgrade(true)}
+                    className="flex-1 py-1.5 bg-amber-500/20 border border-amber-500/30 text-amber-400 font-bold text-xs rounded-lg transition-all"
+                  >
+                    ✦ Pro — Generate Follow-up
+                  </button>
+                )}
+                <button
+                  onClick={() => markFollowUpSent(followUpEntry.id)}
+                  className="px-3 py-1.5 bg-white/5 text-gray-500 hover:text-white text-xs rounded-lg transition-all"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Follow-up Modal */}
+      {showFollowUpModal && followUpModalEntry && (
+        <FollowUpModal
+          entry={followUpModalEntry}
+          contactInfo={contactInfo}
+          onClose={() => { setShowFollowUpModal(false); setFollowUpModalEntry(null); }}
+          onSent={() => markFollowUpSent(followUpModalEntry.id)}
+          showNotification={showNotification}
+        />
+      )}
+
       {isMobile ? (
-        // ── MOBILE ──
         <div className="fixed inset-0 flex flex-col h-[100dvh] bg-[#0f172a]">
           <MobileNav {...props} />
           <div className="flex-1 overflow-y-auto pt-14 pb-20 landscape:pb-4 landscape:pl-14 w-full scroll-smooth">
@@ -433,7 +462,6 @@ const Dashboard = () => {
           </div>
         </div>
       ) : (
-        // ── DESKTOP ──
         <div className="flex h-screen">
           <Sidebar {...props} />
           <main className="flex-1 flex flex-col overflow-hidden">
