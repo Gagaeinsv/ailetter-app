@@ -22,7 +22,7 @@ const Card = ({ children }) => (
 
 const MobileSettingsTab = ({
   dict, contactInfo, setContactInfo, uiLang, setUiLang,
-  settings, setSettings, showNotification, history, setHistory,
+  settings, setSettings, showNotification, setHistory,
   isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate
 }) => {
   const [activeSection, setActiveSection] = useState('profile');
