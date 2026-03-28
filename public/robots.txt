@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://myailetter.vercel.app/sitemap.xml
+Sitemap: https://ailetter.pro/sitemap.xml
