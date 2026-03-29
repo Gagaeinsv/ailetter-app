@@ -150,6 +150,46 @@ const DashboardTab = (props) => {
             <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} />
           )}
 
+          {/* ── Follow-up Block ── */}
+          {generatedLetter && (
+            <div className={`rounded-xl border p-4 transition-all ${
+              currentLetterSavedId
+                ? 'border-emerald-500/20 bg-emerald-500/5'
+                : 'border-[#334155] bg-[#1e293b]'
+            }`}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-base">⏰</span>
+                <span className="text-xs font-black text-white uppercase tracking-wider">Follow-up Reminder</span>
+                {!isPro && (
+                  <span className="ml-auto flex items-center gap-1 text-[9px] font-black text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
+                    <Lock className="w-2.5 h-2.5" /> PRO
+                  </span>
+                )}
+              </div>
+
+              {currentLetterSavedId ? (
+                // Вже збережено — показуємо коли follow-up
+                <div>
+                  <p className="text-xs text-emerald-400 font-medium mb-1">✓ Saved — follow-up reminder in 7 days</p>
+                  <p className="text-[10px] text-slate-500">AIletter нагадає вам написати рекрутеру через тиждень</p>
+                </div>
+              ) : (
+                // Ще не збережено
+                <div>
+                  <p className="text-xs text-slate-400 mb-2">Copy or download to start the 7-day follow-up timer</p>
+                  {!isPro && (
+                    <button
+                      onClick={() => setShowUpgrade(true)}
+                      className="w-full py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/30 text-amber-400 rounded-lg text-xs font-bold transition-all"
+                    >
+                      ✦ Upgrade Pro — Auto Follow-up
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Review prompt */}
           {generatedLetter && isPro && (
             <button onClick={() => setShowReview(true)}

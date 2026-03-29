@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { generateLinkedInVersion } from "../gemini";
 import { Loader2, Copy, Check, Linkedin } from "lucide-react";
 
@@ -8,6 +9,26 @@ export default function LinkedInGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
+
+  // SEO
+  useEffect(() => {
+    document.title = "LinkedIn Easy Apply Message Generator | AIletter";
+
+    let link = document.querySelector("link[rel='canonical']");
+    if (!link) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "canonical");
+      document.head.appendChild(link);
+    }
+    link.setAttribute("href", "https://ailetter.pro/linkedin-message");
+  }, []);
+
+  const goToMain = () => {
+    window.scrollTo(0, 0);
+    navigate("/?from=linkedin");
+  };
 
   const handleGenerate = async () => {
     if (!jobDescription.trim()) return;
@@ -39,34 +60,37 @@ export default function LinkedInGeneratorPage() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center px-4 py-12">
 
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="bg-[#6366f1] p-2 rounded-lg">
-          <Linkedin size={24} className="text-white" />
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-bold">LinkedIn Easy Apply Message Generator</h1>
+      {/* HEADER */}
+      <div className="max-w-2xl mb-10 text-center">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-4">
+          LinkedIn Easy Apply Message Generator
+        </h1>
+
+        <p className="text-gray-400 mb-3">
+          Not sure what to write in LinkedIn Easy Apply? Generate a short,
+          professional message tailored to your job description in seconds.
+        </p>
+
+        <p className="text-gray-500 text-sm">
+          Paste the job description → generate → copy → apply.
+        </p>
+
+        {/* CTA зверху */}
+        <p className="text-xs text-gray-500 mt-4">
+          Free · No sign-up ·{" "}
+          <button
+            onClick={goToMain}
+            className="text-indigo-400 hover:text-indigo-300 underline"
+          >
+            Need a full cover letter? →
+          </button>
+        </p>
       </div>
 
-      <p className="text-gray-400 text-center max-w-xl mb-2">
-        Generate a short, personalized LinkedIn Easy Apply message in seconds.
-        Paste the job description — get a ready-to-send message.
-      </p>
-
-      {/* Subtle CTA вгорі */}
-      <p className="text-xs text-gray-500 mb-10 text-center">
-        Free · No sign-up required · Powered by AI ·{" "}
-        <a href="/" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">
-          Need a full cover letter? →
-        </a>
-      </p>
-
-      {/* Input */}
+      {/* INPUT */}
       <div className="w-full max-w-2xl">
-        <label className="block text-sm font-medium text-gray-400 mb-2">
-          Job Description
-        </label>
         <textarea
-          className="w-full bg-[#1e293b] border border-[#334155] rounded-xl p-4 text-white placeholder-gray-500 resize-none focus:outline-none focus:border-[#6366f1] transition-colors"
+          className="w-full bg-[#1e293b] border border-[#334155] rounded-xl p-4 text-white resize-none"
           rows={7}
           placeholder="Paste the job description here..."
           value={jobDescription}
@@ -76,7 +100,7 @@ export default function LinkedInGeneratorPage() {
         <button
           onClick={handleGenerate}
           disabled={loading || !jobDescription.trim()}
-          className="mt-3 w-full bg-[#6366f1] hover:bg-[#5458ee] disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
+          className="mt-3 w-full bg-[#6366f1] hover:bg-[#5458ee] px-6 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -96,88 +120,125 @@ export default function LinkedInGeneratorPage() {
         )}
       </div>
 
-      {/* Result */}
+      {/* RESULT */}
       {result && (
         <>
           <div className="w-full max-w-2xl mt-8 bg-[#1e293b] border border-[#334155] rounded-xl p-5">
-            <h2 className="text-lg font-semibold mb-3 text-white">
-              Your LinkedIn Easy Apply Message
-            </h2>
-            <p className="whitespace-pre-wrap text-gray-200 text-sm leading-relaxed mb-5">
+            <p className="whitespace-pre-wrap text-gray-200 text-sm mb-4">
               {result}
             </p>
 
             <div className="flex gap-3 flex-wrap">
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-2 bg-[#334155] hover:bg-[#475569] px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="bg-[#334155] px-4 py-2 rounded-lg text-sm flex items-center gap-2"
               >
-                {copied ? <Check size={15} className="text-green-400" /> : <Copy size={15} />}
-                {copied ? "Copied!" : "Copy Message"}
+                {copied ? <Check size={15} /> : <Copy size={15} />}
+                {copied ? "Copied!" : "Copy"}
               </button>
 
               <button
                 onClick={handleOpenLinkedIn}
-                className="flex items-center gap-2 bg-[#0077b5] hover:bg-[#006097] px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="bg-[#0077b5] px-4 py-2 rounded-lg text-sm flex items-center gap-2"
               >
                 <Linkedin size={15} />
-                Open LinkedIn Jobs
+                Open LinkedIn
               </button>
             </div>
 
             <p className="text-xs text-gray-600 mt-4">
-              Paste this in the "Cover Letter" field when applying via LinkedIn Easy Apply.
+              Paste this into the "Cover Letter" field on LinkedIn Easy Apply.
             </p>
+
             <p className="text-xs text-gray-700 mt-1">
-              Generated with <a href="/" className="underline hover:text-gray-500">AIletter</a>
+              Generated with AIletter
             </p>
           </div>
 
-          {/* ✅ CTA одразу після результату */}
+          {/* CTA після результату */}
           <div className="w-full max-w-2xl mt-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <p className="font-semibold text-white text-sm">Need a full cover letter?</p>
-              <p className="text-xs text-gray-400 mt-0.5">Upload your CV + job description → get a tailored letter in 30 seconds.</p>
+              <p className="font-semibold text-white text-sm">
+                Need a full cover letter?
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Upload your CV + job description → get a tailored letter in 30 seconds.
+              </p>
             </div>
-            <a
-              href="/"
-              className="shrink-0 bg-[#6366f1] hover:bg-[#5458ee] px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors whitespace-nowrap"
+
+            <button
+              onClick={goToMain}
+              className="bg-[#6366f1] hover:bg-[#5458ee] px-5 py-2.5 rounded-xl font-semibold text-sm"
             >
               Try AIletter →
-            </a>
+            </button>
+          </div>
+
+          {/* 💰 FREE vs PRO */}
+          <div className="w-full max-w-2xl mt-4 bg-[#1e293b] border border-[#334155] rounded-xl p-5">
+
+            <div className="text-center mb-4">
+              <p className="text-sm font-semibold text-white">
+                Unlock full job application toolkit
+              </p>
+              <p className="text-xs text-gray-400">
+                Go beyond LinkedIn messages
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-xs">
+
+              <div className="bg-[#0f172a] border border-[#334155] rounded-lg p-3">
+                <p className="font-semibold text-gray-300 mb-2">Free</p>
+                <ul className="space-y-1 text-gray-500">
+                  <li>✔ LinkedIn message generator</li>
+                  <li>✔ Unlimited usage</li>
+                </ul>
+              </div>
+
+              <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-3 relative">
+                <div className="absolute -top-2 right-2 text-[10px] bg-indigo-500 px-2 py-0.5 rounded">
+                  PRO
+                </div>
+
+                <p className="font-semibold text-white mb-2">Pro</p>
+                <ul className="space-y-1 text-gray-300">
+                  <li>✔ Full cover letters</li>
+                  <li>✔ CV parsing</li>
+                  <li>✔ Templates</li>
+                  <li>✔ PDF export</li>
+                </ul>
+              </div>
+
+            </div>
+
+            <div className="mt-5 text-center">
+              <button
+                onClick={goToMain}
+                className="bg-[#6366f1] hover:bg-[#5458ee] px-6 py-2.5 rounded-xl font-semibold text-sm"
+              >
+                Upgrade to Pro →
+              </button>
+            </div>
+
           </div>
         </>
       )}
 
-      {/* How it works */}
+      {/* SEO EXAMPLES */}
       <div className="w-full max-w-2xl mt-16">
-        <h2 className="text-xl font-semibold mb-6 text-center">How it works</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { step: "1", title: "Paste job description", desc: "Copy the job posting text and paste it above." },
-            { step: "2", title: "Generate message", desc: "AI writes a 150–200 word personalized Easy Apply message." },
-            { step: "3", title: "Copy & apply", desc: "Paste directly into LinkedIn Easy Apply cover letter field." },
-          ].map((item) => (
-            <div key={item.step} className="bg-[#1e293b] border border-[#334155] rounded-xl p-4 text-center">
-              <div className="w-8 h-8 rounded-full bg-[#6366f1] flex items-center justify-center text-sm font-bold mx-auto mb-3">
-                {item.step}
-              </div>
-              <h3 className="font-semibold text-sm mb-1">{item.title}</h3>
-              <p className="text-xs text-gray-400">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+        <h2 className="text-xl font-semibold mb-6 text-center">
+          LinkedIn Easy Apply Message Examples
+        </h2>
 
-      {/* CTA внизу — для тих хто не генерував */}
-      <div className="mt-12 text-center">
-        <p className="text-gray-500 text-sm mb-4">Want a complete, ATS-optimized cover letter?</p>
-        <a
-          href="/"
-          className="inline-block bg-[#6366f1] hover:bg-[#5458ee] px-8 py-3 rounded-xl font-semibold transition-colors"
-        >
-          Try AI Cover Letter Generator →
-        </a>
+        <div className="space-y-4 text-sm text-gray-300">
+          <div className="bg-[#1e293b] p-4 rounded-xl">
+            Managing cross-functional teams and tight deadlines has been my daily work for the past 3 years...
+          </div>
+          <div className="bg-[#1e293b] p-4 rounded-xl">
+            You’re looking for someone who can handle multiple stakeholders...
+          </div>
+        </div>
       </div>
 
     </div>

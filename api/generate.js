@@ -11,19 +11,25 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1/models/${modelId}:generateContent?key=${apiKey}`;
 
     const body = {
-      contents: contents.map(part =>
-        typeof part === "string"
-          ? { role: "user", parts: [{ text: part }] }
-          : { role: "user", parts: [part] }
-      ),
+      contents: [
+        {
+          role: "user",
+          parts: contents.map(part =>
+            typeof part === "string" ? { text: part } : part
+          ),
+        },
+      ],
       generationConfig: {
         temperature,
         maxOutputTokens,
         ...(responseMimeType ? { responseMimeType } : {}),
       },
+      safetySettings: [
+        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
+      ],
     };
 
     const response = await fetch(url, {
@@ -39,6 +45,7 @@ export default async function handler(req, res) {
     }
 
     res.status(200).json(data);
+
   } catch (error) {
     console.error("Gemini API error:", error);
     res.status(500).json({ error: "Internal server error" });

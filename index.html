@@ -3,46 +3,35 @@
   <head>
     <meta charset="UTF-8" />
 
-    <!-- Favicons -->
-     <link rel="canonical" href="https://ailetter.pro/" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <!-- ❗ НЕ ставимо canonical на одну сторінку -->
+    <!-- буде динамічно з React -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary SEO -->
-    <title>AIletter — AI Cover Letter Generator in 30 Seconds</title>
-    <meta name="description" content="Generate a personalized, ATS-ready cover letter in 30 seconds. Upload your CV, paste the job description, and get a tailored letter in your language. Free to start." />
-    <meta name="keywords" content="AI cover letter generator, cover letter AI, LinkedIn Easy Apply message, ATS cover letter, motivational letter generator" />
-    <meta name="author" content="AIletter" />
+    <title>AIletter — AI Cover Letter Generator</title>
+
+    <meta name="description" content="Generate a personalized, ATS-ready cover letter in seconds using AI." />
     <meta name="robots" content="index, follow" />
 
-    <!-- Open Graph (Facebook, LinkedIn preview) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://ailetter.pro/" />
-    <meta property="og:title" content="AIletter — AI Cover Letter Generator" />
-    <meta property="og:description" content="Generate a personalized, ATS-ready cover letter in 30 seconds. Free to start. No card required." />
+    <!-- Open Graph -->
+    <meta property="og:title" content="AIletter" />
+    <meta property="og:description" content="AI Cover Letter Generator" />
     <meta property="og:image" content="https://ailetter.pro/android-chrome-512x512.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="AIletter" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AIletter — AI Cover Letter Generator" />
-    <meta name="twitter:description" content="Generate a personalized, ATS-ready cover letter in 30 seconds." />
-    <meta name="twitter:image" content="https://ailetter.pro/android-chrome-512x512.png" />
-
-    <!-- Theme color (mobile browser bar) -->
     <meta name="theme-color" content="#0f172a" />
   </head>
+
   <body>
+
+    <!-- 🔥 SEO fallback (дуже важливо для Google) -->
+    <div style="display:none;">
+      <h1>LinkedIn Easy Apply Message Generator</h1>
+      <p>
+        Generate a LinkedIn Easy Apply message in seconds. Paste your job description
+        and get a ready-to-send message instantly.
+      </p>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
