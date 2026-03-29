@@ -38,7 +38,7 @@ const Dashboard = () => {
   const [toast, setToast]             = useState({ show: false, msg: '' });
 
   // ── Follow-up State ──
-  const [followUpEntry, setFollowUpEntry] = useState(null); // запис для якого показуємо banner
+  const [followUpEntry, setFollowUpEntry]         = useState(null);
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
   const [followUpModalEntry, setFollowUpModalEntry] = useState(null);
 
@@ -51,6 +51,7 @@ const Dashboard = () => {
   const [fileName, setFileName]       = useState('');
   const [settings, setSettings]       = useState({ language: 'Auto', tone: 'Professional', length: 'Standard' });
   const [generatedLetter, setGeneratedLetter] = useState('');
+  const [currentLetterSavedId, setCurrentLetterSavedId] = useState(null); // ID збереженого запису
   const [selectedTemplate, setSelectedTemplate] = useState('influx');
   const [loading, setLoading]         = useState(false);
   const [parsingCV, setParsingCV]     = useState(false);
@@ -58,9 +59,9 @@ const Dashboard = () => {
   const [editText, setEditText]       = useState('');
 
   // ── History State ──
-  const [history, setHistory]               = useState([]);
-  const [historySearch, setHistorySearch]   = useState('');
-  const [historyFilter, setHistoryFilter]   = useState('all');
+  const [history, setHistory]             = useState([]);
+  const [historySearch, setHistorySearch] = useState('');
+  const [historyFilter, setHistoryFilter] = useState('all');
 
   const documentRef = useRef();
   const dict        = translations[uiLang] || translations.en;
@@ -81,14 +82,19 @@ const Dashboard = () => {
     if (savedHistory) setHistory(JSON.parse(savedHistory));
   }, [user]);
 
+  // ── Скидаємо ID збереження при новій генерації ──
+  useEffect(() => {
+    setCurrentLetterSavedId(null);
+  }, [generatedLetter]);
+
   // ── Follow-up banner check ──
   useEffect(() => {
     if (!history.length) return;
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const pending = history.find(h =>
-      h.sentDate &&
+      h.savedAt &&
       !h.followUpSent &&
-      new Date(h.sentDate).getTime() < sevenDaysAgo
+      h.savedAt < sevenDaysAgo
     );
     setFollowUpEntry(pending || null);
   }, [history]);
@@ -139,7 +145,6 @@ const Dashboard = () => {
     if (planLoading) return showNotification('Checking plan...');
 
     const isAdmin = user?.email === 'gagatinsv@gmail.com';
-
     if (!isAdmin && !isPro && getMonthlyCount() >= 5) {
       setShowUpgrade(true);
       return;
@@ -147,6 +152,8 @@ const Dashboard = () => {
 
     setLoading(true);
     setGeneratedLetter('');
+    setCurrentLetterSavedId(null);
+
     try {
       const text = await generateLetter(contactInfo, jobDescription, cvFile, settings);
       setGeneratedLetter(text);
@@ -170,31 +177,74 @@ const Dashboard = () => {
     }
   };
 
+  // ── Save to history (внутрішня) ──
+  // trigger: 'manual' | 'copy' | 'pdf' | 'docx'
+  const saveToHistory = async (trigger = 'manual') => {
+    if (!generatedLetter) return null;
+
+    // Якщо вже збережено — не дублювати
+    if (currentLetterSavedId) return currentLetterSavedId;
+
+    let company = 'Unknown';
+    try {
+      company = await extractCompanyName(jobDescription);
+    } catch (e) {
+      console.warn('Could not extract company name:', e);
+    }
+
+    const id = Date.now();
+    const entry = {
+      id,
+      date:          new Date().toLocaleDateString(),
+      savedAt:       id, // timestamp для follow-up відліку
+      job:           jobDescription.substring(0, 60) + '...',
+      jobDescription,
+      text:          generatedLetter,
+      lang:          settings.language,
+      company,
+      followUpSent:  false,
+      savedVia:      trigger, // звідки збережено
+    };
+
+    const updated = [entry, ...history];
+    setHistory(updated);
+    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    setCurrentLetterSavedId(id);
+    return id;
+  };
+
+  // ── Публічний handleSaveToHistory (для кнопки Save) ──
+  const handleSaveToHistory = async () => {
+    const id = await saveToHistory('manual');
+    if (id === currentLetterSavedId && currentLetterSavedId !== null) {
+      showNotification('Already saved ✓');
+    } else {
+      showNotification('Saved ✓ — follow-up reminder in 7 days');
+    }
+  };
+
   // ── PDF ──
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     if (!generatedLetter) {
       showNotification('Generate a letter first');
       return;
     }
+
+    // Автозбереження при PDF якщо ще не збережено
+    await saveToHistory('pdf');
 
     const element = documentRef.current;
     let watermarkEl = null;
 
     if (!isPro) {
       watermarkEl = document.createElement('div');
-      watermarkEl.id = 'pdf-watermark';
       watermarkEl.style.cssText = `
-        position: absolute;
-        bottom: 15px;
-        left: 50%;
+        position: absolute; bottom: 15px; left: 50%;
         transform: translateX(-50%);
-        font-size: 12px;
-        font-weight: 500;
-        color: rgba(100, 116, 139, 0.6);
-        font-family: sans-serif;
-        pointer-events: none;
-        z-index: 1000;
-        white-space: nowrap;
+        font-size: 11px; font-weight: 500;
+        color: rgba(100,116,139,0.5);
+        font-family: sans-serif; pointer-events: none;
+        z-index: 1000; white-space: nowrap;
       `;
       watermarkEl.innerHTML = 'Generated with <b>AIletter.app</b> (Free Plan)';
       element.style.position = 'relative';
@@ -209,24 +259,23 @@ const Dashboard = () => {
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     };
 
-    html2pdf()
-      .set(opt)
-      .from(element)
-      .save()
-      .then(() => {
-        if (watermarkEl && element.contains(watermarkEl)) {
-          element.removeChild(watermarkEl);
-        }
-        if (!isPro) {
-          setTimeout(() => showNotification('💡 Upgrade Pro — HD export, DOCX & no watermark'), 800);
-        }
-      });
+    html2pdf().set(opt).from(element).save().then(() => {
+      if (watermarkEl && element.contains(watermarkEl)) {
+        element.removeChild(watermarkEl);
+      }
+      if (!isPro) {
+        setTimeout(() => showNotification('💡 Upgrade Pro — HD export, DOCX & no watermark'), 800);
+      }
+    });
   };
 
   // ── DOCX ──
   const downloadDOCX = async () => {
     if (!isPro) { setShowUpgrade(true); return; }
     if (!generatedLetter) { showNotification('Generate a letter first'); return; }
+
+    // Автозбереження при DOCX якщо ще не збережено
+    await saveToHistory('docx');
 
     try {
       const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = await import('docx');
@@ -254,7 +303,10 @@ const Dashboard = () => {
               spacing: { after: 80 },
             }),
             new Paragraph({
-              children: [new TextRun({ text: [profession, email, phone, location, linkedin].filter(Boolean).join('  ·  '), size: 20, font: 'Calibri', color: '64748b' })],
+              children: [new TextRun({
+                text: [profession, email, phone, location, linkedin].filter(Boolean).join('  ·  '),
+                size: 20, font: 'Calibri', color: '64748b'
+              })],
               spacing: { after: 400 },
             }),
             new Paragraph({
@@ -286,35 +338,15 @@ const Dashboard = () => {
     }
   };
 
-  // ── History ──
-  const handleSaveToHistory = async () => {
+  // ── Copy (з автозбереженням) ──
+  const copyLetter = async () => {
     if (!generatedLetter) return;
-
-    // Витягуємо назву компанії асинхронно
-    let company = 'Unknown';
-    try {
-      company = await extractCompanyName(jobDescription);
-    } catch (e) {
-      console.warn('Could not extract company name:', e);
-    }
-
-    const entry = {
-      id:            Date.now(),
-      date:          new Date().toLocaleDateString(),
-      sentDate:      new Date().toISOString(), // дата збереження = дата відправки
-      job:           jobDescription.substring(0, 60) + '...',
-      jobDescription,
-      text:          generatedLetter,
-      lang:          settings.language,
-      company,
-      followUpSent:  false,
-    };
-    const updated = [entry, ...history];
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
-    showNotification(`Saved ✓ — follow-up reminder in 7 days`);
+    navigator.clipboard.writeText(generatedLetter);
+    await saveToHistory('copy');
+    showNotification('Copied to clipboard ✓');
   };
 
+  // ── History helpers ──
   const markFollowUpSent = (id) => {
     const updated = history.map(h => h.id === id ? { ...h, followUpSent: true } : h);
     setHistory(updated);
@@ -332,7 +364,12 @@ const Dashboard = () => {
   };
 
   const duplicateHistoryItem = (item) => {
-    const copy = { ...item, id: Date.now(), date: new Date().toLocaleDateString(), job: '[Copy] ' + item.job };
+    const copy = {
+      ...item,
+      id:   Date.now(),
+      date: new Date().toLocaleDateString(),
+      job:  '[Copy] ' + item.job,
+    };
     const updated = [copy, ...history];
     setHistory(updated);
     localStorage.setItem('letterHistory', JSON.stringify(updated));
@@ -371,6 +408,8 @@ const Dashboard = () => {
     editMode, setEditMode,
     editText, setEditText,
     documentRef, downloadPDF, downloadDOCX,
+    copyLetter, // передаємо замість navigator.clipboard напряму
+    currentLetterSavedId,
     history, setHistory,
     historySearch, setHistorySearch,
     historyFilter, setHistoryFilter,
@@ -384,7 +423,6 @@ const Dashboard = () => {
     todayStr, placeholderText,
     uiLang, setUiLang,
     saveProfile,
-    // Follow-up
     onFollowUp: (entry) => { setFollowUpModalEntry(entry); setShowFollowUpModal(true); },
   };
 
@@ -408,7 +446,7 @@ const Dashboard = () => {
             <div className="flex-1 min-w-0">
               <p className="text-white font-bold text-sm">Time for a follow-up!</p>
               <p className="text-gray-400 text-xs mt-0.5 truncate">
-                You applied to <span className="text-amber-400">{followUpEntry.company}</span> 7+ days ago
+                You applied to <span className="text-amber-400">{followUpEntry.company || 'this company'}</span> 7+ days ago
               </p>
               <div className="flex gap-2 mt-3">
                 {isPro ? (

@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import HeroMockup from '../components/landing/HeroMockup';
+import FollowUpMockup from '../components/FollowUpMockup';
 import { useReviews } from '../hooks/useReviews';
 
 const styles = `
@@ -337,6 +338,8 @@ const Landing = () => {
           <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0f172a] to-transparent" />
         </div>
       </section>
+      
+      <FollowUpMockup />
 
       {/* HOW IT WORKS */}
       <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto z-10 relative">

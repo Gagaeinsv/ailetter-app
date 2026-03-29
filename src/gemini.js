@@ -1,7 +1,7 @@
 const MODELS = [
-  { id: "gemini-2.5-flash",      temp: 0.4 },  // було 0.7
-  { id: "gemini-2.5-flash-lite", temp: 0.4 },  // було 0.6
-  { id: "gemini-2.5-pro",        temp: 0.4 },  // було 0.7
+  { id: "gemini-2.5-flash",      temp: 0.7 },
+  { id: "gemini-2.5-flash-lite", temp: 0.6 },
+  { id: "gemini-2.5-pro",        temp: 0.7 },
 ];
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -86,11 +86,11 @@ Write a cover letter in ${lang} for the candidate below. The letter must feel pe
 GENDER & GRAMMAR — CRITICAL:
 ══════════════════════════════════════════
 - Infer the candidate's gender from their full name.
-- Apply correct grammatical gender agreement throughout the ENTIRE letter in ANY language that has grammatical gender.
-- This applies universally to ALL gendered languages including but not limited to: Ukrainian, Polish, Italian, German, French, Spanish, Portuguese, Czech, Slovak, Croatian, Romanian, and any other language with grammatical gender.
-- Use correct verb forms, adjective endings, past tense agreements, participles, and pronouns matching the inferred gender — according to the native grammar rules of whatever language the letter is written in.
-- If gender cannot be determined from the name — default to masculine grammatical forms.
-- This rule applies regardless of which language is selected or auto-detected.
+- Apply correct grammatical gender agreement throughout the ENTIRE letter in ANY language with grammatical gender (Ukrainian, Italian, German, French, Spanish, etc.).
+- Examples:
+  Ukrainian female: "досвідчена", "впевнена", "працювала" — not "досвідчений", "впевнений", "працював"
+  Italian female: "esperta", "motivata", "sono stata" — not "esperto", "motivato", "sono stato"
+- If gender cannot be determined — default to masculine grammatical forms.
 
 ══════════════════════════════════════════
 SALUTATION:
