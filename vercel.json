@@ -4,15 +4,16 @@
   ],
   "redirects": [
     {
+      "source": "/",
+      "destination": "https://ailetter.pro/",
+      "permanent": true,
+      "has": [{ "type": "host", "value": "myailetter.vercel.app" }]
+    },
+    {
       "source": "/(.*)",
       "destination": "https://ailetter.pro/$1",
       "permanent": true,
-      "has": [
-        {
-          "type": "host",
-          "value": "myailetter.vercel.app"
-        }
-      ]
+      "has": [{ "type": "host", "value": "myailetter.vercel.app" }]
     }
   ]
 }

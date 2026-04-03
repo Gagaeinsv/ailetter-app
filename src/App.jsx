@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import Landing from './pages/Landing';
@@ -10,7 +11,36 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LinkedInGeneratorPage from './pages/LinkedInGeneratorPage';
 
-// ── Private route — redirect to landing if not logged in ──
+
+// SEO: canonical + robots per route
+const SEO_CONFIG = {
+  '/':                 { canonical: 'https://ailetter.pro/',        index: true  },
+  '/terms':            { canonical: 'https://ailetter.pro/terms',   index: true  },
+  '/privacy':          { canonical: 'https://ailetter.pro/privacy', index: true  },
+  '/login':            { canonical: null,                            index: false },
+  '/onboarding':       { canonical: null,                            index: false },
+  '/dashboard':        { canonical: null,                            index: false },
+  '/linkedin-message': { canonical: null,                            index: false },
+};
+
+const PageSEO = () => {
+  const { pathname } = useLocation();
+  const config = SEO_CONFIG[pathname] ?? { canonical: null, index: false };
+  return (
+    <Helmet>
+      {config.index
+        ? <meta name="robots" content="index, follow" />
+        : <meta name="robots" content="noindex, nofollow" />
+      }
+      {config.canonical && (
+        <link rel="canonical" href={config.canonical} />
+      )}
+    </Helmet>
+  );
+};
+
+
+// Private route - redirect to landing if not logged in
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return (
@@ -21,7 +51,8 @@ const PrivateRoute = ({ children }) => {
   return user ? children : <Navigate replace to="/" />;
 };
 
-// ── Dashboard route — redirect new users to onboarding first ──
+
+// Dashboard route - redirect new users to onboarding first
 const DashboardRoute = () => {
   const { user, loading, isNewUser } = useAuth();
   if (loading) return (
@@ -34,25 +65,30 @@ const DashboardRoute = () => {
   return <Dashboard />;
 };
 
+
 function App() {
   return (
-    <AuthProvider>
-      <LanguageProvider>
-        <Router>
-          <Routes>
-            <Route path="/"                  element={<Landing />} />
-            <Route path="/login"             element={<Login />} />
-            <Route path="/onboarding"        element={<PrivateRoute><Onboarding /></PrivateRoute>} />
-            <Route path="/dashboard"         element={<DashboardRoute />} />
-            <Route path="/terms"             element={<TermsOfService />} />
-            <Route path="/privacy"           element={<PrivacyPolicy />} />
-            <Route path="/linkedin-message"  element={<LinkedInGeneratorPage />} />
-            <Route path="*"                  element={<Navigate to="/" />} />
-          </Routes>
-        </Router>
-      </LanguageProvider>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <Router>
+            <PageSEO />
+            <Routes>
+              <Route path="/"                  element={<Landing />} />
+              <Route path="/login"             element={<Login />} />
+              <Route path="/onboarding"        element={<PrivateRoute><Onboarding /></PrivateRoute>} />
+              <Route path="/dashboard"         element={<DashboardRoute />} />
+              <Route path="/terms"             element={<TermsOfService />} />
+              <Route path="/privacy"           element={<PrivacyPolicy />} />
+              <Route path="/linkedin-message"  element={<LinkedInGeneratorPage />} />
+              <Route path="*"                  element={<Navigate to="/" />} />
+            </Routes>
+          </Router>
+        </LanguageProvider>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
+
 
 export default App;
