@@ -2,36 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-    <!-- ❗ НЕ ставимо canonical на одну сторінку -->
-    <!-- буде динамічно з React -->
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>AIletter — AI Cover Letter Generator</title>
 
-    <meta name="description" content="Generate a personalized, ATS-ready cover letter in seconds using AI." />
+    <meta name="description" content="Generate a personalized, ATS-ready cover letter in seconds using AI. Upload your CV, paste the job description, get a tailored letter in 30 seconds." />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="AIletter" />
-    <meta property="og:description" content="AI Cover Letter Generator" />
+    <meta property="og:title" content="AIletter — AI Cover Letter Generator" />
+    <meta property="og:description" content="Get personalized cover letters in 30 seconds. Free to start, no credit card needed." />
     <meta property="og:image" content="https://ailetter.pro/android-chrome-512x512.png" />
+    <meta property="og:url" content="https://ailetter.pro/" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AIletter — AI Cover Letter Generator" />
 
     <meta name="theme-color" content="#0f172a" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
   </head>
 
   <body>
-
-    <!-- 🔥 SEO fallback (дуже важливо для Google) -->
-    <div style="display:none;">
-      <h1>LinkedIn Easy Apply Message Generator</h1>
-      <p>
-        Generate a LinkedIn Easy Apply message in seconds. Paste your job description
-        and get a ready-to-send message instantly.
-      </p>
-    </div>
-
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
