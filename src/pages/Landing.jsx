@@ -212,13 +212,11 @@ const Landing = () => {
     if (!sd) { sd = document.createElement('script'); sd.id = 'ailetter-schema'; sd.type = 'application/ld+json'; document.head.appendChild(sd); }
     sd.textContent = JSON.stringify(schema);
 
-    // Canonical для головної сторінки
     let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
+if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
+canonical.setAttribute('href', 'https://ailetter.pro/');
+
+   
     canonical.setAttribute('href', 'https://ailetter.pro/');
     const el = document.createElement('style'); el.innerText = styles; document.head.appendChild(el);
     return () => { try { document.head.removeChild(el); } catch(e) {} };
