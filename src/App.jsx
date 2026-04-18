@@ -11,16 +11,14 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LinkedInGeneratorPage from './pages/LinkedInGeneratorPage';
 
-
-// SEO: canonical + robots per route
 const SEO_CONFIG = {
-  '/':                 { canonical: 'https://ailetter.pro/',        index: true  },
-  '/terms':            { canonical: 'https://ailetter.pro/terms',   index: true  },
-  '/privacy':          { canonical: 'https://ailetter.pro/privacy', index: true  },
-  '/login':            { canonical: null,                            index: false },
-  '/onboarding':       { canonical: null,                            index: false },
-  '/dashboard':        { canonical: null,                            index: false },
-  '/linkedin-message': { canonical: null,                            index: false },
+  '/':                 { canonical: 'https://ailetter.pro/',                       index: true  },
+  '/terms':            { canonical: 'https://ailetter.pro/terms',                  index: true  },
+  '/privacy':          { canonical: 'https://ailetter.pro/privacy',                index: true  },
+  '/linkedin-message': { canonical: 'https://ailetter.pro/linkedin-message',       index: true  },
+  '/login':            { canonical: null,                                           index: false },
+  '/onboarding':       { canonical: null,                                           index: false },
+  '/dashboard':        { canonical: null,                                           index: false },
 };
 
 const PageSEO = () => {
@@ -28,19 +26,12 @@ const PageSEO = () => {
   const config = SEO_CONFIG[pathname] ?? { canonical: null, index: false };
   return (
     <Helmet>
-      {config.index
-        ? <meta name="robots" content="index, follow" />
-        : <meta name="robots" content="noindex, nofollow" />
-      }
-      {config.canonical && (
-        <link rel="canonical" href={config.canonical} />
-      )}
+      <meta name="robots" content={config.index ? 'index, follow' : 'noindex, nofollow'} />
+      {config.canonical && <link rel="canonical" href={config.canonical} />}
     </Helmet>
   );
 };
 
-
-// Private route - redirect to landing if not logged in
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return (
@@ -51,8 +42,6 @@ const PrivateRoute = ({ children }) => {
   return user ? children : <Navigate replace to="/" />;
 };
 
-
-// Dashboard route - redirect new users to onboarding first
 const DashboardRoute = () => {
   const { user, loading, isNewUser } = useAuth();
   if (loading) return (
@@ -64,7 +53,6 @@ const DashboardRoute = () => {
   if (isNewUser) return <Navigate replace to="/onboarding" />;
   return <Dashboard />;
 };
-
 
 function App() {
   return (
@@ -89,6 +77,5 @@ function App() {
     </HelmetProvider>
   );
 }
-
 
 export default App;
