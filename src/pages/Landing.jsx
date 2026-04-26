@@ -192,34 +192,36 @@ const Landing = () => {
   const { reviews: REVIEWS } = useReviews();
 
   useEffect(() => {
-    document.title = 'AIletter — AI Cover Letter Generator | Get Hired 10x Faster';
-    const setMeta = (name, content, prop = false) => {
-      const attr = prop ? 'property' : 'name';
-      let el = document.querySelector(`meta[${attr}="${name}"]`);
-      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
-      el.setAttribute('content', content);
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'AIletter',
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+      aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '312' },
     };
-    setMeta('description', 'Generate personalized, ATS-optimized cover letters in 30 seconds. Upload your CV, paste the job description, and get a tailored letter. Free to start.');
-    setMeta('keywords', 'cover letter generator, AI cover letter, job application, ATS optimized, resume, CV, супровідний лист, lettera di presentazione');
-    setMeta('robots', 'index, follow');
-    setMeta('og:title', 'AIletter — AI Cover Letter Generator', true);
-    setMeta('og:description', 'Get personalized cover letters in 30 seconds. Free to start, no credit card needed.', true);
-    setMeta('og:type', 'website', true);
-    setMeta('twitter:card', 'summary_large_image');
-    setMeta('twitter:title', 'AIletter — AI Cover Letter Generator');
-    const schema = { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'AIletter', applicationCategory: 'BusinessApplication', offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' }, aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '312' } };
     let sd = document.querySelector('#ailetter-schema');
     if (!sd) { sd = document.createElement('script'); sd.id = 'ailetter-schema'; sd.type = 'application/ld+json'; document.head.appendChild(sd); }
     sd.textContent = JSON.stringify(schema);
 
-    let canonical = document.querySelector('link[rel="canonical"]');
-if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-canonical.setAttribute('href', 'https://ailetter.pro/');
+    const faqSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: FAQS.en.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    };
+    let faqSd = document.querySelector('#ailetter-faq-schema');
+    if (!faqSd) { faqSd = document.createElement('script'); faqSd.id = 'ailetter-faq-schema'; faqSd.type = 'application/ld+json'; document.head.appendChild(faqSd); }
+    faqSd.textContent = JSON.stringify(faqSchema);
 
-   
-    canonical.setAttribute('href', 'https://ailetter.pro/');
     const el = document.createElement('style'); el.innerText = styles; document.head.appendChild(el);
-    return () => { try { document.head.removeChild(el); } catch(e) {} };
+    return () => {
+      try { document.head.removeChild(el); } catch(e) {}
+    };
   }, []);
 
   const t = k => TRANSLATIONS[uiLang]?.[k] || TRANSLATIONS.en[k] || k;

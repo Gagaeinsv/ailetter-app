@@ -3,6 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { generateLinkedInVersion } from "../gemini";
 import { Loader2, Copy, Check, Linkedin } from "lucide-react";
 
+const LINKEDIN_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'LinkedIn Easy Apply Message Generator',
+  url: 'https://ailetter.pro/linkedin-message',
+  description: 'Generate a short, professional LinkedIn Easy Apply message tailored to any job description in seconds. Free, no sign-up required.',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+};
+
 export default function LinkedInGeneratorPage() {
   const [jobDescription, setJobDescription] = useState("");
   const [result, setResult] = useState("");
@@ -12,17 +23,11 @@ export default function LinkedInGeneratorPage() {
 
   const navigate = useNavigate();
 
-  // SEO
   useEffect(() => {
-    document.title = "LinkedIn Easy Apply Message Generator | AIletter";
-
-    let link = document.querySelector("link[rel='canonical']");
-    if (!link) {
-      link = document.createElement("link");
-      link.setAttribute("rel", "canonical");
-      document.head.appendChild(link);
-    }
-    link.setAttribute("href", "https://ailetter.pro/linkedin-message");
+    let sd = document.querySelector('#ailetter-linkedin-schema');
+    if (!sd) { sd = document.createElement('script'); sd.id = 'ailetter-linkedin-schema'; sd.type = 'application/ld+json'; document.head.appendChild(sd); }
+    sd.textContent = JSON.stringify(LINKEDIN_SCHEMA);
+    return () => { try { document.head.removeChild(sd); } catch(e) {} };
   }, []);
 
   const goToMain = () => {
