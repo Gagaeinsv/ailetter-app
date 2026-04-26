@@ -12,22 +12,55 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import LinkedInGeneratorPage from './pages/LinkedInGeneratorPage';
 
 const SEO_CONFIG = {
-  '/':                 { canonical: 'https://ailetter.pro/',                       index: true  },
-  '/terms':            { canonical: 'https://ailetter.pro/terms',                  index: true  },
-  '/privacy':          { canonical: 'https://ailetter.pro/privacy',                index: true  },
-  '/linkedin-message': { canonical: 'https://ailetter.pro/linkedin-message',       index: true  },
-  '/login':            { canonical: null,                                           index: false },
-  '/onboarding':       { canonical: null,                                           index: false },
-  '/dashboard':        { canonical: null,                                           index: false },
+  '/': {
+    title:       'AIletter — AI Cover Letter Generator | Get Hired 10x Faster',
+    description: 'Generate personalized, ATS-optimized cover letters in 30 seconds. Upload your CV, paste the job description, and get a tailored letter. Free to start.',
+    canonical:   'https://ailetter.pro/',
+    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
+    index:       true,
+  },
+  '/linkedin-message': {
+    title:       'LinkedIn Easy Apply Message Generator | AIletter',
+    description: 'Generate a short, professional LinkedIn Easy Apply message tailored to any job description in seconds. Free, no sign-up required.',
+    canonical:   'https://ailetter.pro/linkedin-message',
+    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
+    index:       true,
+  },
+  '/terms': {
+    title:       'Terms of Service | AIletter',
+    description: 'Read the AIletter Terms of Service. Learn about usage rules, subscriptions, and your rights when using our AI cover letter generator.',
+    canonical:   'https://ailetter.pro/terms',
+    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
+    index:       true,
+  },
+  '/privacy': {
+    title:       'Privacy Policy | AIletter',
+    description: 'Learn how AIletter collects, uses, and protects your personal data. Our privacy policy explains your rights and how we handle your information.',
+    canonical:   'https://ailetter.pro/privacy',
+    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
+    index:       true,
+  },
+  '/login':      { title: 'Login | AIletter',      description: '', canonical: null, ogImage: null, index: false },
+  '/onboarding': { title: 'Onboarding | AIletter',  description: '', canonical: null, ogImage: null, index: false },
+  '/dashboard':  { title: 'Dashboard | AIletter',   description: '', canonical: null, ogImage: null, index: false },
 };
 
 const PageSEO = () => {
   const { pathname } = useLocation();
-  const config = SEO_CONFIG[pathname] ?? { canonical: null, index: false };
+  const config = SEO_CONFIG[pathname] ?? { title: 'AIletter', description: '', canonical: null, ogImage: null, index: false };
   return (
     <Helmet>
+      {config.title && <title>{config.title}</title>}
+      {config.description && <meta name="description" content={config.description} />}
       <meta name="robots" content={config.index ? 'index, follow' : 'noindex, nofollow'} />
       {config.canonical && <link rel="canonical" href={config.canonical} />}
+      {config.canonical && <meta property="og:url" content={config.canonical} />}
+      {config.title && <meta property="og:title" content={config.title} />}
+      {config.description && <meta property="og:description" content={config.description} />}
+      {config.ogImage && <meta property="og:image" content={config.ogImage} />}
+      {config.title && <meta name="twitter:title" content={config.title} />}
+      {config.description && <meta name="twitter:description" content={config.description} />}
+      {config.ogImage && <meta name="twitter:image" content={config.ogImage} />}
     </Helmet>
   );
 };
