@@ -276,7 +276,7 @@ const MobileDashboardTab = ({
 
           {/* ATS Score */}
           {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} />
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
           )}
 
           {/* Follow-up block (inputs view, same as desktop) */}

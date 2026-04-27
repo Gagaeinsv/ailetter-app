@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { analyzeATSScore } from '../../gemini';
 
-const ATSScore = ({ coverLetter, jobDescription, triggerKey }) => {
+const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
+  const t = (k, fb) => dict?.[k] || fb;
   const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
@@ -26,9 +27,9 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey }) => {
     : '#6366f1';
 
   const label = data
-    ? data.score >= 75 ? 'Great match'
-    : data.score >= 50 ? 'Fair match'
-    : 'Weak match'
+    ? data.score >= 75 ? t('atsGreat', 'Great match')
+    : data.score >= 50 ? t('atsFair',  'Fair match')
+    : t('atsWeak', 'Weak match')
     : '';
 
   if (!coverLetter || !jobDescription) return null;
@@ -39,10 +40,10 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-base">🎯</span>
-          <span className="text-xs font-black text-white uppercase tracking-wider">ATS Match Score</span>
+          <span className="text-xs font-black text-white uppercase tracking-wider">{t('atsTitle', 'ATS Match Score')}</span>
         </div>
         {loading && (
-          <span className="text-[10px] text-slate-500 animate-pulse">Analyzing…</span>
+          <span className="text-[10px] text-slate-500 animate-pulse">{t('atsAnalyzing', 'Analyzing…')}</span>
         )}
       </div>
 
@@ -53,7 +54,7 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey }) => {
       )}
 
       {error && (
-        <p className="text-[11px] text-slate-500">Could not analyze. Try again later.</p>
+        <p className="text-[11px] text-slate-500">{t('atsError', 'Could not analyze. Try again later.')}</p>
       )}
 
       {data && (
@@ -75,7 +76,7 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey }) => {
           <div className="space-y-2">
             {data.matched?.length > 0 && (
               <div>
-                <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">✓ Matched</span>
+                <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{t('atsMatched', '✓ Matched')}</span>
                 <div className="flex flex-wrap gap-1.5 mt-1">
                   {data.matched.map((kw, i) => (
                     <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium">
@@ -87,7 +88,7 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey }) => {
             )}
             {data.missing?.length > 0 && (
               <div>
-                <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">⚠ Missing</span>
+                <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">{t('atsMissing', '⚠ Missing')}</span>
                 <div className="flex flex-wrap gap-1.5 mt-1">
                   {data.missing.map((kw, i) => (
                     <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-medium">
