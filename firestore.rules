@@ -3,23 +3,26 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{userId} {
-      // 1. Читати може тільки сам юзер
+      // Читати може тільки сам юзер
       allow read: if request.auth != null && request.auth.uid == userId;
 
-      // 2. Писати може тільки сам юзер
+      // Писати може тільки сам юзер
       allow write: if request.auth != null
         && request.auth.uid == userId
-        // ДОЗВОЛЯЄМО писати 'plan', якщо він дорівнює 'free' (для реєстрації)
-        // АБО якщо поля 'plan' взагалі немає в запиті (для оновлення профілю)
         && (
-             request.resource.data.plan == 'free' || 
+             request.resource.data.plan == 'free' ||
              !('plan' in request.resource.data)
            )
-        // Забороняємо змінювати критичні поля Stripe
         && !('stripeCustomerId' in request.resource.data)
         && !('stripeSubscriptionId' in request.resource.data)
         && !('planExpiry' in request.resource.data)
         && !('planStarted' in request.resource.data);
+
+      // ── Letter history subcollection ──
+      match /letters/{letterId} {
+        // Тільки власник може читати та писати свої листи
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
     match /{document=**} {
