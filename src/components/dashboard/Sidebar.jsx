@@ -116,12 +116,12 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { id: 'dashboard',  label: dict.dashboard,    icon: <IconDash /> },
-    { id: 'templates',  label: 'Templates',       icon: <IconTemplate /> },
-    { id: 'history',    label: dict.history,      icon: <IconHist /> },
-    { id: 'interview',  label: 'Interview Prep',  icon: <span>🎤</span> },
-    { id: 'jobtracker', label: 'Job Tracker',     icon: <span>📋</span> },
-    { id: 'settings',   label: dict.settings,     icon: <IconSettings /> },
+    { id: 'dashboard',  label: dict.dashboard,                       icon: <IconDash /> },
+    { id: 'templates',  label: dict.templates  || 'Templates',       icon: <IconTemplate /> },
+    { id: 'history',    label: dict.history,                         icon: <IconHist /> },
+    { id: 'interview',  label: dict.interviewFull || 'Interview Prep',  icon: <span>🎤</span> },
+    { id: 'jobtracker', label: dict.jobtrackerFull || 'Job Tracker',    icon: <span>📋</span> },
+    { id: 'settings',   label: dict.settings,                        icon: <IconSettings /> },
   ];
 
   const handleNav = (id) => {
