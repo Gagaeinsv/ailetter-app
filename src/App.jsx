@@ -10,6 +10,7 @@ import Onboarding from './pages/Onboarding';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LinkedInGeneratorPage from './pages/LinkedInGeneratorPage';
+import SubjectLineGeneratorPage from './pages/SubjectLineGeneratorPage';
 
 const SEO_CONFIG = {
   '/': {
@@ -23,6 +24,13 @@ const SEO_CONFIG = {
     title:       'LinkedIn Easy Apply Message Generator | AIletter',
     description: 'Generate a short, professional LinkedIn Easy Apply message tailored to any job description in seconds. Free, no sign-up required.',
     canonical:   'https://ailetter.pro/linkedin-message',
+    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
+    index:       true,
+  },
+  '/subject-line': {
+    title:       'Email Subject Line Generator for Job Applications | AIletter',
+    description: 'Generate 3 compelling email subject lines for your job application in seconds. Formal, direct, and creative options. Free, no sign-up required.',
+    canonical:   'https://ailetter.pro/subject-line',
     ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
     index:       true,
   },
@@ -102,6 +110,7 @@ function App() {
               <Route path="/terms"             element={<TermsOfService />} />
               <Route path="/privacy"           element={<PrivacyPolicy />} />
               <Route path="/linkedin-message"  element={<LinkedInGeneratorPage />} />
+              <Route path="/subject-line"     element={<SubjectLineGeneratorPage />} />
               <Route path="*"                  element={<Navigate to="/" />} />
             </Routes>
           </Router>

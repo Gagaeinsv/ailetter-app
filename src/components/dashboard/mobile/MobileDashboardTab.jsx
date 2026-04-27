@@ -2,12 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   TemplateInfluxInline, TemplateIconicInline, TemplateEnfoldInline, TemplateModernInline,
   TemplateMinimalInline, TemplateNovaInline, TemplateBreezeInline, TemplateExecutiveInline,
-  TemplateNordicInline, TemplateBerlinInline, TemplateOnyxInline, TemplateGenericProInline
+  TemplateNordicInline, TemplateBerlinInline, TemplateOnyxInline,
+  TemplateTokyoInline, TemplateMilanoInline, TemplateSydneyInline,
+  TemplateAtlasInline, TemplatePearlInline,
+  TemplateGenericProInline
 } from '../../templates/Templates';
 import JobUrlInput from '../JobUrlInput';
 import LinkedInModal from '../LinkedInModal';
 import ReviewModal from '../ReviewModal';
 import AISuggestions from '../AISuggestions';
+import ATSScore from '../ATSScore';
 
 const IconMagic    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>;
 const IconDownload = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
@@ -36,6 +40,11 @@ const renderTemplate = (selectedTemplate, contact, text, date, documentRef) => {
       case 'nordic':    return <TemplateNordicInline    {...p} />;
       case 'berlin':    return <TemplateBerlinInline    {...p} />;
       case 'onyx':      return <TemplateOnyxInline      {...p} />;
+      case 'tokyo':     return <TemplateTokyoInline     {...p} />;
+      case 'milano':    return <TemplateMilanoInline    {...p} />;
+      case 'sydney':    return <TemplateSydneyInline    {...p} />;
+      case 'atlas':     return <TemplateAtlasInline     {...p} />;
+      case 'pearl':     return <TemplatePearlInline     {...p} />;
       default:          return <TemplateGenericProInline {...p} />;
     }
   })();
@@ -66,6 +75,7 @@ const MobileDashboardTab = ({
   const [view, setView] = useState('inputs');
   const [showLinkedIn, setShowLinkedIn] = useState(false);
   const [showReview, setShowReview] = useState(false);
+  const [atsKey, setAtsKey] = useState(0);
 
   // Typing animation
   const [displayedLetter, setDisplayedLetter] = useState('');
@@ -74,6 +84,7 @@ const MobileDashboardTab = ({
 
   useEffect(() => {
     if (!generatedLetter) { setDisplayedLetter(''); setIsTyping(false); return; }
+    setAtsKey(k => k + 1);
     if (typingRef.current) clearTimeout(typingRef.current);
     setDisplayedLetter('');
     setIsTyping(true);
@@ -217,6 +228,26 @@ const MobileDashboardTab = ({
               </select>
             </div>
           </div>
+          <div className="bg-[#1e293b] rounded-2xl border border-[#334155] p-3">
+            <span className="text-[10px] font-black text-[#94a3b8] uppercase tracking-widest block mb-2">{dict?.length || 'Letter Length'}</span>
+            <div className="flex gap-2">
+              {[
+                { val: 'Short',    label: 'Short',    hint: '~280w' },
+                { val: 'Standard', label: 'Standard', hint: '~350w' },
+                { val: 'Detailed', label: 'Detailed', hint: '~400w' },
+              ].map(({ val, label, hint }) => (
+                <button key={val} onClick={() => setSettings({ ...settings, length: val })}
+                  title={hint}
+                  className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all active:scale-95 ${
+                    (settings.length === val) || (!settings.length && val === 'Standard')
+                      ? 'bg-[#6366f1] text-white border-[#6366f1]'
+                      : 'text-[#64748b] border-[#334155]'
+                  }`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Generate button */}
           <button onClick={handleGenerateAndSwitch} disabled={loading || !jobDescription}
@@ -241,6 +272,11 @@ const MobileDashboardTab = ({
           {/* AI Suggestions */}
           {generatedLetter && jobDescription && (
             <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} />
+          )}
+
+          {/* ATS Score */}
+          {generatedLetter && jobDescription && (
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} />
           )}
 
           {/* Follow-up block (inputs view, same as desktop) */}
