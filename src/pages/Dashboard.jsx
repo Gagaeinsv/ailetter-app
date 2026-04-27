@@ -14,6 +14,8 @@ import TemplatesTab from '../components/dashboard/TemplatesTab';
 import HistoryTab from '../components/dashboard/HistoryTab';
 import SettingsTab from '../components/dashboard/SettingsTab';
 import FollowUpModal from '../components/dashboard/FollowUpModal';
+import InterviewTab from '../components/dashboard/InterviewTab';
+import JobTrackerTab from '../components/dashboard/JobTrackerTab';
 
 // Mobile Components
 import MobileNav from '../components/dashboard/mobile/MobileNav';
@@ -21,6 +23,8 @@ import MobileDashboardTab from '../components/dashboard/mobile/MobileDashboardTa
 import MobileHistoryTab from '../components/dashboard/mobile/MobileHistoryTab';
 import MobileTemplatesTab from '../components/dashboard/mobile/MobileTemplatesTab';
 import MobileSettingsTab from '../components/dashboard/mobile/MobileSettingsTab';
+import MobileInterviewTab from '../components/dashboard/mobile/MobileInterviewTab';
+import MobileJobTrackerTab from '../components/dashboard/mobile/MobileJobTrackerTab';
 
 import { TEMPLATES } from '../constants/templates';
 import translations from '../locales/translations';
@@ -492,10 +496,12 @@ const Dashboard = () => {
           <MobileNav {...props} />
           <div className="flex-1 overflow-y-auto pt-14 pb-20 landscape:pb-4 landscape:pl-14 w-full scroll-smooth">
             <div className="min-h-full">
-              {activeTab === 'dashboard' && <MobileDashboardTab {...props} />}
-              {activeTab === 'history'   && <MobileHistoryTab   {...props} />}
-              {activeTab === 'templates' && <MobileTemplatesTab {...props} />}
-              {activeTab === 'settings'  && <MobileSettingsTab  {...props} />}
+              {activeTab === 'dashboard' && <MobileDashboardTab  {...props} />}
+              {activeTab === 'history'   && <MobileHistoryTab    {...props} />}
+              {activeTab === 'templates' && <MobileTemplatesTab  {...props} />}
+              {activeTab === 'interview'   && <MobileInterviewTab   {...props} />}
+              {activeTab === 'jobtracker' && <MobileJobTrackerTab {...props} />}
+              {activeTab === 'settings'   && <MobileSettingsTab   {...props} />}
             </div>
           </div>
         </div>
@@ -507,7 +513,9 @@ const Dashboard = () => {
               {activeTab === 'dashboard' && <DashboardTab  {...props} />}
               {activeTab === 'templates' && <TemplatesTab  {...props} />}
               {activeTab === 'history'   && <HistoryTab    {...props} />}
-              {activeTab === 'settings'  && <SettingsTab   {...props} />}
+              {activeTab === 'interview'   && <InterviewTab    {...props} />}
+              {activeTab === 'jobtracker' && <JobTrackerTab  {...props} />}
+              {activeTab === 'settings'   && <SettingsTab    {...props} />}
             </div>
           </main>
         </div>

@@ -70,6 +70,15 @@ const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, l
         </svg>
         LinkedIn Generator ↗
       </a>
+      <a
+        href="/subject-line"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all text-indigo-300 hover:text-white hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20"
+      >
+        <span>✉️</span>
+        Subject Line Generator ↗
+      </a>
     </nav>
 
     {/* Bottom — без language switcher */}
@@ -107,10 +116,12 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { id: 'dashboard', label: dict.dashboard, icon: <IconDash /> },
-    { id: 'templates', label: 'Templates',    icon: <IconTemplate /> },
-    { id: 'history',   label: dict.history,   icon: <IconHist /> },
-    { id: 'settings',  label: dict.settings,  icon: <IconSettings /> },
+    { id: 'dashboard',  label: dict.dashboard,    icon: <IconDash /> },
+    { id: 'templates',  label: 'Templates',       icon: <IconTemplate /> },
+    { id: 'history',    label: dict.history,      icon: <IconHist /> },
+    { id: 'interview',  label: 'Interview Prep',  icon: <span>🎤</span> },
+    { id: 'jobtracker', label: 'Job Tracker',     icon: <span>📋</span> },
+    { id: 'settings',   label: dict.settings,     icon: <IconSettings /> },
   ];
 
   const handleNav = (id) => {
