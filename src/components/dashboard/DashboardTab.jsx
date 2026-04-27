@@ -163,7 +163,7 @@ const DashboardTab = (props) => {
 
           {/* ATS Score */}
           {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} />
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
           )}
 
           {/* ── Follow-up Block ── */}
