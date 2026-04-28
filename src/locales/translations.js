@@ -3,6 +3,7 @@
 const translations = {
     en: {
       logo: 'AIletter', dashboard: 'Dashboard', templates: 'Templates', history: 'History', settings: 'Settings', logout: 'Log out',
+      interview: 'Interview', interviewFull: 'Interview Prep', jobtracker: 'Tracker', jobtrackerFull: 'Job Tracker',
       step1: '1. Add CV & Job Vacancy', step1Desc: 'Upload your CV, paste the job description, choose language and template — then hit Generate.',
       cvSection: 'CV', cvUploadBtn: 'Upload PDF', cvOrPaste: 'Or paste CV text here...', cvHelp: "PDF, max 5MB. We'll extract your details automatically.",
       jobSection: 'Job Description', jobPlaceholder: 'Paste the job text or a link to the listing...', jobHelp: 'The more detail, the better the result.',
@@ -65,6 +66,7 @@ const translations = {
     },
     uk: {
       logo: 'AIletter', dashboard: 'Дашборд', templates: 'Шаблони', history: 'Історія', settings: 'Налаштування', logout: 'Вийти',
+      interview: 'Інтерв\'ю', interviewFull: 'Підготовка до інтерв\'ю', jobtracker: 'Трекер', jobtrackerFull: 'Трекер вакансій',
       step1: '1. Додай CV та вакансію', step1Desc: 'Завантаж CV, встав текст вакансії, обери мову та шаблон — і натисни Generate.',
       cvSection: 'CV', cvUploadBtn: 'Завантажити PDF', cvOrPaste: 'Або встав текст CV...', cvHelp: 'PDF, до 5МБ. Дані заповняться автоматично.',
       jobSection: 'Опис вакансії', jobPlaceholder: 'Встав текст або посилання на оголошення...', jobHelp: 'Чим більше деталей — тим кращий результат.',
@@ -127,6 +129,7 @@ const translations = {
     },
     it: {
       logo: 'AIletter', dashboard: 'Dashboard', templates: 'Template', history: 'Cronologia', settings: 'Impostazioni', logout: 'Esci',
+      interview: 'Colloquio', interviewFull: 'Prep. colloquio', jobtracker: 'Tracker', jobtrackerFull: 'Tracker candidature',
       step1: '1. Aggiungi CV e Offerta', step1Desc: 'Carica il CV, incolla la descrizione, scegli lingua e template — poi premi Genera.',
       cvSection: 'CV', cvUploadBtn: 'Carica PDF', cvOrPaste: 'O incolla il testo del CV...', cvHelp: 'PDF, max 5MB. I dati verranno estratti automaticamente.',
       jobSection: 'Descrizione del lavoro', jobPlaceholder: 'Incolla il testo o un link all\'annuncio...', jobHelp: 'Più dettagli fornisci, migliore sarà il risultato.',
@@ -189,6 +192,7 @@ const translations = {
     },
     de: {
       logo: 'AIletter', dashboard: 'Dashboard', templates: 'Vorlagen', history: 'Verlauf', settings: 'Einstellungen', logout: 'Abmelden',
+      interview: 'Interview', interviewFull: 'Interview-Vorbereitung', jobtracker: 'Tracker', jobtrackerFull: 'Bewerbungs-Tracker',
       step1: '1. Lebenslauf & Stelle', step1Desc: 'Lebenslauf hochladen, Stellenbeschreibung einfügen, Sprache und Vorlage wählen — dann auf Erstellen klicken.',
       cvSection: 'Lebenslauf', cvUploadBtn: 'PDF hochladen', cvOrPaste: 'Oder Lebenslauf-Text einfügen...', cvHelp: 'PDF, max. 5 MB. Daten werden automatisch extrahiert.',
       jobSection: 'Stellenbeschreibung', jobPlaceholder: 'Text oder Link zur Stellenanzeige einfügen...', jobHelp: 'Je mehr Details, desto besser das Ergebnis.',

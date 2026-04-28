@@ -50,6 +50,7 @@ const FollowUpStatus = ({ item, isPro, onFollowUp, setShowUpgrade }) => {
 
 const MobileHistoryTab = ({
   history, setHistory,
+  addEntry, removeEntry, syncStatus,
   setGeneratedLetter, setActiveTab,
   dict, showNotification,
   isPro, setShowUpgrade,
@@ -71,20 +72,23 @@ const MobileHistoryTab = ({
     return res;
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Delete?')) {
-      const updated = safeHistory.filter(h => h.id !== id);
-      setHistory(updated);
-      localStorage.setItem('letterHistory', JSON.stringify(updated));
-      if (showNotification) showNotification('Deleted');
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete?')) return;
+    if (removeEntry) {
+      await removeEntry(id);
+    } else {
+      setHistory(safeHistory.filter(h => h.id !== id));
     }
+    if (showNotification) showNotification('Deleted');
   };
 
-  const handleDuplicate = (item) => {
+  const handleDuplicate = async (item) => {
     const copy = { ...item, id: Date.now(), date: new Date().toLocaleDateString(), job: `[Copy] ${item.job}` };
-    const updated = [copy, ...safeHistory];
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    if (addEntry) {
+      await addEntry(copy);
+    } else {
+      setHistory([copy, ...safeHistory]);
+    }
     if (showNotification) showNotification('Duplicated');
   };
 
@@ -97,10 +101,15 @@ const MobileHistoryTab = ({
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="text-2xl font-black text-white">{dict?.history || 'History'}</h2>
-          <p className="text-[11px] text-slate-500 mt-0.5">{safeHistory.length} saved letters</p>
-        </div>
+      <div>
+        <h2 className="text-2xl font-black text-white">{dict?.history || 'History'}</h2>
+        <p className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1.5">
+          {safeHistory.length} saved letters
+          {syncStatus === 'syncing' && <span className="text-indigo-400 animate-pulse">☁ Syncing…</span>}
+          {syncStatus === 'synced'  && <span className="text-emerald-400">☁ Synced</span>}
+          {syncStatus === 'error'   && <span className="text-amber-400">⚠ Local</span>}
+        </p>
+      </div>
       </div>
 
       {/* Pending follow-ups banner */}

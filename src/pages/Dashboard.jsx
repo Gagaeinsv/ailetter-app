@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { generateLetter, parseCV, extractCompanyName } from '../gemini';
 import html2pdf from 'html2pdf.js';
 import { usePlan } from '../hooks/usePlan';
+import { useHistory } from '../hooks/useHistory';
 import UpgradeModal from '../components/UpgradeModal';
 import useMediaQuery from '../hooks/useMediaQuery';
 
@@ -62,8 +63,12 @@ const Dashboard = () => {
   const [editMode, setEditMode]       = useState(false);
   const [editText, setEditText]       = useState('');
 
-  // ── History State ──
-  const [history, setHistory]             = useState([]);
+  // ── History State (cloud-synced) ──
+  const {
+    history, setHistory,
+    addEntry, updateEntry, removeEntry,
+    syncStatus,
+  } = useHistory(user, isPro);
   const [historySearch, setHistorySearch] = useState('');
   const [historyFilter, setHistoryFilter] = useState('all');
 
@@ -72,7 +77,7 @@ const Dashboard = () => {
   const todayStr    = new Date().toLocaleDateString('uk-UA');
   const placeholderText = 'Your letter will appear here...';
 
-  // ── Load saved data ──
+  // ── Load saved profile ──
   useEffect(() => {
     const savedProfile = localStorage.getItem('userProfile');
     if (savedProfile) setContactInfo(JSON.parse(savedProfile));
@@ -81,9 +86,6 @@ const Dashboard = () => {
       fullName: user.displayName || '',
       email: user.email || ''
     }));
-
-    const savedHistory = localStorage.getItem('letterHistory');
-    if (savedHistory) setHistory(JSON.parse(savedHistory));
   }, [user]);
 
   // ── Скидаємо ID збереження при новій генерації ──
@@ -200,19 +202,17 @@ const Dashboard = () => {
     const entry = {
       id,
       date:          new Date().toLocaleDateString(),
-      savedAt:       id, // timestamp для follow-up відліку
+      savedAt:       id,
       job:           jobDescription.substring(0, 60) + '...',
       jobDescription,
       text:          generatedLetter,
       lang:          settings.language,
       company,
       followUpSent:  false,
-      savedVia:      trigger, // звідки збережено
+      savedVia:      trigger,
     };
 
-    const updated = [entry, ...history];
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    await addEntry(entry);
     setCurrentLetterSavedId(id);
     return id;
   };
@@ -351,32 +351,26 @@ const Dashboard = () => {
   };
 
   // ── History helpers ──
-  const markFollowUpSent = (id) => {
-    const updated = history.map(h => h.id === id ? { ...h, followUpSent: true } : h);
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+  const markFollowUpSent = async (id) => {
+    await updateEntry(id, { followUpSent: true });
     setFollowUpEntry(null);
     showNotification('Follow-up marked as sent ✓');
   };
 
-  const deleteHistoryItem = (id) => {
+  const deleteHistoryItem = async (id) => {
     if (!window.confirm('Delete this letter?')) return;
-    const updated = history.filter(h => h.id !== id);
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    await removeEntry(id);
     showNotification('Deleted');
   };
 
-  const duplicateHistoryItem = (item) => {
+  const duplicateHistoryItem = async (item) => {
     const copy = {
       ...item,
       id:   Date.now(),
       date: new Date().toLocaleDateString(),
       job:  '[Copy] ' + item.job,
     };
-    const updated = [copy, ...history];
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    await addEntry(copy);
     showNotification('Duplicated ✓');
   };
 
@@ -415,6 +409,7 @@ const Dashboard = () => {
     copyLetter, // передаємо замість navigator.clipboard напряму
     currentLetterSavedId,
     history, setHistory,
+    addEntry, updateEntry, removeEntry, syncStatus,
     historySearch, setHistorySearch,
     historyFilter, setHistoryFilter,
     handleSaveToHistory,

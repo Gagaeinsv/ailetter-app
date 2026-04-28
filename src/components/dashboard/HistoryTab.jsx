@@ -53,6 +53,7 @@ const FollowUpStatus = ({ item, isPro, onFollowUp, setShowUpgrade }) => {
 
 const HistoryTab = ({
   history, setHistory,
+  addEntry, removeEntry, syncStatus,
   setGeneratedLetter, setActiveTab,
   dict, showNotification,
   isPro, setShowUpgrade,
@@ -75,19 +76,24 @@ const HistoryTab = ({
     return res;
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm('Delete?')) return;
-    const updated = safeHistory.filter(h => h.id !== id);
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    if (removeEntry) {
+      await removeEntry(id);
+    } else {
+      const updated = safeHistory.filter(h => h.id !== id);
+      setHistory(updated);
+    }
     showNotification?.('Deleted');
   };
 
-  const handleDuplicate = (item) => {
+  const handleDuplicate = async (item) => {
     const copy = { ...item, id: Date.now(), date: new Date().toLocaleDateString(), job: `[Copy] ${item.job}` };
-    const updated = [copy, ...safeHistory];
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    if (addEntry) {
+      await addEntry(copy);
+    } else {
+      setHistory([copy, ...safeHistory]);
+    }
     showNotification?.('Duplicated ✓');
   };
 
@@ -104,7 +110,12 @@ const HistoryTab = ({
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-black text-white">{dict?.history || 'History'}</h2>
-            <p className="text-slate-500 text-sm mt-1">{safeHistory.length} saved letters</p>
+            <p className="text-slate-500 text-sm mt-1 flex items-center gap-2">
+              {safeHistory.length} saved letters
+              {syncStatus === 'syncing' && <span className="text-[10px] text-indigo-400 animate-pulse">☁ Syncing…</span>}
+              {syncStatus === 'synced'  && <span className="text-[10px] text-emerald-400">☁ Synced</span>}
+              {syncStatus === 'error'   && <span className="text-[10px] text-amber-400">⚠ Local only</span>}
+            </p>
           </div>
           {pendingFollowUps > 0 && (
             <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-4 py-2 rounded-xl">

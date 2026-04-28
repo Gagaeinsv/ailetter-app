@@ -24,8 +24,8 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
     { id: 'dashboard',  icon: <IconHome />,  label: dict?.dashboard  || 'Create'    },
     { id: 'templates',  icon: <IconGrid />,  label: dict?.templates  || 'Templates' },
     { id: 'history',    icon: <IconClock />, label: dict?.history    || 'History'   },
-    { id: 'interview',  icon: <span className="text-base leading-none">🎤</span>, label: 'Interview' },
-    { id: 'jobtracker', icon: <span className="text-base leading-none">📋</span>, label: 'Tracker'   },
+    { id: 'interview',  icon: <span className="text-base leading-none">🎤</span>, label: dict?.interview  || 'Interview' },
+    { id: 'jobtracker', icon: <span className="text-base leading-none">📋</span>, label: dict?.jobtracker || 'Tracker'   },
     { id: 'settings',   icon: <IconUser />,  label: dict?.settings   || 'Profile'   },
   ];
 
