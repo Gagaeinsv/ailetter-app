@@ -7,6 +7,18 @@
       "source": "/",
       "destination": "https://ailetter.pro/",
       "permanent": true,
+      "has": [{ "type": "host", "value": "www.ailetter.pro" }]
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://ailetter.pro/$1",
+      "permanent": true,
+      "has": [{ "type": "host", "value": "www.ailetter.pro" }]
+    },
+    {
+      "source": "/",
+      "destination": "https://ailetter.pro/",
+      "permanent": true,
       "has": [{ "type": "host", "value": "myailetter.vercel.app" }]
     },
     {
