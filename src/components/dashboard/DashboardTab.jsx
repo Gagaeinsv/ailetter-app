@@ -14,6 +14,7 @@ import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
 import ATSScore from './ATSScore';
 import ReviewModal from './ReviewModal';
+import ATSScore from './ATSScore';
 
 const DashboardTab = (props) => {
   const {
@@ -158,7 +159,10 @@ const DashboardTab = (props) => {
 
           {/* AI Suggestions */}
           {generatedLetter && jobDescription && (
-            <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} />
+            <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
+          )}
+          {generatedLetter && jobDescription && (
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
           )}
 
           {/* ATS Score */}
@@ -422,7 +426,7 @@ const DashboardTab = (props) => {
 
       {showLinkedIn && (
         <LinkedInModal onClose={() => setShowLinkedIn(false)} coverLetter={generatedLetter}
-          contactInfo={contactInfo} jobDescription={jobDescription} isPro={isPro} setShowUpgrade={setShowUpgrade} />
+          contactInfo={contactInfo} jobDescription={jobDescription} isPro={isPro} setShowUpgrade={setShowUpgrade} uiLang={uiLang} />
       )}
       {showReview && <ReviewModal onClose={() => setShowReview(false)} user={user} />}
     </div>

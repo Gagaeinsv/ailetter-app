@@ -9,6 +9,8 @@ const IconLogOut   = () => <svg width="18" height="18" viewBox="0 0 24 24" fill=
 const IconStar     = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
 const IconGlobe    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>;
 const IconLinkedin = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>;
+const IconInterview = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+const IconMail = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>;
 
 const LANGS = [
   { code: 'en', label: 'English',    flag: '🇬🇧' },
@@ -21,12 +23,12 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
   const [open, setOpen] = useState(false);
 
   const navItems = [
-    { id: 'dashboard',  icon: <IconHome />,  label: dict?.dashboard  || 'Create'    },
-    { id: 'templates',  icon: <IconGrid />,  label: dict?.templates  || 'Templates' },
-    { id: 'history',    icon: <IconClock />, label: dict?.history    || 'History'   },
-    { id: 'interview',  icon: <span className="text-base leading-none">🎤</span>, label: dict?.interview  || 'Interview' },
-    { id: 'jobtracker', icon: <span className="text-base leading-none">📋</span>, label: dict?.jobtracker || 'Tracker'   },
-    { id: 'settings',   icon: <IconUser />,  label: dict?.settings   || 'Profile'   },
+    { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Create' },
+    { id: 'templates', icon: <IconGrid />, label: dict?.templates || 'Templates' },
+    { id: 'history', icon: <IconClock />, label: dict?.history || 'History' },
+    { id: 'interview', icon: <IconInterview />, label: dict?.interview || 'Interview' },
+    { id: 'jobtracker', icon: <span className="text-base leading-none">📋</span>, label: dict?.jobtracker || 'Tracker' },
+    { id: 'settings', icon: <IconUser />, label: dict?.settings || 'Profile' },
   ];
 
   const go = (id) => { setActiveTab(id); setOpen(false); };
@@ -76,13 +78,19 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
 
               <a
                 href="/linkedin-message"
-                target="_blank"
-                rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
                 className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-left text-[#38bdf8] hover:bg-[#0077b5]/10 border border-[#0077b5]/20"
               >
                 <IconLinkedin />
-                <span className="font-bold text-sm">LinkedIn Generator ↗</span>
+                <span className="font-bold text-sm">{dict?.navLinkedIn || 'LinkedIn ↗'}</span>
+              </a>
+              <a
+                href="/subject-line"
+                onClick={() => setOpen(false)}
+                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-left text-violet-300 hover:bg-violet-500/10 border border-violet-500/20"
+              >
+                <IconMail />
+                <span className="font-bold text-sm">{dict?.navSubjectLine || 'Subject lines ↗'}</span>
               </a>
 
               <div className="pt-4 pb-1">

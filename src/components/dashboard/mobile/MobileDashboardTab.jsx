@@ -56,7 +56,8 @@ const renderTemplate = (selectedTemplate, contact, text, date, documentRef) => {
 };
 
 const MobileDashboardTab = ({
-  dict, contactInfo, setContactInfo, jobDescription, setJobDescription,
+  dict,
+  contactInfo, setContactInfo, jobDescription, setJobDescription,
   cvFile, fileName, handleFileChange, handleAutoFill, parsingCV,
   settings, setSettings, selectedTemplate, setSelectedTemplate, setActiveTab,
   handleGenerate, loading,
@@ -67,6 +68,7 @@ const MobileDashboardTab = ({
   editMode, setEditMode, editText, setEditText,
   handleSaveToHistory, showNotification,
   isPro, setShowUpgrade,
+  uiLang,
   documentRef,
   todayStr, placeholderText,
   user,
@@ -269,17 +271,18 @@ const MobileDashboardTab = ({
             </p>
           )}
 
-          {/* AI Suggestions */}
           {generatedLetter && jobDescription && (
-            <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} />
+            <AISuggestions
+              coverLetter={generatedLetter}
+              jobDescription={jobDescription}
+              dict={dict}
+            />
           )}
 
-          {/* ATS Score */}
           {generatedLetter && jobDescription && (
             <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
           )}
 
-          {/* Follow-up block (inputs view, same as desktop) */}
           {generatedLetter && (
             <div className={`rounded-xl border p-4 transition-all ${
               currentLetterSavedId
@@ -305,6 +308,7 @@ const MobileDashboardTab = ({
                   <p className="text-xs text-slate-400 mb-2">Copy or download to start the 7-day follow-up timer</p>
                   {!isPro && (
                     <button
+                      type="button"
                       onClick={() => setShowUpgrade(true)}
                       className="w-full py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 rounded-lg text-xs font-bold transition-all active:scale-95"
                     >
@@ -316,9 +320,8 @@ const MobileDashboardTab = ({
             </div>
           )}
 
-          {/* Review prompt — Pro only */}
           {generatedLetter && isPro && (
-            <button onClick={() => setShowReview(true)}
+            <button type="button" onClick={() => setShowReview(true)}
               className="w-full flex items-center justify-center gap-2 py-2.5 bg-amber-500/8 border border-amber-500/20 text-amber-400 rounded-xl text-xs font-bold transition-all active:scale-95">
               ⭐ Enjoying AIletter? Leave a review
             </button>
@@ -394,9 +397,15 @@ const MobileDashboardTab = ({
             )}
           </div>
 
-          {/* AI Suggestions */}
           {generatedLetter && jobDescription && (
-            <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} />
+            <AISuggestions
+              coverLetter={generatedLetter}
+              jobDescription={jobDescription}
+              dict={dict}
+            />
+          )}
+          {generatedLetter && jobDescription && (
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
           )}
 
           {/* Edit mode */}
@@ -468,6 +477,7 @@ const MobileDashboardTab = ({
           jobDescription={jobDescription}
           isPro={isPro}
           setShowUpgrade={setShowUpgrade}
+          uiLang={uiLang}
         />
       )}
       {showReview && <ReviewModal onClose={() => setShowReview(false)} user={user} />}

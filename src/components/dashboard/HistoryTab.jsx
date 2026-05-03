@@ -12,14 +12,14 @@ const daysSince = (savedAt) => {
 };
 
 // Статус follow-up для запису
-const FollowUpStatus = ({ item, isPro, onFollowUp, setShowUpgrade }) => {
+const FollowUpStatus = ({ item, isPro, onFollowUp, setShowUpgrade, dict }) => {
   const days = daysSince(item.savedAt);
   if (days === null) return null;
 
   if (item.followUpSent) {
     return (
       <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">
-        ✓ Follow-up sent
+        ✓ {dict?.followUpSentLabel || 'Follow-up sent'}
       </span>
     );
   }
@@ -30,14 +30,14 @@ const FollowUpStatus = ({ item, isPro, onFollowUp, setShowUpgrade }) => {
         onClick={() => onFollowUp(item)}
         className="text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-1 rounded-lg hover:bg-amber-500/20 transition-all animate-pulse"
       >
-        ⏰ Send follow-up
+        ⏰ {dict?.followUpSend || 'Send follow-up'}
       </button>
     ) : (
       <button
         onClick={() => setShowUpgrade(true)}
         className="flex items-center gap-1 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-1 rounded-lg hover:bg-amber-500/20 transition-all"
       >
-        <Lock className="w-2.5 h-2.5" /> Pro — Follow-up
+        <Lock className="w-2.5 h-2.5" /> {dict?.followUpPro || 'Pro — Follow-up'}
       </button>
     );
   }
@@ -46,19 +46,21 @@ const FollowUpStatus = ({ item, isPro, onFollowUp, setShowUpgrade }) => {
   const daysLeft = 7 - days;
   return (
     <span className="text-[10px] text-slate-500 bg-slate-800/50 px-2 py-1 rounded-lg">
-      Follow-up in {daysLeft}d
+      {(dict?.followUpIn || 'Follow-up in {n}d').replace('{n}', String(daysLeft))}
     </span>
   );
 };
 
 const HistoryTab = ({
-  history, setHistory,
-  addEntry, removeEntry, syncStatus,
+  history,
+  user,
+  syncStatus,
+  deleteHistoryItem,
+  duplicateHistoryItem,
   setGeneratedLetter, setActiveTab,
   dict, showNotification,
   isPro, setShowUpgrade,
   onFollowUp,
-  markFollowUpSent,
 }) => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
@@ -76,27 +78,6 @@ const HistoryTab = ({
     return res;
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete?')) return;
-    if (removeEntry) {
-      await removeEntry(id);
-    } else {
-      const updated = safeHistory.filter(h => h.id !== id);
-      setHistory(updated);
-    }
-    showNotification?.('Deleted');
-  };
-
-  const handleDuplicate = async (item) => {
-    const copy = { ...item, id: Date.now(), date: new Date().toLocaleDateString(), job: `[Copy] ${item.job}` };
-    if (addEntry) {
-      await addEntry(copy);
-    } else {
-      setHistory([copy, ...safeHistory]);
-    }
-    showNotification?.('Duplicated ✓');
-  };
-
   // Кількість записів що чекають follow-up
   const pendingFollowUps = safeHistory.filter(h =>
     h.savedAt && !h.followUpSent && daysSince(h.savedAt) >= 7
@@ -110,19 +91,27 @@ const HistoryTab = ({
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-black text-white">{dict?.history || 'History'}</h2>
-            <p className="text-slate-500 text-sm mt-1 flex items-center gap-2">
-              {safeHistory.length} saved letters
-              {syncStatus === 'syncing' && <span className="text-[10px] text-indigo-400 animate-pulse">☁ Syncing…</span>}
-              {syncStatus === 'synced'  && <span className="text-[10px] text-emerald-400">☁ Synced</span>}
-              {syncStatus === 'error'   && <span className="text-[10px] text-amber-400">⚠ Local only</span>}
+            <p className="text-slate-500 text-sm mt-1">
+              {safeHistory.length} {dict?.historyCountSuffix || 'saved letters'}
+              {user?.uid && syncStatus === 'syncing' && (
+                <span className="ml-2 text-indigo-400 text-xs">{dict?.historySyncing || 'Syncing…'}</span>
+              )}
+              {user?.uid && syncStatus === 'error' && (
+                <span className="ml-2 text-amber-400 text-xs">{dict?.historySyncError || 'Cloud sync issue — data kept locally'}</span>
+              )}
+              {user?.uid && syncStatus === 'synced' && (
+                <span className="ml-2 text-emerald-500/80 text-xs">{dict?.historySynced || 'Synced'}</span>
+              )}
             </p>
           </div>
           {pendingFollowUps > 0 && (
             <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-4 py-2 rounded-xl">
               <span className="text-lg">⏰</span>
               <div>
-                <p className="text-amber-400 font-bold text-sm">{pendingFollowUps} follow-up{pendingFollowUps > 1 ? 's' : ''} ready</p>
-                <p className="text-amber-500/70 text-xs">7+ days since application</p>
+                <p className="text-amber-400 font-bold text-sm">
+                  {(dict?.followUpBannerTitle || '{n} follow-ups ready').replace('{n}', String(pendingFollowUps))}
+                </p>
+                <p className="text-amber-500/70 text-xs">{dict?.followUpBannerSub || '7+ days since application'}</p>
               </div>
             </div>
           )}
@@ -135,15 +124,15 @@ const HistoryTab = ({
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search history..."
+              placeholder={dict?.historySearchPlaceholder || 'Search...'}
               className="w-full bg-[#1e293b] border border-[#334155] rounded-xl py-3 pl-10 pr-4 text-white text-sm focus:border-indigo-500 outline-none transition-colors"
             />
           </div>
           <div className="flex bg-[#1e293b] rounded-xl p-1 border border-[#334155]">
             {[
-              { key: 'all', label: 'All' },
-              { key: '7',   label: '7 Days' },
-              { key: '30',  label: '30 Days' },
+              { key: 'all', label: dict?.filterAll || 'All' },
+              { key: '7',   label: dict?.filter7 || '7d' },
+              { key: '30',  label: dict?.filter30 || '30d' },
             ].map(f => (
               <button key={f.key} onClick={() => setFilter(f.key)}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${filter === f.key ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}>
@@ -157,19 +146,19 @@ const HistoryTab = ({
         <div className="bg-[#1e293b] rounded-2xl border border-[#334155] overflow-hidden shadow-xl">
           {getFiltered().length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-slate-500 text-sm">No letters found</p>
+              <p className="text-slate-500 text-sm">{dict?.emptyHistorySearch || 'No letters found'}</p>
               {safeHistory.length === 0 && (
-                <p className="text-slate-600 text-xs mt-2">Generate and save your first letter to see it here</p>
+                <p className="text-slate-600 text-xs mt-2">{dict?.emptyHistory}</p>
               )}
             </div>
           ) : (
             <table className="w-full text-left">
               <thead className="bg-[#0f172a]/50 border-b border-[#334155]">
                 <tr>
-                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">Company / Job</th>
-                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">Saved</th>
-                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">Follow-up</th>
-                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider text-right">Actions</th>
+                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.historyColJob || 'Job'}</th>
+                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.colDate || 'Date'}</th>
+                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.historyColFollowUp || 'Follow-up'}</th>
+                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider text-right">{dict?.colActions || 'Actions'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -199,7 +188,9 @@ const HistoryTab = ({
                         <p className="text-xs text-slate-400">{item.date}</p>
                         {days !== null && (
                           <p className="text-[10px] text-slate-600 mt-0.5">
-                            {days === 0 ? 'Today' : `${days} day${days === 1 ? '' : 's'} ago`}
+                            {days === 0
+                              ? (dict?.historyToday || 'Today')
+                              : (dict?.historyDaysAgo || '{n} days ago').replace('{n}', String(days))}
                           </p>
                         )}
                         {item.lang && (
@@ -214,6 +205,7 @@ const HistoryTab = ({
                           isPro={isPro}
                           onFollowUp={onFollowUp}
                           setShowUpgrade={setShowUpgrade}
+                          dict={dict}
                         />
                       </td>
 
@@ -224,12 +216,12 @@ const HistoryTab = ({
                             onClick={() => { setGeneratedLetter(item.text); setActiveTab('dashboard'); }}
                             className="px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 rounded-lg text-xs font-bold transition-all"
                           >
-                            Load
+                            {dict?.loadLetter || 'Load'}
                           </button>
-                          <button onClick={() => handleDuplicate(item)} className="p-2 text-slate-500 hover:text-white rounded-lg transition-all">
+                          <button onClick={() => duplicateHistoryItem(item)} className="p-2 text-slate-500 hover:text-white rounded-lg transition-all">
                             <IconCopy />
                           </button>
-                          <button onClick={() => handleDelete(item.id)} className="p-2 text-slate-500 hover:text-red-400 rounded-lg transition-all">
+                          <button onClick={() => deleteHistoryItem(item.id)} className="p-2 text-slate-500 hover:text-red-400 rounded-lg transition-all">
                             <IconTrash />
                           </button>
                         </div>

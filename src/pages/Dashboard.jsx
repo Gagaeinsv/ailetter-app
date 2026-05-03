@@ -34,6 +34,14 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
   const { uiLang, setUiLang } = useLanguage();
   const { isPro, planLoading } = usePlan(user);
+  const {
+    history,
+    setHistory: replaceAllHistory,
+    addEntry,
+    updateEntry,
+    removeEntry,
+    syncStatus,
+  } = useHistory(user, isPro);
   const isMobile = useMediaQuery('(max-width: 1024px)') &&
     ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
@@ -63,12 +71,7 @@ const Dashboard = () => {
   const [editMode, setEditMode]       = useState(false);
   const [editText, setEditText]       = useState('');
 
-  // ── History State (cloud-synced) ──
-  const {
-    history, setHistory,
-    addEntry, updateEntry, removeEntry,
-    syncStatus,
-  } = useHistory(user, isPro);
+  // ── History filters (desktop history tab) ──
   const [historySearch, setHistorySearch] = useState('');
   const [historyFilter, setHistoryFilter] = useState('all');
 
@@ -408,8 +411,9 @@ const Dashboard = () => {
     documentRef, downloadPDF, downloadDOCX,
     copyLetter, // передаємо замість navigator.clipboard напряму
     currentLetterSavedId,
-    history, setHistory,
-    addEntry, updateEntry, removeEntry, syncStatus,
+    history,
+    setHistory: replaceAllHistory,
+    addEntry, updateEntry, removeEntry,
     historySearch, setHistorySearch,
     historyFilter, setHistoryFilter,
     handleSaveToHistory,
@@ -417,6 +421,7 @@ const Dashboard = () => {
     duplicateHistoryItem,
     getFilteredHistory,
     markFollowUpSent,
+    syncStatus,
     isPro, planLoading, setShowUpgrade,
     dict, showNotification,
     todayStr, placeholderText,
@@ -491,12 +496,12 @@ const Dashboard = () => {
           <MobileNav {...props} />
           <div className="flex-1 overflow-y-auto pt-14 pb-20 landscape:pb-4 landscape:pl-14 w-full scroll-smooth">
             <div className="min-h-full">
-              {activeTab === 'dashboard' && <MobileDashboardTab  {...props} />}
-              {activeTab === 'history'   && <MobileHistoryTab    {...props} />}
-              {activeTab === 'templates' && <MobileTemplatesTab  {...props} />}
-              {activeTab === 'interview'   && <MobileInterviewTab   {...props} />}
+              {activeTab === 'dashboard' && <MobileDashboardTab {...props} />}
+              {activeTab === 'history' && <MobileHistoryTab {...props} />}
+              {activeTab === 'templates' && <MobileTemplatesTab {...props} />}
+              {activeTab === 'interview' && <MobileInterviewTab {...props} />}
               {activeTab === 'jobtracker' && <MobileJobTrackerTab {...props} />}
-              {activeTab === 'settings'   && <MobileSettingsTab   {...props} />}
+              {activeTab === 'settings' && <MobileSettingsTab {...props} />}
             </div>
           </div>
         </div>
@@ -505,12 +510,12 @@ const Dashboard = () => {
           <Sidebar {...props} />
           <main className="flex-1 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-hidden relative">
-              {activeTab === 'dashboard' && <DashboardTab  {...props} />}
-              {activeTab === 'templates' && <TemplatesTab  {...props} />}
-              {activeTab === 'history'   && <HistoryTab    {...props} />}
-              {activeTab === 'interview'   && <InterviewTab    {...props} />}
-              {activeTab === 'jobtracker' && <JobTrackerTab  {...props} />}
-              {activeTab === 'settings'   && <SettingsTab    {...props} />}
+              {activeTab === 'dashboard' && <DashboardTab {...props} />}
+              {activeTab === 'templates' && <TemplatesTab {...props} />}
+              {activeTab === 'interview' && <InterviewTab {...props} />}
+              {activeTab === 'history' && <HistoryTab {...props} />}
+              {activeTab === 'jobtracker' && <JobTrackerTab {...props} />}
+              {activeTab === 'settings' && <SettingsTab {...props} />}
             </div>
           </main>
         </div>

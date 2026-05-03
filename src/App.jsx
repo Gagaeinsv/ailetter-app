@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -11,51 +11,61 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LinkedInGeneratorPage from './pages/LinkedInGeneratorPage';
 import SubjectLineGeneratorPage from './pages/SubjectLineGeneratorPage';
+import translations from './locales/translations';
 
-const SEO_CONFIG = {
-  '/': {
-    title:       'AIletter — AI Cover Letter Generator | Get Hired 10x Faster',
-    description: 'Generate personalized, ATS-optimized cover letters in 30 seconds. Upload your CV, paste the job description, and get a tailored letter. Free to start.',
-    canonical:   'https://ailetter.pro/',
-    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
-    index:       true,
-  },
-  '/linkedin-message': {
-    title:       'LinkedIn Easy Apply Message Generator | AIletter',
-    description: 'Generate a short, professional LinkedIn Easy Apply message tailored to any job description in seconds. Free, no sign-up required.',
-    canonical:   'https://ailetter.pro/linkedin-message',
-    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
-    index:       true,
-  },
-  '/subject-line': {
-    title:       'Email Subject Line Generator for Job Applications | AIletter',
-    description: 'Generate 3 compelling email subject lines for your job application in seconds. Formal, direct, and creative options. Free, no sign-up required.',
-    canonical:   'https://ailetter.pro/subject-line',
-    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
-    index:       true,
-  },
+const OG_IMAGE = 'https://ailetter.pro/android-chrome-512x512.png';
+
+const STATIC_SEO = {
   '/terms': {
-    title:       'Terms of Service | AIletter',
+    title: 'Terms of Service | AIletter',
     description: 'Read the AIletter Terms of Service. Learn about usage rules, subscriptions, and your rights when using our AI cover letter generator.',
-    canonical:   'https://ailetter.pro/terms',
-    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
-    index:       true,
+    canonical: 'https://ailetter.pro/terms',
+    ogImage: OG_IMAGE,
+    index: true,
   },
   '/privacy': {
-    title:       'Privacy Policy | AIletter',
+    title: 'Privacy Policy | AIletter',
     description: 'Learn how AIletter collects, uses, and protects your personal data. Our privacy policy explains your rights and how we handle your information.',
-    canonical:   'https://ailetter.pro/privacy',
-    ogImage:     'https://ailetter.pro/android-chrome-512x512.png',
-    index:       true,
+    canonical: 'https://ailetter.pro/privacy',
+    ogImage: OG_IMAGE,
+    index: true,
   },
-  '/login':      { title: 'Login | AIletter',      description: '', canonical: null, ogImage: null, index: false },
-  '/onboarding': { title: 'Onboarding | AIletter',  description: '', canonical: null, ogImage: null, index: false },
-  '/dashboard':  { title: 'Dashboard | AIletter',   description: '', canonical: null, ogImage: null, index: false },
+  '/login': { title: 'Login | AIletter', description: '', canonical: null, ogImage: null, index: false },
+  '/onboarding': { title: 'Onboarding | AIletter', description: '', canonical: null, ogImage: null, index: false },
+  '/dashboard': { title: 'Dashboard | AIletter', description: '', canonical: null, ogImage: null, index: false },
 };
 
 const PageSEO = () => {
   const { pathname } = useLocation();
-  const config = SEO_CONFIG[pathname] ?? { title: 'AIletter', description: '', canonical: null, ogImage: null, index: false };
+  const { uiLang } = useLanguage();
+  const dict = translations[uiLang] || translations.en;
+
+  const localized = useMemo(() => ({
+    '/': {
+      title: `${dict.seoHomeTitle} | AIletter`,
+      description: dict.seoHomeDesc,
+      canonical: 'https://ailetter.pro/',
+      ogImage: OG_IMAGE,
+      index: true,
+    },
+    '/linkedin-message': {
+      title: dict.seoLinkedInTitle,
+      description: dict.seoLinkedInDesc,
+      canonical: 'https://ailetter.pro/linkedin-message',
+      ogImage: OG_IMAGE,
+      index: true,
+    },
+    '/subject-line': {
+      title: dict.seoSubjectTitle,
+      description: dict.seoSubjectDesc,
+      canonical: 'https://ailetter.pro/subject-line',
+      ogImage: OG_IMAGE,
+      index: true,
+    },
+  }), [dict]);
+
+  const config = localized[pathname] ?? STATIC_SEO[pathname] ?? { title: 'AIletter', description: '', canonical: null, ogImage: null, index: false };
+
   return (
     <Helmet>
       {config.title && <title>{config.title}</title>}
@@ -103,15 +113,15 @@ function App() {
           <Router>
             <PageSEO />
             <Routes>
-              <Route path="/"                  element={<Landing />} />
-              <Route path="/login"             element={<Login />} />
-              <Route path="/onboarding"        element={<PrivateRoute><Onboarding /></PrivateRoute>} />
-              <Route path="/dashboard"         element={<DashboardRoute />} />
-              <Route path="/terms"             element={<TermsOfService />} />
-              <Route path="/privacy"           element={<PrivacyPolicy />} />
-              <Route path="/linkedin-message"  element={<LinkedInGeneratorPage />} />
-              <Route path="/subject-line"     element={<SubjectLineGeneratorPage />} />
-              <Route path="*"                  element={<Navigate to="/" />} />
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
+              <Route path="/dashboard" element={<DashboardRoute />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/linkedin-message" element={<LinkedInGeneratorPage />} />
+              <Route path="/subject-line" element={<SubjectLineGeneratorPage />} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>
         </LanguageProvider>

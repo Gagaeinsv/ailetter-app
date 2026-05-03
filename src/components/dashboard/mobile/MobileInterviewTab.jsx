@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { generateInterviewQA } from '../../../gemini';
 
+const UI_TO_PROMPT_LANG = { en: 'English', uk: 'Ukrainian', it: 'Italian', de: 'German' };
+
 const IconMagic   = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>;
 const IconChevron = ({ open }) => (
   <svg className={`w-4 h-4 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
@@ -24,22 +26,32 @@ const QACard = ({ item, index }) => {
   );
 };
 
-const MobileInterviewTab = ({ jobDescription, generatedLetter, contactInfo, dict }) => {
+const MobileInterviewTab = ({ jobDescription, generatedLetter, contactInfo, dict, showNotification, uiLang = 'en' }) => {
   const [qa, setQa]               = useState([]);
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState(null);
   const [generated, setGenerated] = useState(false);
 
   const t = (key, fallback) => dict?.[key] || fallback;
-  const hasContent = jobDescription || generatedLetter;
+  const hasContent = !!(jobDescription?.trim() && generatedLetter?.trim());
 
   const handleGenerate = async () => {
-    if (!hasContent) return;
+    if (!hasContent) {
+      showNotification?.(t('interviewNeedInputs', 'Add a cover letter and job description first.'));
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
-      const data = await generateInterviewQA(generatedLetter || '', jobDescription || '', contactInfo);
-      setQa(data);
+      const data = await generateInterviewQA(generatedLetter, jobDescription, contactInfo, {
+        outputLanguage: UI_TO_PROMPT_LANG[uiLang] || 'English',
+      });
+      const list = Array.isArray(data) ? data : [];
+      const normalized = list.map((row) => ({
+        q: row.q ?? row.question ?? '',
+        a: row.a ?? row.answer ?? '',
+      })).filter((row) => row.q && row.a);
+      setQa(normalized);
       setGenerated(true);
     } catch {
       setError(t('interviewError', 'AI is busy. Please try again.'));

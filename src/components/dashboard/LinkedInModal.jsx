@@ -2,13 +2,16 @@ import React, { useState, useRef } from 'react';
 import { X, Linkedin, Copy, Check, Sparkles, Lock } from 'lucide-react';
 import { generateLinkedInVersion } from '../../gemini';
 
+const UI_TO_PROMPT_LANG = { en: 'English', uk: 'Ukrainian', it: 'Italian', de: 'German' };
+
 const LinkedInModal = ({
   onClose,
   coverLetter,
   contactInfo,
   jobDescription,
   isPro,
-  setShowUpgrade
+  setShowUpgrade,
+  uiLang = 'en',
 }) => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,7 +38,8 @@ const LinkedInModal = ({
       const result = await generateLinkedInVersion(
         coverLetter,
         jobDescription,
-        contactInfo
+        contactInfo,
+        { outputLanguage: UI_TO_PROMPT_LANG[uiLang] || 'English' }
       );
 
       setMessage(result);

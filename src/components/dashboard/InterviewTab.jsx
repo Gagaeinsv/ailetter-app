@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { generateInterviewQA } from '../../gemini';
 
-const IconMagic   = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>;
+const UI_TO_PROMPT_LANG = { en: 'English', uk: 'Ukrainian', it: 'Italian', de: 'German' };
+
+const IconMagic = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z" /></svg>;
 const IconChevron = ({ open }) => (
-  <svg className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+  <svg className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>
 );
 
 const QACard = ({ item, index }) => {
   const [open, setOpen] = useState(index === 0);
   return (
     <div className={`border rounded-xl transition-all duration-200 ${open ? 'border-indigo-500/30 bg-indigo-500/5' : 'border-[#334155] bg-[#1e293b]/60'}`}>
-      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
+      <button type="button" onClick={() => setOpen((o) => !o)} className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
         <div className="flex items-center gap-3">
           <span className="shrink-0 w-6 h-6 rounded-full bg-[#6366f1]/20 border border-[#6366f1]/30 flex items-center justify-center text-[10px] font-black text-indigo-400">
             {index + 1}
@@ -28,21 +30,38 @@ const QACard = ({ item, index }) => {
   );
 };
 
-const InterviewTab = ({ jobDescription, generatedLetter, contactInfo, dict }) => {
-  const [qa, setQa]               = useState([]);
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState(null);
+const InterviewTab = ({
+  jobDescription,
+  generatedLetter,
+  contactInfo,
+  dict,
+  showNotification,
+  uiLang = 'en',
+}) => {
+  const [qa, setQa] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [generated, setGenerated] = useState(false);
 
   const t = (key, fallback) => dict?.[key] || fallback;
 
   const handleGenerate = async () => {
-    if (!jobDescription && !generatedLetter) return;
+    if (!generatedLetter?.trim() || !jobDescription?.trim()) {
+      showNotification?.(t('interviewNeedInputs', 'Add a cover letter and job description first.'));
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
-      const data = await generateInterviewQA(generatedLetter || '', jobDescription || '', contactInfo);
-      setQa(data);
+      const data = await generateInterviewQA(generatedLetter, jobDescription, contactInfo, {
+        outputLanguage: UI_TO_PROMPT_LANG[uiLang] || 'English',
+      });
+      const list = Array.isArray(data) ? data : [];
+      const normalized = list.map((row) => ({
+        q: row.q ?? row.question ?? '',
+        a: row.a ?? row.answer ?? '',
+      })).filter((row) => row.q && row.a);
+      setQa(normalized);
       setGenerated(true);
     } catch {
       setError(t('interviewError', 'AI is busy. Please try again.'));
@@ -51,13 +70,13 @@ const InterviewTab = ({ jobDescription, generatedLetter, contactInfo, dict }) =>
     }
   };
 
-  const hasContent = jobDescription || generatedLetter;
+  const hasContent = !!(jobDescription?.trim() && generatedLetter?.trim());
 
   const featureCards = [
-    { icon: '🎯', titleKey: 'interviewCard1Title', descKey: 'interviewCard1Desc', titleFb: 'Role-specific questions',    descFb: 'Based on actual requirements from the job description' },
-    { icon: '💬', titleKey: 'interviewCard2Title', descKey: 'interviewCard2Desc', titleFb: 'Behavioral questions',       descFb: 'Tell me about a time... prepared with ideal answers' },
-    { icon: '🧠', titleKey: 'interviewCard3Title', descKey: 'interviewCard3Desc', titleFb: 'Technical questions',        descFb: 'Skills and knowledge questions relevant to this role' },
-    { icon: '✍️', titleKey: 'interviewCard4Title', descKey: 'interviewCard4Desc', titleFb: 'Personalized answers',       descFb: 'Answers tailored to your background from the cover letter' },
+    { icon: '🎯', titleKey: 'interviewCard1Title', descKey: 'interviewCard1Desc', titleFb: 'Role-specific questions', descFb: 'Based on actual requirements from the job description' },
+    { icon: '💬', titleKey: 'interviewCard2Title', descKey: 'interviewCard2Desc', titleFb: 'Behavioral questions', descFb: 'Tell me about a time... prepared with ideal answers' },
+    { icon: '🧠', titleKey: 'interviewCard3Title', descKey: 'interviewCard3Desc', titleFb: 'Technical questions', descFb: 'Skills and knowledge questions relevant to this role' },
+    { icon: '✍️', titleKey: 'interviewCard4Title', descKey: 'interviewCard4Desc', titleFb: 'Personalized answers', descFb: 'Answers tailored to your background from the cover letter' },
   ];
 
   return (
@@ -81,7 +100,7 @@ const InterviewTab = ({ jobDescription, generatedLetter, contactInfo, dict }) =>
                     : t('interviewNeedContent', 'Go to the Create tab first, paste the job description, and generate a cover letter.')}
                 </p>
                 {hasContent ? (
-                  <button onClick={handleGenerate} disabled={loading}
+                  <button type="button" onClick={handleGenerate} disabled={loading}
                     className="flex items-center gap-2 px-5 py-2.5 bg-[#6366f1] hover:bg-[#5458ee] disabled:opacity-50 rounded-xl font-bold text-sm transition-all active:scale-95">
                     {loading
                       ? <><span className="animate-spin inline-block text-base">⟳</span> {t('interviewGenerating', 'Generating…')}</>
@@ -100,7 +119,7 @@ const InterviewTab = ({ jobDescription, generatedLetter, contactInfo, dict }) =>
           <>
             <div className="flex items-center justify-between mb-4">
               <p className="text-xs text-slate-500">{qa.length} {t('interviewQuestionsCount', 'questions generated')}</p>
-              <button onClick={handleGenerate} disabled={loading}
+              <button type="button" onClick={handleGenerate} disabled={loading}
                 className="text-xs text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 disabled:opacity-50">
                 <IconMagic /> {t('interviewRegenerate', 'Regenerate')}
               </button>
@@ -111,7 +130,7 @@ const InterviewTab = ({ jobDescription, generatedLetter, contactInfo, dict }) =>
             <div className="mt-8 bg-[#1e293b] border border-[#334155] rounded-2xl p-5">
               <h3 className="font-black text-white text-sm mb-3">{t('interviewTipsTitle', '💡 Interview Tips')}</h3>
               <ul className="space-y-2 text-xs text-slate-400 leading-relaxed">
-                {['interviewTip1','interviewTip2','interviewTip3','interviewTip4'].map((k, i) => (
+                {['interviewTip1', 'interviewTip2', 'interviewTip3', 'interviewTip4'].map((k, i) => (
                   <li key={i}>✓ {t(k, '')}</li>
                 ))}
               </ul>

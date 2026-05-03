@@ -259,10 +259,16 @@ ${jobDescription.substring(0, 500)}`;
   });
 };
 
-export const generateLinkedInVersion = async (coverLetter, jobDescription, contactInfo) => {
+const outputLangLine = (outputLanguage) =>
+  outputLanguage
+    ? `\nOUTPUT LANGUAGE: Write the entire message in ${outputLanguage} (not English unless that is the language requested).\n`
+    : '';
+
+export const generateLinkedInVersion = async (coverLetter, jobDescription, contactInfo, options = {}) => {
   const promptText = `
 You are an expert career coach. Write a SHORT LinkedIn Easy Apply message.
 This goes in the "Cover Letter" field when applying via LinkedIn Easy Apply.
+${outputLangLine(options.outputLanguage)}
 
 STRICT CONSTRAINTS:
 1. Length: 150–200 words. No more, no less. Count carefully.
@@ -285,6 +291,38 @@ ${jobDescription.substring(0, 800)}
 
 Full Cover Letter (context and achievements only — do NOT copy sentences):
 ${coverLetter.substring(0, 1200)}
+  `.trim();
+
+  return await tryModel(async (modelId) => {
+    return await callGemini({
+      modelId,
+      temperature: 0.65,
+      maxOutputTokens: 2048,
+      contents: [promptText],
+    });
+  });
+};
+
+export const generateLinkedInStandalone = async (jobDescription, contactInfo, options = {}) => {
+  const promptText = `
+You are an expert career coach. The candidate does NOT have a full cover letter yet.
+Write a SHORT LinkedIn Easy Apply message using ONLY the job description and any candidate hints below.
+${outputLangLine(options.outputLanguage)}
+
+STRICT CONSTRAINTS:
+1. Length: 150–200 words.
+2. Tone: Confident, direct, human. No buzzwords.
+3. FORBIDDEN first words: "With my experience", "I am writing", "Having X years", "Successfully".
+4. START with a strong hook tied to the role or company need from the JD.
+5. Highlight 2–3 strengths that match the JD (infer reasonable professional strengths — do NOT invent specific employers, degrees, or metrics).
+6. End with a clear call to action.
+7. Output ONLY the message body. No "Dear...", no subject line.
+8. Plain text only, no emoji.
+
+Candidate hints: ${contactInfo?.fullName || "not provided"}, ${contactInfo?.profession || "role not provided"}
+
+Job Description:
+${jobDescription.substring(0, 1200)}
   `.trim();
 
   return await tryModel(async (modelId) => {
@@ -370,84 +408,6 @@ ${coverLetter.substring(0, 1200)}
   });
 };
 
-export const generateInterviewQA = async (coverLetter, jobDescription, contactInfo) => {
-  const promptText = `
-You are a senior hiring manager and interview coach.
-
-Based on the job description and candidate's cover letter, generate exactly 8 likely interview questions and ideal short answers.
-
-Return ONLY valid JSON, no markdown:
-[
-  { "q": "Question text?", "a": "Ideal answer in 2-3 sentences." },
-  ...
-]
-
-Rules:
-- Mix behavioral (Tell me about a time...), situational, and role-specific questions
-- Answers should reference the candidate's background from the cover letter
-- Keep answers concise: 2-3 sentences each
-- Make questions realistic and specific to the role
-
-Candidate name: ${contactInfo?.fullName || "the candidate"}
-
-Job Description:
-${jobDescription.substring(0, 1200)}
-
-Cover Letter:
-${coverLetter.substring(0, 1000)}
-  `.trim();
-
-  return await tryModel(async (modelId) => {
-    const text = await callGemini({
-      modelId,
-      temperature: 0.6,
-      maxOutputTokens: 3000,
-      contents: [promptText],
-      responseMimeType: "application/json",
-    });
-    const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-    return JSON.parse(cleaned);
-  });
-};
-
-export const generateSubjectLines = async (coverLetter, jobDescription, contactInfo) => {
-  const promptText = `
-You are an expert at writing compelling email subject lines for job applications.
-
-Generate exactly 3 subject line options: one formal, one direct/bold, one creative.
-
-Return ONLY valid JSON, no markdown:
-[
-  { "style": "Formal",   "subject": "Application for [Role] — [Name]" },
-  { "style": "Direct",   "subject": "..." },
-  { "style": "Creative", "subject": "..." }
-]
-
-Rules:
-- Each under 60 characters
-- No generic "I am applying for..." phrasing
-- Reference the actual role from the job description
-- Use the candidate's name where appropriate
-- Make each distinctly different in style
-
-Candidate: ${contactInfo?.fullName || "the candidate"}
-Job Description: ${jobDescription.substring(0, 600)}
-Cover Letter snippet: ${coverLetter.substring(0, 400)}
-  `.trim();
-
-  return await tryModel(async (modelId) => {
-    const text = await callGemini({
-      modelId,
-      temperature: 0.7,
-      maxOutputTokens: 512,
-      contents: [promptText],
-      responseMimeType: "application/json",
-    });
-    const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-    return JSON.parse(cleaned);
-  });
-};
-
 export const generateFollowUp = async (originalLetter, jobDescription, contactInfo, daysSince) => {
   const promptText = `
 You are an expert career coach. Write a SHORT, professional follow-up email for a job application.
@@ -487,5 +447,98 @@ ${originalLetter.substring(0, 800)}
       maxOutputTokens: 512,
       contents: [promptText],
     });
+  });
+};
+
+const parseJsonFromModel = (text) => {
+  const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
+  return JSON.parse(cleaned);
+};
+
+export const generateInterviewQA = async (coverLetter, jobDescription, contactInfo, options = {}) => {
+  const name = contactInfo?.fullName || contactInfo?.name || "the candidate";
+  const langRule = options.outputLanguage
+    ? `Output language: ${options.outputLanguage} for every question and answer.`
+    : "Match the language of the job description when possible.";
+
+  const promptText = `
+You are a senior hiring manager and interview coach.
+
+Based on the job description and candidate's cover letter, generate exactly 8 likely interview questions and ideal short answers.
+
+Return ONLY valid JSON, no markdown:
+[
+  { "q": "Question text?", "a": "Ideal answer in 2-3 sentences." },
+  ...
+]
+
+Rules:
+- Mix behavioral (Tell me about a time...), situational, and role-specific questions
+- Answers should reference the candidate's background from the cover letter
+- Keep answers concise: 2-3 sentences each
+- Make questions realistic and specific to the role
+- ${langRule}
+
+Candidate name: ${name}
+
+Job Description:
+${jobDescription.substring(0, 1200)}
+
+Cover Letter:
+${coverLetter.substring(0, 1000)}
+  `.trim();
+
+  return await tryModel(async (modelId) => {
+    const text = await callGemini({
+      modelId,
+      temperature: 0.6,
+      maxOutputTokens: 3000,
+      contents: [promptText],
+      responseMimeType: "application/json",
+    });
+    return parseJsonFromModel(text);
+  });
+};
+
+export const generateSubjectLines = async (coverLetter, jobDescription, contactInfo, options = {}) => {
+  const name = contactInfo?.fullName || contactInfo?.name || "the candidate";
+  const langRule = options.outputLanguage
+    ? `Output language: ${options.outputLanguage} for all subject and style fields.`
+    : "Match the language of the job description when possible.";
+
+  const promptText = `
+You are an expert at writing compelling email subject lines for job applications.
+
+Generate exactly 3 subject line options: one formal, one direct/bold, one creative.
+
+Return ONLY valid JSON, no markdown:
+[
+  { "style": "Formal",   "subject": "..." },
+  { "style": "Direct",   "subject": "..." },
+  { "style": "Creative", "subject": "..." }
+]
+
+Rules:
+- Each under 60 characters
+- No generic "I am applying for..." phrasing
+- Reference the actual role from the job description
+- Use the candidate's name where appropriate
+- Make each distinctly different in style
+- ${langRule}
+
+Candidate: ${name}
+Job Description: ${jobDescription.substring(0, 600)}
+Cover Letter snippet: ${(coverLetter || "").substring(0, 400)}
+  `.trim();
+
+  return await tryModel(async (modelId) => {
+    const text = await callGemini({
+      modelId,
+      temperature: 0.7,
+      maxOutputTokens: 512,
+      contents: [promptText],
+      responseMimeType: "application/json",
+    });
+    return parseJsonFromModel(text);
   });
 };

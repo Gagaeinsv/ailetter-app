@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconDash, IconTemplate, IconHist, IconSettings } from '../ui/Icons';
+import { IconDash, IconTemplate, IconHist, IconSettings, IconInterview } from '../ui/Icons';
 
 const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, logout, dict, uiLang, setUiLang, navItems, handleNav, navigate }) => (
   <>
@@ -56,11 +56,8 @@ const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, l
         </button>
       ))}
 
-      {/* LinkedIn Generator */}
       <a
         href="/linkedin-message"
-        target="_blank"
-        rel="noopener noreferrer"
         className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all text-[#38bdf8] hover:text-white hover:bg-[#0077b5]/10 border border-transparent hover:border-[#0077b5]/20"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -68,16 +65,17 @@ const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, l
           <rect width="4" height="12" x="2" y="9"/>
           <circle cx="4" cy="4" r="2"/>
         </svg>
-        LinkedIn Generator ↗
+        {dict.navLinkedIn}
       </a>
       <a
         href="/subject-line"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all text-indigo-300 hover:text-white hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20"
+        className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all text-violet-300 hover:text-white hover:bg-violet-500/10 border border-transparent hover:border-violet-500/20"
       >
-        <span>✉️</span>
-        Subject Line Generator ↗
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        {dict.navSubjectLine}
       </a>
     </nav>
 
@@ -116,12 +114,12 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { id: 'dashboard',  label: dict.dashboard,                       icon: <IconDash /> },
-    { id: 'templates',  label: dict.templates  || 'Templates',       icon: <IconTemplate /> },
-    { id: 'history',    label: dict.history,                         icon: <IconHist /> },
-    { id: 'interview',  label: dict.interviewFull || 'Interview Prep',  icon: <span>🎤</span> },
-    { id: 'jobtracker', label: dict.jobtrackerFull || 'Job Tracker',    icon: <span>📋</span> },
-    { id: 'settings',   label: dict.settings,                        icon: <IconSettings /> },
+    { id: 'dashboard', label: dict.dashboard, icon: <IconDash /> },
+    { id: 'templates', label: dict.templates, icon: <IconTemplate /> },
+    { id: 'history', label: dict.history, icon: <IconHist /> },
+    { id: 'interview', label: dict.interviewFull || dict.interview, icon: <IconInterview /> },
+    { id: 'jobtracker', label: dict.jobtrackerFull || dict.jobtracker, icon: <span>📋</span> },
+    { id: 'settings', label: dict.settings, icon: <IconSettings /> },
   ];
 
   const handleNav = (id) => {

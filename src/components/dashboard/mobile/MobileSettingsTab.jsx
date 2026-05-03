@@ -220,7 +220,12 @@ const MobileSettingsTab = ({
             </Card>
             <div className="space-y-3">
               <button
-                onClick={() => { if (window.confirm('Delete all history?')) { setHistory([]); showNotification(dict.deleted || 'Deleted'); } }}
+                onClick={() => {
+                  if (window.confirm(dict.confirmDeleteAllHistory || 'Delete all history?')) {
+                    setHistory([]);
+                    showNotification(dict.deleted || 'Deleted');
+                  }
+                }}
                 className="w-full py-3.5 border border-[#334155] text-[#94a3b8] rounded-xl font-semibold text-sm transition-all active:bg-[#334155]/30"
               >
                 {dict.deleteHistory || 'Delete all history'}

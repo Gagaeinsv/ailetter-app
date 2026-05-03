@@ -205,7 +205,12 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
               </div>
               <div className="space-y-3">
                 <button
-                  onClick={() => { if (window.confirm('Delete all history?')) { setHistory([]); showNotification(dict.deleted); } }}
+                  onClick={() => {
+                    if (window.confirm(dict.confirmDeleteAllHistory || 'Delete all history?')) {
+                      setHistory([]);
+                      showNotification(dict.deleted);
+                    }
+                  }}
                   className="w-full py-3 border border-[#334155] text-[#94a3b8] hover:text-white hover:border-[#475569] rounded-xl font-semibold text-sm transition-all"
                 >
                   {dict.deleteHistory}

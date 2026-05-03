@@ -13,7 +13,7 @@ function reducer(state, action) {
   }
 }
 
-export default function AISuggestions({ coverLetter, jobDescription }) {
+export default function AISuggestions({ coverLetter, jobDescription, dict }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -34,11 +34,11 @@ export default function AISuggestions({ coverLetter, jobDescription }) {
         dispatch({ type: 'SUCCESS', payload: lines });
       })
       .catch(() => {
-        if (!cancelled) dispatch({ type: 'ERROR', payload: 'Could not load suggestions.' });
+        if (!cancelled) dispatch({ type: 'ERROR', payload: dict?.suggestionsError || 'Could not load suggestions.' });
       });
 
     return () => { cancelled = true; };
-  }, [coverLetter, jobDescription]);
+  }, [coverLetter, jobDescription, dict?.suggestionsError]);
 
   const { suggestions, loading, error } = state;
 
@@ -53,7 +53,7 @@ export default function AISuggestions({ coverLetter, jobDescription }) {
       >
         <div className="flex items-center gap-2">
           <Sparkles size={14} className="text-violet-400 shrink-0" />
-          <span className="text-sm font-semibold text-white">AI Suggestions</span>
+          <span className="text-sm font-semibold text-white">{dict?.suggestionsTitle || 'AI Suggestions'}</span>
           {!loading && suggestions.length > 0 && (
             <span className="text-[10px] font-black text-violet-400 bg-violet-400/10 px-2 py-0.5 rounded-full">
               {suggestions.length}
@@ -75,7 +75,7 @@ export default function AISuggestions({ coverLetter, jobDescription }) {
           {loading && (
             <div className="flex items-center gap-2 text-sm text-gray-400 py-2">
               <Loader2 size={13} className="animate-spin shrink-0" />
-              <span>Analyzing your letter...</span>
+              <span>{dict?.suggestionsLoading || 'Analyzing your letter...'}</span>
             </div>
           )}
 

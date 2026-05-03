@@ -3,40 +3,53 @@ import { analyzeATSScore } from '../../gemini';
 
 const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
   const t = (k, fb) => dict?.[k] || fb;
-  const [data, setData]       = useState(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!coverLetter || !jobDescription) return;
+    if (!coverLetter?.trim() || !jobDescription?.trim()) {
+      setData(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
     let cancelled = false;
     setLoading(true);
     setError(null);
     setData(null);
     analyzeATSScore(coverLetter, jobDescription)
-      .then(result => { if (!cancelled) setData(result); })
-      .catch(() => { if (!cancelled) setError(true); })
-      .finally(() => { if (!cancelled) setLoading(false); });
+      .then((result) => {
+        if (!cancelled) setData(result);
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => { cancelled = true; };
-  }, [triggerKey]);
+  }, [triggerKey, coverLetter, jobDescription]);
+
+  if (!coverLetter?.trim() || !jobDescription?.trim()) return null;
+
+  const matched = data?.matched ?? data?.matchedKeywords ?? [];
+  const missing = data?.missing ?? data?.missingKeywords ?? [];
 
   const color = data
     ? data.score >= 75 ? '#22c55e'
-    : data.score >= 50 ? '#f59e0b'
-    : '#ef4444'
+      : data.score >= 50 ? '#f59e0b'
+        : '#ef4444'
     : '#6366f1';
 
   const label = data
     ? data.score >= 75 ? t('atsGreat', 'Great match')
-    : data.score >= 50 ? t('atsFair',  'Fair match')
-    : t('atsWeak', 'Weak match')
+      : data.score >= 50 ? t('atsFair', 'Fair match')
+        : t('atsWeak', 'Weak match')
     : '';
-
-  if (!coverLetter || !jobDescription) return null;
 
   return (
     <div className="bg-[#1e293b] border border-[#334155] rounded-2xl p-4 space-y-3">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-base">🎯</span>
@@ -59,7 +72,6 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
 
       {data && (
         <>
-          {/* Score bar */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-2.5 rounded-full bg-[#334155] overflow-hidden">
               <div
@@ -72,13 +84,12 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
 
           <p className="text-[11px] font-bold" style={{ color }}>{label}</p>
 
-          {/* Keywords */}
           <div className="space-y-2">
-            {data.matched?.length > 0 && (
+            {matched.length > 0 && (
               <div>
                 <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{t('atsMatched', '✓ Matched')}</span>
                 <div className="flex flex-wrap gap-1.5 mt-1">
-                  {data.matched.map((kw, i) => (
+                  {matched.map((kw, i) => (
                     <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium">
                       {kw}
                     </span>
@@ -86,11 +97,11 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
                 </div>
               </div>
             )}
-            {data.missing?.length > 0 && (
+            {missing.length > 0 && (
               <div>
                 <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">{t('atsMissing', '⚠ Missing')}</span>
                 <div className="flex flex-wrap gap-1.5 mt-1">
-                  {data.missing.map((kw, i) => (
+                  {missing.map((kw, i) => (
                     <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-medium">
                       {kw}
                     </span>
@@ -100,10 +111,10 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
             )}
           </div>
 
-          {/* Tip */}
           {data.tip && (
             <p className="text-[11px] text-slate-400 italic border-t border-[#334155] pt-2">
-              💡 {data.tip}
+              <span className="text-indigo-400 font-medium not-italic">{t('atsTipLabel', 'Tip')}: </span>
+              {data.tip}
             </p>
           )}
         </>
