@@ -47,6 +47,23 @@ async function tryModel(modelFn) {
   throw new Error("AI is busy. Please try again.");
 }
 
+/** Try each model in order (for flaky parse / empty tokens); rotates on every failure */
+async function tryEveryModel(modelFn) {
+  let lastError = null;
+  for (let i = 0; i < MODELS.length; i++) {
+    const current = MODELS[i];
+    try {
+      console.log(`tryEveryModel using: ${current.id}`);
+      return await modelFn(current.id, current.temp);
+    } catch (error) {
+      lastError = error;
+      console.warn(`${current.id} failed (tryEveryModel):`, error);
+      if (i + 1 < MODELS.length) await sleep(600);
+    }
+  }
+  throw lastError || new Error("AI is busy. Please try again.");
+}
+
 export const generateLetter = async (userProfile, jobDescription, cvFilePart, settings) => {
   const { language, tone, length } = settings;
 
@@ -471,10 +488,10 @@ Cover Letter:
 ${coverLetter.substring(0, 1200)}
   `.trim();
 
-  return await tryModel(async (modelId) => {
+  return await tryEveryModel(async (modelId, temp) => {
     const text = await callGemini({
       modelId,
-      temperature: 0.2,
+      temperature: typeof temp === "number" ? temp : 0.2,
       maxOutputTokens: 1024,
       contents: [promptText],
     });
