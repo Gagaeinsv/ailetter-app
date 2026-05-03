@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { generateLetter, parseCV, extractCompanyName } from '../gemini';
 import html2pdf from 'html2pdf.js';
 import { usePlan } from '../hooks/usePlan';
+import { useHistory } from '../hooks/useHistory';
 import UpgradeModal from '../components/UpgradeModal';
 import useMediaQuery from '../hooks/useMediaQuery';
 
@@ -14,6 +15,7 @@ import TemplatesTab from '../components/dashboard/TemplatesTab';
 import HistoryTab from '../components/dashboard/HistoryTab';
 import SettingsTab from '../components/dashboard/SettingsTab';
 import FollowUpModal from '../components/dashboard/FollowUpModal';
+import InterviewTab from '../components/dashboard/InterviewTab';
 
 // Mobile Components
 import MobileNav from '../components/dashboard/mobile/MobileNav';
@@ -29,6 +31,14 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
   const { uiLang, setUiLang } = useLanguage();
   const { isPro, planLoading } = usePlan(user);
+  const {
+    history,
+    setHistory: replaceAllHistory,
+    addEntry,
+    updateEntry,
+    removeEntry,
+    syncStatus,
+  } = useHistory(user, isPro);
   const isMobile = useMediaQuery('(max-width: 1024px)') &&
     ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
@@ -58,8 +68,7 @@ const Dashboard = () => {
   const [editMode, setEditMode]       = useState(false);
   const [editText, setEditText]       = useState('');
 
-  // ── History State ──
-  const [history, setHistory]             = useState([]);
+  // ── History filters ──
   const [historySearch, setHistorySearch] = useState('');
   const [historyFilter, setHistoryFilter] = useState('all');
 
@@ -78,8 +87,6 @@ const Dashboard = () => {
       email: user.email || ''
     }));
 
-    const savedHistory = localStorage.getItem('letterHistory');
-    if (savedHistory) setHistory(JSON.parse(savedHistory));
   }, [user]);
 
   // ── Скидаємо ID збереження при новій генерації ──
@@ -206,9 +213,7 @@ const Dashboard = () => {
       savedVia:      trigger, // звідки збережено
     };
 
-    const updated = [entry, ...history];
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    await addEntry(entry);
     setCurrentLetterSavedId(id);
     return id;
   };
@@ -348,18 +353,14 @@ const Dashboard = () => {
 
   // ── History helpers ──
   const markFollowUpSent = (id) => {
-    const updated = history.map(h => h.id === id ? { ...h, followUpSent: true } : h);
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    updateEntry(id, { followUpSent: true });
     setFollowUpEntry(null);
     showNotification('Follow-up marked as sent ✓');
   };
 
   const deleteHistoryItem = (id) => {
     if (!window.confirm('Delete this letter?')) return;
-    const updated = history.filter(h => h.id !== id);
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    removeEntry(id);
     showNotification('Deleted');
   };
 
@@ -370,9 +371,7 @@ const Dashboard = () => {
       date: new Date().toLocaleDateString(),
       job:  '[Copy] ' + item.job,
     };
-    const updated = [copy, ...history];
-    setHistory(updated);
-    localStorage.setItem('letterHistory', JSON.stringify(updated));
+    addEntry(copy);
     showNotification('Duplicated ✓');
   };
 
@@ -410,7 +409,8 @@ const Dashboard = () => {
     documentRef, downloadPDF, downloadDOCX,
     copyLetter, // передаємо замість navigator.clipboard напряму
     currentLetterSavedId,
-    history, setHistory,
+    history,
+    setHistory: replaceAllHistory,
     historySearch, setHistorySearch,
     historyFilter, setHistoryFilter,
     handleSaveToHistory,
@@ -418,6 +418,7 @@ const Dashboard = () => {
     duplicateHistoryItem,
     getFilteredHistory,
     markFollowUpSent,
+    syncStatus,
     isPro, planLoading, setShowUpgrade,
     dict, showNotification,
     todayStr, placeholderText,
@@ -493,6 +494,7 @@ const Dashboard = () => {
           <div className="flex-1 overflow-y-auto pt-14 pb-20 landscape:pb-4 landscape:pl-14 w-full scroll-smooth">
             <div className="min-h-full">
               {activeTab === 'dashboard' && <MobileDashboardTab {...props} />}
+              {activeTab === 'interview' && <InterviewTab      {...props} />}
               {activeTab === 'history'   && <MobileHistoryTab   {...props} />}
               {activeTab === 'templates' && <MobileTemplatesTab {...props} />}
               {activeTab === 'settings'  && <MobileSettingsTab  {...props} />}
@@ -506,6 +508,7 @@ const Dashboard = () => {
             <div className="flex-1 overflow-hidden relative">
               {activeTab === 'dashboard' && <DashboardTab  {...props} />}
               {activeTab === 'templates' && <TemplatesTab  {...props} />}
+              {activeTab === 'interview' && <InterviewTab {...props} />}
               {activeTab === 'history'   && <HistoryTab    {...props} />}
               {activeTab === 'settings'  && <SettingsTab   {...props} />}
             </div>

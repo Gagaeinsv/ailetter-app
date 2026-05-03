@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import JobUrlInput from '../JobUrlInput';
 import LinkedInModal from '../LinkedInModal';
 import AISuggestions from '../AISuggestions';
+import ATSScore from '../ATSScore';
 
 const IconMagic    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>;
 const IconDownload = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
@@ -12,12 +13,14 @@ const IconLinkedin = () => <svg width="14" height="14" viewBox="0 0 24 24" fill=
 const IconX        = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 
 const MobileDashboardTab = ({
-  dict, contactInfo, jobDescription, setJobDescription,
+  dict,
+  contactInfo, jobDescription, setJobDescription,
   cvFile, fileName, handleFileChange, handleAutoFill, parsingCV,
   settings, setSettings, handleGenerate, loading,
   generatedLetter, setGeneratedLetter, downloadPDF,
   editMode, setEditMode, handleSaveToHistory, showNotification,
   isPro, setShowUpgrade,
+  uiLang,
 }) => {
   const [view, setView] = useState('inputs');
   const [showLinkedIn, setShowLinkedIn] = useState(false);
@@ -140,7 +143,11 @@ const MobileDashboardTab = ({
             <AISuggestions
               coverLetter={generatedLetter}
               jobDescription={jobDescription}
+              dict={dict}
             />
+          )}
+          {generatedLetter && jobDescription && (
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
           )}
         </div>
       )}
@@ -185,7 +192,11 @@ const MobileDashboardTab = ({
             <AISuggestions
               coverLetter={generatedLetter}
               jobDescription={jobDescription}
+              dict={dict}
             />
+          )}
+          {generatedLetter && jobDescription && (
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
           )}
 
           <div>
@@ -218,6 +229,7 @@ const MobileDashboardTab = ({
           jobDescription={jobDescription}
           isPro={isPro}
           setShowUpgrade={setShowUpgrade}
+          uiLang={uiLang}
         />
       )}
     </div>
