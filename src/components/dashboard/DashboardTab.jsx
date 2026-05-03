@@ -160,10 +160,6 @@ const DashboardTab = (props) => {
           {generatedLetter && jobDescription && (
             <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
           )}
-          {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
-          )}
-
           {/* ATS Score */}
           {generatedLetter && jobDescription && (
             <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />

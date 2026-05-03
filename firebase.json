@@ -36,6 +36,14 @@
     ],
     "rewrites": [
       {
+        "source": "/api/generate",
+        "function": "geminiGenerate"
+      },
+      {
+        "source": "/api/parse-job",
+        "function": "parseJob"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
