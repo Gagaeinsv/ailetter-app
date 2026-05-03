@@ -7,7 +7,7 @@ const labelClass = "text-xs font-semibold text-[#64748b] uppercase tracking-wide
 
 const TEMPLATE_LIST = ['Influx','Iconic','Minimal','Nova','Breeze','Enfold','Modern','Executive','Nordic','Berlin','Tokyo','Milano','Sydney','Atlas','Onyx','Pearl'];
 
-const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, settings, setSettings, showNotification, history, setHistory, isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate }) => {
+const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, settings, setSettings, showNotification, history, setHistory, clearTrackerJobs, isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate }) => {
   const [settingsTab, setSettingsTab] = useState('profile');
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError]     = useState(null);
@@ -205,6 +205,7 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
               </div>
               <div className="space-y-3">
                 <button
+                  type="button"
                   onClick={() => {
                     if (window.confirm(dict.confirmDeleteAllHistory || 'Delete all history?')) {
                       setHistory([]);
@@ -215,6 +216,20 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
                 >
                   {dict.deleteHistory}
                 </button>
+                {user?.uid && clearTrackerJobs && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm(dict.trackerClearConfirm || dict.trackerDeleteAll)) {
+                        clearTrackerJobs();
+                        showNotification(dict.deleted || 'Deleted');
+                      }
+                    }}
+                    className="w-full py-3 border border-[#334155] text-[#94a3b8] hover:text-white hover:border-[#475569] rounded-xl font-semibold text-sm transition-all"
+                  >
+                    {dict.trackerDeleteAll}
+                  </button>
+                )}
                 <button className="w-full py-3 border border-red-500/20 text-red-400 hover:bg-red-500/10 hover:border-red-500/40 rounded-xl font-semibold text-sm transition-all">
                   {dict.deleteAccount}
                 </button>
