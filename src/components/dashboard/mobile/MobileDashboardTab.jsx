@@ -285,10 +285,6 @@ const MobileDashboardTab = ({
             />
           )}
 
-          {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
-          )}
-
           {generatedLetter && (
             <div className={`rounded-xl border p-4 transition-all ${
               currentLetterSavedId

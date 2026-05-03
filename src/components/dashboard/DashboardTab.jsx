@@ -160,10 +160,6 @@ const DashboardTab = (props) => {
           {generatedLetter && jobDescription && (
             <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
           )}
-          {/* ATS Score */}
-          {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
-          )}
 
           {/* ── Follow-up Block ── */}
           {generatedLetter && (
@@ -375,8 +371,8 @@ const DashboardTab = (props) => {
           </div>
         </div>
 
-        {/* Document Preview */}
-        <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-[#0b1120] relative custom-scrollbar">
+        {/* Document Preview — flex-col stacks letter + ATS; row would push ATS sideways off-screen */}
+        <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center gap-8 bg-[#0b1120] relative custom-scrollbar">
           {editMode ? (
             <div className="flex w-full max-w-[1200px] gap-6 h-full">
               <div className="flex-1 bg-white shadow-2xl rounded-sm opacity-50 pointer-events-none h-fit scale-[0.9] origin-top">{renderTemplate()}</div>
@@ -414,6 +410,12 @@ const DashboardTab = (props) => {
                   <p className="text-slate-400 text-sm">Fill in your details on the left and click Generate to see the magic happen.</p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {generatedLetter && jobDescription?.trim() && (
+            <div className="w-full max-w-[210mm] mx-auto mt-8 shrink-0">
+              <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
             </div>
           )}
         </div>
