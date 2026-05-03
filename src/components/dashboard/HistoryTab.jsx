@@ -57,7 +57,7 @@ const HistoryTab = ({
   syncStatus,
   deleteHistoryItem,
   duplicateHistoryItem,
-  setGeneratedLetter, setActiveTab,
+  loadLetterFromHistory,
   dict, showNotification,
   isPro, setShowUpgrade,
   onFollowUp,
@@ -213,7 +213,8 @@ const HistoryTab = ({
                       <td className="p-5">
                         <div className="flex items-center justify-end gap-2">
                           <button
-                            onClick={() => { setGeneratedLetter(item.text); setActiveTab('dashboard'); }}
+                            type="button"
+                            onClick={() => loadLetterFromHistory?.(item)}
                             className="px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 rounded-lg text-xs font-bold transition-all"
                           >
                             {dict?.loadLetter || 'Load'}
