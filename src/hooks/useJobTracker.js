@@ -3,9 +3,6 @@ import {
   collection,
   doc,
   deleteDoc,
-  query,
-  orderBy,
-  limit,
   onSnapshot,
   writeBatch,
   getDocs,
@@ -112,11 +109,11 @@ export const useJobTracker = (user, isPro) => {
 
     const cap = firestoreCap(isPro);
     const appsRef = collection(db, 'users', uid, 'jobApplications');
-    const q = query(appsRef, orderBy('updatedAt', 'desc'), limit(cap));
+    /** Full subcollection subscribe — orderBy(updatedAt) omits docs without that field, breaking cross-device sync */
 
     setSyncStatus('syncing');
     const unsub = onSnapshot(
-      q,
+      appsRef,
       async (snap) => {
         const cloud = snap.docs.map((d) => jobFromFirestore(d.data(), d.id));
 
@@ -129,9 +126,7 @@ export const useJobTracker = (user, isPro) => {
           if (!byId.has(key)) byId.set(key, j);
         });
 
-        let merged = [...byId.values()].sort(
-          (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)
-        );
+        let merged = [...byId.values()].sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
         merged = merged.slice(0, cap);
         saveLocal(uid, merged);
         setJobsState(merged);
