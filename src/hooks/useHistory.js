@@ -101,20 +101,23 @@ export const useHistory = (user, isPro) => {
         });
 
         const local = loadLocal(uid);
-        const byId = new Map();
+        const sortBySaved = (a, b) => Number(b.savedAt || b.id) - Number(a.savedAt || a.id);
 
-        cloud.forEach((e) => byId.set(e.id, e));
-        local.forEach((e) => {
-          if (!byId.has(e.id)) byId.set(e.id, e);
-        });
-
-        let merged = [...byId.values()].sort((a, b) => Number(b.savedAt || b.id) - Number(a.savedAt || a.id));
-        merged = merged.slice(0, cap);
+        let merged;
+        if (cloud.length > 0) {
+          const cloudIds = new Set(cloud.map((e) => String(e.id)));
+          const localsNotInCloud = local.filter((e) => !cloudIds.has(String(e.id)));
+          merged = [...cloud, ...localsNotInCloud].sort(sortBySaved).slice(0, cap);
+        } else {
+          merged = [...local].sort(sortBySaved).slice(0, cap);
+        }
         saveLocal(uid, merged);
         setHistoryState(merged);
         setSyncStatus('synced');
 
-        if (!migratedRef.current && cloud.length === 0 && local.length > 0) {
+        const canMigrateSeed =
+          !snap.metadata.fromCache && !snap.metadata.hasPendingWrites;
+        if (!migratedRef.current && canMigrateSeed && cloud.length === 0 && local.length > 0) {
           migratedRef.current = true;
           try {
             const batch = writeBatch(db);

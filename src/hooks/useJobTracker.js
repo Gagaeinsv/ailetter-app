@@ -118,21 +118,28 @@ export const useJobTracker = (user, isPro) => {
         const cloud = snap.docs.map((d) => jobFromFirestore(d.data(), d.id));
 
         const local = loadLocal(uid);
-        const byId = new Map();
+        const sortByUpdated = (a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0);
 
-        cloud.forEach((j) => byId.set(String(j.id), j));
-        local.forEach((j) => {
-          const key = String(j.id);
-          if (!byId.has(key)) byId.set(key, j);
-        });
-
-        let merged = [...byId.values()].sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
-        merged = merged.slice(0, cap);
+        /**
+         * Prefer cloud docs when slicing to cap — old merge interleaved locals with weak
+         * timestamps so mobile-created rows dropped off the tail on desktop browsers.
+         */
+        let merged;
+        if (cloud.length > 0) {
+          const cloudIds = new Set(cloud.map((j) => String(j.id)));
+          const localsNotInCloud = local.filter((j) => !cloudIds.has(String(j.id)));
+          merged = [...cloud, ...localsNotInCloud].sort(sortByUpdated).slice(0, cap);
+        } else {
+          merged = [...local].sort(sortByUpdated).slice(0, cap);
+        }
         saveLocal(uid, merged);
         setJobsState(merged);
         setSyncStatus('synced');
 
-        if (!migratedRef.current && cloud.length === 0 && local.length > 0) {
+        // Only migrate after a server-grounded snapshot; avoid migrating on empty cache before server resolves
+        const canMigrateSeed =
+          !snap.metadata.fromCache && !snap.metadata.hasPendingWrites;
+        if (!migratedRef.current && canMigrateSeed && cloud.length === 0 && local.length > 0) {
           migratedRef.current = true;
           try {
             const batch = writeBatch(db);
