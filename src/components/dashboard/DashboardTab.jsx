@@ -14,7 +14,6 @@ import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
 import ATSScore from './ATSScore';
 import ReviewModal from './ReviewModal';
-import ATSScore from './ATSScore';
 
 const DashboardTab = (props) => {
   const {
