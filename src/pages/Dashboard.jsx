@@ -74,6 +74,9 @@ const Dashboard = () => {
   // ── History filters (desktop history tab) ──
   const [historySearch, setHistorySearch] = useState('');
   const [historyFilter, setHistoryFilter] = useState('all');
+  /** Incremented when loading a letter from history so mobile dashboard switches to the Result tab */
+  const [mobileHistoryLoadNonce, setMobileHistoryLoadNonce] = useState(0);
+  const skipNextGeneratedLetterSaveIdReset = useRef(false);
 
   const documentRef = useRef();
   const dict        = translations[uiLang] || translations.en;
@@ -91,8 +94,12 @@ const Dashboard = () => {
     }));
   }, [user]);
 
-  // ── Скидаємо ID збереження при новій генерації ──
+  // ── Скидаємо ID збереження при новій генерації (крім завантаження з історії) ──
   useEffect(() => {
+    if (skipNextGeneratedLetterSaveIdReset.current) {
+      skipNextGeneratedLetterSaveIdReset.current = false;
+      return;
+    }
     setCurrentLetterSavedId(null);
   }, [generatedLetter]);
 
@@ -228,6 +235,21 @@ const Dashboard = () => {
     } else {
       showNotification('Saved ✓ — follow-up reminder in 7 days');
     }
+  };
+
+  const loadLetterFromHistory = (item) => {
+    const text = item?.text ?? '';
+    setEditMode(false);
+    setEditText('');
+    if (item?.jobDescription) setJobDescription(item.jobDescription);
+    if (item?.lang && item.lang !== 'Auto') {
+      setSettings((prev) => ({ ...prev, language: item.lang }));
+    }
+    skipNextGeneratedLetterSaveIdReset.current = true;
+    setCurrentLetterSavedId(item?.id ?? null);
+    if (isMobile) setMobileHistoryLoadNonce((n) => n + 1);
+    setGeneratedLetter(text);
+    setActiveTab('dashboard');
   };
 
   // ── PDF ──
@@ -419,9 +441,11 @@ const Dashboard = () => {
     handleSaveToHistory,
     deleteHistoryItem,
     duplicateHistoryItem,
+    loadLetterFromHistory,
     getFilteredHistory,
     markFollowUpSent,
     syncStatus,
+    mobileHistoryLoadNonce,
     isPro, planLoading, setShowUpgrade,
     dict, showNotification,
     todayStr, placeholderText,

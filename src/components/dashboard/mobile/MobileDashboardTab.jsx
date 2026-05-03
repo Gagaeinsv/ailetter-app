@@ -73,6 +73,7 @@ const MobileDashboardTab = ({
   todayStr, placeholderText,
   user,
   TEMPLATES,
+  mobileHistoryLoadNonce = 0,
 }) => {
   const [view, setView] = useState('inputs');
   const [showLinkedIn, setShowLinkedIn] = useState(false);
@@ -104,6 +105,11 @@ const MobileDashboardTab = ({
     type();
     return () => { if (typingRef.current) clearTimeout(typingRef.current); };
   }, [generatedLetter]);
+
+  useEffect(() => {
+    if (!mobileHistoryLoadNonce || !generatedLetter) return;
+    setView('preview');
+  }, [mobileHistoryLoadNonce, generatedLetter]);
 
   const handleGenerateAndSwitch = async () => {
     setView('inputs');

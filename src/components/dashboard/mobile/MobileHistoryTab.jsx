@@ -56,8 +56,7 @@ const MobileHistoryTab = ({
   syncStatus,
   deleteHistoryItem,
   duplicateHistoryItem,
-  setGeneratedLetter,
-  setActiveTab,
+  loadLetterFromHistory,
   dict,
   isPro,
   setShowUpgrade,
@@ -198,7 +197,7 @@ const MobileHistoryTab = ({
                 <div className="flex gap-2 border-t border-[#334155] pt-3">
                   <button
                     type="button"
-                    onClick={() => { setGeneratedLetter(item.text); setActiveTab('dashboard'); }}
+                    onClick={() => loadLetterFromHistory?.(item)}
                     className="flex-1 py-2 bg-[#6366f1]/10 text-[#6366f1] rounded-lg text-xs font-bold uppercase active:scale-95 transition-all"
                   >
                     {dict?.loadLetter || 'Load'}
