@@ -22,7 +22,7 @@ const Card = ({ children }) => (
 
 const MobileSettingsTab = ({
   dict, contactInfo, setContactInfo, uiLang, setUiLang,
-  settings, setSettings, showNotification, setHistory,
+  settings, setSettings, showNotification, setHistory, clearTrackerJobs,
   isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate
 }) => {
   const [activeSection, setActiveSection] = useState('profile');
@@ -220,6 +220,7 @@ const MobileSettingsTab = ({
             </Card>
             <div className="space-y-3">
               <button
+                type="button"
                 onClick={() => {
                   if (window.confirm(dict.confirmDeleteAllHistory || 'Delete all history?')) {
                     setHistory([]);
@@ -230,6 +231,20 @@ const MobileSettingsTab = ({
               >
                 {dict.deleteHistory || 'Delete all history'}
               </button>
+              {user?.uid && clearTrackerJobs && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm(dict.trackerClearConfirm || dict.trackerDeleteAll)) {
+                      clearTrackerJobs();
+                      showNotification(dict.deleted || 'Deleted');
+                    }
+                  }}
+                  className="w-full py-3.5 border border-[#334155] text-[#94a3b8] rounded-xl font-semibold text-sm transition-all active:bg-[#334155]/30"
+                >
+                  {dict.trackerDeleteAll}
+                </button>
+              )}
               <button className="w-full py-3.5 border border-red-500/20 text-red-400 rounded-xl font-semibold text-sm transition-all active:bg-red-500/10">
                 {dict.deleteAccount || 'Delete account'}
               </button>

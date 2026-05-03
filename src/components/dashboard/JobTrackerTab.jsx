@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const getStatuses = (dict) => {
   const t = (k, fb) => dict?.[k] || fb;
@@ -10,9 +10,6 @@ const getStatuses = (dict) => {
   ];
 };
 
-const LS_KEY  = 'jobTracker';
-const loadJobs = () => { try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; } };
-const saveJobs = (jobs) => localStorage.setItem(LS_KEY, JSON.stringify(jobs));
 const daysSince = (dateStr) => {
   if (!dateStr) return null;
   return Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
@@ -120,22 +117,37 @@ const JobForm = ({ initial, onSave, onCancel, dict }) => {
   );
 };
 
-const JobTrackerTab = ({ dict }) => {
+const JobTrackerTab = ({
+  dict,
+  user,
+  trackerJobs = [],
+  trackerSyncStatus,
+  upsertTrackerJob,
+  patchTrackerJob,
+  removeTrackerJob,
+}) => {
   const t = (k, fb) => dict?.[k] || fb;
   const STATUSES = getStatuses(dict);
 
-  const [jobs, setJobs]                 = useState(loadJobs);
+  const jobs = Array.isArray(trackerJobs) ? trackerJobs : [];
   const [showForm, setShowForm]         = useState(false);
   const [editJob, setEditJob]           = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [search, setSearch]             = useState('');
 
-  useEffect(() => { saveJobs(jobs); }, [jobs]);
-
-  const addJob    = (form) => { setJobs(prev => [{ ...form, id: Date.now() }, ...prev]); setShowForm(false); };
-  const updateJob = (form) => { setJobs(prev => prev.map(j => j.id === form.id ? form : j)); setEditJob(null); };
-  const deleteJob = (id)   => { if (!window.confirm(t('trackerDeleteConfirm', 'Delete this application?'))) return; setJobs(prev => prev.filter(j => j.id !== id)); };
-  const changeStatus = (id, status) => setJobs(prev => prev.map(j => j.id === id ? { ...j, status } : j));
+  const addJob = (form) => {
+    upsertTrackerJob?.({ ...form, id: Date.now() });
+    setShowForm(false);
+  };
+  const updateJob = (form) => {
+    upsertTrackerJob?.({ ...form, id: form.id });
+    setEditJob(null);
+  };
+  const deleteJob = (id) => {
+    if (!window.confirm(t('trackerDeleteConfirm', 'Delete this application?'))) return;
+    removeTrackerJob?.(id);
+  };
+  const changeStatus = (id, status) => patchTrackerJob?.(id, { status });
 
   const filtered = jobs.filter(j => {
     const matchStatus = filterStatus === 'all' || j.status === filterStatus;
@@ -152,7 +164,18 @@ const JobTrackerTab = ({ dict }) => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-3xl font-black text-white">{t('trackerTitle', 'Job Tracker')}</h2>
-            <p className="text-slate-500 text-sm mt-1">{jobs.length} {t('trackerSubtitle', 'applications tracked')}</p>
+            <p className="text-slate-500 text-sm mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span>{jobs.length} {t('trackerSubtitle', 'applications tracked')}</span>
+              {user?.uid && trackerSyncStatus === 'syncing' && (
+                <span className="text-indigo-400 text-xs">{dict?.trackerJobsSyncing}</span>
+              )}
+              {user?.uid && trackerSyncStatus === 'error' && (
+                <span className="text-amber-400 text-xs">{dict?.trackerJobsSyncError}</span>
+              )}
+              {user?.uid && trackerSyncStatus === 'synced' && (
+                <span className="text-emerald-500/80 text-xs">{dict?.trackerJobsSynced}</span>
+              )}
+            </p>
           </div>
           <button onClick={() => { setEditJob(null); setShowForm(true); }}
             className="flex items-center gap-2 px-5 py-2.5 bg-[#6366f1] hover:bg-[#5458ee] rounded-xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-indigo-500/20">
@@ -212,7 +235,7 @@ const JobTrackerTab = ({ dict }) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(job => (
-              <JobCard key={job.id} job={job}
+              <JobCard key={String(job.id)} job={job}
                 onEdit={(j) => { setEditJob(j); setShowForm(false); }}
                 onDelete={deleteJob}
                 onStatusChange={changeStatus}

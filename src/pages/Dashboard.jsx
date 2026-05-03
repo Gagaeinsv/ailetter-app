@@ -5,6 +5,7 @@ import { generateLetter, parseCV, extractCompanyName } from '../gemini';
 import html2pdf from 'html2pdf.js';
 import { usePlan } from '../hooks/usePlan';
 import { useHistory } from '../hooks/useHistory';
+import { useJobTracker } from '../hooks/useJobTracker';
 import UpgradeModal from '../components/UpgradeModal';
 import useMediaQuery from '../hooks/useMediaQuery';
 
@@ -42,6 +43,14 @@ const Dashboard = () => {
     removeEntry,
     syncStatus,
   } = useHistory(user, isPro);
+  const {
+    trackerJobs,
+    trackerSyncStatus,
+    upsertTrackerJob,
+    patchTrackerJob,
+    removeTrackerJob,
+    clearTrackerJobs,
+  } = useJobTracker(user, isPro);
   const isMobile = useMediaQuery('(max-width: 1024px)') &&
     ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
@@ -450,6 +459,12 @@ const Dashboard = () => {
     getFilteredHistory,
     markFollowUpSent,
     syncStatus,
+    clearTrackerJobs,
+    trackerJobs,
+    trackerSyncStatus,
+    upsertTrackerJob,
+    patchTrackerJob,
+    removeTrackerJob,
     mobileHistoryLoadNonce,
     isPro, planLoading, setShowUpgrade,
     dict, showNotification,
