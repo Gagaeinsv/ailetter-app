@@ -160,14 +160,6 @@ const DashboardTab = (props) => {
           {generatedLetter && jobDescription && (
             <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
           )}
-          {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
-          )}
-
-          {/* ATS Score */}
-          {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
-          )}
 
           {/* ── Follow-up Block ── */}
           {generatedLetter && (
@@ -418,6 +410,12 @@ const DashboardTab = (props) => {
                   <p className="text-slate-400 text-sm">Fill in your details on the left and click Generate to see the magic happen.</p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {generatedLetter && jobDescription?.trim() && (
+            <div className="w-full max-w-[210mm] mx-auto mt-8 shrink-0">
+              <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
             </div>
           )}
         </div>

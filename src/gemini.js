@@ -401,6 +401,51 @@ const parseJsonFromModel = (raw) => {
   throw new Error("Could not parse JSON from AI response");
 };
 
+const normalizeATSPayload = (raw) => {
+  let score = Number(raw?.score ?? raw?.atsScore ?? raw?.matchScore);
+  if (!Number.isFinite(score)) score = 0;
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  const collectList = (...candidates) => {
+    for (const c of candidates) {
+      if (Array.isArray(c)) {
+        const out = c.map((x) => String(x ?? "").trim()).filter(Boolean);
+        if (out.length) return out;
+      }
+      if (typeof c === "string" && c.trim()) {
+        const out = c.split(/[,;/|]/).map((s) => s.trim()).filter(Boolean);
+        if (out.length) return out;
+      }
+      if (c && typeof c === "object" && !Array.isArray(c)) {
+        for (const k of ["keywords", "items", "list", "values"]) {
+          if (!Array.isArray(c[k])) continue;
+          const out = c[k].map((x) => String(x ?? "").trim()).filter(Boolean);
+          if (out.length) return out;
+        }
+      }
+    }
+    return [];
+  };
+
+  let matched = collectList(raw?.matched, raw?.matchedKeywords, raw?.found, raw?.matches);
+  let missing = collectList(raw?.missing, raw?.missingKeywords, raw?.gaps, raw?.toAdd);
+
+  matched = [...new Set(matched)].slice(0, 8);
+  missing = [...new Set(missing)].slice(0, 8);
+
+  const tipRaw = raw?.tip ?? raw?.suggestion ?? raw?.advice ?? raw?.recommendation;
+  const tip = typeof tipRaw === "string" ? tipRaw.trim().slice(0, 280) : "";
+
+  return {
+    score,
+    matchedKeywords: matched,
+    matched,
+    missingKeywords: missing,
+    missing,
+    tip,
+  };
+};
+
 export const analyzeATSScore = async (coverLetter, jobDescription) => {
   const promptText = `
 You are an ATS (Applicant Tracking System) expert. Analyze how well the cover letter matches the job description.
@@ -433,7 +478,7 @@ ${coverLetter.substring(0, 1200)}
       maxOutputTokens: 1024,
       contents: [promptText],
     });
-    return parseJsonFromModel(text);
+    return normalizeATSPayload(parseJsonFromModel(text));
   });
 };
 

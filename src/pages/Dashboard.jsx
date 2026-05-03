@@ -241,7 +241,12 @@ const Dashboard = () => {
     const text = item?.text ?? '';
     setEditMode(false);
     setEditText('');
-    if (item?.jobDescription) setJobDescription(item.jobDescription);
+    if (item?.jobDescription && String(item.jobDescription).trim()) {
+      setJobDescription(String(item.jobDescription).trim());
+    } else if (item?.job && String(item.job).trim()) {
+      const short = String(item.job).replace(/\.\.\.\s*$/, '').trim();
+      if (short) setJobDescription(short);
+    }
     if (item?.lang && item.lang !== 'Auto') {
       setSettings((prev) => ({ ...prev, language: item.lang }));
     }
