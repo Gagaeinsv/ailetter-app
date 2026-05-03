@@ -245,17 +245,16 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
   "certifications": ["Cert 1", "Cert 2"]
 }`;
 
-  return await tryModel(async (modelId) => {
+  return await tryEveryModel(async (modelId, temp) => {
     const text = await callGemini({
       modelId,
-      temperature: 0.2,
+      temperature: typeof temp === "number" ? temp : 0.2,
       maxOutputTokens: 4000,
       contents: [promptText, cvFilePart],
-      responseMimeType: "application/json",
     });
-
-    const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-    return JSON.parse(cleaned);
+    const obj = parseJsonFromModel(text);
+    if (!obj || typeof obj !== "object") throw new Error("Invalid CV parse shape");
+    return obj;
   });
 };
 

@@ -12,7 +12,6 @@ import LinkedInModal from '../LinkedInModal';
 import ReviewModal from '../ReviewModal';
 import AISuggestions from '../AISuggestions';
 import ATSScore from '../ATSScore';
-import DashboardSubjectLines from '../DashboardSubjectLines';
 
 const IconMagic    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>;
 const IconDownload = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
@@ -152,14 +151,6 @@ const MobileDashboardTab = ({
       {generatedLetter && jobDescription && (
         <div className="px-4 pb-4 space-y-4 border-b border-[#1e293b] bg-[#0f172a]">
           <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
-          <DashboardSubjectLines
-            coverLetter={generatedLetter}
-            jobDescription={jobDescription}
-            contactInfo={contactInfo}
-            uiLang={uiLang}
-            dict={dict}
-            triggerKey={atsKey}
-          />
           <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
         </div>
       )}
