@@ -13,7 +13,6 @@ import LinkedInModal from './LinkedInModal';
 import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
 import ATSScore from './ATSScore';
-import DashboardSubjectLines from './DashboardSubjectLines';
 import ReviewModal from './ReviewModal';
 
 const DashboardTab = (props) => {
@@ -162,16 +161,6 @@ const DashboardTab = (props) => {
             <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
           )}
 
-          {generatedLetter && jobDescription && (
-            <DashboardSubjectLines
-              coverLetter={generatedLetter}
-              jobDescription={jobDescription}
-              contactInfo={contactInfo}
-              uiLang={uiLang}
-              dict={dict}
-              triggerKey={atsKey}
-            />
-          )}
           {generatedLetter && jobDescription && (
             <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
           )}
