@@ -4,9 +4,6 @@ import {
   doc,
   setDoc,
   deleteDoc,
-  query,
-  orderBy,
-  limit,
   onSnapshot,
   writeBatch,
   getDocs,
@@ -73,20 +70,26 @@ export const useHistory = (user, isPro) => {
 
     const cap = firestoreLimit(isPro);
     const lettersRef = collection(db, 'users', uid, 'letters');
-    const q = query(lettersRef, orderBy('savedAt', 'desc'), limit(cap));
+    /** No server orderBy: older docs may lack savedAt/indexed fields and would be excluded from ordered queries */
 
     setSyncStatus('syncing');
     const unsub = onSnapshot(
-      q,
+      lettersRef,
       async (snap) => {
         const cloud = snap.docs.map((d) => {
           const data = d.data();
           const rawId = data.id ?? d.id;
           const id = typeof rawId === 'number' ? rawId : Number(rawId) || rawId;
+          const savedAt =
+            typeof data.savedAt === 'number'
+              ? data.savedAt
+              : typeof id === 'number'
+                ? id
+                : Date.now();
           return {
             id,
             date: data.date ?? '',
-            savedAt: data.savedAt ?? data.id ?? Date.now(),
+            savedAt,
             job: data.job ?? '',
             jobDescription: data.jobDescription ?? '',
             text: data.text ?? '',
@@ -105,7 +108,7 @@ export const useHistory = (user, isPro) => {
           if (!byId.has(e.id)) byId.set(e.id, e);
         });
 
-        let merged = [...byId.values()].sort((a, b) => (b.savedAt || b.id) - (a.savedAt || a.id));
+        let merged = [...byId.values()].sort((a, b) => Number(b.savedAt || b.id) - Number(a.savedAt || a.id));
         merged = merged.slice(0, cap);
         saveLocal(uid, merged);
         setHistoryState(merged);
