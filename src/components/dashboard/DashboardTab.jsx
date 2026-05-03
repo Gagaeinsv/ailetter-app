@@ -371,8 +371,8 @@ const DashboardTab = (props) => {
           </div>
         </div>
 
-        {/* Document Preview */}
-        <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-[#0b1120] relative custom-scrollbar">
+        {/* Document Preview — flex-col stacks letter + ATS; row would push ATS sideways off-screen */}
+        <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center gap-8 bg-[#0b1120] relative custom-scrollbar">
           {editMode ? (
             <div className="flex w-full max-w-[1200px] gap-6 h-full">
               <div className="flex-1 bg-white shadow-2xl rounded-sm opacity-50 pointer-events-none h-fit scale-[0.9] origin-top">{renderTemplate()}</div>
