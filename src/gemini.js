@@ -370,6 +370,37 @@ ${coverLetter.substring(0, 1200)}
   });
 };
 
+/** Parse JSON from model plain text — avoid responseMimeType (same pipeline as letter/LinkedIn). */
+const parseJsonFromModel = (raw) => {
+  if (!raw || typeof raw !== "string") {
+    throw new Error("Empty response from AI");
+  }
+  const cleanedOuter = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
+  const tryParse = (s) => {
+    try {
+      return JSON.parse(s);
+    } catch {
+      return null;
+    }
+  };
+  let out = tryParse(cleanedOuter);
+  if (out !== null) return out;
+  const cleaned = cleanedOuter;
+  const objStart = cleaned.indexOf("{");
+  const arrStart = cleaned.indexOf("[");
+  if (arrStart !== -1 && (objStart === -1 || arrStart < objStart)) {
+    const end = cleaned.lastIndexOf("]");
+    if (end > arrStart) out = tryParse(cleaned.slice(arrStart, end + 1));
+    if (out !== null) return out;
+  }
+  if (objStart !== -1) {
+    const end = cleaned.lastIndexOf("}");
+    if (end > objStart) out = tryParse(cleaned.slice(objStart, end + 1));
+    if (out !== null) return out;
+  }
+  throw new Error("Could not parse JSON from AI response");
+};
+
 export const analyzeATSScore = async (coverLetter, jobDescription) => {
   const promptText = `
 You are an ATS (Applicant Tracking System) expert. Analyze how well the cover letter matches the job description.
@@ -399,12 +430,10 @@ ${coverLetter.substring(0, 1200)}
     const text = await callGemini({
       modelId,
       temperature: 0.2,
-      maxOutputTokens: 512,
+      maxOutputTokens: 1024,
       contents: [promptText],
-      responseMimeType: "application/json",
     });
-    const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-    return JSON.parse(cleaned);
+    return parseJsonFromModel(text);
   });
 };
 
@@ -450,11 +479,6 @@ ${originalLetter.substring(0, 800)}
   });
 };
 
-const parseJsonFromModel = (text) => {
-  const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-  return JSON.parse(cleaned);
-};
-
 export const generateInterviewQA = async (coverLetter, jobDescription, contactInfo, options = {}) => {
   const name = contactInfo?.fullName || contactInfo?.name || "the candidate";
   const langRule = options.outputLanguage
@@ -494,7 +518,6 @@ ${coverLetter.substring(0, 1000)}
       temperature: 0.6,
       maxOutputTokens: 3000,
       contents: [promptText],
-      responseMimeType: "application/json",
     });
     return parseJsonFromModel(text);
   });
@@ -535,9 +558,8 @@ Cover Letter snippet: ${(coverLetter || "").substring(0, 400)}
     const text = await callGemini({
       modelId,
       temperature: 0.7,
-      maxOutputTokens: 512,
+      maxOutputTokens: 1024,
       contents: [promptText],
-      responseMimeType: "application/json",
     });
     return parseJsonFromModel(text);
   });
