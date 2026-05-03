@@ -16,6 +16,7 @@ import HistoryTab from '../components/dashboard/HistoryTab';
 import SettingsTab from '../components/dashboard/SettingsTab';
 import FollowUpModal from '../components/dashboard/FollowUpModal';
 import InterviewTab from '../components/dashboard/InterviewTab';
+import JobTrackerTab from '../components/dashboard/JobTrackerTab';
 
 // Mobile Components
 import MobileNav from '../components/dashboard/mobile/MobileNav';
@@ -23,6 +24,8 @@ import MobileDashboardTab from '../components/dashboard/mobile/MobileDashboardTa
 import MobileHistoryTab from '../components/dashboard/mobile/MobileHistoryTab';
 import MobileTemplatesTab from '../components/dashboard/mobile/MobileTemplatesTab';
 import MobileSettingsTab from '../components/dashboard/mobile/MobileSettingsTab';
+import MobileInterviewTab from '../components/dashboard/mobile/MobileInterviewTab';
+import MobileJobTrackerTab from '../components/dashboard/mobile/MobileJobTrackerTab';
 
 import { TEMPLATES } from '../constants/templates';
 import translations from '../locales/translations';
@@ -68,7 +71,7 @@ const Dashboard = () => {
   const [editMode, setEditMode]       = useState(false);
   const [editText, setEditText]       = useState('');
 
-  // ── History filters ──
+  // ── History filters (desktop history tab) ──
   const [historySearch, setHistorySearch] = useState('');
   const [historyFilter, setHistoryFilter] = useState('all');
 
@@ -77,7 +80,7 @@ const Dashboard = () => {
   const todayStr    = new Date().toLocaleDateString('uk-UA');
   const placeholderText = 'Your letter will appear here...';
 
-  // ── Load saved data ──
+  // ── Load saved profile ──
   useEffect(() => {
     const savedProfile = localStorage.getItem('userProfile');
     if (savedProfile) setContactInfo(JSON.parse(savedProfile));
@@ -86,7 +89,6 @@ const Dashboard = () => {
       fullName: user.displayName || '',
       email: user.email || ''
     }));
-
   }, [user]);
 
   // ── Скидаємо ID збереження при новій генерації ──
@@ -203,14 +205,14 @@ const Dashboard = () => {
     const entry = {
       id,
       date:          new Date().toLocaleDateString(),
-      savedAt:       id, // timestamp для follow-up відліку
+      savedAt:       id,
       job:           jobDescription.substring(0, 60) + '...',
       jobDescription,
       text:          generatedLetter,
       lang:          settings.language,
       company,
       followUpSent:  false,
-      savedVia:      trigger, // звідки збережено
+      savedVia:      trigger,
     };
 
     await addEntry(entry);
@@ -352,26 +354,26 @@ const Dashboard = () => {
   };
 
   // ── History helpers ──
-  const markFollowUpSent = (id) => {
-    updateEntry(id, { followUpSent: true });
+  const markFollowUpSent = async (id) => {
+    await updateEntry(id, { followUpSent: true });
     setFollowUpEntry(null);
     showNotification('Follow-up marked as sent ✓');
   };
 
-  const deleteHistoryItem = (id) => {
+  const deleteHistoryItem = async (id) => {
     if (!window.confirm('Delete this letter?')) return;
-    removeEntry(id);
+    await removeEntry(id);
     showNotification('Deleted');
   };
 
-  const duplicateHistoryItem = (item) => {
+  const duplicateHistoryItem = async (item) => {
     const copy = {
       ...item,
       id:   Date.now(),
       date: new Date().toLocaleDateString(),
       job:  '[Copy] ' + item.job,
     };
-    addEntry(copy);
+    await addEntry(copy);
     showNotification('Duplicated ✓');
   };
 
@@ -411,6 +413,7 @@ const Dashboard = () => {
     currentLetterSavedId,
     history,
     setHistory: replaceAllHistory,
+    addEntry, updateEntry, removeEntry,
     historySearch, setHistorySearch,
     historyFilter, setHistoryFilter,
     handleSaveToHistory,
@@ -494,10 +497,11 @@ const Dashboard = () => {
           <div className="flex-1 overflow-y-auto pt-14 pb-20 landscape:pb-4 landscape:pl-14 w-full scroll-smooth">
             <div className="min-h-full">
               {activeTab === 'dashboard' && <MobileDashboardTab {...props} />}
-              {activeTab === 'interview' && <InterviewTab      {...props} />}
-              {activeTab === 'history'   && <MobileHistoryTab   {...props} />}
+              {activeTab === 'history' && <MobileHistoryTab {...props} />}
               {activeTab === 'templates' && <MobileTemplatesTab {...props} />}
-              {activeTab === 'settings'  && <MobileSettingsTab  {...props} />}
+              {activeTab === 'interview' && <MobileInterviewTab {...props} />}
+              {activeTab === 'jobtracker' && <MobileJobTrackerTab {...props} />}
+              {activeTab === 'settings' && <MobileSettingsTab {...props} />}
             </div>
           </div>
         </div>
@@ -506,11 +510,12 @@ const Dashboard = () => {
           <Sidebar {...props} />
           <main className="flex-1 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-hidden relative">
-              {activeTab === 'dashboard' && <DashboardTab  {...props} />}
-              {activeTab === 'templates' && <TemplatesTab  {...props} />}
+              {activeTab === 'dashboard' && <DashboardTab {...props} />}
+              {activeTab === 'templates' && <TemplatesTab {...props} />}
               {activeTab === 'interview' && <InterviewTab {...props} />}
-              {activeTab === 'history'   && <HistoryTab    {...props} />}
-              {activeTab === 'settings'  && <SettingsTab   {...props} />}
+              {activeTab === 'history' && <HistoryTab {...props} />}
+              {activeTab === 'jobtracker' && <JobTrackerTab {...props} />}
+              {activeTab === 'settings' && <SettingsTab {...props} />}
             </div>
           </main>
         </div>

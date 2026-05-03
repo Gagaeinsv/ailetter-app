@@ -3,12 +3,16 @@ import {
   TemplateInfluxInline, TemplateIconicInline, TemplateEnfoldInline, 
   TemplateModernInline, TemplateMinimalInline, TemplateNovaInline, 
   TemplateBreezeInline, TemplateExecutiveInline, TemplateNordicInline, 
-  TemplateBerlinInline, TemplateOnyxInline, TemplateGenericProInline 
+  TemplateBerlinInline, TemplateOnyxInline,
+  TemplateTokyoInline, TemplateMilanoInline, TemplateSydneyInline,
+  TemplateAtlasInline, TemplatePearlInline,
+  TemplateGenericProInline 
 } from '../templates/Templates';
 import { Loader2, Copy, Sparkles, FileText, Download, Lock, RefreshCw, Save, Check, PenLine, Settings2, Linkedin } from 'lucide-react';
 import LinkedInModal from './LinkedInModal';
 import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
+import ATSScore from './ATSScore';
 import ReviewModal from './ReviewModal';
 import ATSScore from './ATSScore';
 
@@ -36,6 +40,7 @@ const DashboardTab = (props) => {
   const [showReview, setShowReview]     = useState(false);
   const [displayedLetter, setDisplayedLetter] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [atsKey, setAtsKey] = useState(0);
   const typingRef = useRef(null);
 
   useEffect(() => {
@@ -44,6 +49,7 @@ const DashboardTab = (props) => {
       setIsTyping(false);
       return;
     }
+    setAtsKey(k => k + 1);
     if (typingRef.current) clearTimeout(typingRef.current);
     setDisplayedLetter('');
     setIsTyping(true);
@@ -79,6 +85,11 @@ const DashboardTab = (props) => {
       case 'nordic':    return <TemplateNordicInline    {...p} />;
       case 'berlin':    return <TemplateBerlinInline    {...p} />;
       case 'onyx':      return <TemplateOnyxInline      {...p} />;
+      case 'tokyo':     return <TemplateTokyoInline     {...p} />;
+      case 'milano':    return <TemplateMilanoInline    {...p} />;
+      case 'sydney':    return <TemplateSydneyInline    {...p} />;
+      case 'atlas':     return <TemplateAtlasInline     {...p} />;
+      case 'pearl':     return <TemplatePearlInline     {...p} />;
       default:          return <TemplateGenericProInline {...p} />;
     }
   };
@@ -152,6 +163,11 @@ const DashboardTab = (props) => {
           )}
           {generatedLetter && jobDescription && (
             <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
+          )}
+
+          {/* ATS Score */}
+          {generatedLetter && jobDescription && (
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
           )}
 
           {/* ── Follow-up Block ── */}
@@ -321,6 +337,19 @@ const DashboardTab = (props) => {
               <button key={t} onClick={() => setSettings({ ...settings, tone: t })}
                 className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all ${settings.tone === t ? 'bg-[#6366f1] text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`}>
                 {t}
+              </button>
+            ))}
+          </div>
+          <div className="flex bg-[#1e293b] rounded-lg p-0.5 border border-[#334155]">
+            {[
+              { val: 'Short',    label: 'Short',    hint: '~280w' },
+              { val: 'Standard', label: 'Standard', hint: '~350w' },
+              { val: 'Detailed', label: 'Detailed', hint: '~400w' },
+            ].map(({ val, label, hint }) => (
+              <button key={val} onClick={() => setSettings({ ...settings, length: val })}
+                title={hint}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all ${settings.length === val || (!settings.length && val === 'Standard') ? 'bg-[#6366f1] text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`}>
+                {label}
               </button>
             ))}
           </div>

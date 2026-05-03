@@ -7,6 +7,26 @@ import { Loader2, Copy, Check, Mail } from 'lucide-react';
 
 const UI_TO_PROMPT_LANG = { en: 'English', uk: 'Ukrainian', it: 'Italian', de: 'German' };
 
+const STYLE_COLORS = {
+  Formal: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400' },
+  Direct: { bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', text: 'text-indigo-400' },
+  Creative: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-400' },
+};
+
+function normalizeSubjectResults(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item, i) => {
+    if (typeof item === 'string') {
+      const styles = ['Formal', 'Direct', 'Creative'];
+      return { style: styles[i] || '', subject: item };
+    }
+    return {
+      style: item?.style || '',
+      subject: item?.subject || '',
+    };
+  }).filter((r) => r.subject);
+}
+
 export default function SubjectLineGeneratorPage() {
   const { uiLang } = useLanguage();
   const dict = translations[uiLang] || translations.en;
@@ -56,7 +76,7 @@ export default function SubjectLineGeneratorPage() {
       const data = await generateSubjectLines('', jobDescription, { fullName: name }, {
         outputLanguage: UI_TO_PROMPT_LANG[uiLang] || 'English',
       });
-      setResults(data);
+      setResults(normalizeSubjectResults(data));
     } catch {
       setError(dict.subjectError);
     } finally {
@@ -64,8 +84,8 @@ export default function SubjectLineGeneratorPage() {
     }
   };
 
-  const handleCopy = (line, idx) => {
-    navigator.clipboard.writeText(line);
+  const handleCopy = (text, idx) => {
+    navigator.clipboard.writeText(text);
     setCopiedIdx(idx);
     setTimeout(() => setCopiedIdx(null), 2000);
   };
@@ -125,22 +145,30 @@ export default function SubjectLineGeneratorPage() {
 
       {results.length > 0 && (
         <div className="w-full max-w-2xl mt-8 space-y-3">
-          {results.map((line, i) => (
-            <div
-              key={i}
-              className="bg-[#1e293b] border border-[#334155] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3"
-            >
-              <p className="flex-1 text-gray-200 text-sm">{line}</p>
-              <button
-                type="button"
-                onClick={() => handleCopy(line, i)}
-                className="shrink-0 bg-[#334155] px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2"
+          {results.map((row, i) => {
+            const c = STYLE_COLORS[row.style] || STYLE_COLORS.Formal;
+            return (
+              <div
+                key={i}
+                className={`flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl border ${c.bg} ${c.border}`}
               >
-                {copiedIdx === i ? <Check size={15} /> : <Copy size={15} />}
-                {copiedIdx === i ? dict.subjectCopied : dict.subjectCopy}
-              </button>
-            </div>
-          ))}
+                <div className="flex-1 min-w-0">
+                  {row.style && (
+                    <span className={`text-[9px] font-black uppercase tracking-widest ${c.text} block mb-1`}>{row.style}</span>
+                  )}
+                  <p className="text-gray-200 text-sm">{row.subject}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleCopy(row.subject, i)}
+                  className="shrink-0 bg-[#334155] px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2"
+                >
+                  {copiedIdx === i ? <Check size={15} /> : <Copy size={15} />}
+                  {copiedIdx === i ? dict.subjectCopied : dict.subjectCopy}
+                </button>
+              </div>
+            );
+          })}
           <p className="text-xs text-gray-600">{dict.subjectHint}</p>
           <p className="text-xs text-gray-700">{dict.subjectFooter}</p>
           <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">

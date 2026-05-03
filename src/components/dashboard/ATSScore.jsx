@@ -1,86 +1,126 @@
-import React, { useEffect, useReducer } from 'react';
-import { Loader2, Target } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { analyzeATSScore } from '../../gemini';
 
-const initial = { data: null, loading: false, error: null };
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'START':
-      return { data: null, loading: true, error: null };
-    case 'OK':
-      return { data: action.payload, loading: false, error: null };
-    case 'ERR':
-      return { ...state, loading: false, error: action.payload };
-    default:
-      return state;
-  }
-}
-
-export default function ATSScore({ coverLetter, jobDescription, dict }) {
-  const [state, dispatch] = useReducer(reducer, initial);
+const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
+  const t = (k, fb) => dict?.[k] || fb;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!coverLetter?.trim() || !jobDescription?.trim()) {
-      dispatch({ type: 'OK', payload: null });
+      setData(null);
+      setLoading(false);
+      setError(null);
       return;
     }
     let cancelled = false;
-    dispatch({ type: 'START' });
+    setLoading(true);
+    setError(null);
+    setData(null);
     analyzeATSScore(coverLetter, jobDescription)
-      .then((data) => {
-        if (!cancelled) dispatch({ type: 'OK', payload: data });
+      .then((result) => {
+        if (!cancelled) setData(result);
       })
       .catch(() => {
-        if (!cancelled) dispatch({ type: 'ERR', payload: dict?.atsError || 'Could not analyze.' });
+        if (!cancelled) setError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [coverLetter, jobDescription, dict?.atsError]);
+  }, [triggerKey, coverLetter, jobDescription]);
 
   if (!coverLetter?.trim() || !jobDescription?.trim()) return null;
 
-  const { data, loading, error } = state;
+  const matched = data?.matched ?? data?.matchedKeywords ?? [];
+  const missing = data?.missing ?? data?.missingKeywords ?? [];
+
+  const color = data
+    ? data.score >= 75 ? '#22c55e'
+      : data.score >= 50 ? '#f59e0b'
+        : '#ef4444'
+    : '#6366f1';
+
+  const label = data
+    ? data.score >= 75 ? t('atsGreat', 'Great match')
+      : data.score >= 50 ? t('atsFair', 'Fair match')
+        : t('atsWeak', 'Weak match')
+    : '';
 
   return (
-    <div className="mt-4 bg-[#1e293b] border border-[#334155] rounded-xl overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-[#334155]/80">
-        <Target className="w-4 h-4 text-emerald-400 shrink-0" />
-        <span className="text-sm font-semibold text-white">{dict?.atsTitle || 'ATS match'}</span>
-        {loading && <Loader2 className="w-4 h-4 animate-spin text-slate-400 ml-auto" />}
-      </div>
-      <div className="px-4 pb-4 pt-3">
+    <div className="bg-[#1e293b] border border-[#334155] rounded-2xl p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-base">🎯</span>
+          <span className="text-xs font-black text-white uppercase tracking-wider">{t('atsTitle', 'ATS Match Score')}</span>
+        </div>
         {loading && (
-          <p className="text-sm text-slate-400">{dict?.atsLoading || 'Analyzing…'}</p>
+          <span className="text-[10px] text-slate-500 animate-pulse">{t('atsAnalyzing', 'Analyzing…')}</span>
         )}
-        {error && <p className="text-sm text-red-400">{error}</p>}
-        {!loading && data && (
-          <div className="space-y-3 text-sm">
-            <div className="flex items-baseline gap-2">
-              <span className="text-slate-500">{dict?.atsScoreLabel || 'Score'}</span>
-              <span className="text-2xl font-black text-emerald-400 tabular-nums">{data.score ?? '—'}</span>
-              <span className="text-slate-600">/100</span>
+      </div>
+
+      {loading && (
+        <div className="h-2 rounded-full bg-[#334155] overflow-hidden">
+          <div className="h-full bg-[#6366f1]/40 animate-pulse rounded-full w-2/3" />
+        </div>
+      )}
+
+      {error && (
+        <p className="text-[11px] text-slate-500">{t('atsError', 'Could not analyze. Try again later.')}</p>
+      )}
+
+      {data && (
+        <>
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-2.5 rounded-full bg-[#334155] overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{ width: `${data.score}%`, background: color }}
+              />
             </div>
-            {(data.matchedKeywords?.length > 0) && (
+            <span className="text-lg font-black tabular-nums" style={{ color }}>{data.score}%</span>
+          </div>
+
+          <p className="text-[11px] font-bold" style={{ color }}>{label}</p>
+
+          <div className="space-y-2">
+            {matched.length > 0 && (
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">{dict?.atsMatched || 'Matched'}</p>
-                <p className="text-slate-300 leading-relaxed">{data.matchedKeywords.join(', ')}</p>
+                <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{t('atsMatched', '✓ Matched')}</span>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {matched.map((kw, i) => (
+                    <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium">
+                      {kw}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
-            {(data.missingKeywords?.length > 0) && (
+            {missing.length > 0 && (
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-amber-500/80 mb-1">{dict?.atsMissing || 'Could strengthen'}</p>
-                <p className="text-slate-400 leading-relaxed">{data.missingKeywords.join(', ')}</p>
+                <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">{t('atsMissing', '⚠ Missing')}</span>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {missing.map((kw, i) => (
+                    <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-medium">
+                      {kw}
+                    </span>
+                  ))}
+                </div>
               </div>
-            )}
-            {data.tip && (
-              <p className="text-slate-400 border-t border-[#334155] pt-3 mt-2">
-                <span className="text-indigo-400 font-medium">{dict?.atsTipLabel || 'Tip'}: </span>
-                {data.tip}
-              </p>
             )}
           </div>
-        )}
-      </div>
+
+          {data.tip && (
+            <p className="text-[11px] text-slate-400 italic border-t border-[#334155] pt-2">
+              <span className="text-indigo-400 font-medium not-italic">{t('atsTipLabel', 'Tip')}: </span>
+              {data.tip}
+            </p>
+          )}
+        </>
+      )}
     </div>
   );
-}
+};
+
+export default ATSScore;
