@@ -6,6 +6,7 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [manualRetryToken, setManualRetryToken] = useState(0);
 
   useEffect(() => {
     if (!coverLetter?.trim() || !jobDescription?.trim()) {
@@ -22,14 +23,17 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
       .then((result) => {
         if (!cancelled) setData(result);
       })
-      .catch(() => {
-        if (!cancelled) setError(true);
+      .catch((err) => {
+        if (!cancelled) {
+          console.warn('ATS analyze failed:', err);
+          setError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [triggerKey, coverLetter, jobDescription]);
+  }, [triggerKey, manualRetryToken, coverLetter, jobDescription]);
 
   if (!coverLetter?.trim() || !jobDescription?.trim()) return null;
 
@@ -66,8 +70,17 @@ const ATSScore = ({ coverLetter, jobDescription, triggerKey, dict }) => {
         </div>
       )}
 
-      {error && (
-        <p className="text-[11px] text-slate-500">{t('atsError', 'Could not analyze. Try again later.')}</p>
+      {error && !loading && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <p className="text-[11px] text-slate-500">{t('atsError', 'Could not analyze. Try again later.')}</p>
+          <button
+            type="button"
+            onClick={() => { setManualRetryToken((x) => x + 1); }}
+            className="text-[11px] font-bold text-indigo-400 hover:text-indigo-300 underline underline-offset-2 shrink-0 self-start sm:self-auto"
+          >
+            {t('atsRetry', 'Try again')}
+          </button>
+        </div>
       )}
 
       {data && (

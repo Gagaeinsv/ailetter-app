@@ -13,6 +13,7 @@ import LinkedInModal from './LinkedInModal';
 import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
 import ATSScore from './ATSScore';
+import DashboardSubjectLines from './DashboardSubjectLines';
 import ReviewModal from './ReviewModal';
 
 const DashboardTab = (props) => {
@@ -159,6 +160,20 @@ const DashboardTab = (props) => {
           {/* AI Suggestions */}
           {generatedLetter && jobDescription && (
             <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
+          )}
+
+          {generatedLetter && jobDescription && (
+            <DashboardSubjectLines
+              coverLetter={generatedLetter}
+              jobDescription={jobDescription}
+              contactInfo={contactInfo}
+              uiLang={uiLang}
+              dict={dict}
+              triggerKey={atsKey}
+            />
+          )}
+          {generatedLetter && jobDescription && (
+            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
           )}
 
           {/* ── Follow-up Block ── */}
@@ -413,11 +428,6 @@ const DashboardTab = (props) => {
             </div>
           )}
 
-          {generatedLetter && jobDescription?.trim() && (
-            <div className="w-full max-w-[210mm] mx-auto mt-8 shrink-0">
-              <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
-            </div>
-          )}
         </div>
       </div>
 
