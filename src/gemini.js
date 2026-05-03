@@ -370,6 +370,44 @@ ${coverLetter.substring(0, 1200)}
   });
 };
 
+export const analyzeATSScore = async (coverLetter, jobDescription) => {
+  const promptText = `
+You are an ATS (Applicant Tracking System) expert. Analyze how well the cover letter matches the job description.
+
+Return ONLY valid JSON, no markdown, no explanation:
+{
+  "score": <integer 0-100>,
+  "matched": ["keyword1", "keyword2", "keyword3"],
+  "missing": ["keyword1", "keyword2", "keyword3"],
+  "tip": "<one short actionable tip under 15 words>"
+}
+
+Rules:
+- score: 0-100 integer. Above 75 is good, 50-74 is fair, below 50 is weak.
+- matched: up to 6 important keywords/phrases from JD that appear in the letter
+- missing: up to 5 important keywords/phrases from JD NOT present in the letter
+- tip: specific, actionable, max 15 words
+
+Job Description:
+${jobDescription.substring(0, 1200)}
+
+Cover Letter:
+${coverLetter.substring(0, 1200)}
+  `.trim();
+
+  return await tryModel(async (modelId) => {
+    const text = await callGemini({
+      modelId,
+      temperature: 0.2,
+      maxOutputTokens: 512,
+      contents: [promptText],
+      responseMimeType: "application/json",
+    });
+    const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
+    return JSON.parse(cleaned);
+  });
+};
+
 export const generateFollowUp = async (originalLetter, jobDescription, contactInfo, daysSince) => {
   const promptText = `
 You are an expert career coach. Write a SHORT, professional follow-up email for a job application.
@@ -417,36 +455,44 @@ const parseJsonFromModel = (text) => {
   return JSON.parse(cleaned);
 };
 
-export const analyzeATSScore = async (coverLetter, jobDescription) => {
-  const promptText = `
-You are an ATS (applicant tracking system) analyst. Compare the cover letter to the job description.
+export const generateInterviewQA = async (coverLetter, jobDescription, contactInfo, options = {}) => {
+  const name = contactInfo?.fullName || contactInfo?.name || "the candidate";
+  const langRule = options.outputLanguage
+    ? `Output language: ${options.outputLanguage} for every question and answer.`
+    : "Match the language of the job description when possible.";
 
-Return ONLY valid JSON (no markdown):
-{
-  "score": <integer 0-100>,
-  "matchedKeywords": ["keyword1", "keyword2", ...],
-  "missingKeywords": ["keyword1", ...],
-  "tip": "<one short actionable sentence>"
-}
+  const promptText = `
+You are a senior hiring manager and interview coach.
+
+Based on the job description and candidate's cover letter, generate exactly 8 likely interview questions and ideal short answers.
+
+Return ONLY valid JSON, no markdown:
+[
+  { "q": "Question text?", "a": "Ideal answer in 2-3 sentences." },
+  ...
+]
 
 Rules:
-- score reflects how well the letter mirrors important JD terms (skills, tools, responsibilities) without stuffing.
-- matchedKeywords: up to 8 terms from the JD that appear clearly in the letter.
-- missingKeywords: up to 8 important JD terms weak or absent in the letter.
-- tip: max 25 words, specific.
+- Mix behavioral (Tell me about a time...), situational, and role-specific questions
+- Answers should reference the candidate's background from the cover letter
+- Keep answers concise: 2-3 sentences each
+- Make questions realistic and specific to the role
+- ${langRule}
 
-Job description (excerpt):
-${jobDescription.substring(0, 2500)}
+Candidate name: ${name}
 
-Cover letter (excerpt):
-${coverLetter.substring(0, 2500)}
+Job Description:
+${jobDescription.substring(0, 1200)}
+
+Cover Letter:
+${coverLetter.substring(0, 1000)}
   `.trim();
 
   return await tryModel(async (modelId) => {
     const text = await callGemini({
       modelId,
-      temperature: 0.2,
-      maxOutputTokens: 1024,
+      temperature: 0.6,
+      maxOutputTokens: 3000,
       contents: [promptText],
       responseMimeType: "application/json",
     });
@@ -454,80 +500,45 @@ ${coverLetter.substring(0, 2500)}
   });
 };
 
-export const generateInterviewQA = async (coverLetter, jobDescription, contactInfo, options = {}) => {
-  const name = contactInfo?.fullName || contactInfo?.name || "Candidate";
-  const role = contactInfo?.profession || "";
-  const langRule = options.outputLanguage
-    ? `Language: ${options.outputLanguage} for all questions and answers.`
-    : 'Language: same as the job description (or English if JD is mixed/unclear).';
-
-  const promptText = `
-You are a career coach. Based on the job description and cover letter, produce 5 likely interview questions with strong sample answers.
-
-Return ONLY valid JSON array (no markdown), each item:
-{ "question": "...", "answer": "..." }
-
-Rules:
-- Questions should be specific to this role and the candidate's stated experience.
-- Answers: 80-140 words, first person, grounded in the letter — no invented employers or metrics.
-- ${langRule}
-- Candidate: ${name}, ${role}
-
-Job description:
-${jobDescription.substring(0, 2000)}
-
-Cover letter:
-${coverLetter.substring(0, 2000)}
-  `.trim();
-
-  return await tryModel(async (modelId) => {
-    const text = await callGemini({
-      modelId,
-      temperature: 0.45,
-      maxOutputTokens: 8192,
-      contents: [promptText],
-      responseMimeType: "application/json",
-    });
-    const data = parseJsonFromModel(text);
-    return Array.isArray(data) ? data : [];
-  });
-};
-
 export const generateSubjectLines = async (coverLetter, jobDescription, contactInfo, options = {}) => {
-  const name = contactInfo?.fullName || contactInfo?.name || "";
+  const name = contactInfo?.fullName || contactInfo?.name || "the candidate";
   const langRule = options.outputLanguage
-    ? `Language: ${options.outputLanguage} for all subject lines.`
-    : 'Language: same as job description (or English if unclear).';
+    ? `Output language: ${options.outputLanguage} for all subject and style fields.`
+    : "Match the language of the job description when possible.";
 
   const promptText = `
-Generate exactly 3 email subject lines for a job application.
+You are an expert at writing compelling email subject lines for job applications.
 
-Return ONLY valid JSON array of 3 strings (no markdown), e.g. ["...", "...", "..."]
+Generate exactly 3 subject line options: one formal, one direct/bold, one creative.
+
+Return ONLY valid JSON, no markdown:
+[
+  { "style": "Formal",   "subject": "..." },
+  { "style": "Direct",   "subject": "..." },
+  { "style": "Creative", "subject": "..." }
+]
 
 Rules:
-- Professional, concise (under 90 characters each).
-- One formal, one direct, one slightly creative but still professional.
-- May include role or company if known from JD; do not invent company if unknown.
+- Each under 60 characters
+- No generic "I am applying for..." phrasing
+- Reference the actual role from the job description
+- Use the candidate's name where appropriate
+- Make each distinctly different in style
 - ${langRule}
-- Candidate name for context: ${name || "not provided"}
 
-Job description:
-${jobDescription.substring(0, 1500)}
-
-Cover letter (optional context):
-${(coverLetter || "").substring(0, 800)}
+Candidate: ${name}
+Job Description: ${jobDescription.substring(0, 600)}
+Cover Letter snippet: ${(coverLetter || "").substring(0, 400)}
   `.trim();
 
   return await tryModel(async (modelId) => {
     const text = await callGemini({
       modelId,
-      temperature: 0.55,
+      temperature: 0.7,
       maxOutputTokens: 512,
       contents: [promptText],
       responseMimeType: "application/json",
     });
-    const data = parseJsonFromModel(text);
-    if (!Array.isArray(data)) return [];
-    return data.map(String).filter(Boolean).slice(0, 3);
+    return parseJsonFromModel(text);
   });
 };

@@ -115,10 +115,11 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
 
   const navItems = [
     { id: 'dashboard', label: dict.dashboard, icon: <IconDash /> },
-    { id: 'interview', label: dict.interview, icon: <IconInterview /> },
     { id: 'templates', label: dict.templates, icon: <IconTemplate /> },
-    { id: 'history',   label: dict.history,   icon: <IconHist /> },
-    { id: 'settings',  label: dict.settings,  icon: <IconSettings /> },
+    { id: 'history', label: dict.history, icon: <IconHist /> },
+    { id: 'interview', label: dict.interviewFull || dict.interview, icon: <IconInterview /> },
+    { id: 'jobtracker', label: dict.jobtrackerFull || dict.jobtracker, icon: <span>📋</span> },
+    { id: 'settings', label: dict.settings, icon: <IconSettings /> },
   ];
 
   const handleNav = (id) => {
