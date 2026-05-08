@@ -56,8 +56,7 @@ const MobileHistoryTab = ({
   syncStatus,
   deleteHistoryItem,
   duplicateHistoryItem,
-  setGeneratedLetter,
-  setActiveTab,
+  loadLetterFromHistory,
   dict,
   isPro,
   setShowUpgrade,
@@ -67,6 +66,11 @@ const MobileHistoryTab = ({
   const [filter, setFilter] = useState('all');
 
   const safeHistory = Array.isArray(history) ? history : [];
+
+  const historyCountLabel =
+    safeHistory.length === 1
+      ? (dict?.historyCountSuffixOne ?? dict?.historyCountSuffix)
+      : dict?.historyCountSuffix;
 
   const getFilteredHistory = () => {
     let res = safeHistory;
@@ -89,16 +93,16 @@ const MobileHistoryTab = ({
     <div className="h-full overflow-y-auto bg-[#0f172a] px-4 py-6 pb-24 custom-scrollbar">
       <div className="mb-4">
         <h2 className="text-2xl font-black text-white">{dict?.history || 'History'}</h2>
-        <p className="text-[11px] text-slate-500 mt-0.5">
-          {safeHistory.length} {dict?.historyCountSuffix || 'saved letters'}
+        <p className="text-[11px] text-slate-500 mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span>{safeHistory.length} {historyCountLabel ?? (safeHistory.length === 1 ? 'saved letter' : 'saved letters')}</span>
           {user?.uid && syncStatus === 'syncing' && (
-            <span className="ml-2 text-indigo-400">{dict?.historySyncing || 'Syncing…'}</span>
+            <span className="text-indigo-400 shrink-0">{dict?.historySyncing || 'Syncing…'}</span>
           )}
           {user?.uid && syncStatus === 'synced' && (
-            <span className="ml-2 text-emerald-400">{dict?.historySynced || 'Synced'}</span>
+            <span className="text-emerald-400 shrink-0">{dict?.historySynced || 'Synced'}</span>
           )}
           {user?.uid && syncStatus === 'error' && (
-            <span className="ml-2 text-amber-400">{dict?.historySyncError || 'Sync issue'}</span>
+            <span className="text-amber-400 shrink-0">{dict?.historySyncError || 'Sync issue'}</span>
           )}
         </p>
       </div>
@@ -198,7 +202,7 @@ const MobileHistoryTab = ({
                 <div className="flex gap-2 border-t border-[#334155] pt-3">
                   <button
                     type="button"
-                    onClick={() => { setGeneratedLetter(item.text); setActiveTab('dashboard'); }}
+                    onClick={() => loadLetterFromHistory?.(item)}
                     className="flex-1 py-2 bg-[#6366f1]/10 text-[#6366f1] rounded-lg text-xs font-bold uppercase active:scale-95 transition-all"
                   >
                     {dict?.loadLetter || 'Load'}

@@ -57,7 +57,7 @@ const HistoryTab = ({
   syncStatus,
   deleteHistoryItem,
   duplicateHistoryItem,
-  setGeneratedLetter, setActiveTab,
+  loadLetterFromHistory,
   dict, showNotification,
   isPro, setShowUpgrade,
   onFollowUp,
@@ -66,6 +66,11 @@ const HistoryTab = ({
   const [filter, setFilter] = useState('all');
 
   const safeHistory = Array.isArray(history) ? history : [];
+
+  const historyCountLabel =
+    safeHistory.length === 1
+      ? (dict?.historyCountSuffixOne ?? dict?.historyCountSuffix)
+      : dict?.historyCountSuffix;
 
   const getFiltered = () => {
     let res = safeHistory;
@@ -91,16 +96,18 @@ const HistoryTab = ({
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-black text-white">{dict?.history || 'History'}</h2>
-            <p className="text-slate-500 text-sm mt-1">
-              {safeHistory.length} {dict?.historyCountSuffix || 'saved letters'}
+            <p className="text-slate-500 text-sm mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span>
+                {safeHistory.length} {historyCountLabel ?? (safeHistory.length === 1 ? 'saved letter' : 'saved letters')}
+              </span>
               {user?.uid && syncStatus === 'syncing' && (
-                <span className="ml-2 text-indigo-400 text-xs">{dict?.historySyncing || 'Syncing…'}</span>
+                <span className="text-indigo-400 text-xs shrink-0">{dict?.historySyncing || 'Syncing…'}</span>
               )}
               {user?.uid && syncStatus === 'error' && (
-                <span className="ml-2 text-amber-400 text-xs">{dict?.historySyncError || 'Cloud sync issue — data kept locally'}</span>
+                <span className="text-amber-400 text-xs shrink-0">{dict?.historySyncError || 'Cloud sync issue — data kept locally'}</span>
               )}
               {user?.uid && syncStatus === 'synced' && (
-                <span className="ml-2 text-emerald-500/80 text-xs">{dict?.historySynced || 'Synced'}</span>
+                <span className="text-emerald-500/80 text-xs shrink-0">{dict?.historySynced || 'Synced'}</span>
               )}
             </p>
           </div>
@@ -213,7 +220,8 @@ const HistoryTab = ({
                       <td className="p-5">
                         <div className="flex items-center justify-end gap-2">
                           <button
-                            onClick={() => { setGeneratedLetter(item.text); setActiveTab('dashboard'); }}
+                            type="button"
+                            onClick={() => loadLetterFromHistory?.(item)}
                             className="px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 rounded-lg text-xs font-bold transition-all"
                           >
                             {dict?.loadLetter || 'Load'}

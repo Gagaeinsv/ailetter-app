@@ -73,6 +73,7 @@ const MobileDashboardTab = ({
   todayStr, placeholderText,
   user,
   TEMPLATES,
+  mobileHistoryLoadNonce = 0,
 }) => {
   const [view, setView] = useState('inputs');
   const [showLinkedIn, setShowLinkedIn] = useState(false);
@@ -104,6 +105,11 @@ const MobileDashboardTab = ({
     type();
     return () => { if (typingRef.current) clearTimeout(typingRef.current); };
   }, [generatedLetter]);
+
+  useEffect(() => {
+    if (!mobileHistoryLoadNonce || !generatedLetter) return;
+    setView('preview');
+  }, [mobileHistoryLoadNonce, generatedLetter]);
 
   const handleGenerateAndSwitch = async () => {
     setView('inputs');
@@ -140,6 +146,14 @@ const MobileDashboardTab = ({
           </button>
         </div>
       </div>
+
+      {/* Suggestions → subject lines → ATS: one place, both Data and Result tabs */}
+      {generatedLetter && jobDescription && (
+        <div className="px-4 pb-4 space-y-4 border-b border-[#1e293b] bg-[#0f172a]">
+          <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
+          <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
+        </div>
+      )}
 
       {/* ── INPUTS view ── */}
       {view === 'inputs' && (
@@ -271,18 +285,6 @@ const MobileDashboardTab = ({
             </p>
           )}
 
-          {generatedLetter && jobDescription && (
-            <AISuggestions
-              coverLetter={generatedLetter}
-              jobDescription={jobDescription}
-              dict={dict}
-            />
-          )}
-
-          {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
-          )}
-
           {generatedLetter && (
             <div className={`rounded-xl border p-4 transition-all ${
               currentLetterSavedId
@@ -396,17 +398,6 @@ const MobileDashboardTab = ({
               </div>
             )}
           </div>
-
-          {generatedLetter && jobDescription && (
-            <AISuggestions
-              coverLetter={generatedLetter}
-              jobDescription={jobDescription}
-              dict={dict}
-            />
-          )}
-          {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
-          )}
 
           {/* Edit mode */}
           <div>

@@ -4,9 +4,6 @@ import {
   doc,
   setDoc,
   deleteDoc,
-  query,
-  orderBy,
-  limit,
   onSnapshot,
   writeBatch,
   getDocs,
@@ -73,20 +70,26 @@ export const useHistory = (user, isPro) => {
 
     const cap = firestoreLimit(isPro);
     const lettersRef = collection(db, 'users', uid, 'letters');
-    const q = query(lettersRef, orderBy('savedAt', 'desc'), limit(cap));
+    /** No server orderBy: older docs may lack savedAt/indexed fields and would be excluded from ordered queries */
 
     setSyncStatus('syncing');
     const unsub = onSnapshot(
-      q,
+      lettersRef,
       async (snap) => {
         const cloud = snap.docs.map((d) => {
           const data = d.data();
           const rawId = data.id ?? d.id;
           const id = typeof rawId === 'number' ? rawId : Number(rawId) || rawId;
+          const savedAt =
+            typeof data.savedAt === 'number'
+              ? data.savedAt
+              : typeof id === 'number'
+                ? id
+                : Date.now();
           return {
             id,
             date: data.date ?? '',
-            savedAt: data.savedAt ?? data.id ?? Date.now(),
+            savedAt,
             job: data.job ?? '',
             jobDescription: data.jobDescription ?? '',
             text: data.text ?? '',
@@ -98,20 +101,23 @@ export const useHistory = (user, isPro) => {
         });
 
         const local = loadLocal(uid);
-        const byId = new Map();
+        const sortBySaved = (a, b) => Number(b.savedAt || b.id) - Number(a.savedAt || a.id);
 
-        cloud.forEach((e) => byId.set(e.id, e));
-        local.forEach((e) => {
-          if (!byId.has(e.id)) byId.set(e.id, e);
-        });
-
-        let merged = [...byId.values()].sort((a, b) => (b.savedAt || b.id) - (a.savedAt || a.id));
-        merged = merged.slice(0, cap);
+        let merged;
+        if (cloud.length > 0) {
+          const cloudIds = new Set(cloud.map((e) => String(e.id)));
+          const localsNotInCloud = local.filter((e) => !cloudIds.has(String(e.id)));
+          merged = [...cloud, ...localsNotInCloud].sort(sortBySaved).slice(0, cap);
+        } else {
+          merged = [...local].sort(sortBySaved).slice(0, cap);
+        }
         saveLocal(uid, merged);
         setHistoryState(merged);
         setSyncStatus('synced');
 
-        if (!migratedRef.current && cloud.length === 0 && local.length > 0) {
+        const canMigrateSeed =
+          !snap.metadata.fromCache && !snap.metadata.hasPendingWrites;
+        if (!migratedRef.current && canMigrateSeed && cloud.length === 0 && local.length > 0) {
           migratedRef.current = true;
           try {
             const batch = writeBatch(db);

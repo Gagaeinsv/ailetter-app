@@ -14,7 +14,6 @@ import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
 import ATSScore from './ATSScore';
 import ReviewModal from './ReviewModal';
-import ATSScore from './ATSScore';
 
 const DashboardTab = (props) => {
   const {
@@ -161,11 +160,7 @@ const DashboardTab = (props) => {
           {generatedLetter && jobDescription && (
             <AISuggestions coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
           )}
-          {generatedLetter && jobDescription && (
-            <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} dict={dict} />
-          )}
 
-          {/* ATS Score */}
           {generatedLetter && jobDescription && (
             <ATSScore coverLetter={generatedLetter} jobDescription={jobDescription} triggerKey={atsKey} dict={dict} />
           )}
@@ -380,8 +375,8 @@ const DashboardTab = (props) => {
           </div>
         </div>
 
-        {/* Document Preview */}
-        <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-[#0b1120] relative custom-scrollbar">
+        {/* Document Preview — flex-col stacks letter + ATS; row would push ATS sideways off-screen */}
+        <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center gap-8 bg-[#0b1120] relative custom-scrollbar">
           {editMode ? (
             <div className="flex w-full max-w-[1200px] gap-6 h-full">
               <div className="flex-1 bg-white shadow-2xl rounded-sm opacity-50 pointer-events-none h-fit scale-[0.9] origin-top">{renderTemplate()}</div>
@@ -421,6 +416,7 @@ const DashboardTab = (props) => {
               </div>
             </div>
           )}
+
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const getStatuses = (dict) => {
   const t = (k, fb) => dict?.[k] || fb;
@@ -10,22 +10,25 @@ const getStatuses = (dict) => {
   ];
 };
 
-const LS_KEY  = 'jobTracker';
-const loadJobs = () => { try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; } };
-const saveJobs = (jobs) => localStorage.setItem(LS_KEY, JSON.stringify(jobs));
 const daysSince = (d) => d ? Math.floor((Date.now() - new Date(d).getTime()) / 86400000) : null;
 
-const MobileJobTrackerTab = ({ dict }) => {
+const MobileJobTrackerTab = ({
+  dict,
+  user,
+  trackerJobs = [],
+  trackerSyncStatus,
+  upsertTrackerJob,
+  patchTrackerJob,
+  removeTrackerJob,
+}) => {
   const t = (k, fb) => dict?.[k] || fb;
   const STATUSES = getStatuses(dict);
 
-  const [jobs, setJobs]       = useState(loadJobs);
+  const jobs = Array.isArray(trackerJobs) ? trackerJobs : [];
   const [showAdd, setShowAdd] = useState(false);
   const [editJob, setEditJob] = useState(null);
   const [filter, setFilter]   = useState('all');
   const [form, setForm]       = useState({ company: '', role: '', url: '', notes: '', status: 'applied', date: new Date().toISOString().slice(0, 10) });
-
-  useEffect(() => { saveJobs(jobs); }, [jobs]);
 
   const setF = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -39,17 +42,14 @@ const MobileJobTrackerTab = ({ dict }) => {
 
   const handleSave = () => {
     if (!form.company || !form.role) return;
-    if (editJob) {
-      setJobs(prev => prev.map(j => j.id === editJob.id ? { ...form, id: editJob.id } : j));
-    } else {
-      setJobs(prev => [{ ...form, id: Date.now() }, ...prev]);
-    }
+    const id = editJob ? editJob.id : Date.now();
+    upsertTrackerJob?.({ ...form, id });
     setShowAdd(false);
     setEditJob(null);
   };
 
-  const deleteJob    = (id)            => { if (window.confirm(t('trackerDeleteConfirm', 'Delete?'))) setJobs(prev => prev.filter(j => j.id !== id)); };
-  const changeStatus = (id, status)    => setJobs(prev => prev.map(j => j.id === id ? { ...j, status } : j));
+  const deleteJob    = (id)            => { if (window.confirm(t('trackerDeleteConfirm', 'Delete?'))) removeTrackerJob?.(id); };
+  const changeStatus = (id, status)    => patchTrackerJob?.(id, { status });
 
   const filtered = jobs.filter(j => filter === 'all' || j.status === filter);
   const inputCls = "w-full bg-[#0f172a] border border-[#334155] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#6366f1] transition-colors";
@@ -61,7 +61,18 @@ const MobileJobTrackerTab = ({ dict }) => {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-2xl font-black text-white">{t('trackerTitle', 'Job Tracker')}</h2>
-          <p className="text-xs text-slate-500 mt-0.5">{jobs.length} {t('trackerSubtitle', 'applications')}</p>
+          <div className="text-xs text-slate-500 mt-0.5 space-y-0.5">
+            <p>{jobs.length} {t('trackerSubtitle', 'applications')}</p>
+            {user?.uid && trackerSyncStatus === 'syncing' && (
+              <p className="text-indigo-400 text-[10px]">{dict?.trackerJobsSyncing}</p>
+            )}
+            {user?.uid && trackerSyncStatus === 'error' && (
+              <p className="text-amber-400 text-[10px]">{dict?.trackerJobsSyncError}</p>
+            )}
+            {user?.uid && trackerSyncStatus === 'synced' && (
+              <p className="text-emerald-500/80 text-[10px]">{dict?.trackerJobsSynced}</p>
+            )}
+          </div>
         </div>
         <button onClick={openAdd} className="px-4 py-2 bg-[#6366f1] rounded-xl font-black text-xs uppercase active:scale-95 transition-all">
           {t('trackerAddShort', '+ Add')}
@@ -143,7 +154,7 @@ const MobileJobTrackerTab = ({ dict }) => {
             const st   = STATUSES.find(s => s.key === job.status) || STATUSES[0];
             const days = daysSince(job.date);
             return (
-              <div key={job.id} className="bg-[#1e293b] border border-[#334155] rounded-xl p-4">
+              <div key={String(job.id)} className="bg-[#1e293b] border border-[#334155] rounded-xl p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div className="min-w-0 flex-1">
                     <p className="font-black text-white text-sm truncate">{job.company}</p>

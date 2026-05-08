@@ -7,7 +7,7 @@ const labelClass = "text-xs font-semibold text-[#64748b] uppercase tracking-wide
 
 const TEMPLATE_LIST = ['Influx','Iconic','Minimal','Nova','Breeze','Enfold','Modern','Executive','Nordic','Berlin','Tokyo','Milano','Sydney','Atlas','Onyx','Pearl'];
 
-const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, settings, setSettings, showNotification, history, setHistory, isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate }) => {
+const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, settings, setSettings, showNotification, history, setHistory, clearTrackerJobs, isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate, profileSyncStatus }) => {
   const [settingsTab, setSettingsTab] = useState('profile');
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError]     = useState(null);
@@ -58,6 +58,13 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
                 <h3 className="text-xl font-black text-white">{dict.tabProfile}</h3>
                 <p className="text-xs text-[#64748b] mt-1">Manage your personal information</p>
               </div>
+              {user?.uid && (
+                <p className="text-[10px] text-slate-500 -mt-2">
+                  {profileSyncStatus === 'syncing' && (dict?.historySyncing || 'Syncing…')}
+                  {profileSyncStatus === 'synced' && (dict?.historySynced || 'Synced')}
+                  {profileSyncStatus === 'error' && (dict?.historySyncError || 'Cloud sync issue — using local copy')}
+                </p>
+              )}
               <div className="flex items-center gap-5 p-5 bg-[#1e293b] rounded-2xl border border-[#334155]">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-black text-2xl shrink-0">
                   {contactInfo.fullName?.[0] || user?.displayName?.[0] || 'U'}
@@ -205,6 +212,7 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
               </div>
               <div className="space-y-3">
                 <button
+                  type="button"
                   onClick={() => {
                     if (window.confirm(dict.confirmDeleteAllHistory || 'Delete all history?')) {
                       setHistory([]);
@@ -215,6 +223,20 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
                 >
                   {dict.deleteHistory}
                 </button>
+                {user?.uid && clearTrackerJobs && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm(dict.trackerClearConfirm || dict.trackerDeleteAll)) {
+                        clearTrackerJobs();
+                        showNotification(dict.deleted || 'Deleted');
+                      }
+                    }}
+                    className="w-full py-3 border border-[#334155] text-[#94a3b8] hover:text-white hover:border-[#475569] rounded-xl font-semibold text-sm transition-all"
+                  >
+                    {dict.trackerDeleteAll}
+                  </button>
+                )}
                 <button className="w-full py-3 border border-red-500/20 text-red-400 hover:bg-red-500/10 hover:border-red-500/40 rounded-xl font-semibold text-sm transition-all">
                   {dict.deleteAccount}
                 </button>

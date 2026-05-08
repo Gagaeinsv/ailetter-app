@@ -5,6 +5,8 @@ import { generateLetter, parseCV, extractCompanyName } from '../gemini';
 import html2pdf from 'html2pdf.js';
 import { usePlan } from '../hooks/usePlan';
 import { useHistory } from '../hooks/useHistory';
+import { useJobTracker } from '../hooks/useJobTracker';
+import { useProfile } from '../hooks/useProfile';
 import UpgradeModal from '../components/UpgradeModal';
 import useMediaQuery from '../hooks/useMediaQuery';
 
@@ -42,6 +44,15 @@ const Dashboard = () => {
     removeEntry,
     syncStatus,
   } = useHistory(user, isPro);
+  const {
+    trackerJobs,
+    trackerSyncStatus,
+    upsertTrackerJob,
+    patchTrackerJob,
+    removeTrackerJob,
+    clearTrackerJobs,
+  } = useJobTracker(user, isPro);
+  const { profile, setProfile, profileSyncStatus } = useProfile(user);
   const isMobile = useMediaQuery('(max-width: 1024px)') &&
     ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
@@ -74,25 +85,36 @@ const Dashboard = () => {
   // ── History filters (desktop history tab) ──
   const [historySearch, setHistorySearch] = useState('');
   const [historyFilter, setHistoryFilter] = useState('all');
+  /** Incremented when loading a letter from history so mobile dashboard switches to the Result tab */
+  const [mobileHistoryLoadNonce, setMobileHistoryLoadNonce] = useState(0);
+  const skipNextGeneratedLetterSaveIdReset = useRef(false);
 
   const documentRef = useRef();
   const dict        = translations[uiLang] || translations.en;
   const todayStr    = new Date().toLocaleDateString('uk-UA');
   const placeholderText = 'Your letter will appear here...';
 
-  // ── Load saved profile ──
+  // ── Load synced profile ──
   useEffect(() => {
-    const savedProfile = localStorage.getItem('userProfile');
-    if (savedProfile) setContactInfo(JSON.parse(savedProfile));
-    else if (user) setContactInfo(prev => ({
-      ...prev,
-      fullName: user.displayName || '',
-      email: user.email || ''
-    }));
-  }, [user]);
+    if (profile) {
+      setContactInfo((prev) => ({ ...prev, ...profile }));
+      return;
+    }
+    if (user) {
+      setContactInfo((prev) => ({
+        ...prev,
+        fullName: user.displayName || '',
+        email: user.email || '',
+      }));
+    }
+  }, [profile, user]);
 
-  // ── Скидаємо ID збереження при новій генерації ──
+  // ── Скидаємо ID збереження при новій генерації (крім завантаження з історії) ──
   useEffect(() => {
+    if (skipNextGeneratedLetterSaveIdReset.current) {
+      skipNextGeneratedLetterSaveIdReset.current = false;
+      return;
+    }
     setCurrentLetterSavedId(null);
   }, [generatedLetter]);
 
@@ -134,7 +156,7 @@ const Dashboard = () => {
       const data = await parseCV(cvFile);
       const updated = { ...contactInfo, ...data };
       setContactInfo(updated);
-      localStorage.setItem('userProfile', JSON.stringify(updated));
+      setProfile(updated);
       showNotification('Auto-filled ✓');
     } catch (e) {
       alert('AI Error: Could not parse CV');
@@ -228,6 +250,26 @@ const Dashboard = () => {
     } else {
       showNotification('Saved ✓ — follow-up reminder in 7 days');
     }
+  };
+
+  const loadLetterFromHistory = (item) => {
+    const text = item?.text ?? '';
+    setEditMode(false);
+    setEditText('');
+    if (item?.jobDescription && String(item.jobDescription).trim()) {
+      setJobDescription(String(item.jobDescription).trim());
+    } else if (item?.job && String(item.job).trim()) {
+      const short = String(item.job).replace(/\.\.\.\s*$/, '').trim();
+      if (short) setJobDescription(short);
+    }
+    if (item?.lang && item.lang !== 'Auto') {
+      setSettings((prev) => ({ ...prev, language: item.lang }));
+    }
+    skipNextGeneratedLetterSaveIdReset.current = true;
+    setCurrentLetterSavedId(item?.id ?? null);
+    if (isMobile) setMobileHistoryLoadNonce((n) => n + 1);
+    setGeneratedLetter(text);
+    setActiveTab('dashboard');
   };
 
   // ── PDF ──
@@ -389,8 +431,8 @@ const Dashboard = () => {
   };
 
   // ── Profile ──
-  const saveProfile = () => {
-    localStorage.setItem('userProfile', JSON.stringify(contactInfo));
+  const saveProfile = async () => {
+    await setProfile(contactInfo);
     showNotification('Profile saved ✓');
   };
 
@@ -419,9 +461,18 @@ const Dashboard = () => {
     handleSaveToHistory,
     deleteHistoryItem,
     duplicateHistoryItem,
+    loadLetterFromHistory,
     getFilteredHistory,
     markFollowUpSent,
     syncStatus,
+    clearTrackerJobs,
+    trackerJobs,
+    trackerSyncStatus,
+    upsertTrackerJob,
+    patchTrackerJob,
+    removeTrackerJob,
+    profileSyncStatus,
+    mobileHistoryLoadNonce,
     isPro, planLoading, setShowUpgrade,
     dict, showNotification,
     todayStr, placeholderText,

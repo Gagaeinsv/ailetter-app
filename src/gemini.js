@@ -47,6 +47,23 @@ async function tryModel(modelFn) {
   throw new Error("AI is busy. Please try again.");
 }
 
+/** Try each model in order (for flaky parse / empty tokens); rotates on every failure */
+async function tryEveryModel(modelFn) {
+  let lastError = null;
+  for (let i = 0; i < MODELS.length; i++) {
+    const current = MODELS[i];
+    try {
+      console.log(`tryEveryModel using: ${current.id}`);
+      return await modelFn(current.id, current.temp);
+    } catch (error) {
+      lastError = error;
+      console.warn(`${current.id} failed (tryEveryModel):`, error);
+      if (i + 1 < MODELS.length) await sleep(600);
+    }
+  }
+  throw lastError || new Error("AI is busy. Please try again.");
+}
+
 export const generateLetter = async (userProfile, jobDescription, cvFilePart, settings) => {
   const { language, tone, length } = settings;
 
@@ -228,17 +245,16 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
   "certifications": ["Cert 1", "Cert 2"]
 }`;
 
-  return await tryModel(async (modelId) => {
+  return await tryEveryModel(async (modelId, temp) => {
     const text = await callGemini({
       modelId,
-      temperature: 0.2,
+      temperature: typeof temp === "number" ? temp : 0.2,
       maxOutputTokens: 4000,
       contents: [promptText, cvFilePart],
-      responseMimeType: "application/json",
     });
-
-    const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-    return JSON.parse(cleaned);
+    const obj = parseJsonFromModel(text);
+    if (!obj || typeof obj !== "object") throw new Error("Invalid CV parse shape");
+    return obj;
   });
 };
 
@@ -370,6 +386,82 @@ ${coverLetter.substring(0, 1200)}
   });
 };
 
+/** Parse JSON from model plain text — avoid responseMimeType (same pipeline as letter/LinkedIn). */
+const parseJsonFromModel = (raw) => {
+  if (!raw || typeof raw !== "string") {
+    throw new Error("Empty response from AI");
+  }
+  const cleanedOuter = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
+  const tryParse = (s) => {
+    try {
+      return JSON.parse(s);
+    } catch {
+      return null;
+    }
+  };
+  let out = tryParse(cleanedOuter);
+  if (out !== null) return out;
+  const cleaned = cleanedOuter;
+  const objStart = cleaned.indexOf("{");
+  const arrStart = cleaned.indexOf("[");
+  if (arrStart !== -1 && (objStart === -1 || arrStart < objStart)) {
+    const end = cleaned.lastIndexOf("]");
+    if (end > arrStart) out = tryParse(cleaned.slice(arrStart, end + 1));
+    if (out !== null) return out;
+  }
+  if (objStart !== -1) {
+    const end = cleaned.lastIndexOf("}");
+    if (end > objStart) out = tryParse(cleaned.slice(objStart, end + 1));
+    if (out !== null) return out;
+  }
+  throw new Error("Could not parse JSON from AI response");
+};
+
+const normalizeATSPayload = (raw) => {
+  let score = Number(raw?.score ?? raw?.atsScore ?? raw?.matchScore);
+  if (!Number.isFinite(score)) score = 0;
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  const collectList = (...candidates) => {
+    for (const c of candidates) {
+      if (Array.isArray(c)) {
+        const out = c.map((x) => String(x ?? "").trim()).filter(Boolean);
+        if (out.length) return out;
+      }
+      if (typeof c === "string" && c.trim()) {
+        const out = c.split(/[,;/|]/).map((s) => s.trim()).filter(Boolean);
+        if (out.length) return out;
+      }
+      if (c && typeof c === "object" && !Array.isArray(c)) {
+        for (const k of ["keywords", "items", "list", "values"]) {
+          if (!Array.isArray(c[k])) continue;
+          const out = c[k].map((x) => String(x ?? "").trim()).filter(Boolean);
+          if (out.length) return out;
+        }
+      }
+    }
+    return [];
+  };
+
+  let matched = collectList(raw?.matched, raw?.matchedKeywords, raw?.found, raw?.matches);
+  let missing = collectList(raw?.missing, raw?.missingKeywords, raw?.gaps, raw?.toAdd);
+
+  matched = [...new Set(matched)].slice(0, 8);
+  missing = [...new Set(missing)].slice(0, 8);
+
+  const tipRaw = raw?.tip ?? raw?.suggestion ?? raw?.advice ?? raw?.recommendation;
+  const tip = typeof tipRaw === "string" ? tipRaw.trim().slice(0, 280) : "";
+
+  return {
+    score,
+    matchedKeywords: matched,
+    matched,
+    missingKeywords: missing,
+    missing,
+    tip,
+  };
+};
+
 export const analyzeATSScore = async (coverLetter, jobDescription) => {
   const promptText = `
 You are an ATS (Applicant Tracking System) expert. Analyze how well the cover letter matches the job description.
@@ -395,16 +487,14 @@ Cover Letter:
 ${coverLetter.substring(0, 1200)}
   `.trim();
 
-  return await tryModel(async (modelId) => {
+  return await tryEveryModel(async (modelId, temp) => {
     const text = await callGemini({
       modelId,
-      temperature: 0.2,
-      maxOutputTokens: 512,
+      temperature: typeof temp === "number" ? temp : 0.2,
+      maxOutputTokens: 1024,
       contents: [promptText],
-      responseMimeType: "application/json",
     });
-    const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-    return JSON.parse(cleaned);
+    return normalizeATSPayload(parseJsonFromModel(text));
   });
 };
 
@@ -450,11 +540,6 @@ ${originalLetter.substring(0, 800)}
   });
 };
 
-const parseJsonFromModel = (text) => {
-  const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-  return JSON.parse(cleaned);
-};
-
 export const generateInterviewQA = async (coverLetter, jobDescription, contactInfo, options = {}) => {
   const name = contactInfo?.fullName || contactInfo?.name || "the candidate";
   const langRule = options.outputLanguage
@@ -494,7 +579,6 @@ ${coverLetter.substring(0, 1000)}
       temperature: 0.6,
       maxOutputTokens: 3000,
       contents: [promptText],
-      responseMimeType: "application/json",
     });
     return parseJsonFromModel(text);
   });
@@ -535,9 +619,8 @@ Cover Letter snippet: ${(coverLetter || "").substring(0, 400)}
     const text = await callGemini({
       modelId,
       temperature: 0.7,
-      maxOutputTokens: 512,
+      maxOutputTokens: 1024,
       contents: [promptText],
-      responseMimeType: "application/json",
     });
     return parseJsonFromModel(text);
   });
