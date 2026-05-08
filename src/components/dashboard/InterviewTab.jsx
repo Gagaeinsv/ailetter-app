@@ -69,6 +69,7 @@ const InterviewTab = ({
         q: pickFirst(row, ['q', 'question', 'domanda', 'frage', 'питання']),
         a: pickFirst(row, ['a', 'answer', 'risposta', 'antwort', 'відповідь']),
       })).filter((row) => row.q && row.a);
+      if (normalized.length === 0) throw new Error('Empty interview result');
       setQa(normalized);
       setGenerated(true);
     } catch {

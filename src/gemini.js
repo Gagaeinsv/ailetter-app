@@ -572,7 +572,7 @@ export const generateInterviewQA = async (coverLetter, jobDescription, contactIn
     ? `Output language: ${options.outputLanguage} for every question and answer VALUE. JSON keys must stay exactly "q" and "a" (English).`
     : "Match the language of the job description when possible.";
 
-  const promptText = `
+  const basePrompt = (attempt = 1) => `
 You are a senior hiring manager and interview coach.
 
 Based on the job description and candidate's cover letter, generate exactly 8 likely interview questions and ideal short answers.
@@ -593,6 +593,7 @@ Rules:
   - R (Result): 1 sentence (use a metric if it exists in the cover letter; otherwise qualitative)
 - Output the answer as a single string with line breaks exactly like:
   "S: ...\nT: ...\nA: ...\nR: ..."
+- Every answer MUST contain all four labels in this order: S:, T:, A:, R:
 - Never invent metrics, employers, tools, or achievements not present in the cover letter or job description
 - Make questions realistic and specific to the role
 - ${langRule}
@@ -604,16 +605,61 @@ ${jobDescription.substring(0, 1200)}
 
 Cover Letter:
 ${coverLetter.substring(0, 1000)}
+${attempt >= 2 ? '\nIMPORTANT: You must return ONLY the JSON array. No prose. Ensure every "a" has 4 lines with S:/T:/A:/R: labels.' : ''}
   `.trim();
 
-  return await tryModel(async (modelId) => {
-    const text = await callGemini({
+  const isStarAnswer = (a) => {
+    const s = String(a || '').trim();
+    if (!s) return false;
+    const normalized = s.replace(/\\n/g, '\n');
+    return /(^|\n)S:\s*\S/.test(normalized)
+      && /(^|\n)T:\s*\S/.test(normalized)
+      && /(^|\n)A:\s*\S/.test(normalized)
+      && /(^|\n)R:\s*\S/.test(normalized);
+  };
+
+  const normalizeStarText = (a) => {
+    const s = String(a || '').trim();
+    if (!s) return '';
+    return s
+      .replace(/\s+(T:)/g, '\n$1')
+      .replace(/\s+(A:)/g, '\n$1')
+      .replace(/\s+(R:)/g, '\n$1')
+      .replace(/\\n/g, '\n')
+      .trim();
+  };
+
+  return await tryEveryModel(async (modelId, temp) => {
+    const text1 = await callGemini({
       modelId,
-      temperature: 0.6,
+      temperature: typeof temp === 'number' ? temp : 0.55,
       maxOutputTokens: 3000,
-      contents: [promptText],
+      contents: [basePrompt(1)],
     });
-    return parseJsonFromModel(text);
+    let data1;
+    try {
+      data1 = parseJsonFromModel(text1);
+    } catch {
+      data1 = null;
+    }
+    const list1 = Array.isArray(data1) ? data1 : [];
+    const ok1 = list1.length === 8 && list1.every((row) => isStarAnswer(row?.a) || isStarAnswer(row?.answer));
+    if (ok1) {
+      return list1.map((row) => ({ ...row, a: normalizeStarText(row?.a ?? row?.answer ?? '') }));
+    }
+
+    const text2 = await callGemini({
+      modelId,
+      temperature: 0.35,
+      maxOutputTokens: 3000,
+      contents: [basePrompt(2)],
+    });
+    const data2 = parseJsonFromModel(text2);
+    const list2 = Array.isArray(data2) ? data2 : [];
+    const normalized2 = list2.map((row) => ({ ...row, a: normalizeStarText(row?.a ?? row?.answer ?? '') }));
+    const ok2 = normalized2.length === 8 && normalized2.every((row) => row?.q && isStarAnswer(row?.a));
+    if (!ok2) throw new Error('Invalid interview output');
+    return normalized2;
   });
 };
 
