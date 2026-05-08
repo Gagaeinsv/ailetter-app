@@ -23,7 +23,7 @@ const Card = ({ children }) => (
 const MobileSettingsTab = ({
   dict, contactInfo, setContactInfo, uiLang, setUiLang,
   settings, setSettings, showNotification, setHistory, clearTrackerJobs,
-  isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate
+  isPro, setShowUpgrade, saveProfile, user, selectedTemplate, setSelectedTemplate, profileSyncStatus
 }) => {
   const [activeSection, setActiveSection] = useState('profile');
   const [portalLoading, setPortalLoading] = useState(false);
@@ -73,6 +73,13 @@ const MobileSettingsTab = ({
         {/* ── Profile ── */}
         {activeSection === 'profile' && (
           <Section title={dict.tabProfile || 'Profile'}>
+            {user?.uid && (
+              <p className="text-[10px] text-slate-500 -mt-2 mb-2">
+                {profileSyncStatus === 'syncing' && (dict?.historySyncing || 'Syncing…')}
+                {profileSyncStatus === 'synced' && (dict?.historySynced || 'Synced')}
+                {profileSyncStatus === 'error' && (dict?.historySyncError || 'Cloud sync issue — using local copy')}
+              </p>
+            )}
             <div className="flex items-center gap-4 p-4 bg-[#1e293b] rounded-2xl border border-[#334155]">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-black text-2xl shrink-0">
                 {contactInfo.fullName?.[0] || user?.displayName?.[0] || 'U'}

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import translations from '../locales/translations';
+import { useProfile } from '../hooks/useProfile';
 
 const inputClass = "w-full bg-[#0f172a] border border-[#334155] rounded-xl p-3.5 text-sm text-white outline-none focus:border-indigo-500 transition-all placeholder-[#475569]";
 const labelClass = "block text-[10px] font-black uppercase tracking-widest text-[#64748b] mb-2";
@@ -17,6 +18,7 @@ const Onboarding = () => {
   const { setIsNewUser }        = useAuth();
   const { uiLang } = useLanguage();
   const dict = translations[uiLang] || translations.en;
+  const { setProfile } = useProfile(auth.currentUser);
 
   const STEPS = useMemo(() => ([
     { key: 'profession', label: dict?.obProfessionLabel || 'What is your role?', placeholder: dict?.obProfessionPh || 'Python Developer', type: 'text' },
@@ -65,6 +67,7 @@ const Onboarding = () => {
         experience: bio.experience,
       };
       localStorage.setItem('userProfile', JSON.stringify(updatedLocal));
+      await setProfile(updatedLocal);
 
       // Only write allowed fields to users/{uid}
       await setDoc(doc(db, 'users', auth.currentUser.uid), {
