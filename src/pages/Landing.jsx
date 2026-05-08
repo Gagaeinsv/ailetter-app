@@ -93,6 +93,16 @@ const TRANSLATIONS = {
     ctaButton: "Generate For Free", ctaSubtext: "No credit card · 5 free generations",
     trust: "Trusted by candidates hired at",
     feature1: "ATS Optimized", feature2: "30 Seconds", feature3: "4 Languages",
+    aiTitle: "New AI tools",
+    aiSubtitle: "More than cover letters — prepare faster and apply smarter.",
+    ai1T: "ATS score & keyword gaps",
+    ai1D: "See match score, missing keywords, and quick fixes before you apply.",
+    ai2T: "Interview Q&A",
+    ai2D: "8 likely questions with ideal answers based on your letter + job description.",
+    ai3T: "LinkedIn Easy Apply message",
+    ai3D: "Short, confident message ready to paste — tailored to the role.",
+    ai4T: "Email subject lines",
+    ai4D: "3 options (formal / direct / creative) under 60 chars.",
     compareTitle: "Why switch to AIletter?", oldWay: "The Old Way", newWay: "With AIletter",
     old1: "2+ hours per application", new1: "30 seconds per application",
     old2: "Generic copy-paste templates", new2: "Hyper-personalized content",
@@ -114,6 +124,16 @@ const TRANSLATIONS = {
     ctaButton: "Створити безкоштовно", ctaSubtext: "Картка не потрібна · 5 безкоштовних спроб",
     trust: "Нашим користувачам довіряють в",
     feature1: "Проходить ATS", feature2: "30 Секунд", feature3: "4 Мови",
+    aiTitle: "Нові AI інструменти",
+    aiSubtitle: "Не тільки листи — готуйся швидше та подавайся розумніше.",
+    ai1T: "ATS скор та прогалини",
+    ai1D: "Оцінка відповідності, відсутні ключові слова та швидкі поради.",
+    ai2T: "Підготовка до інтерв’ю",
+    ai2D: "8 ймовірних питань і короткі ідеальні відповіді по твоєму листу + вакансії.",
+    ai3T: "LinkedIn Easy Apply повідомлення",
+    ai3D: "Коротке, впевнене повідомлення — готове вставити.",
+    ai4T: "Email subject lines",
+    ai4D: "3 варіанти (формально / прямо / креативно) до 60 символів.",
     compareTitle: "Чому AIletter?", oldWay: "Старий спосіб", newWay: "З AIletter",
     old1: "2+ години на заявку", new1: "30 секунд на заявку",
     old2: "Шаблонні фрази", new2: "Персоналізований контент",
@@ -135,6 +155,16 @@ const TRANSLATIONS = {
     ctaButton: "Genera gratis", ctaSubtext: "Nessuna carta · 5 generazioni gratis",
     trust: "Candidati assunti da",
     feature1: "Ottimizzato ATS", feature2: "30 Secondi", feature3: "4 Lingue",
+    aiTitle: "Nuovi strumenti AI",
+    aiSubtitle: "Non solo lettere — preparati più velocemente e candidati meglio.",
+    ai1T: "Punteggio ATS & keyword mancanti",
+    ai1D: "Vedi match score, keyword mancanti e fix rapidi prima di candidarti.",
+    ai2T: "Q&A per colloquio",
+    ai2D: "8 domande probabili con risposte ideali basate su lettera + job description.",
+    ai3T: "Messaggio LinkedIn Easy Apply",
+    ai3D: "Messaggio breve e sicuro, pronto da incollare — su misura per il ruolo.",
+    ai4T: "Oggetti email",
+    ai4D: "3 opzioni (formale / diretto / creativo) sotto 60 caratteri.",
     compareTitle: "Perché AIletter?", oldWay: "Il vecchio modo", newWay: "Con AIletter",
     old1: "2+ ore per candidatura", new1: "30 secondi per candidatura",
     old2: "Template generici", new2: "Contenuto personalizzato",
@@ -156,6 +186,16 @@ const TRANSLATIONS = {
     ctaButton: "Kostenlos generieren", ctaSubtext: "Keine Kreditkarte · 5 kostenlose Generierungen",
     trust: "Vertrauen von Kandidaten bei",
     feature1: "ATS-optimiert", feature2: "30 Sekunden", feature3: "4 Sprachen",
+    aiTitle: "Neue KI-Tools",
+    aiSubtitle: "Mehr als Anschreiben — schneller vorbereiten und smarter bewerben.",
+    ai1T: "ATS-Score & Keyword-Lücken",
+    ai1D: "Match-Score, fehlende Keywords und schnelle Fixes vor dem Absenden.",
+    ai2T: "Interview Q&A",
+    ai2D: "8 wahrscheinliche Fragen mit idealen Antworten aus Brief + Stellenanzeige.",
+    ai3T: "LinkedIn Easy Apply Nachricht",
+    ai3D: "Kurze, selbstbewusste Nachricht zum Einfügen — passend zur Rolle.",
+    ai4T: "E-Mail-Betreffzeilen",
+    ai4D: "3 Optionen (formal / direkt / kreativ) unter 60 Zeichen.",
     compareTitle: "Warum AIletter?", oldWay: "Der alte Weg", newWay: "Mit AIletter",
     old1: "2+ Stunden pro Bewerbung", new1: "30 Sekunden pro Bewerbung",
     old2: "Generische Vorlagen", new2: "Personalisierter Inhalt",
@@ -344,6 +384,29 @@ const Landing = () => {
           </div>
           <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0f172a] to-transparent" />
           <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0f172a] to-transparent" />
+        </div>
+      </section>
+
+      {/* AI TOOLS */}
+      <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto z-10 relative">
+        <div className="text-center mb-10 md:mb-14">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black">{t('aiTitle')}</h2>
+          <p className="text-gray-400 text-sm mt-3 max-w-2xl mx-auto">{t('aiSubtitle')}</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { icon: '📊', title: t('ai1T'), desc: t('ai1D'), tint: 'border-emerald-500/15 bg-emerald-500/[0.04] text-emerald-300' },
+            { icon: '🎤', title: t('ai2T'), desc: t('ai2D'), tint: 'border-indigo-500/15 bg-indigo-500/[0.05] text-indigo-300' },
+            { icon: '💼', title: t('ai3T'), desc: t('ai3D'), tint: 'border-sky-500/15 bg-sky-500/[0.04] text-sky-300' },
+            { icon: '✉️', title: t('ai4T'), desc: t('ai4D'), tint: 'border-purple-500/15 bg-purple-500/[0.04] text-purple-300' },
+          ].map((card, i) => (
+            <div key={i} className={`glass p-6 rounded-2xl border ${card.tint} hover:border-white/10 transition-all`}>
+              <div className="text-3xl mb-3">{card.icon}</div>
+              <h3 className="text-base font-black text-white mb-2">{card.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{card.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
