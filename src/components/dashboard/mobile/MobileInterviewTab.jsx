@@ -3,6 +3,14 @@ import { generateInterviewQA } from '../../../gemini';
 
 const UI_TO_PROMPT_LANG = { en: 'English', uk: 'Ukrainian', it: 'Italian', de: 'German' };
 
+const pickFirst = (obj, keys) => {
+  for (const k of keys) {
+    const v = obj?.[k];
+    if (typeof v === 'string' && v.trim()) return v;
+  }
+  return '';
+};
+
 const IconMagic   = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>;
 const IconChevron = ({ open }) => (
   <svg className={`w-4 h-4 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
@@ -48,8 +56,8 @@ const MobileInterviewTab = ({ jobDescription, generatedLetter, contactInfo, dict
       });
       const list = Array.isArray(data) ? data : [];
       const normalized = list.map((row) => ({
-        q: row.q ?? row.question ?? '',
-        a: row.a ?? row.answer ?? '',
+        q: pickFirst(row, ['q', 'question', 'domanda', 'frage', 'питання']),
+        a: pickFirst(row, ['a', 'answer', 'risposta', 'antwort', 'відповідь']),
       })).filter((row) => row.q && row.a);
       setQa(normalized);
       setGenerated(true);

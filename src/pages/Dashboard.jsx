@@ -6,6 +6,7 @@ import html2pdf from 'html2pdf.js';
 import { usePlan } from '../hooks/usePlan';
 import { useHistory } from '../hooks/useHistory';
 import { useJobTracker } from '../hooks/useJobTracker';
+import { useProfile } from '../hooks/useProfile';
 import UpgradeModal from '../components/UpgradeModal';
 import useMediaQuery from '../hooks/useMediaQuery';
 
@@ -51,6 +52,7 @@ const Dashboard = () => {
     removeTrackerJob,
     clearTrackerJobs,
   } = useJobTracker(user, isPro);
+  const { profile, setProfile, profileSyncStatus } = useProfile(user);
   const isMobile = useMediaQuery('(max-width: 1024px)') &&
     ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
@@ -92,16 +94,20 @@ const Dashboard = () => {
   const todayStr    = new Date().toLocaleDateString('uk-UA');
   const placeholderText = 'Your letter will appear here...';
 
-  // ── Load saved profile ──
+  // ── Load synced profile ──
   useEffect(() => {
-    const savedProfile = localStorage.getItem('userProfile');
-    if (savedProfile) setContactInfo(JSON.parse(savedProfile));
-    else if (user) setContactInfo(prev => ({
-      ...prev,
-      fullName: user.displayName || '',
-      email: user.email || ''
-    }));
-  }, [user]);
+    if (profile) {
+      setContactInfo((prev) => ({ ...prev, ...profile }));
+      return;
+    }
+    if (user) {
+      setContactInfo((prev) => ({
+        ...prev,
+        fullName: user.displayName || '',
+        email: user.email || '',
+      }));
+    }
+  }, [profile, user]);
 
   // ── Скидаємо ID збереження при новій генерації (крім завантаження з історії) ──
   useEffect(() => {
@@ -150,7 +156,7 @@ const Dashboard = () => {
       const data = await parseCV(cvFile);
       const updated = { ...contactInfo, ...data };
       setContactInfo(updated);
-      localStorage.setItem('userProfile', JSON.stringify(updated));
+      setProfile(updated);
       showNotification('Auto-filled ✓');
     } catch (e) {
       alert('AI Error: Could not parse CV');
@@ -425,8 +431,8 @@ const Dashboard = () => {
   };
 
   // ── Profile ──
-  const saveProfile = () => {
-    localStorage.setItem('userProfile', JSON.stringify(contactInfo));
+  const saveProfile = async () => {
+    await setProfile(contactInfo);
     showNotification('Profile saved ✓');
   };
 
@@ -465,6 +471,7 @@ const Dashboard = () => {
     upsertTrackerJob,
     patchTrackerJob,
     removeTrackerJob,
+    profileSyncStatus,
     mobileHistoryLoadNonce,
     isPro, planLoading, setShowUpgrade,
     dict, showNotification,
