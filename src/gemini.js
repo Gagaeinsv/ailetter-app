@@ -546,7 +546,7 @@ export const generateInterviewQA = async (coverLetter, jobDescription, contactIn
     ? `Output language: ${options.outputLanguage} for every question and answer VALUE. JSON keys must stay exactly "q" and "a" (English).`
     : "Match the language of the job description when possible.";
 
-  const promptText = `
+  const basePrompt = (attempt = 1) => `
 You are a senior hiring manager and interview coach.
 
 Based on the job description and candidate's cover letter, generate exactly 8 likely interview questions and ideal short answers.
@@ -565,8 +565,9 @@ Rules:
   - T (Task): 1 sentence
   - A (Action): 2–3 sentences (be specific)
   - R (Result): 1 sentence (use a metric if it exists in the cover letter; otherwise qualitative)
-- Output the answer as a single string with line breaks exactly like:
+- Output the answer as a single string with EXACT line breaks and labels:
   "S: ...\nT: ...\nA: ...\nR: ..."
+- Every answer MUST contain all four labels in this order: S:, T:, A:, R:
 - Never invent metrics, employers, tools, or achievements not present in the cover letter or job description
 - Make questions realistic and specific to the role
 - ${langRule}
@@ -578,16 +579,55 @@ ${jobDescription.substring(0, 1200)}
 
 Cover Letter:
 ${coverLetter.substring(0, 1000)}
+${attempt >= 2 ? '\nIMPORTANT: Your previous output did not follow STAR. Fix every answer to include 4 lines with S:/T:/A:/R: labels and \\n line breaks.' : ''}
   `.trim();
 
+  const isStarAnswer = (a) => {
+    const s = String(a || '').trim();
+    if (!s) return false;
+    // allow either real newlines or escaped ones from JSON parsing
+    const normalized = s.replace(/\\n/g, '\n');
+    return /(^|\n)S:\s*\S/.test(normalized)
+      && /(^|\n)T:\s*\S/.test(normalized)
+      && /(^|\n)A:\s*\S/.test(normalized)
+      && /(^|\n)R:\s*\S/.test(normalized);
+  };
+
+  const normalizeStarText = (a) => {
+    const s = String(a || '').trim();
+    if (!s) return '';
+    // If model returns "S: ... T: ... A: ... R: ..." on one line, format it.
+    return s
+      .replace(/\s+(T:)/g, '\n$1')
+      .replace(/\s+(A:)/g, '\n$1')
+      .replace(/\s+(R:)/g, '\n$1')
+      .replace(/\\n/g, '\n')
+      .trim();
+  };
+
   return await tryModel(async (modelId) => {
-    const text = await callGemini({
+    const text1 = await callGemini({
       modelId,
       temperature: 0.6,
       maxOutputTokens: 3000,
-      contents: [promptText],
+      contents: [basePrompt(1)],
     });
-    return parseJsonFromModel(text);
+    const data1 = parseJsonFromModel(text1);
+    const list1 = Array.isArray(data1) ? data1 : [];
+    const ok1 = list1.length > 0 && list1.every((row) => isStarAnswer(row?.a) || isStarAnswer(row?.answer));
+    if (ok1) {
+      return list1.map((row) => ({ ...row, a: normalizeStarText(row?.a ?? row?.answer ?? '') }));
+    }
+
+    const text2 = await callGemini({
+      modelId,
+      temperature: 0.55,
+      maxOutputTokens: 3000,
+      contents: [basePrompt(2)],
+    });
+    const data2 = parseJsonFromModel(text2);
+    const list2 = Array.isArray(data2) ? data2 : [];
+    return list2.map((row) => ({ ...row, a: normalizeStarText(row?.a ?? row?.answer ?? '') }));
   });
 };
 
