@@ -579,14 +579,21 @@ Based on the job description and candidate's cover letter, generate exactly 8 li
 
 Return ONLY valid JSON, no markdown:
 [
-  { "q": "Question text?", "a": "Ideal answer in 2-3 sentences." },
+  { "q": "Question text?", "a": "Answer in STAR format with labels." },
   ...
 ]
 
 Rules:
 - Mix behavioral (Tell me about a time...), situational, and role-specific questions
 - Answers should reference the candidate's background from the cover letter
-- Keep answers concise: 2-3 sentences each
+- Use the STAR methodology for EVERY answer:
+  - S (Situation): 1 sentence
+  - T (Task): 1 sentence
+  - A (Action): 2–3 sentences (be specific)
+  - R (Result): 1 sentence (use a metric if it exists in the cover letter; otherwise qualitative)
+- Output the answer as a single string with line breaks exactly like:
+  "S: ...\nT: ...\nA: ...\nR: ..."
+- Never invent metrics, employers, tools, or achievements not present in the cover letter or job description
 - Make questions realistic and specific to the role
 - ${langRule}
 

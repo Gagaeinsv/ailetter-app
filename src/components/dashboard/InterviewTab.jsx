@@ -30,7 +30,7 @@ const QACard = ({ item, index }) => {
         <span className={`shrink-0 ${open ? 'text-indigo-400' : 'text-gray-600'}`}><IconChevron open={open} /></span>
       </button>
       {open && (
-        <div className="px-5 pb-4 pl-14 text-sm text-gray-300 leading-relaxed border-t border-[#334155]/50 pt-3">
+        <div className="px-5 pb-4 pl-14 text-sm text-gray-300 leading-relaxed border-t border-[#334155]/50 pt-3 whitespace-pre-wrap">
           {item.a}
         </div>
       )}
