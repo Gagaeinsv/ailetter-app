@@ -15,14 +15,21 @@ const STYLE_COLORS = {
 
 function normalizeSubjectResults(raw) {
   if (!Array.isArray(raw)) return [];
+  const pick = (obj, keys) => {
+    for (const k of keys) {
+      const v = obj?.[k];
+      if (typeof v === 'string' && v.trim()) return v;
+    }
+    return '';
+  };
   return raw.map((item, i) => {
     if (typeof item === 'string') {
       const styles = ['Formal', 'Direct', 'Creative'];
       return { style: styles[i] || '', subject: item };
     }
     return {
-      style: item?.style || '',
-      subject: item?.subject || '',
+      style: pick(item, ['style', 'stile', 'stil', 'стиль']),
+      subject: pick(item, ['subject', 'oggetto', 'betreff', 'тема']),
     };
   }).filter((r) => r.subject);
 }

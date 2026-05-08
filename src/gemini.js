@@ -543,7 +543,7 @@ ${originalLetter.substring(0, 800)}
 export const generateInterviewQA = async (coverLetter, jobDescription, contactInfo, options = {}) => {
   const name = contactInfo?.fullName || contactInfo?.name || "the candidate";
   const langRule = options.outputLanguage
-    ? `Output language: ${options.outputLanguage} for every question and answer.`
+    ? `Output language: ${options.outputLanguage} for every question and answer VALUE. JSON keys must stay exactly "q" and "a" (English).`
     : "Match the language of the job description when possible.";
 
   const promptText = `
@@ -587,7 +587,7 @@ ${coverLetter.substring(0, 1000)}
 export const generateSubjectLines = async (coverLetter, jobDescription, contactInfo, options = {}) => {
   const name = contactInfo?.fullName || contactInfo?.name || "the candidate";
   const langRule = options.outputLanguage
-    ? `Output language: ${options.outputLanguage} for all subject and style fields.`
+    ? `Output language: ${options.outputLanguage} for the TEXT values only. JSON keys must stay exactly "style" and "subject" (English). The "style" VALUE must be one of: "Formal", "Direct", "Creative".`
     : "Match the language of the job description when possible.";
 
   const promptText = `
