@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import HeroMockup from '../components/landing/HeroMockup';
-import { useReviews } from '../hooks/useReviews';
+import AiToolsMockup from '../components/landing/AiToolsMockup';
 
 const styles = `
   @keyframes landingScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
@@ -95,6 +95,10 @@ const TRANSLATIONS = {
     feature1: "ATS Optimized", feature2: "30 Seconds", feature3: "4 Languages",
     aiTitle: "New AI tools",
     aiSubtitle: "More than cover letters — prepare faster and apply smarter.",
+    aiDemoBtn: "See example",
+    aiDemoClose: "Close",
+    aiDemoHeader: "AI tools — Example output",
+    aiDemoHint: "Tap a tool to preview example output.",
     ai1T: "ATS score & keyword gaps",
     ai1D: "See match score, missing keywords, and quick fixes before you apply.",
     ai2T: "Interview Q&A",
@@ -126,6 +130,10 @@ const TRANSLATIONS = {
     feature1: "Проходить ATS", feature2: "30 Секунд", feature3: "4 Мови",
     aiTitle: "Нові AI інструменти",
     aiSubtitle: "Не тільки листи — готуйся швидше та подавайся розумніше.",
+    aiDemoBtn: "Подивитись приклад",
+    aiDemoClose: "Закрити",
+    aiDemoHeader: "AI інструменти — приклад результату",
+    aiDemoHint: "Обери інструмент, щоб побачити приклад.",
     ai1T: "ATS скор та прогалини",
     ai1D: "Оцінка відповідності, відсутні ключові слова та швидкі поради.",
     ai2T: "Підготовка до інтерв’ю",
@@ -157,6 +165,10 @@ const TRANSLATIONS = {
     feature1: "Ottimizzato ATS", feature2: "30 Secondi", feature3: "4 Lingue",
     aiTitle: "Nuovi strumenti AI",
     aiSubtitle: "Non solo lettere — preparati più velocemente e candidati meglio.",
+    aiDemoBtn: "Vedi esempio",
+    aiDemoClose: "Chiudi",
+    aiDemoHeader: "Strumenti AI — esempio",
+    aiDemoHint: "Scegli uno strumento per vedere un esempio.",
     ai1T: "Punteggio ATS & keyword mancanti",
     ai1D: "Vedi match score, keyword mancanti e fix rapidi prima di candidarti.",
     ai2T: "Q&A per colloquio",
@@ -188,6 +200,10 @@ const TRANSLATIONS = {
     feature1: "ATS-optimiert", feature2: "30 Sekunden", feature3: "4 Sprachen",
     aiTitle: "Neue KI-Tools",
     aiSubtitle: "Mehr als Anschreiben — schneller vorbereiten und smarter bewerben.",
+    aiDemoBtn: "Beispiel ansehen",
+    aiDemoClose: "Schließen",
+    aiDemoHeader: "KI-Tools — Beispiel",
+    aiDemoHint: "Wähle ein Tool, um ein Beispiel zu sehen.",
     ai1T: "ATS-Score & Keyword-Lücken",
     ai1D: "Match-Score, fehlende Keywords und schnelle Fixes vor dem Absenden.",
     ai2T: "Interview Q&A",
@@ -229,7 +245,7 @@ const Landing = () => {
   const { uiLang, setUiLang } = useLanguage();
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { reviews: REVIEWS } = useReviews();
+  const [showAiDemo, setShowAiDemo] = useState(false);
 
   useEffect(() => {
     const schema = {
@@ -239,7 +255,6 @@ const Landing = () => {
       applicationCategory: 'BusinessApplication',
       operatingSystem: 'Web',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
-      aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '312' },
     };
     let sd = document.querySelector('#ailetter-schema');
     if (!sd) { sd = document.createElement('script'); sd.id = 'ailetter-schema'; sd.type = 'application/ld+json'; document.head.appendChild(sd); }
@@ -392,6 +407,15 @@ const Landing = () => {
         <div className="text-center mb-10 md:mb-14">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black">{t('aiTitle')}</h2>
           <p className="text-gray-400 text-sm mt-3 max-w-2xl mx-auto">{t('aiSubtitle')}</p>
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => setShowAiDemo(true)}
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-white text-[#0f172a] font-black text-xs uppercase tracking-widest hover:bg-gray-100 transition-all"
+            >
+              {t('aiDemoBtn')}
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -461,36 +485,24 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* REVIEWS */}
-      <section className="py-16 md:py-20 px-4 md:px-6 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3">{t('reviewsTitle')}</h2>
-            <div className="flex items-center justify-center gap-2 mt-3">
-              <Stars /><span className="font-black text-white text-sm">4.9</span>
-              <span className="text-gray-600 text-xs">/ 5.0 · 312 reviews</span>
+      {/* AI DEMO MODAL */}
+      {showAiDemo && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-4xl">
+            <div className="flex items-center justify-between mb-3 px-1">
+              <div className="text-sm font-black text-white">{t('aiDemoHeader')}</div>
+              <button
+                type="button"
+                onClick={() => setShowAiDemo(false)}
+                className="px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-white/10 hover:bg-white/15 border border-white/10 text-white transition-all"
+              >
+                {t('aiDemoClose')}
+              </button>
             </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {REVIEWS.map((r, i) => (
-              <div key={i} className="glass p-5 rounded-xl flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${r.color} flex items-center justify-center font-black text-sm shrink-0`}>{r.avatar}</div>
-                    <div>
-                      <p className="font-bold text-white text-xs">{r.name}</p>
-                      <p className="text-[10px] text-indigo-400">{r.role}</p>
-                    </div>
-                  </div>
-                  <IconQuote />
-                </div>
-                <Stars n={r.stars} />
-                <p className="text-gray-400 text-xs leading-relaxed flex-1">"{r.text}"</p>
-              </div>
-            ))}
+            <AiToolsMockup t={t} />
           </div>
         </div>
-      </section>
+      )}
 
       {/* FAQ */}
       <section className="py-16 md:py-20 px-4 md:px-6 relative z-10 bg-[#1e293b]/20">
