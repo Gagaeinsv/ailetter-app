@@ -543,7 +543,23 @@ ${attempt >= 2 ? 'IMPORTANT: Your previous attempt was too short or incomplete. 
     const tooShort = t.split(/\s+/).length < 70; // catches 1-sentence outputs
     const noSignOff = !/(regards|sincerely|best|kind regards|cordiali saluti|mit freundlichen grüßen|z povahoyu|з повагою)/i.test(t);
     const endsBadly = /[,;:–-]\s*$/.test(t) || /(\.\.\.|…)\s*$/.test(t);
-    return tooShort || noSignOff || endsBadly;
+    const endsWithoutPunct = !/[.!?…]$/.test(t);
+    const hasFinalNameLine = new RegExp(`${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i').test(t.split('\n').slice(-1)[0] || '');
+    // If it ends without punctuation and doesn't look like it finished the sign-off, treat as cut-off.
+    const likelyCutOff = endsWithoutPunct && !hasFinalNameLine;
+    return tooShort || noSignOff || endsBadly || likelyCutOff;
+  };
+
+  const looksCutMidWord = (s) => {
+    const t = String(s || '').trim();
+    if (!t) return false;
+    // Heuristic: ends with a letter, no punctuation at end, and last token seems incomplete.
+    const endsWithLetter = /\p{L}$/u.test(t);
+    const endsWithPunct = /[.!?…]$/.test(t);
+    if (!endsWithLetter || endsWithPunct) return false;
+    const last = t.split(/\s+/).pop() || '';
+    // Very short last fragment often indicates truncation (e.g. "intere" / "reg")
+    return last.length > 0 && last.length <= 6;
   };
 
   return await tryEveryModel(async (modelId, temp) => {
@@ -554,7 +570,7 @@ ${attempt >= 2 ? 'IMPORTANT: Your previous attempt was too short or incomplete. 
       contents: [basePrompt(1)],
     });
     const cleaned1 = String(first || '').replace(/```/g, '').trim();
-    if (!looksIncomplete(cleaned1)) return cleaned1;
+    if (!looksIncomplete(cleaned1) && !looksCutMidWord(cleaned1)) return cleaned1;
 
     const second = await callGemini({
       modelId,
@@ -562,7 +578,36 @@ ${attempt >= 2 ? 'IMPORTANT: Your previous attempt was too short or incomplete. 
       maxOutputTokens: 1024,
       contents: [basePrompt(2)],
     });
-    return String(second || '').replace(/```/g, '').trim();
+    let cleaned2 = String(second || '').replace(/```/g, '').trim();
+    if (!looksCutMidWord(cleaned2)) return cleaned2;
+
+    // If the model output is cut mid-word, ask for a continuation and append.
+    const fragmentMatch = cleaned2.match(/(\p{L}+)\s*$/u);
+    const fragment = fragmentMatch?.[1] || '';
+    const base = fragment ? cleaned2.slice(0, -fragment.length).trimEnd() : cleaned2;
+
+    const continuePrompt = `
+Continue the follow-up email below from exactly where it stopped.
+
+Rules:
+- Output ONLY the missing continuation text (do NOT repeat earlier sentences).
+- If the last word is cut, start by completing that word fragment: "${fragment}".
+- Finish the email cleanly (complete sentence, sign-off line, and name line).
+- Use the same language and tone as the email.
+
+Email so far:
+${base}
+    `.trim();
+
+    const cont = await callGemini({
+      modelId,
+      temperature: 0.3,
+      maxOutputTokens: 512,
+      contents: [continuePrompt],
+    });
+    const cleanedCont = String(cont || '').replace(/```/g, '').trim();
+    const joined = `${base}${fragment ? fragment : ''}${cleanedCont ? (cleanedCont.startsWith('\n') ? '' : ' ') + cleanedCont : ''}`.trim();
+    return joined;
   });
 };
 
