@@ -499,44 +499,70 @@ ${coverLetter.substring(0, 1200)}
 };
 
 export const generateFollowUp = async (originalLetter, jobDescription, contactInfo, daysSince) => {
-  const promptText = `
-You are an expert career coach. Write a SHORT, professional follow-up email for a job application.
+  const name = (contactInfo?.fullName || contactInfo?.name || '').trim() || 'The candidate';
+
+  const basePrompt = (attempt = 1) => `
+You are an expert career coach. Write a polished follow-up email for a job application.
 
 CONTEXT:
 - The candidate applied ${daysSince} days ago and has not heard back.
-- This is a polite follow-up — NOT a desperate plea. Confident and brief.
+- Goal: show genuine continued interest + make it easy to respond.
 
-STRICT RULES:
-1. Length: 80–120 words MAX. Short and respectful of the reader's time.
-2. Tone: Warm, professional, confident. NOT pushy or apologetic.
-3. Structure:
-   - Line 1: Brief reminder of who they are and which role they applied for
-   - Line 2–3: One specific detail from the original letter that reinforces their fit (do NOT copy — rephrase naturally)
-   - Final line: Simple ask — still interested, happy to provide anything else, looking forward to next steps
-4. NO subject line. Output ONLY the email body.
-5. NO "I am following up on my application" as the opener — too generic.
-6. Start with something like: "I wanted to briefly follow up on my application for [role]..." or reference a specific detail.
-7. End with a natural sign-off like "Best regards," followed by the candidate's name.
-8. Plain text only. No markdown, no bullets.
+OUTPUT REQUIREMENTS:
+- Plain text only. No markdown. No bullets.
+- Output ONLY the email body (no subject line).
+- Write in the same language as the Job Description (unless it is clearly bilingual; then default to English).
 
-Candidate: ${contactInfo?.fullName || "the candidate"}
-Role applied for: extracted from job description below
-Days since application: ${daysSince}
+STYLE:
+- Warm, confident, professional. Never desperate. Never apologetic.
+- Avoid vague filler. Include ONE concrete fit detail (rephrased) from the original letter.
 
-Job Description (for context):
-${jobDescription.substring(0, 600)}
+STRUCTURE (must follow exactly):
+1) Greeting line (e.g., "Hi [Name]," or "Hello," if unknown).
+2) Paragraph 1 (2–3 sentences): remind role + when applied + a specific connection to the role/company.
+3) Paragraph 2 (1–2 sentences): gentle call-to-action asking about next steps and offering extra info.
+4) Sign-off on its own line ("Best regards," / localized equivalent) + the candidate name on the last line.
 
-Original Cover Letter (use for context — do NOT copy sentences directly):
-${originalLetter.substring(0, 800)}
+LENGTH:
+- Target 140–190 words. Do not exceed 220 words.
+- MUST be a complete email (no cut-off, no unfinished sentence).
+
+Candidate name: ${name}
+Job Description (context):
+${String(jobDescription || '').substring(0, 900)}
+
+Original Cover Letter (context only; do NOT copy sentences):
+${String(originalLetter || '').substring(0, 1200)}
+
+${attempt >= 2 ? 'IMPORTANT: Your previous attempt was too short or incomplete. Write a full email with 2 paragraphs + sign-off, and ensure the last two lines are the sign-off and the name.' : ''}
   `.trim();
 
-  return await tryModel(async (modelId) => {
-    return await callGemini({
+  const looksIncomplete = (s) => {
+    const t = String(s || '').trim();
+    if (!t) return true;
+    const tooShort = t.split(/\s+/).length < 70; // catches 1-sentence outputs
+    const noSignOff = !/(regards|sincerely|best|kind regards|cordiali saluti|mit freundlichen grüßen|z povahoyu|з повагою)/i.test(t);
+    const endsBadly = /[,;:–-]\s*$/.test(t) || /(\.\.\.|…)\s*$/.test(t);
+    return tooShort || noSignOff || endsBadly;
+  };
+
+  return await tryEveryModel(async (modelId, temp) => {
+    const first = await callGemini({
       modelId,
-      temperature: 0.6,
-      maxOutputTokens: 512,
-      contents: [promptText],
+      temperature: typeof temp === 'number' ? temp : 0.6,
+      maxOutputTokens: 1024,
+      contents: [basePrompt(1)],
     });
+    const cleaned1 = String(first || '').replace(/```/g, '').trim();
+    if (!looksIncomplete(cleaned1)) return cleaned1;
+
+    const second = await callGemini({
+      modelId,
+      temperature: typeof temp === 'number' ? temp : 0.55,
+      maxOutputTokens: 1024,
+      contents: [basePrompt(2)],
+    });
+    return String(second || '').replace(/```/g, '').trim();
   });
 };
 
