@@ -35,8 +35,16 @@ const STATIC_SEO = {
   '/dashboard': { title: 'Dashboard | AIletter', description: '', canonical: null, ogImage: null, index: false },
 };
 
+/** Match router paths so Helmet never marks public pages as noindex (e.g. /privacy/). */
+const normalizePathname = (raw) => {
+  const p = raw || '/';
+  if (p !== '/' && p.endsWith('/')) return p.replace(/\/+$/, '');
+  return p;
+};
+
 const PageSEO = () => {
-  const { pathname } = useLocation();
+  const { pathname: rawPath } = useLocation();
+  const pathname = normalizePathname(rawPath);
   const { uiLang } = useLanguage();
   const dict = translations[uiLang] || translations.en;
 
@@ -64,7 +72,8 @@ const PageSEO = () => {
     },
   }), [dict]);
 
-  const config = localized[pathname] ?? STATIC_SEO[pathname] ?? { title: 'AIletter', description: '', canonical: null, ogImage: null, index: false };
+  const seoByPath = useMemo(() => ({ ...STATIC_SEO, ...localized }), [localized]);
+  const config = seoByPath[pathname] ?? { title: 'AIletter', description: '', canonical: null, ogImage: null, index: false };
 
   return (
     <Helmet>
