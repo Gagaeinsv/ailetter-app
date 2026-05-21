@@ -93,6 +93,31 @@ function jobFromFirestore(data, docClientId) {
   });
 }
 
+/** Per-job merge: keep the row with the highest updatedAt (fixes status reverting after cloud snapshot). */
+function mergeCloudAndLocal(cloud, local, cap) {
+  const sortByUpdated = (a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0);
+  const byId = new Map();
+
+  for (const job of cloud) {
+    if (!job) continue;
+    const id = String(job.id);
+    const existing = byId.get(id);
+    if (!existing || Number(job.updatedAt || 0) >= Number(existing.updatedAt || 0)) {
+      byId.set(id, job);
+    }
+  }
+  for (const job of local) {
+    if (!job) continue;
+    const id = String(job.id);
+    const existing = byId.get(id);
+    if (!existing || Number(job.updatedAt || 0) > Number(existing.updatedAt || 0)) {
+      byId.set(id, job);
+    }
+  }
+
+  return Array.from(byId.values()).sort(sortByUpdated).slice(0, cap);
+}
+
 export const useJobTracker = (user, isPro) => {
   const uid = user?.uid;
   const [jobs, setJobsState] = useState(() => loadLocal(uid));
@@ -118,20 +143,7 @@ export const useJobTracker = (user, isPro) => {
         const cloud = snap.docs.map((d) => jobFromFirestore(d.data(), d.id));
 
         const local = loadLocal(uid);
-        const sortByUpdated = (a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0);
-
-        /**
-         * Prefer cloud docs when slicing to cap — old merge interleaved locals with weak
-         * timestamps so mobile-created rows dropped off the tail on desktop browsers.
-         */
-        let merged;
-        if (cloud.length > 0) {
-          const cloudIds = new Set(cloud.map((j) => String(j.id)));
-          const localsNotInCloud = local.filter((j) => !cloudIds.has(String(j.id)));
-          merged = [...cloud, ...localsNotInCloud].sort(sortByUpdated).slice(0, cap);
-        } else {
-          merged = [...local].sort(sortByUpdated).slice(0, cap);
-        }
+        const merged = mergeCloudAndLocal(cloud, local, cap);
         saveLocal(uid, merged);
         setJobsState(merged);
         setSyncStatus('synced');
@@ -222,25 +234,32 @@ export const useJobTracker = (user, isPro) => {
   const patchJob = useCallback(
     async (id, patch) => {
       const sid = String(normalizeId(id));
+      const now = Date.now();
       let updatedDoc = null;
+
       setJobsState((prev) => {
         const next = prev.map((j) => {
           if (String(j.id) !== sid) return j;
-          const merged = normalizeJobFromStorage({
+          updatedDoc = normalizeJobFromStorage({
             ...j,
             ...patch,
-            updatedAt: Date.now(),
+            updatedAt: now,
           });
-          updatedDoc = merged;
-          return merged;
+          return updatedDoc;
         });
+        if (!updatedDoc) return prev;
         saveLocal(uid, next);
         return next;
       });
 
-      if (uid && updatedDoc) {
+      if (!updatedDoc) return;
+
+      if (uid) {
         try {
-          await setDoc(doc(db, 'users', uid, 'jobApplications', String(updatedDoc.id)), toFsDoc(updatedDoc));
+          await setDoc(
+            doc(db, 'users', uid, 'jobApplications', String(updatedDoc.id)),
+            toFsDoc(updatedDoc)
+          );
         } catch (e) {
           console.warn('useJobTracker: patchJob failed', e);
           setSyncStatus('error');
