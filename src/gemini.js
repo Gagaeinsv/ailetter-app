@@ -417,7 +417,117 @@ const parseJsonFromModel = (raw) => {
   throw new Error("Could not parse JSON from AI response");
 };
 
-const normalizeATSPayload = (raw) => {
+const ATS_STOPWORDS = new Set([
+  "the", "and", "for", "with", "you", "your", "our", "are", "will", "this", "that", "from",
+  "have", "has", "been", "into", "about", "their", "they", "them", "who", "what", "when",
+  "where", "which", "while", "would", "should", "could", "must", "may", "can", "all", "any",
+  "job", "role", "team", "work", "company", "position", "candidate", "experience", "years",
+  "year", "ability", "skills", "skill", "including", "such", "using", "use", "used",
+]);
+
+const ATS_GENERIC_FLUFF = new Set([
+  "team player", "hard working", "hard-working", "communication skills", "problem solving",
+  "problem-solving", "self motivated", "self-motivated", "detail oriented", "detail-oriented",
+  "fast learner", "quick learner", "results driven", "results-driven", "proactive",
+]);
+
+const appearsInText = (haystack, needle) => {
+  const h = String(haystack || "").toLowerCase();
+  const n = String(needle || "").toLowerCase().trim();
+  if (!n || n.length < 2) return false;
+  return h.includes(n);
+};
+
+const isBadATSKeyword = (kw) => {
+  const s = String(kw || "").trim().replace(/\s+/g, " ");
+  if (!s || s.length < 2 || s.length > 42) return true;
+  if (/[.!?]/.test(s)) return true;
+  if (s.split(/\s+/).length > 4) return true;
+  if (/^(tip|note|add|include|mention|try|consider|make sure)\b/i.test(s)) return true;
+  if (ATS_GENERIC_FLUFF.has(s.toLowerCase())) return true;
+  return false;
+};
+
+/** Pull short skill/requirement phrases from JD when the model returns junk. */
+const extractJDCandidateTerms = (jobDescription) => {
+  const jd = String(jobDescription || "");
+  const terms = new Set();
+
+  const sectionMatch = jd.match(
+    /(?:requirements?|qualifications?|skills?|must[\s-]have|nice[\s-]to[\s-]have|what you(?:'ll| will) bring|we(?:'re| are) looking for)[:\s]*([\s\S]{0,900})/i
+  );
+  const focus = sectionMatch ? sectionMatch[1] : jd;
+
+  const splitParts = focus.split(/[\n,;•·|/]+/);
+  for (const part of splitParts) {
+    let s = part.trim().replace(/^[-*•\d.)]+\s*/, "");
+    if (!s || s.length < 2 || s.length > 42) continue;
+    if (/\b(responsibilities|benefits|salary|apply|equal opportunity)\b/i.test(s)) continue;
+    const words = s.toLowerCase().split(/\s+/).filter((w) => w && !ATS_STOPWORDS.has(w));
+    if (words.length === 0 || words.length > 4) continue;
+    const phrase = s.replace(/\s+/g, " ").trim();
+    if (!isBadATSKeyword(phrase)) terms.add(phrase);
+  }
+
+  const techHits = jd.match(
+    /\b(?:Python|JavaScript|TypeScript|React|Node\.?js|SQL|AWS|Azure|GCP|Docker|Kubernetes|Figma|Excel|SAP|CRM|SEO|B2B|B2C|Agile|Scrum|Jira|Git|CI\/CD|machine learning|data analysis|project management|stakeholder management|customer success|sales|marketing|UX|UI|HR|finance|accounting|English|German|Ukrainian|Italian)\b/gi
+  );
+  if (techHits) {
+    for (const t of techHits) {
+      const phrase = t.trim();
+      if (!isBadATSKeyword(phrase)) terms.add(phrase);
+    }
+  }
+
+  return [...terms];
+};
+
+const refineATSLists = (matched, missing, jobDescription, coverLetter) => {
+  const jd = String(jobDescription || "");
+  const letter = String(coverLetter || "");
+
+  const filterList = (list, mode) => {
+    const seen = new Set();
+    const out = [];
+    for (const raw of list) {
+      const kw = String(raw || "").trim().replace(/\s+/g, " ");
+      if (isBadATSKeyword(kw)) continue;
+      const key = kw.toLowerCase();
+      if (seen.has(key)) continue;
+
+      const inJd = appearsInText(jd, kw);
+      const inLetter = appearsInText(letter, kw);
+      if (!inJd) continue;
+      if (mode === "matched" && !inLetter) continue;
+      if (mode === "missing" && inLetter) continue;
+
+      seen.add(key);
+      out.push(kw);
+      if (out.length >= 6) break;
+    }
+    return out;
+  };
+
+  let refinedMatched = filterList(matched, "matched");
+  let refinedMissing = filterList(missing, "missing");
+
+  if (refinedMissing.length < 2) {
+    const backup = extractJDCandidateTerms(jd)
+      .filter((kw) => !appearsInText(letter, kw) && !refinedMatched.some((m) => m.toLowerCase() === kw.toLowerCase()));
+    for (const kw of backup) {
+      if (refinedMissing.length >= 5) break;
+      if (!refinedMissing.some((m) => m.toLowerCase() === kw.toLowerCase())) {
+        refinedMissing.push(kw);
+      }
+    }
+  }
+
+  refinedMissing = refinedMissing.filter((kw) => !refinedMatched.some((m) => m.toLowerCase() === kw.toLowerCase())).slice(0, 5);
+
+  return { matched: refinedMatched, missing: refinedMissing };
+};
+
+const normalizeATSPayload = (raw, jobDescription, coverLetter) => {
   let score = Number(raw?.score ?? raw?.atsScore ?? raw?.matchScore);
   if (!Number.isFinite(score)) score = 0;
   score = Math.max(0, Math.min(100, Math.round(score)));
@@ -444,13 +554,23 @@ const normalizeATSPayload = (raw) => {
   };
 
   let matched = collectList(raw?.matched, raw?.matchedKeywords, raw?.found, raw?.matches);
-  let missing = collectList(raw?.missing, raw?.missingKeywords, raw?.gaps, raw?.toAdd);
+  let missing = collectList(raw?.missing, raw?.missingKeywords, raw?.gaps, raw?.toAdd, raw?.missingSkills);
 
-  matched = [...new Set(matched)].slice(0, 8);
-  missing = [...new Set(missing)].slice(0, 8);
+  if (jobDescription && coverLetter) {
+    const refined = refineATSLists(matched, missing, jobDescription, coverLetter);
+    matched = refined.matched;
+    missing = refined.missing;
+  } else {
+    matched = matched.filter((k) => !isBadATSKeyword(k)).slice(0, 6);
+    missing = missing.filter((k) => !isBadATSKeyword(k)).slice(0, 5);
+  }
 
   const tipRaw = raw?.tip ?? raw?.suggestion ?? raw?.advice ?? raw?.recommendation;
-  const tip = typeof tipRaw === "string" ? tipRaw.trim().slice(0, 280) : "";
+  let tip = typeof tipRaw === "string" ? tipRaw.trim().replace(/\s+/g, " ") : "";
+  if (tip.length > 120 || (tip && isBadATSKeyword(tip))) tip = "";
+  if (!tip && missing.length > 0) {
+    tip = `Mention "${missing[0]}" naturally in one sentence.`;
+  }
 
   return {
     score,
@@ -463,38 +583,54 @@ const normalizeATSPayload = (raw) => {
 };
 
 export const analyzeATSScore = async (coverLetter, jobDescription) => {
-  const promptText = `
-You are an ATS (Applicant Tracking System) expert. Analyze how well the cover letter matches the job description.
+  const jd = String(jobDescription || "").trim();
+  const letter = String(coverLetter || "").trim();
 
-Return ONLY valid JSON, no markdown, no explanation:
+  const promptText = `
+You are an ATS analyst. Compare the cover letter to the job description.
+
+Return ONLY valid JSON (no markdown):
 {
   "score": <integer 0-100>,
-  "matched": ["keyword1", "keyword2", "keyword3"],
-  "missing": ["keyword1", "keyword2", "keyword3"],
-  "tip": "<one short actionable tip under 15 words>"
+  "matched": ["term1", "term2"],
+  "missing": ["term1", "term2"],
+  "tip": "<max 12 words>"
 }
 
-Rules:
-- score: 0-100 integer. Above 75 is good, 50-74 is fair, below 50 is weak.
-- matched: up to 6 important keywords/phrases from JD that appear in the letter
-- missing: up to 5 important keywords/phrases from JD NOT present in the letter
-- tip: specific, actionable, max 15 words
+SCORING (score):
+- 75-100: most concrete JD requirements/skills appear in the letter
+- 50-74: partial overlap
+- below 50: weak overlap
+
+MATCHED (max 6 items):
+- Short noun phrases (1-4 words) copied from the Job Description
+- Each MUST appear in the Job Description AND in the Cover Letter (case-insensitive)
+
+MISSING (max 5 items) — CRITICAL:
+- Short noun phrases (1-4 words) that appear in the Job Description but NOT in the Cover Letter
+- Only skills, tools, certifications, languages, methodologies, or hard requirements from the JD
+- Do NOT invent terms not in the JD
+- Do NOT put sentences, advice, tips, benefits, salary, company slogans, or generic traits ("team player", "communication")
+- Do NOT duplicate anything already in "matched"
+
+TIP:
+- One concrete edit: reference the top missing term and how to weave it in (max 12 words)
 
 Job Description:
-${jobDescription.substring(0, 1200)}
+${jd.substring(0, 1400)}
 
 Cover Letter:
-${coverLetter.substring(0, 1200)}
+${letter.substring(0, 1400)}
   `.trim();
 
   return await tryEveryModel(async (modelId, temp) => {
     const text = await callGemini({
       modelId,
-      temperature: typeof temp === "number" ? temp : 0.2,
+      temperature: typeof temp === "number" ? temp : 0.15,
       maxOutputTokens: 1024,
       contents: [promptText],
     });
-    return normalizeATSPayload(parseJsonFromModel(text));
+    return normalizeATSPayload(parseJsonFromModel(text), jd, letter);
   });
 };
 
