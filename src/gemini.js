@@ -429,13 +429,53 @@ const ATS_GENERIC_FLUFF = new Set([
   "team player", "hard working", "hard-working", "communication skills", "problem solving",
   "problem-solving", "self motivated", "self-motivated", "detail oriented", "detail-oriented",
   "fast learner", "quick learner", "results driven", "results-driven", "proactive",
+  "communication", "teamwork", "collaboration", "leadership", "time management",
+  "multitasking", "multi-tasking", "flexibility", "adaptability", "creativity",
+  "critical thinking", "problem-solving skills", "organizational", "management",
+  "passion", "motivated", "enthusiasm", "reliable", "dedicated", "attention to detail",
+  "strong work ethic", "highly organized", "written and verbal", "ability to", "proven ability",
+  "proven track record", "interpersonal skills", "decision making"
 ]);
+
+const cleanATSKeyword = (kw) => {
+  let s = String(kw || "").trim().toLowerCase().replace(/\s+/g, " ");
+  if (!s) return "";
+  
+  // Remove common prefix fluff patterns
+  s = s.replace(/^(experience (with|in|of)|knowledge of|understanding of|familiarity with|ability to|proven ability to|skills (in|with)|hands-on |hands on )\s*/gi, "");
+  s = s.replace(/^(strong|excellent|good|deep|proven|practical|demonstrated|expert)\s+/gi, "");
+  
+  // Remove common suffix fluff patterns
+  s = s.replace(/\s+(experience|skills|knowledge|understanding|ability|abilities|competencies)$/gi, "");
+  
+  return s.trim();
+};
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+const getCaseSensitiveMatch = (text, lowercaseKeyword) => {
+  const escaped = escapeRegExp(lowercaseKeyword);
+  const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+  const match = text.match(regex);
+  if (match) return match[0];
+  
+  const index = text.toLowerCase().indexOf(lowercaseKeyword);
+  if (index !== -1) {
+    return text.substring(index, index + lowercaseKeyword.length);
+  }
+  return lowercaseKeyword;
+};
 
 const appearsInText = (haystack, needle) => {
   const h = String(haystack || "").toLowerCase();
   const n = String(needle || "").toLowerCase().trim();
   if (!n || n.length < 2) return false;
-  return h.includes(n);
+  
+  const escapedNeedle = escapeRegExp(n);
+  const regex = new RegExp(`(?:^|[^a-zA-Z0-9+#.])${escapedNeedle}(?:$|[^a-zA-Z0-9+#.])`, 'i');
+  return regex.test(h);
 };
 
 const isBadATSKeyword = (kw) => {
@@ -463,10 +503,17 @@ const extractJDCandidateTerms = (jobDescription) => {
     let s = part.trim().replace(/^[-*•\d.)]+\s*/, "");
     if (!s || s.length < 2 || s.length > 42) continue;
     if (/\b(responsibilities|benefits|salary|apply|equal opportunity)\b/i.test(s)) continue;
-    const words = s.toLowerCase().split(/\s+/).filter((w) => w && !ATS_STOPWORDS.has(w));
+    
+    const cleaned = cleanATSKeyword(s);
+    if (!cleaned || cleaned.length < 2 || cleaned.length > 40) continue;
+    
+    const words = cleaned.split(/\s+/).filter((w) => w && !ATS_STOPWORDS.has(w));
     if (words.length === 0 || words.length > 4) continue;
-    const phrase = s.replace(/\s+/g, " ").trim();
-    if (!isBadATSKeyword(phrase)) terms.add(phrase);
+    
+    if (!isBadATSKeyword(cleaned)) {
+      const originalCase = getCaseSensitiveMatch(jd, cleaned);
+      terms.add(originalCase);
+    }
   }
 
   const techHits = jd.match(
@@ -475,7 +522,11 @@ const extractJDCandidateTerms = (jobDescription) => {
   if (techHits) {
     for (const t of techHits) {
       const phrase = t.trim();
-      if (!isBadATSKeyword(phrase)) terms.add(phrase);
+      const cleaned = cleanATSKeyword(phrase);
+      if (cleaned && !isBadATSKeyword(cleaned)) {
+        const originalCase = getCaseSensitiveMatch(jd, cleaned);
+        terms.add(originalCase);
+      }
     }
   }
 
@@ -490,19 +541,21 @@ const refineATSLists = (matched, missing, jobDescription, coverLetter) => {
     const seen = new Set();
     const out = [];
     for (const raw of list) {
-      const kw = String(raw || "").trim().replace(/\s+/g, " ");
-      if (isBadATSKeyword(kw)) continue;
-      const key = kw.toLowerCase();
+      const cleaned = cleanATSKeyword(raw);
+      if (!cleaned || isBadATSKeyword(cleaned)) continue;
+      
+      const key = cleaned.toLowerCase();
       if (seen.has(key)) continue;
 
-      const inJd = appearsInText(jd, kw);
-      const inLetter = appearsInText(letter, kw);
+      const inJd = appearsInText(jd, cleaned);
+      const inLetter = appearsInText(letter, cleaned);
       if (!inJd) continue;
       if (mode === "matched" && !inLetter) continue;
       if (mode === "missing" && inLetter) continue;
 
       seen.add(key);
-      out.push(kw);
+      const originalCase = getCaseSensitiveMatch(jd, cleaned);
+      out.push(originalCase);
       if (out.length >= 6) break;
     }
     return out;
@@ -560,14 +613,28 @@ const normalizeATSPayload = (raw, jobDescription, coverLetter) => {
     const refined = refineATSLists(matched, missing, jobDescription, coverLetter);
     matched = refined.matched;
     missing = refined.missing;
+    
+    // Recalculate match score dynamically based on actual matched vs missing keywords ratio (70% weight)
+    let keywordScore = 50;
+    if (matched.length + missing.length > 0) {
+      keywordScore = Math.round((matched.length / (matched.length + missing.length)) * 100);
+    }
+    score = Math.round((score * 0.3) + (keywordScore * 0.7));
+    
+    if (matched.length === 0) {
+      score = Math.min(score, 20);
+    }
+    if (missing.length === 0 && matched.length > 0) {
+      score = Math.max(score, 85);
+    }
   } else {
-    matched = matched.filter((k) => !isBadATSKeyword(k)).slice(0, 6);
-    missing = missing.filter((k) => !isBadATSKeyword(k)).slice(0, 5);
+    matched = matched.filter((k) => !isBadATSKeyword(cleanATSKeyword(k))).slice(0, 6);
+    missing = missing.filter((k) => !isBadATSKeyword(cleanATSKeyword(k))).slice(0, 5);
   }
 
   const tipRaw = raw?.tip ?? raw?.suggestion ?? raw?.advice ?? raw?.recommendation;
   let tip = typeof tipRaw === "string" ? tipRaw.trim().replace(/\s+/g, " ") : "";
-  if (tip.length > 120 || (tip && isBadATSKeyword(tip))) tip = "";
+  if (tip.length > 120 || (tip && isBadATSKeyword(cleanATSKeyword(tip)))) tip = "";
   if (!tip && missing.length > 0) {
     tip = `Mention "${missing[0]}" naturally in one sentence.`;
   }
