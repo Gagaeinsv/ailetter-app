@@ -41,7 +41,9 @@ const ALLOWED_ORIGINS = [
   "https://my-ai-project-93644.web.app",
   "https://my-ai-project-93644.firebaseapp.com",
   "https://my-cv-ai.vercel.app",
-  "https://myailetter.vercel.app", // ✅ новий домен
+  "https://myailetter.vercel.app", 
+  "https://ailetter.pro",
+  "https://www.ailetter.pro",
 ];
 
 
@@ -169,7 +171,7 @@ exports.createCheckoutSession = onCall(
       throw new Error("invalid-price-id");
 
     const referer = request.rawRequest?.headers?.referer || "";
-    const origin  = ALLOWED_ORIGINS.find(o => referer.startsWith(o)) || "https://myailetter.vercel.app";
+    const origin  = ALLOWED_ORIGINS.find(o => referer.startsWith(o)) || "https://ailetter.pro";
 
     const params = {
       mode: "subscription",
@@ -237,7 +239,7 @@ exports.createPortalSession = onCall(
 
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: "https://myailetter.vercel.app/dashboard",
+      return_url: "https://ailetter.pro/dashboard",
     });
 
     return { url: session.url };
