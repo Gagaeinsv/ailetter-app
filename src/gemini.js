@@ -614,12 +614,14 @@ const normalizeATSPayload = (raw, jobDescription, coverLetter) => {
     matched = refined.matched;
     missing = refined.missing;
     
-    // Recalculate match score dynamically based on actual matched vs missing keywords ratio (70% weight)
+    // Recalculate match score dynamically based on actual matched vs missing keywords ratio (50% weight)
     let keywordScore = 50;
     if (matched.length + missing.length > 0) {
-      keywordScore = Math.round((matched.length / (matched.length + missing.length)) * 100);
+      const ratio = matched.length / (matched.length + missing.length);
+      // Non-linear mapping: base of 40% if there is at least one match, plus up to 60% based on the ratio
+      keywordScore = 40 + Math.round(ratio * 60);
     }
-    score = Math.round((score * 0.3) + (keywordScore * 0.7));
+    score = Math.round((score * 0.5) + (keywordScore * 0.5));
     
     if (matched.length === 0) {
       score = Math.min(score, 20);
@@ -704,7 +706,7 @@ ${letter.substring(0, 1400)}
 export const generateFollowUp = async (originalLetter, jobDescription, contactInfo, daysSince) => {
   const name = (contactInfo?.fullName || contactInfo?.name || '').trim() || 'The candidate';
 
-  const basePrompt = (attempt = 1) => `
+  const basePrompt = `
 You are an expert career coach. Write a polished follow-up email for a job application.
 
 CONTEXT:
@@ -724,11 +726,11 @@ STRUCTURE (must follow exactly):
 1) Greeting line (e.g., "Hi [Name]," or "Hello," if unknown).
 2) Paragraph 1 (2–3 sentences): remind role + when applied + a specific connection to the role/company.
 3) Paragraph 2 (1–2 sentences): gentle call-to-action asking about next steps and offering extra info.
-4) Sign-off on its own line ("Best regards," / localized equivalent) + the candidate name on the last line.
+4) Sign-off on its own line ("Best regards," or localized equivalent) + the candidate name on the last line.
 
 LENGTH:
 - Target 140–190 words. Do not exceed 220 words.
-- MUST be a complete email (no cut-off, no unfinished sentence).
+- Ensure the email is complete, with a proper sign-off and the candidate's name at the very end.
 
 Candidate name: ${name}
 Job Description (context):
@@ -736,81 +738,23 @@ ${String(jobDescription || '').substring(0, 900)}
 
 Original Cover Letter (context only; do NOT copy sentences):
 ${String(originalLetter || '').substring(0, 1200)}
-
-${attempt >= 2 ? 'IMPORTANT: Your previous attempt was too short or incomplete. Write a full email with 2 paragraphs + sign-off, and ensure the last two lines are the sign-off and the name.' : ''}
   `.trim();
 
-  const looksIncomplete = (s) => {
-    const t = String(s || '').trim();
-    if (!t) return true;
-    const tooShort = t.split(/\s+/).length < 70; // catches 1-sentence outputs
-    const noSignOff = !/(regards|sincerely|best|kind regards|cordiali saluti|mit freundlichen grüßen|z povahoyu|з повагою)/i.test(t);
-    const endsBadly = /[,;:–-]\s*$/.test(t) || /(\.\.\.|…)\s*$/.test(t);
-    const endsWithoutPunct = !/[.!?…]$/.test(t);
-    const hasFinalNameLine = new RegExp(`${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i').test(t.split('\n').slice(-1)[0] || '');
-    // If it ends without punctuation and doesn't look like it finished the sign-off, treat as cut-off.
-    const likelyCutOff = endsWithoutPunct && !hasFinalNameLine;
-    return tooShort || noSignOff || endsBadly || likelyCutOff;
-  };
-
-  const looksCutMidWord = (s) => {
-    const t = String(s || '').trim();
-    if (!t) return false;
-    // Heuristic: ends with a letter, no punctuation at end, and last token seems incomplete.
-    const endsWithLetter = /\p{L}$/u.test(t);
-    const endsWithPunct = /[.!?…]$/.test(t);
-    if (!endsWithLetter || endsWithPunct) return false;
-    const last = t.split(/\s+/).pop() || '';
-    // Very short last fragment often indicates truncation (e.g. "intere" / "reg")
-    return last.length > 0 && last.length <= 6;
-  };
-
   return await tryEveryModel(async (modelId, temp) => {
-    const first = await callGemini({
+    const text = await callGemini({
       modelId,
       temperature: typeof temp === 'number' ? temp : 0.6,
       maxOutputTokens: 1024,
-      contents: [basePrompt(1)],
+      contents: [basePrompt],
     });
-    const cleaned1 = String(first || '').replace(/```/g, '').trim();
-    if (!looksIncomplete(cleaned1) && !looksCutMidWord(cleaned1)) return cleaned1;
-
-    const second = await callGemini({
-      modelId,
-      temperature: typeof temp === 'number' ? temp : 0.55,
-      maxOutputTokens: 1024,
-      contents: [basePrompt(2)],
-    });
-    let cleaned2 = String(second || '').replace(/```/g, '').trim();
-    if (!looksCutMidWord(cleaned2)) return cleaned2;
-
-    // If the model output is cut mid-word, ask for a continuation and append.
-    const fragmentMatch = cleaned2.match(/(\p{L}+)\s*$/u);
-    const fragment = fragmentMatch?.[1] || '';
-    const base = fragment ? cleaned2.slice(0, -fragment.length).trimEnd() : cleaned2;
-
-    const continuePrompt = `
-Continue the follow-up email below from exactly where it stopped.
-
-Rules:
-- Output ONLY the missing continuation text (do NOT repeat earlier sentences).
-- If the last word is cut, start by completing that word fragment: "${fragment}".
-- Finish the email cleanly (complete sentence, sign-off line, and name line).
-- Use the same language and tone as the email.
-
-Email so far:
-${base}
-    `.trim();
-
-    const cont = await callGemini({
-      modelId,
-      temperature: 0.3,
-      maxOutputTokens: 512,
-      contents: [continuePrompt],
-    });
-    const cleanedCont = String(cont || '').replace(/```/g, '').trim();
-    const joined = `${base}${fragment ? fragment : ''}${cleanedCont ? (cleanedCont.startsWith('\n') ? '' : ' ') + cleanedCont : ''}`.trim();
-    return joined;
+    
+    // Strip markdown blocks if the model wrapped it in code blocks
+    let cleaned = String(text || '').replace(/^```[a-z]*\s*/i, '').replace(/```\s*$/g, '').trim();
+    
+    // If the model returned a subject line like "Subject: ...", strip it
+    cleaned = cleaned.replace(/^(Subject:|Oggetto:|RE:|Betreff:|Тема:).*?\n+/gmi, "").trim();
+    
+    return cleaned;
   });
 };
 
