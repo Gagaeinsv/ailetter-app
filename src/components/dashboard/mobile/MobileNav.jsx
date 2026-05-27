@@ -11,6 +11,7 @@ const IconGlobe    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill=
 const IconLinkedin = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>;
 const IconInterview = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
 const IconMail = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>;
+const IconCV = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
 
 const LANGS = [
   { code: 'en', label: 'English',    flag: '🇬🇧' },
@@ -24,11 +25,20 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
 
   const navItems = [
     { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Create' },
+    { id: 'cv-optimizer', icon: <IconCV />, label: dict?.cvOptimizer || 'CV Optimizer' },
     { id: 'templates', icon: <IconGrid />, label: dict?.templates || 'Templates' },
     { id: 'history', icon: <IconClock />, label: dict?.history || 'History' },
     { id: 'interview', icon: <IconInterview />, label: dict?.interview || 'Interview' },
     { id: 'jobtracker', icon: <span className="text-base leading-none">📋</span>, label: dict?.jobtracker || 'Tracker' },
     { id: 'settings', icon: <IconUser />, label: dict?.settings || 'Profile' },
+  ];
+
+  const bottomNavItems = [
+    { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Create' },
+    { id: 'cv-optimizer', icon: <IconCV />, label: dict?.cvOptimizer || 'CV Optimizer' },
+    { id: 'jobtracker', icon: <span className="text-base leading-none">📋</span>, label: dict?.jobtracker || 'Tracker' },
+    { id: 'history', icon: <IconClock />, label: dict?.history || 'History' },
+    { id: 'templates', icon: <IconGrid />, label: dict?.templates || 'Templates' },
   ];
 
   const go = (id) => { setActiveTab(id); setOpen(false); };
@@ -135,7 +145,7 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
 
       {/* ── BOTTOM NAV ── */}
       <div className="landscape:hidden h-20 bg-[#1e293b] border-t border-[#334155] flex items-start justify-around px-2 fixed bottom-0 left-0 right-0 z-40 pt-3 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
-        {navItems.map(item => (
+        {bottomNavItems.map(item => (
           <button key={item.id} onClick={() => setActiveTab(item.id)}
             className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all flex-1 ${
               activeTab === item.id ? 'text-[#6366f1] translate-y-[-2px]' : 'text-gray-500'
@@ -148,7 +158,7 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
 
       {/* ── LANDSCAPE SIDE NAV ── */}
       <div className="hidden landscape:flex flex-col w-14 bg-[#1e293b] border-r border-[#334155] fixed left-0 top-0 bottom-0 z-40 pt-14 pb-2 items-center justify-start gap-1">
-        {navItems.map(item => (
+        {bottomNavItems.map(item => (
           <button key={item.id} onClick={() => setActiveTab(item.id)}
             className={`w-10 h-10 flex flex-col items-center justify-center rounded-xl transition-all ${
               activeTab === item.id ? 'bg-[#6366f1] text-white' : 'text-gray-500 hover:text-white hover:bg-[#0f172a]'

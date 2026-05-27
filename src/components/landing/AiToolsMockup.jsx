@@ -44,34 +44,46 @@ const AiToolsMockup = ({ t }) => {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{labels.ats}</div>
-            <div className="text-[10px] font-black text-emerald-400">Score: 78</div>
+            <div className="text-[10px] font-black text-indigo-400">Score: 84%</div>
           </div>
-          <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-emerald-400 to-indigo-400" style={{ width: '78%' }} />
+          <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400" style={{ width: '84%' }} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3">
-              <div className="text-[10px] font-black uppercase tracking-widest text-emerald-300/90 mb-2">Matched</div>
-              <div className="flex flex-wrap gap-1.5">
-                {['stakeholder', 'Figma', 'UX research', 'prototypes'].map((k) => (
-                  <span key={k} className="text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/10">{k}</span>
+          <div className="rounded-xl border border-white/5 bg-slate-900/60 p-3.5 space-y-3">
+            <div className="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b border-white/5 pb-2">
+              Bullet Point Optimizer
+            </div>
+            <div className="space-y-2">
+              <div className="space-y-0.5">
+                <span className="text-[8px] font-black uppercase tracking-wider text-red-400/90">Original Achievement</span>
+                <p className="text-[11px] text-gray-400 leading-normal italic">
+                  "Responsible for managing design files and updating style guide."
+                </p>
+              </div>
+              <div className="space-y-0.5 pt-2 border-t border-white/5">
+                <span className="text-[8px] font-black uppercase tracking-wider text-emerald-400">AI-Optimized (ATS-Ready)</span>
+                <p className="text-[11px] text-white leading-relaxed font-semibold">
+                  "Spearheaded design system migration on Figma, scaling UI component reuse by 45% and reducing developer handoff time by 3 hours/week."
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="rounded-xl border border-emerald-500/10 bg-emerald-500/[0.02] p-2.5">
+              <span className="text-[8px] font-black uppercase tracking-widest text-emerald-400 block mb-1">Matched Keywords</span>
+              <div className="flex flex-wrap gap-1">
+                {['Figma', 'UI design'].map(k => (
+                  <span key={k} className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300">{k}</span>
                 ))}
               </div>
             </div>
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
-              <div className="text-[10px] font-black uppercase tracking-widest text-amber-300/90 mb-2">Missing</div>
-              <div className="flex flex-wrap gap-1.5">
-                {['accessibility', 'design systems', 'metrics'].map((k) => (
-                  <span key={k} className="text-[10px] font-bold px-2 py-1 rounded-full bg-amber-500/10 text-amber-200 border border-amber-500/10">{k}</span>
+            <div className="rounded-xl border border-amber-500/10 bg-amber-500/[0.02] p-2.5">
+              <span className="text-[8px] font-black uppercase tracking-widest text-amber-400 block mb-1">Missing Keywords</span>
+              <div className="flex flex-wrap gap-1">
+                {['design system', 'metrics'].map(k => (
+                  <span key={k} className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300">{k}</span>
                 ))}
               </div>
-            </div>
-          </div>
-          <div className="rounded-xl border border-slate-700 bg-slate-900/40 p-3">
-            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Quick tips</div>
-            <div className="space-y-1.5 text-xs text-slate-300 leading-relaxed">
-              <div>Include “design systems” once in the 2nd paragraph.</div>
-              <div>Add one accessibility example (WCAG, contrast, keyboard nav).</div>
             </div>
           </div>
         </div>

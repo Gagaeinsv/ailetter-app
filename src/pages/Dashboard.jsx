@@ -19,6 +19,7 @@ import SettingsTab from '../components/dashboard/SettingsTab';
 import FollowUpModal from '../components/dashboard/FollowUpModal';
 import InterviewTab from '../components/dashboard/InterviewTab';
 import JobTrackerTab from '../components/dashboard/JobTrackerTab';
+import CVOptimizerTab from '../components/dashboard/CVOptimizerTab';
 
 // Mobile Components
 import MobileNav from '../components/dashboard/mobile/MobileNav';
@@ -28,6 +29,7 @@ import MobileTemplatesTab from '../components/dashboard/mobile/MobileTemplatesTa
 import MobileSettingsTab from '../components/dashboard/mobile/MobileSettingsTab';
 import MobileInterviewTab from '../components/dashboard/mobile/MobileInterviewTab';
 import MobileJobTrackerTab from '../components/dashboard/mobile/MobileJobTrackerTab';
+import MobileCVOptimizerTab from '../components/dashboard/mobile/MobileCVOptimizerTab';
 
 import { TEMPLATES } from '../constants/templates';
 import translations from '../locales/translations';
@@ -60,6 +62,25 @@ const Dashboard = () => {
   const [activeTab, setActiveTab]     = useState('dashboard');
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [toast, setToast]             = useState({ show: false, msg: '' });
+
+  // ── CV Optimizer State ──
+  const [cvAnalysis, setCvAnalysis] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`cv_analysis_${user?.uid || 'guest'}`);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [cvAnalysisLoading, setCvAnalysisLoading] = useState(false);
+
+  useEffect(() => {
+    if (cvAnalysis) {
+      localStorage.setItem(`cv_analysis_${user?.uid || 'guest'}`, JSON.stringify(cvAnalysis));
+    } else {
+      localStorage.removeItem(`cv_analysis_${user?.uid || 'guest'}`);
+    }
+  }, [cvAnalysis, user]);
 
   // ── Follow-up State ──
   const [followUpEntry, setFollowUpEntry]         = useState(null);
@@ -479,6 +500,8 @@ const Dashboard = () => {
     uiLang, setUiLang,
     saveProfile,
     onFollowUp: (entry) => { setFollowUpModalEntry(entry); setShowFollowUpModal(true); },
+    cvAnalysis, setCvAnalysis,
+    cvAnalysisLoading, setCvAnalysisLoading,
   };
 
   return (
@@ -548,6 +571,7 @@ const Dashboard = () => {
           <div className="flex-1 overflow-y-auto pt-14 pb-20 landscape:pb-4 landscape:pl-14 w-full scroll-smooth">
             <div className="min-h-full">
               {activeTab === 'dashboard' && <MobileDashboardTab {...props} />}
+              {activeTab === 'cv-optimizer' && <MobileCVOptimizerTab {...props} />}
               {activeTab === 'history' && <MobileHistoryTab {...props} />}
               {activeTab === 'templates' && <MobileTemplatesTab {...props} />}
               {activeTab === 'interview' && <MobileInterviewTab {...props} />}
@@ -561,7 +585,8 @@ const Dashboard = () => {
           <Sidebar {...props} />
           <main className="flex-1 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-hidden relative">
-              {activeTab === 'dashboard' && <DashboardTab {...props} />}
+               {activeTab === 'dashboard' && <DashboardTab {...props} />}
+              {activeTab === 'cv-optimizer' && <CVOptimizerTab {...props} />}
               {activeTab === 'templates' && <TemplatesTab {...props} />}
               {activeTab === 'interview' && <InterviewTab {...props} />}
               {activeTab === 'history' && <HistoryTab {...props} />}

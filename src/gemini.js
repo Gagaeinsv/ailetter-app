@@ -896,3 +896,122 @@ Cover Letter snippet: ${(coverLetter || "").substring(0, 400)}
     return parseJsonFromModel(text);
   });
 };
+
+const normalizeCVPayload = (raw, profile, jobDescription) => {
+  let score = Number(raw?.atsScore ?? raw?.score ?? 0);
+  if (!Number.isFinite(score)) score = 0;
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  let keywords = Number(raw?.atsBreakdown?.keywords ?? raw?.atsBreakdown?.keywordsScore ?? 50);
+  let metrics = Number(raw?.atsBreakdown?.metrics ?? raw?.atsBreakdown?.metricsScore ?? 50);
+  let structure = Number(raw?.atsBreakdown?.structure ?? raw?.atsBreakdown?.structureScore ?? 50);
+
+  const matched = Array.isArray(raw?.matchedKeywords) ? raw.matchedKeywords.map(k => String(k || "").trim()).filter(Boolean).slice(0, 6) : [];
+  const missing = Array.isArray(raw?.missingKeywords) ? raw.missingKeywords.map(k => String(k || "").trim()).filter(Boolean).slice(0, 5) : [];
+
+  const tips = Array.isArray(raw?.tips) ? raw.tips.map(t => String(t || "").trim()).filter(Boolean).slice(0, 3) : [];
+  const bulletPoints = Array.isArray(raw?.bulletPoints)
+    ? raw.bulletPoints.map(bp => ({
+        original: String(bp?.original || "").trim(),
+        optimized: String(bp?.optimized || "").trim(),
+      })).filter(bp => bp.original && bp.optimized).slice(0, 4)
+    : [];
+
+  return {
+    atsScore: score,
+    atsBreakdown: {
+      keywords: Math.max(0, Math.min(100, Math.round(keywords))),
+      metrics: Math.max(0, Math.min(100, Math.round(metrics))),
+      structure: Math.max(0, Math.min(100, Math.round(structure))),
+    },
+    matchedKeywords: matched,
+    missingKeywords: missing,
+    tips,
+    bulletPoints,
+  };
+};
+
+export const analyzeCV = async (userProfile, jobDescription, options = {}) => {
+  const jd = String(jobDescription || "").trim();
+  
+  const candidateProfile = `
+- Profession: ${userProfile?.profession || "Not provided"}
+- Skills: ${Array.isArray(userProfile?.skills) ? userProfile.skills.join(", ") : (userProfile?.skills || "Not provided")}
+- Experience achievements: ${
+    Array.isArray(userProfile?.experience)
+      ? userProfile.experience.map(e =>
+          `${e.title} at ${e.company}: ${(e.achievements || []).join("; ")}`
+        ).join(" | ")
+      : (userProfile?.experience || "Not provided")
+  }
+- Education: ${userProfile?.education || "Not specified"}
+- Certifications: ${Array.isArray(userProfile?.certifications) ? userProfile.certifications.join(", ") : (userProfile?.certifications || "None")}
+  `.trim();
+
+  const langRule = options.outputLanguage
+    ? `Output language: ${options.outputLanguage} for all descriptive string values (tips, bulletPoints optimized strings). JSON keys must remain in English.`
+    : "Match the language of the job description for the tips and optimized text.";
+
+  const promptText = `
+You are an expert ATS (Applicant Tracking System) CV Auditor. Compare the candidate's CV Profile against the Job Description.
+
+Return ONLY a valid JSON object matching this structure (no markdown, no backticks, no prose):
+{
+  "atsScore": <integer 0-100>,
+  "atsBreakdown": {
+    "keywords": <integer 0-100>,
+    "metrics": <integer 0-100>,
+    "structure": <integer 0-100>
+  },
+  "matchedKeywords": ["keyword1", "keyword2"],
+  "missingKeywords": ["keyword1", "keyword2"],
+  "tips": [
+    "Tip 1...",
+    "Tip 2..."
+  ],
+  "bulletPoints": [
+    {
+      "original": "Original achievement sentence",
+      "optimized": "Optimized achievement sentence with keywords and quantifiable metrics"
+    }
+  ]
+}
+
+SCORING RULES (atsScore, keywords, metrics, structure):
+- atsScore: combined average based on keyword overlap, presence of quantifiable metrics, and overall professional structure.
+- keywords: percentage of essential hard skills, tools, and methodologies from the JD matched in the CV.
+- metrics: score on how well the CV quantifies results (uses percentages, numbers, timeframes, or dollar amounts).
+- structure: score on CV clarity, professional summaries, and action-verb usage.
+
+KEYWORDS (matchedKeywords, missingKeywords):
+- matchedKeywords: up to 6 hard skills or requirements present in both CV and JD.
+- missingKeywords: up to 5 critical skills or requirements present in the JD but missing from the CV. Do NOT include soft skills or generic traits.
+
+TIPS (tips):
+- Exactly 2-3 specific, actionable recommendations (max 15 words each) on how the candidate can edit their CV to fit the JD better.
+
+BULLET POINTS OPTIMIZATION (bulletPoints):
+- Take exactly 2-3 of the candidate's achievements and optimize them.
+- If achievements are weak, rewrite them to weave in top missing keywords and introduce realistic metrics/numbers (e.g. increase by X%, reduce time by Y, manage Z stakeholders).
+- Keep each optimized bullet point concise and action-oriented.
+
+${langRule}
+
+Candidate CV Profile:
+${candidateProfile.substring(0, 1500)}
+
+Job Description:
+${jd.substring(0, 1500)}
+  `.trim();
+
+  return await tryEveryModel(async (modelId, temp) => {
+    const text = await callGemini({
+      modelId,
+      temperature: typeof temp === "number" ? temp : 0.15,
+      maxOutputTokens: 2500,
+      contents: [promptText],
+    });
+    const parsed = parseJsonFromModel(text);
+    return normalizeCVPayload(parsed, userProfile, jd);
+  });
+};
