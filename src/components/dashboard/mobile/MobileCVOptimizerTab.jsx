@@ -16,6 +16,7 @@ export default function MobileCVOptimizerTab({
   setShowUpgrade,
 }) {
   const [copiedIdx, setCopiedIdx] = useState(null);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const hasCv = contactInfo && (contactInfo.skills?.length > 0 || contactInfo.experience?.length > 0);
   const hasJd = jobDescription && jobDescription.trim().length > 10;
@@ -155,6 +156,84 @@ export default function MobileCVOptimizerTab({
       {/* Analysis Results */}
       {cvAnalysis && !cvAnalysisLoading && (
         <div className="space-y-4 mb-6">
+          {/* Collapsible Loaded CV Profile */}
+          <div className="bg-[#1e293b]/30 rounded-xl border border-white/5 overflow-hidden">
+            <button
+              onClick={() => setProfileOpen(o => !o)}
+              className="w-full flex items-center justify-between p-4 text-left font-black text-xs uppercase tracking-widest text-indigo-400"
+            >
+              <div className="flex items-center gap-2">
+                <span>📄</span>
+                <span>{dict.cvProfileTitle || 'Loaded CV Profile'}</span>
+              </div>
+              <span className="text-gray-500 text-[10px]">{profileOpen ? '✕' : '▼'}</span>
+            </button>
+
+            {profileOpen && (
+              <div className="px-4 pb-4 space-y-4 border-t border-white/5 pt-3">
+                {/* General Info */}
+                <div className="p-3 bg-[#0f172a]/40 border border-white/5 rounded-lg space-y-2">
+                  <div>
+                    <span className="text-[7px] font-black uppercase tracking-wider text-slate-500">Candidate Name</span>
+                    <p className="text-[11px] font-bold text-white">{contactInfo.fullName || 'User'}</p>
+                  </div>
+                  {contactInfo.profession && (
+                    <div>
+                      <span className="text-[7px] font-black uppercase tracking-wider text-slate-500">Profession</span>
+                      <p className="text-[11px] font-bold text-white">{contactInfo.profession}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Skills */}
+                {contactInfo.skills?.length > 0 ? (
+                  <div className="space-y-1.5">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 block">Skills</span>
+                    <div className="flex flex-wrap gap-1">
+                      {contactInfo.skills.map((s, idx) => (
+                        <span key={idx} className="text-[9px] font-semibold px-2 py-0.5 rounded bg-[#0f172a]/55 text-slate-300 border border-white/5">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : contactInfo.skills ? (
+                  <div className="space-y-1.5">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 block">Skills</span>
+                    <p className="text-[10px] text-gray-300 leading-normal">{contactInfo.skills}</p>
+                  </div>
+                ) : null}
+
+                {/* Work Experience */}
+                <div className="space-y-2">
+                  <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 block">Work Experience</span>
+                  {Array.isArray(contactInfo.experience) && contactInfo.experience.length > 0 ? (
+                    <div className="space-y-3">
+                      {contactInfo.experience.map((job, idx) => (
+                        <div key={idx} className="border-l border-indigo-500/30 pl-2.5 py-0.5 space-y-0.5">
+                          <h4 className="font-bold text-[11px] text-white leading-tight">{job.title}</h4>
+                          <p className="text-[9px] text-gray-400 font-semibold">{job.company} {job.duration ? `(${job.duration})` : ''}</p>
+                          {job.achievements?.length > 0 && (
+                            <ul className="list-disc list-inside space-y-0.5 text-[10px] text-gray-300 pl-0.5">
+                              {job.achievements.map((ach, aIdx) => (
+                                <li key={aIdx} className="leading-relaxed">
+                                  {ach}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : typeof contactInfo.experience === 'string' && contactInfo.experience.trim() ? (
+                    <p className="text-[10px] text-gray-300 whitespace-pre-wrap">{contactInfo.experience}</p>
+                  ) : (
+                    <p className="text-[9px] text-gray-500 italic">No structured experience found.</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
           {/* Score dial */}
           <div className="bg-[#1e293b]/30 rounded-xl border border-white/5 p-4 flex flex-col items-center justify-center text-center">
             <span className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-3">

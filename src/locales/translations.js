@@ -125,6 +125,8 @@ const translations = {
       cvOptimizerOriginal: 'Original CV achievement:',
       cvOptimizerOptimized: 'ATS-Optimized version:',
       cvOptimizerTips: 'Actionable CV Checklist',
+      cvProfileTitle: 'Loaded CV Profile',
+      cvProfileDesc: 'Resume data currently analyzed.',
     },
     uk: {
       logo: 'AIletter', dashboard: 'Дашборд', templates: 'Шаблони', history: 'Історія', settings: 'Налаштування', logout: 'Вийти',
@@ -251,6 +253,8 @@ const translations = {
       cvOptimizerOriginal: 'Оригінальний маркер з резюме:',
       cvOptimizerOptimized: 'Оптимізована версія під ATS:',
       cvOptimizerTips: 'Покроковий чек-лист для покращення CV',
+      cvProfileTitle: 'Завантажений профіль CV',
+      cvProfileDesc: 'Дані вашого резюме, які аналізуються.',
     },
     it: {
       logo: 'AIletter', dashboard: 'Dashboard', templates: 'Template', history: 'Cronologia', settings: 'Impostazioni', logout: 'Esci',
@@ -377,6 +381,8 @@ const translations = {
       cvOptimizerOriginal: 'Punto elenco originale:',
       cvOptimizerOptimized: 'Versione ottimizzata ATS:',
       cvOptimizerTips: 'Checklist per migliorare il CV',
+      cvProfileTitle: 'Profilo CV caricato',
+      cvProfileDesc: 'Dati del curriculum analizzati.',
     },
     de: {
       logo: 'AIletter', dashboard: 'Dashboard', templates: 'Vorlagen', history: 'Verlauf', settings: 'Einstellungen', logout: 'Abmelden',
@@ -503,6 +509,8 @@ const translations = {
       cvOptimizerOriginal: 'Originaler Aufzählungspunkt:',
       cvOptimizerOptimized: 'ATS-optimierte Version:',
       cvOptimizerTips: 'Checkliste zur Lebenslauf-Optimierung',
+      cvProfileTitle: 'Geladenes CV-Profil',
+      cvProfileDesc: 'Lebenslaufdaten, die analysiert werden.',
     },
   };
 

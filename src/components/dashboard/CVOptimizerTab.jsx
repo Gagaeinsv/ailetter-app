@@ -160,197 +160,282 @@ export default function CVOptimizerTab({
 
       {/* Analysis Results */}
       {cvAnalysis && !cvAnalysisLoading && (
-        <div className="space-y-6">
-          {/* Top Row: Score + Breakdown */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Score circle */}
-            <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6 flex flex-col items-center justify-center text-center">
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">
-                {dict.cvOptimizerScore || 'ATS Match Score'}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+          
+          {/* Left Column: Loaded CV Profile */}
+          <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6 space-y-6 h-fit xl:sticky xl:top-0">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#6366f1] block">
+                {dict.cvProfileTitle || 'Loaded CV Profile'}
               </span>
+              <p className="text-[10px] text-gray-500 mt-0.5">
+                {dict.cvProfileDesc || 'Resume data currently analyzed.'}
+              </p>
+            </div>
 
-              <div className="relative flex items-center justify-center">
-                <svg className="w-32 h-32 transform -rotate-90">
-                  <circle
-                    className="stroke-[#334155]"
-                    strokeWidth={stroke}
-                    fill="transparent"
-                    r={normalizedRadius}
-                    cx={radius + stroke}
-                    cy={radius + stroke}
-                  />
-                  <circle
-                    className={`transition-all duration-1000 ease-out ${getScoreColor(cvAnalysis.atsScore)}`}
-                    strokeWidth={stroke}
-                    strokeDasharray={circumference + ' ' + circumference}
-                    style={{ strokeDashoffset }}
-                    fill="transparent"
-                    r={normalizedRadius}
-                    cx={radius + stroke}
-                    cy={radius + stroke}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute flex flex-col items-center">
-                  <span className={`text-3xl font-black ${getScoreColor(cvAnalysis.atsScore).split(' ')[1]}`}>
-                    {cvAnalysis.atsScore}%
-                  </span>
+            {/* General Info */}
+            <div className="p-4 bg-[#0f172a]/40 border border-white/5 rounded-xl space-y-2">
+              <div>
+                <span className="text-[8px] font-black uppercase tracking-wider text-slate-500">Candidate Name</span>
+                <p className="text-xs font-bold text-white">{contactInfo.fullName || 'User'}</p>
+              </div>
+              {contactInfo.profession && (
+                <div>
+                  <span className="text-[8px] font-black uppercase tracking-wider text-slate-500">Profession</span>
+                  <p className="text-xs font-bold text-white">{contactInfo.profession}</p>
                 </div>
-              </div>
-
-              <span className={`text-xs font-black uppercase tracking-widest mt-4 ${getScoreColor(cvAnalysis.atsScore).split(' ')[1]}`}>
-                {getScoreLabel(cvAnalysis.atsScore)}
-              </span>
+              )}
+              {(contactInfo.email || contactInfo.phone || contactInfo.location) && (
+                <div className="pt-2 border-t border-white/5 flex flex-col gap-1 text-[11px] text-gray-400">
+                  {contactInfo.email && <div className="truncate">✉ {contactInfo.email}</div>}
+                  {contactInfo.phone && <div>📞 {contactInfo.phone}</div>}
+                  {contactInfo.location && <div className="truncate">📍 {contactInfo.location}</div>}
+                </div>
+              )}
             </div>
 
-            {/* Breakdown bars */}
-            <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6 flex flex-col justify-between lg:col-span-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4 block">
-                ATS Breakdown Evaluation
-              </span>
-
-              <div className="space-y-4">
-                {[
-                  { label: dict.cvOptimizerKeywords || 'Keywords Match', score: cvAnalysis.atsBreakdown.keywords, color: 'bg-emerald-400 shadow-emerald-400/25' },
-                  { label: dict.cvOptimizerMetrics || 'Impact & Metrics', score: cvAnalysis.atsBreakdown.metrics, color: 'bg-[#6366f1] shadow-indigo-500/25' },
-                  { label: dict.cvOptimizerStructure || 'Structure & Format', score: cvAnalysis.atsBreakdown.structure, color: 'bg-purple-400 shadow-purple-500/25' },
-                ].map((item, i) => (
-                  <div key={i} className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs font-bold text-gray-300">
-                      <span>{item.label}</span>
-                      <span>{item.score}%</span>
-                    </div>
-                    <div className="h-2 rounded-full bg-slate-800 overflow-hidden relative">
-                      <div
-                        className={`h-full rounded-full transition-all duration-1000 shadow-md ${item.color}`}
-                        style={{ width: `${item.score}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Middle Row: Checklist + Keywords */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Checklist */}
-            <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <FileText className="text-[#6366f1] w-4.5 h-4.5" />
-                <h3 className="font-black text-xs uppercase tracking-widest text-gray-300">
-                  {dict.cvOptimizerTips || 'Actionable CV Checklist'}
-                </h3>
-              </div>
-
-              <div className="space-y-3">
-                {cvAnalysis.tips?.map((tip, idx) => (
-                  <div key={idx} className="flex items-start gap-3 p-3.5 bg-[#0f172a]/30 border border-white/5 rounded-xl">
-                    <span className="w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-[10px] text-indigo-300 font-black shrink-0 mt-0.5">
-                      {idx + 1}
+            {/* Skills */}
+            {contactInfo.skills?.length > 0 ? (
+              <div className="space-y-2">
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Skills</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {contactInfo.skills.map((s, idx) => (
+                    <span key={idx} className="text-[10px] font-semibold px-2.5 py-1 rounded bg-[#0f172a]/55 text-slate-300 border border-white/5">
+                      {s}
                     </span>
-                    <p className="text-xs text-gray-200 leading-relaxed font-semibold">{tip}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Keywords */}
-            <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6 space-y-4">
-              {/* Matched */}
-              <div>
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-400/90 mb-2">
-                  {dict.atsMatched || '✓ Matched Keywords'}
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {cvAnalysis.matchedKeywords?.length > 0 ? (
-                    cvAnalysis.matchedKeywords.map((k) => (
-                      <span key={k} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                        {k}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-xs text-gray-500 italic">No exact matched terms found.</span>
-                  )}
+                  ))}
                 </div>
               </div>
-
-              {/* Missing */}
-              <div>
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-400/90 mb-2">
-                  {dict.atsMissing || '⚠ Missing Keywords'}
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {cvAnalysis.missingKeywords?.length > 0 ? (
-                    cvAnalysis.missingKeywords.map((k) => (
-                      <span key={k} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                        {k}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-xs text-emerald-400 italic">Excellent! No missing hard requirements detected.</span>
-                  )}
-                </div>
+            ) : contactInfo.skills ? (
+              <div className="space-y-2">
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Skills</span>
+                <p className="text-xs text-gray-300 leading-normal">{contactInfo.skills}</p>
               </div>
+            ) : null}
+
+            {/* Work Experience */}
+            <div className="space-y-3">
+              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Work Experience</span>
+              {Array.isArray(contactInfo.experience) && contactInfo.experience.length > 0 ? (
+                <div className="space-y-4">
+                  {contactInfo.experience.map((job, idx) => (
+                    <div key={idx} className="border-l-2 border-indigo-500/30 pl-3.5 py-0.5 space-y-1">
+                      <h4 className="font-bold text-xs text-white leading-tight">{job.title}</h4>
+                      <p className="text-[10px] text-gray-400 font-semibold">{job.company} {job.duration ? `(${job.duration})` : ''}</p>
+                      {job.achievements?.length > 0 && (
+                        <ul className="list-disc list-inside space-y-1 text-[10px] text-gray-300 pl-1">
+                          {job.achievements.map((ach, aIdx) => (
+                            <li key={aIdx} className="leading-relaxed">
+                              {ach}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : typeof contactInfo.experience === 'string' && contactInfo.experience.trim() ? (
+                <p className="text-xs text-gray-300 whitespace-pre-wrap">{contactInfo.experience}</p>
+              ) : (
+                <p className="text-[10px] text-gray-500 italic">No structured experience found. achievements list is empty.</p>
+              )}
             </div>
           </div>
 
-          {/* Bottom Row: AI Bullet Point Optimizer */}
-          <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6">
-            <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-4">
-              <div>
-                <h3 className="font-black text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2">
-                  <Sparkles className="text-amber-400 w-4.5 h-4.5" />
-                  {dict.cvOptimizerOptimizedBullets || 'AI-Optimized Bullet Points'}
-                </h3>
-                <p className="text-gray-500 text-[10px] mt-0.5">
-                  Enhance your resume achievements with action verbs and target metrics.
-                </p>
+          {/* Right Column: ATS Optimization Results */}
+          <div className="xl:col-span-2 space-y-6">
+            {/* Top Row: Score + Breakdown */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Score circle */}
+              <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6 flex flex-col items-center justify-center text-center">
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">
+                  {dict.cvOptimizerScore || 'ATS Match Score'}
+                </span>
+
+                <div className="relative flex items-center justify-center">
+                  <svg className="w-32 h-32 transform -rotate-90">
+                    <circle
+                      className="stroke-[#334155]"
+                      strokeWidth={stroke}
+                      fill="transparent"
+                      r={normalizedRadius}
+                      cx={radius + stroke}
+                      cy={radius + stroke}
+                    />
+                    <circle
+                      className={`transition-all duration-1000 ease-out ${getScoreColor(cvAnalysis.atsScore)}`}
+                      strokeWidth={stroke}
+                      strokeDasharray={circumference + ' ' + circumference}
+                      style={{ strokeDashoffset }}
+                      fill="transparent"
+                      r={normalizedRadius}
+                      cx={radius + stroke}
+                      cy={radius + stroke}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute flex flex-col items-center">
+                    <span className={`text-3xl font-black ${getScoreColor(cvAnalysis.atsScore).split(' ')[1]}`}>
+                      {cvAnalysis.atsScore}%
+                    </span>
+                  </div>
+                </div>
+
+                <span className={`text-xs font-black uppercase tracking-widest mt-4 ${getScoreColor(cvAnalysis.atsScore).split(' ')[1]}`}>
+                  {getScoreLabel(cvAnalysis.atsScore)}
+                </span>
+              </div>
+
+              {/* Breakdown bars */}
+              <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6 flex flex-col justify-between lg:col-span-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4 block">
+                  ATS Breakdown Evaluation
+                </span>
+
+                <div className="space-y-4">
+                  {[
+                    { label: dict.cvOptimizerKeywords || 'Keywords Match', score: cvAnalysis.atsBreakdown.keywords, color: 'bg-emerald-400 shadow-emerald-400/25' },
+                    { label: dict.cvOptimizerMetrics || 'Impact & Metrics', score: cvAnalysis.atsBreakdown.metrics, color: 'bg-[#6366f1] shadow-indigo-500/25' },
+                    { label: dict.cvOptimizerStructure || 'Structure & Format', score: cvAnalysis.atsBreakdown.structure, color: 'bg-purple-400 shadow-purple-500/25' },
+                  ].map((item, i) => (
+                    <div key={i} className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs font-bold text-gray-300">
+                        <span>{item.label}</span>
+                        <span>{item.score}%</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-slate-800 overflow-hidden relative">
+                        <div
+                          className={`h-full rounded-full transition-all duration-1000 shadow-md ${item.color}`}
+                          style={{ width: `${item.score}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {cvAnalysis.bulletPoints?.length > 0 ? (
-              <div className="space-y-4">
-                {cvAnalysis.bulletPoints.map((bp, idx) => (
-                  <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl border border-white/5 bg-[#0f172a]/20">
-                    <div className="space-y-1">
-                      <span className="text-[9px] font-black uppercase tracking-wider text-slate-500">
-                        {dict.cvOptimizerOriginal || 'Original Achievement'}
-                      </span>
-                      <p className="text-xs text-gray-400 leading-relaxed italic">
-                        "{bp.original}"
-                      </p>
-                    </div>
+            {/* Middle Row: Checklist + Keywords */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Checklist */}
+              <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileText className="text-[#6366f1] w-4.5 h-4.5" />
+                  <h3 className="font-black text-xs uppercase tracking-widest text-gray-300">
+                    {dict.cvOptimizerTips || 'Actionable CV Checklist'}
+                  </h3>
+                </div>
 
-                    <div className="space-y-1 md:border-l md:border-white/5 md:pl-4 flex flex-col justify-between">
-                      <div>
-                        <span className="text-[9px] font-black uppercase tracking-wider text-[#6366f1]">
-                          {dict.cvOptimizerOptimized || 'ATS-Optimized'}
+                <div className="space-y-3">
+                  {cvAnalysis.tips?.map((tip, idx) => (
+                    <div key={idx} className="flex items-start gap-3 p-3.5 bg-[#0f172a]/30 border border-white/5 rounded-xl">
+                      <span className="w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-[10px] text-indigo-300 font-black shrink-0 mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <p className="text-xs text-gray-200 leading-relaxed font-semibold">{tip}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Keywords */}
+              <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6 space-y-4">
+                {/* Matched */}
+                <div>
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-400/90 mb-2">
+                    {dict.atsMatched || '✓ Matched Keywords'}
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {cvAnalysis.matchedKeywords?.length > 0 ? (
+                      cvAnalysis.matchedKeywords.map((k) => (
+                        <span key={k} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                          {k}
                         </span>
-                        <p className="text-xs text-white leading-relaxed font-semibold">
-                          {bp.optimized}
+                      ))
+                    ) : (
+                      <span className="text-xs text-gray-500 italic">No exact matched terms found.</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Missing */}
+                <div>
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-400/90 mb-2">
+                    {dict.atsMissing || '⚠ Missing Keywords'}
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {cvAnalysis.missingKeywords?.length > 0 ? (
+                      cvAnalysis.missingKeywords.map((k) => (
+                        <span key={k} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                          {k}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs text-emerald-400 italic">Excellent! No missing hard requirements detected.</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Row: AI Bullet Point Optimizer */}
+            <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6">
+              <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-4">
+                <div>
+                  <h3 className="font-black text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2">
+                    <Sparkles className="text-amber-400 w-4.5 h-4.5" />
+                    {dict.cvOptimizerOptimizedBullets || 'AI-Optimized Bullet Points'}
+                  </h3>
+                  <p className="text-gray-500 text-[10px] mt-0.5">
+                    Enhance your resume achievements with action verbs and target metrics.
+                  </p>
+                </div>
+              </div>
+
+              {cvAnalysis.bulletPoints?.length > 0 ? (
+                <div className="space-y-4">
+                  {cvAnalysis.bulletPoints.map((bp, idx) => (
+                    <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl border border-white/5 bg-[#0f172a]/20">
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-wider text-slate-500">
+                          {dict.cvOptimizerOriginal || 'Original Achievement'}
+                        </span>
+                        <p className="text-xs text-gray-400 leading-relaxed italic">
+                          "{bp.original}"
                         </p>
                       </div>
 
-                      <div className="flex justify-end mt-3">
-                        <button
-                          onClick={() => handleCopy(bp.optimized, idx)}
-                          className="px-3 py-1.5 bg-[#334155] hover:bg-[#475569] text-white rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-all"
-                        >
-                          {copiedIdx === idx ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
-                          {copiedIdx === idx ? (dict.copied || 'Copied!') : (dict.copyText || 'Copy')}
-                        </button>
+                      <div className="space-y-1 md:border-l md:border-white/5 md:pl-4 flex flex-col justify-between">
+                        <div>
+                          <span className="text-[9px] font-black uppercase tracking-wider text-[#6366f1]">
+                            {dict.cvOptimizerOptimized || 'ATS-Optimized'}
+                          </span>
+                          <p className="text-xs text-white leading-relaxed font-semibold">
+                            {bp.optimized}
+                          </p>
+                        </div>
+
+                        <div className="flex justify-end mt-3">
+                          <button
+                            onClick={() => handleCopy(bp.optimized, idx)}
+                            className="px-3 py-1.5 bg-[#334155] hover:bg-[#475569] text-white rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-all"
+                          >
+                            {copiedIdx === idx ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
+                            {copiedIdx === idx ? (dict.copied || 'Copied!') : (dict.copyText || 'Copy')}
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-6 text-gray-500 text-xs italic">
-                AI could not optimize any bullet points. Ensure your experience fields contain text achievements.
-              </div>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-gray-500 text-xs italic">
+                  AI could not optimize any bullet points. Ensure your experience fields contain text achievements.
+                </div>
+              )}
+            </div>
           </div>
+          
         </div>
       )}
     </div>
