@@ -32,13 +32,12 @@ const styles = `
   .fu5 { animation-delay: 0.55s; }
 `;
 
-const IconCheck   = () => <svg className="w-4 h-4 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>;
-const IconX       = () => <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>;
+const IconCheck   = () => <svg className="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>;
+const IconX       = () => <svg className="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>;
 const IconRocket  = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>;
 const IconMenu    = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
 const IconClose   = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 const IconChevron = ({ open }) => <svg className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>;
-const IconQuote   = () => <svg className="w-5 h-5 text-indigo-400/30" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>;
 
 const Stars = ({ n = 5 }) => (
   <div className="flex gap-0.5">
@@ -52,186 +51,209 @@ const Stars = ({ n = 5 }) => (
 
 const FAQS = {
   en: [
-    { q: 'Is AIletter really free to start?', a: 'Yes — you get 5 free generations per month with no credit card required. Each generation produces a complete, ready-to-send cover letter.' },
-    { q: 'How personalized are the letters?', a: 'Very. AIletter analyzes your CV and the specific job description to create unique letters. No two letters are the same, and they reference actual requirements from the job posting.' },
+    { q: 'Is AIletter really free to start?', a: 'Yes — you get 5 free generations per month with no credit card required. Each generation produces a complete, ready-to-use cover letter, resume optimizer scan, or interview Q&A list.' },
+    { q: 'How does the ATS Resume Optimizer work?', a: 'You upload your CV and paste the target vacancy. The AI audits your formatting, structure, and text achievements, highlights missing keywords, and automatically re-writes your bullet points with quantitative impact metrics to pass screening.' },
+    { q: 'How personalized are the letters and interview preps?', a: 'Extremely. AIletter analyzes your actual CV profile and the job description. It generates tailored letters referencing vacancy requirements and designs custom questions using the STAR interview methodology.' },
+    { q: 'What is the Smart Job Tracker?', a: 'It is a visual board inside your dashboard where you can log applications, add notes, and move entries between columns (Applied, Interview, Offer, Rejected). The system tracks application dates and alerts you when it is time to follow up.' },
     { q: 'What languages are supported?', a: 'Currently English, Ukrainian, Italian, and German. The AI detects the job description language automatically or you can set it manually.' },
-    { q: 'Will the letter pass ATS screening?', a: 'Yes. Letters are optimized with relevant keywords from the job description, which helps with Applicant Tracking Systems used by most companies.' },
-    { q: 'Can I edit the generated letter?', a: 'Absolutely. Every generated letter is fully editable directly in the app. The preview updates in real time as you type.' },
-    { q: 'What is the Pro plan?', a: 'Pro gives you unlimited generations, all 16 templates, DOCX export, no watermarks on PDFs, and priority AI processing. Plans start from €6/month.' },
+    { q: 'What is the Pro plan?', a: 'Pro gives you unlimited generations, 16+ premium templates, DOCX & HD PDF exports, no watermarks, automated follow-up draft generation, and priority AI processing. Plans start from €6/month.' },
   ],
   uk: [
-    { q: 'Чи справді безкоштовно?', a: 'Так — 5 безкоштовних генерацій щомісяця без кредитної картки. Кожна генерація дає готовий лист.' },
-    { q: 'Наскільки персоналізовані листи?', a: "Дуже. AI аналізує ваше CV і конкретну вакансію, тому кожен лист унікальний і містить реальні вимоги з оголошення." },
-    { q: 'Які мови підтримуються?', a: 'English, Українська, Italiano та Deutsch. AI визначає мову автоматично або ви можете задати вручну.' },
-    { q: 'Чи пройде лист через ATS?', a: 'Так. Листи оптимізовані під ключові слова з вакансії, що допомагає пройти ATS-фільтри.' },
-    { q: 'Чи можна редагувати лист?', a: "Так, кожен лист повністю редагується прямо в додатку. Прев'ю оновлюється в реальному часі." },
-    { q: 'Що входить у Pro план?', a: 'Необмежені генерації, всі 16 шаблонів, DOCX експорт, без водяних знаків, пріоритетний AI. Від €6/місяць.' },
+    { q: 'Чи справді безкоштовно?', a: 'Так — 5 безкоштовних спроб щомісяця без кредитної картки. Ви можете створювати листи, аналізувати резюме або готуватися до інтерв’ю безкоштовно.' },
+    { q: 'Як працює ATS Оптимізатор резюме?', a: 'Ви завантажуєте резюме та вставляєте вакансію. AI перевіряє форматування, підраховує відповідність ключових слів та переписує ваші досягнення, додаючи метрики, щоб пройти автоматичний фільтр рекрутерів.' },
+    { q: 'Наскільки персоналізовані листи та питання до інтерв’ю?', a: 'Максимально. Система бере досвід з вашого профілю та співвідносить його з кожним рядком вакансії. Листи та питання до співбесіди за методом STAR будуть унікальними для кожної вакансії.' },
+    { q: 'Що таке розумний трекер вакансій?', a: 'Це візуальна Kanban-дошка в додатку, де ви можете зберігати вакансії, міняти їхній статус (Відправлено, Співбесіда, Офер, Відмова) та отримувати нагадування про те, що пора нагадати рекрутеру про себе.' },
+    { q: 'Які мови підтримуються?', a: 'English, Українська, Italiano та Deutsch. AI визначає мову вакансії автоматично або ви можете вибрати її в налаштуваннях.' },
+    { q: 'Що входить у Pro план?', a: 'Необмежені генерації, 16+ шаблонів, експорт у DOCX та PDF без водяних знаків, автогенерація follow-up листів, пріоритетний AI. Від €6/місяць.' },
   ],
   it: [
-    { q: 'È davvero gratuito per iniziare?', a: "Sì — 5 generazioni gratis al mese, senza carta di credito. Ogni generazione produce una lettera completa e pronta all'invio." },
-    { q: 'Quanto sono personalizzate le lettere?', a: 'Molto. AIletter analizza il tuo CV e la descrizione del lavoro specifica per creare lettere uniche.' },
-    { q: 'Quali lingue sono supportate?', a: "English, Українська, Italiano e Deutsch. L'AI rileva automaticamente la lingua." },
-    { q: 'La lettera supererà il filtro ATS?', a: 'Sì. Le lettere sono ottimizzate con parole chiave dalla descrizione del lavoro.' },
-    { q: 'Posso modificare la lettera generata?', a: "Assolutamente. Ogni lettera è completamente modificabile direttamente nell'app." },
-    { q: "Cos'è il piano Pro?", a: 'Generazioni illimitate, tutti i 16 template, export DOCX, nessuna filigrana. Da €6/mese.' },
+    { q: 'È davvero gratuito per iniziare?', a: 'Sì — ricevi 5 generazioni gratuite al mese senza carta di credito. Ogni generazione produce lettere, scansioni CV o domande di colloquio.' },
+    { q: 'Come funziona l’ottimizzatore CV per ATS?', a: 'Carichi il tuo CV e incolli l’offerta. L’AI valuta la struttura del testo, individua le parole chiave mancanti richieste dall’azienda e riscrive i punti elenco con indicatori di performance quantitativi.' },
+    { q: 'Quanto sono personalizzate le lettere e le domande di colloquio?', a: 'Moltissimo. AIletter analizza i dati del tuo profilo e della vacancy per creare lettere su misura e formulare domande basate sul metodo STAR.' },
+    { q: 'Cos’è il tracker delle candidature?', a: 'È una bacheca Kanban all’interno della dashboard dove puoi salvare le posizioni a cui ti sei candidato, aggiungere note e ricevere alert che ti segnalano quando è ora di inviare un follow-up.' },
+    { q: 'Quali lingue sono supportate?', a: 'English, Українська, Italiano e Deutsch. L’AI rileva automaticamente la lingua o puoi impostarla a mano.' },
+    { q: 'Cos’è il piano Pro?', a: 'Generazioni illimitate, 16+ template premium, esportazione DOCX, nessuna filigrana su PDF, stesura automatica dei follow-up ed elaborazione AI prioritaria. Da €6/mese.' },
   ],
   de: [
-    { q: 'Ist AIletter wirklich kostenlos?', a: 'Ja — 5 kostenlose Generierungen pro Monat ohne Kreditkarte. Jede Generierung ergibt ein vollständiges Anschreiben.' },
-    { q: 'Wie personalisiert sind die Briefe?', a: 'Sehr. AIletter analysiert deinen Lebenslauf und die spezifische Stellenbeschreibung.' },
-    { q: 'Welche Sprachen werden unterstützt?', a: 'English, Українська, Italiano und Deutsch. Die KI erkennt die Sprache automatisch.' },
-    { q: 'Besteht der Brief den ATS-Filter?', a: 'Ja. Briefe sind mit relevanten Keywords aus der Stellenbeschreibung optimiert.' },
-    { q: 'Kann ich den generierten Brief bearbeiten?', a: 'Absolut. Jeder Brief ist direkt in der App vollständig bearbeitbar.' },
-    { q: 'Was ist der Pro-Plan?', a: 'Unbegrenzte Generierungen, alle 16 Vorlagen, DOCX-Export, keine Wasserzeichen. Ab €6/Monat.' },
+    { q: 'Ist AIletter wirklich kostenlos?', a: 'Ja — Sie erhalten 5 kostenlose Generierungen pro Monat ohne Kreditkarte. Jede Generierung liefert vollständige Anschreiben, ATS-Scans oder Interview-Fragen.' },
+    { q: 'Wie funktioniert der ATS-Lebenslauf-Optimierer?', a: 'Sie laden Ihren Lebenslauf hoch und fügen die Stellenanzeige ein. Die KI prüft die Struktur, findet Keyword-Lücken und schreibt Ihre Erfolge mit messbaren Ergebnissen um, um die Filter zu bestehen.' },
+    { q: 'Wie personalisiert sind Anschreiben und Interview-Fragen?', a: 'Absolut maßgeschneidert. AIletter analysiert die Fähigkeiten Ihres Profils und gleicht sie mit der Ausschreibung ab. Fragen und STAR-Antworten werden individuell erstellt.' },
+    { q: 'Was ist der Job-Tracker?', a: 'Ein visuelles Kanban-Board, auf dem Sie Ihre Bewerbungen verwalten (Beworben, Gespräch, Angebot, Abgelehnt). Der Tracker erinnert Sie automatisch, wenn ein Follow-up ansteht.' },
+    { q: 'Welche Sprachen werden unterstützt?', a: 'English, Englisch, Ukrainisch, Italienisch und Deutsch. Die KI erkennt die Sprache automatisch.' },
+    { q: 'Was ist der Pro-Plan?', a: 'Unbegrenzte Generierungen, 16+ Vorlagen, DOCX-Export, keine Wasserzeichen auf PDFs, automatische Follow-up-Entwürfe. Ab €6/Monat.' },
   ],
 };
 
 const TRANSLATIONS = {
   en: {
-    badge: "V2.5 Now Live",
-    heroTitle1: "Get Hired", heroTitle2: "10x Faster", heroTitle3: "with AI",
-    heroSubtitle: "Upload your CV, paste the job description, and get a tailored, ATS-optimized cover letter in 30 seconds.",
-    ctaButton: "Generate For Free", ctaSubtext: "No credit card · 5 free generations",
+    badge: "V3.0 Now Live",
+    heroTitle1: "Land Your Next", heroTitle2: "Role 10x Faster", heroTitle3: "with AI Suite",
+    heroSubtitle: "Resume optimization, tailormade cover letters, interview Q&A prep, and application tracking — all in one place.",
+    ctaButton: "Get Started For Free", ctaSubtext: "No credit card required · 5 free generations",
     trust: "Trusted by candidates hired at",
-    feature1: "ATS Optimized", feature2: "30 Seconds", feature3: "4 Languages",
-    aiTitle: "New AI tools",
-    aiSubtitle: "More than cover letters — prepare faster and apply smarter.",
-    aiDemoBtn: "See example",
-    aiDemoClose: "Close",
-    aiDemoHeader: "AI tools — Example output",
+    howItWorksTitle: "Get Hired in 3 Simple Steps",
+    step1T: "1. Scan CV & Vacancy", step1D: "Upload your CV and paste the job description. AIletter extracts your skills and matches them against requirements.",
+    step2T: "2. Optimize & Generate", step2D: "Review your ATS match score, fill keyword gaps, edit your resume accomplishments, and generate a tailored cover letter.",
+    step3T: "3. Track & Practice", step3D: "Organize applications on your pipeline board, practice role-specific interview Q&As, and get alerts for follow-ups.",
+    aiTitle: "AI Job Search Suite",
+    aiSubtitle: "Everything you need to speed up your job hunt, pass ATS screening, and nail your interviews.",
     aiDemoHint: "Tap a tool to preview example output.",
-    ai1T: "ATS CV Reviewer & Optimizer",
-    ai1D: "Upload your CV, scan it against a job description, detect keyword gaps, and get AI-optimized achievements.",
-    ai2T: "Interview Q&A",
-    ai2D: "8 likely questions with ideal answers based on your letter + job description.",
-    ai3T: "LinkedIn Easy Apply message",
-    ai3D: "Short, confident message ready to paste — tailored to the role.",
-    ai4T: "Email subject lines",
-    ai4D: "3 options (formal / direct / creative) under 60 chars.",
-    compareTitle: "Why switch to AIletter?", oldWay: "The Old Way", newWay: "With AIletter",
-    old1: "2+ hours per application", new1: "30 seconds per application",
-    old2: "Generic copy-paste templates", new2: "Hyper-personalized content",
-    old3: "Stress & writer's block", new3: "Confidence & speed",
-    stepsTitle: "How it works",
-    step1T: "Upload CV", step1D: "Drop your PDF — we extract all relevant info automatically.",
-    step2T: "Paste Job", step2D: "Add the job description or paste a link to the posting.",
-    step3T: "Get Letter", step3D: "AI generates a tailored letter. Edit, export, and apply.",
-    reviewsTitle: "Real results from real users",
-    faqTitle: "Common questions",
+    aiDemoHeader: "AI tools — Example output",
+    letterT: "Tailor-made Cover Letters",
+    letterD: "Generate personalized, high-converting cover letters in 30 seconds with 16+ professional templates.",
+    atsT: "ATS CV Optimizer",
+    atsD: "Audit your CV, identify keyword gaps, and get AI-optimized resume achievements with impact metrics.",
+    interviewT: "Interview prep Q&A",
+    interviewD: "Practice with 8 custom behavioral and role-specific questions and ideal answers prepared using the STAR methodology.",
+    trackerT: "Smart Job Tracker",
+    trackerD: "Track application statuses, store custom notes, and receive auto-scheduled follow-up alerts.",
+    outreachT: "LinkedIn & Email Outreach",
+    outreachD: "Create short LinkedIn Easy Apply introductions and direct email subject lines to double your recruiter response rate.",
+    bentoTitle: "Complete Job Application Toolkit",
+    bentoSubtitle: "Why use separate tools? AIletter covers your application from first search to signed offer.",
+    compareTitle: "Why Candidates Choose AIletter", oldWay: "The Old Way", newWay: "With AIletter Suite",
+    compare1: "Hours spent writing and formatting manual letters", new1: "Personalized letter ready in 30 seconds",
+    compare2: "Untracked applications and lost spreadsheet data", new2: "Visual Kanban board with auto follow-up alerts",
+    compare3: "Resume rejected by automated ATS screening systems", new3: "ATS keyword analysis and optimizer built-in",
+    compare4: "Stress and lack of preparation before interviews", new4: "8 customized interview questions with answers",
+    reviewsTitle: "Real Results from Real Candidates",
+    review1Text: "The ATS CV optimizer found 4 missing keyword gaps in my resume. Got an interview in 4 days!", review1Author: "Sarah M., Frontend Developer",
+    review2Text: "The Job Tracker saved me from spreadsheet hell. The follow-up notification prompted me to write, and that email got me the offer.", review2Author: "Dmitri K., Product Manager",
+    review3Text: "Preparing for interview questions using the customized STAR prep answers gave me so much confidence. Landed the job!", review3Author: "Marco P., Business Analyst",
+    faqTitle: "Frequently Asked Questions",
     footerDesc: "The future of job applications.",
     login: "Login", openApp: "Open App", welcomeBack: "Welcome back",
-    terms: "Terms of Service", privacy: "Privacy Policy", linkedinGen: "LinkedIn Generator",
+    terms: "Terms of Service", privacy: "Privacy Policy", linkedinGen: "LinkedIn Message Gen",
   },
   uk: {
-    badge: "V2.5 Вже доступно",
-    heroTitle1: "Отримай офер", heroTitle2: "у 10 разів", heroTitle3: "швидше",
-    heroSubtitle: "Завантаж CV, встав вакансію та отримай персоналізований супровідний лист за 30 секунд.",
-    ctaButton: "Створити безкоштовно", ctaSubtext: "Картка не потрібна · 5 безкоштовних спроб",
+    badge: "V3.0 Вже Доступно",
+    heroTitle1: "Отримай офер", heroTitle2: "у 10 разів швидше", heroTitle3: "з AI Кабінетом",
+    heroSubtitle: "Оптимізація резюме, персоналізовані листи, підготовка до співбесід та трекер вакансій — все в одному місці.",
+    ctaButton: "Почати безкоштовно", ctaSubtext: "Картка не потрібна · 5 безкоштовних спроб",
     trust: "Нашим користувачам довіряють в",
-    feature1: "Проходить ATS", feature2: "30 Секунд", feature3: "4 Мови",
-    aiTitle: "Нові AI інструменти",
-    aiSubtitle: "Не тільки листи — готуйся швидше та подавайся розумніше.",
-    aiDemoBtn: "Подивитись приклад",
-    aiDemoClose: "Закрити",
-    aiDemoHeader: "AI інструменти — приклад результату",
+    howItWorksTitle: "Отримай роботу за 3 прості кроки",
+    step1T: "1. Завантаж CV та вакансію", step1D: "Завантаж резюме та встав текст вакансії. AI автоматично проаналізує твої навички та вимоги.",
+    step2T: "2. Оптимізуй та налаштуй", step2D: "Переглянь ATS-оцінку, додай пропущені ключові слова, оптимізуй досвід та згенеруй лист.",
+    step3T: "3. Відстежуй та готуйся", step3D: "Організуй відгуки на дошці трекера, пройди тренувальне інтерв'ю та надсилай follow-up.",
+    aiTitle: "AI Кабінет Пошуку Роботи",
+    aiSubtitle: "Все необхідне, щоб прискорити твій пошук роботи, пройти ATS-фільтри та блискуче пройти інтерв'ю.",
     aiDemoHint: "Обери інструмент, щоб побачити приклад.",
-    ai1T: "ATS CV Оптимізатор та Аудитор",
-    ai1D: "Завантажуй CV, аналізуй його під вакансію, знаходь прогалини та отримуй AI-оптимізовані формулювання.",
-    ai2T: "Підготовка до інтерв’ю",
-    ai2D: "8 ймовірних питань і короткі ідеальні відповіді по твоєму листу + вакансії.",
-    ai3T: "LinkedIn Easy Apply повідомлення",
-    ai3D: "Коротке, впевнене повідомлення — готове вставити.",
-    ai4T: "Email subject lines",
-    ai4D: "3 варіанти (формально / прямо / креативно) до 60 символів.",
-    compareTitle: "Чому AIletter?", oldWay: "Старий спосіб", newWay: "З AIletter",
-    old1: "2+ години на заявку", new1: "30 секунд на заявку",
-    old2: "Шаблонні фрази", new2: "Персоналізований контент",
-    old3: "Стрес та муки творчості", new3: "Впевненість та швидкість",
-    stepsTitle: "Як це працює",
-    step1T: "Завантаж CV", step1D: "Додай PDF — ми автоматично витягуємо всю інформацію.",
-    step2T: "Встав вакансію", step2D: "Додай опис вакансії або вставте посилання на неї.",
-    step3T: "Отримай лист", step3D: "AI генерує персоналізований лист. Редагуй і відправляй.",
-    reviewsTitle: "Реальні результати реальних користувачів",
+    aiDemoHeader: "AI інструменти — приклад результату",
+    letterT: "Персоналізовані листи",
+    letterD: "Генеруй високоефективні супровідні листи за 30 секунд у 16+ професійних візуальних шаблонах.",
+    atsT: "ATS CV Оптимізатор",
+    atsD: "Аналізуй резюме, знаходь прогалини у ключових словах та отримуй AI-оптимізовані формулювання досвіду.",
+    interviewT: "Підготовка до співбесіди",
+    interviewD: "Отримуй 8 персоналізованих запитань та ідеальних відповідей за методом STAR на основі твого резюме.",
+    trackerT: "Розумний трекер вакансій",
+    trackerD: "Відстежуй статуси відгуків, зберігай нотатки та отримуй автоматичні нагадування про follow-up.",
+    outreachT: "Outreach та теми листів",
+    outreachD: "Генеруй повідомлення для LinkedIn Easy Apply та теми електронних листів, щоб зацікавити рекрутерів.",
+    bentoTitle: "Повний набір інструментів пошуку роботи",
+    bentoSubtitle: "Навіщо користуватися різними сервісами? AIletter покриває весь шлях від першого пошуку до оферу.",
+    compareTitle: "Чому шукачі обирають AIletter", oldWay: "Старий спосіб", newWay: "З кабінетом AIletter",
+    compare1: "Години на ручне написання листів та форматування дизайну", new1: "Супровідний лист готовий за 30 секунд",
+    compare2: "Заявки губляться у пошті та хаотичних Excel файлах", new2: "Візуальна дошка трекера з нагадуваннями follow-up",
+    compare3: "Резюме відхиляється автоматичними ATS-фільтрами", new3: "Аналіз ATS-оцінки та оптимізація ключових слів",
+    compare4: "Стрес та відсутність підготовки перед співбесідою", new4: "8 персональних запитань та відповідей під вакансію",
+    reviewsTitle: "Реальні результати реальних кандидатів",
+    review1Text: "Оптимізатор CV знайшов 4 прогалини в моєму резюме. Отримала запрошення на інтерв'ю вже за 4 дні!", review1Author: "Світлана М., Frontend Developer",
+    review2Text: "Трекер врятував мене від хаосу Excel. Нагадування про follow-up спонукало мене написати рекрутеру, і цей лист приніс офер!", review2Author: "Дмитро К., Product Manager",
+    review3Text: "Підготовка за методом STAR дала мені величезну впевненість на співбесіді. Отримав офер!", review3Author: "Марко П., Бізнес-аналітик",
     faqTitle: "Часті запитання",
     footerDesc: "Майбутнє пошуку роботи.",
-    login: "Увійти", openApp: "Відкрити додаток", welcomeBack: "З поверненням",
+    login: "Увійти", openApp: "Дашборд", welcomeBack: "З поверненням",
     terms: "Умови використання", privacy: "Політика конфіденційності", linkedinGen: "LinkedIn Генератор",
   },
   it: {
-    badge: "V2.5 Ora disponibile",
-    heroTitle1: "Assunto", heroTitle2: "10 volte", heroTitle3: "più veloce",
-    heroSubtitle: "Carica il CV, incolla l'offerta di lavoro e ottieni una lettera personalizzata in 30 secondi.",
-    ctaButton: "Genera gratis", ctaSubtext: "Nessuna carta · 5 generazioni gratis",
+    badge: "V3.0 Ora Disponibile",
+    heroTitle1: "Trova Lavoro", heroTitle2: "10x Più Veloce", heroTitle3: "con la Suite AI",
+    heroSubtitle: "Ottimizzazione del CV, lettere di presentazione su misura, preparazione ai colloqui e tracciamento delle candidature — tutto in un unico posto.",
+    ctaButton: "Inizia Gratis", ctaSubtext: "Nessuna carta richiesta · 5 generazioni gratis",
     trust: "Candidati assunti da",
-    feature1: "Ottimizzato ATS", feature2: "30 Secondi", feature3: "4 Lingue",
-    aiTitle: "Nuovi strumenti AI",
-    aiSubtitle: "Non solo lettere — preparati più velocemente e candidati meglio.",
-    aiDemoBtn: "Vedi esempio",
-    aiDemoClose: "Chiudi",
-    aiDemoHeader: "Strumenti AI — esempio",
+    howItWorksTitle: "Fatti Assumere in 3 Semplici Passaggi",
+    step1T: "1. Carica CV e Offerta", step1D: "Carica il tuo curriculum e inserisci la descrizione del lavoro. L'AI estrarrà le competenze e le confronterà con l'annuncio.",
+    step2T: "2. Ottimizza e Personalizza", step2D: "Controlla il punteggio ATS, colma le lacune, migliora le frasi del curriculum e scegli un modello di lettera.",
+    step3T: "3. Traccia e Allenati", step3D: "Organizza i tuoi contatti nella pipeline visuale, esercitati per i colloqui e ricevi alert per i follow-up.",
+    aiTitle: "Suite AI per la Ricerca di Lavoro",
+    aiSubtitle: "Tutto ciò di cui hai bisogno per accelerare la ricerca, superare i filtri ATS e superare brillantemente i colloqui.",
     aiDemoHint: "Scegli uno strumento per vedere un esempio.",
-    ai1T: "ATS CV Optimizer & Auditor",
-    ai1D: "Carica il tuo CV, analizzalo rispetto all'offerta, individua le lacune e ottieni punti elenco ottimizzati dall'AI.",
-    ai2T: "Q&A per colloquio",
-    ai2D: "8 domande probabili con risposte ideali basate su lettera + job description.",
-    ai3T: "Messaggio LinkedIn Easy Apply",
-    ai3D: "Messaggio breve e sicuro, pronto da incollare — su misura per il ruolo.",
-    ai4T: "Oggetti email",
-    ai4D: "3 opzioni (formale / diretto / creativo) sotto 60 caratteri.",
-    compareTitle: "Perché AIletter?", oldWay: "Il vecchio modo", newWay: "Con AIletter",
-    old1: "2+ ore per candidatura", new1: "30 secondi per candidatura",
-    old2: "Template generici", new2: "Contenuto personalizzato",
-    old3: "Stress e blocco creativo", new3: "Fiducia e velocità",
-    stepsTitle: "Come funziona",
-    step1T: "Carica CV", step1D: "Carica il tuo PDF — estraiamo automaticamente le info.",
-    step2T: "Incolla offerta", step2D: "Aggiungi la descrizione del lavoro o incolla un link.",
-    step3T: "Ottieni lettera", step3D: "L'AI genera una lettera su misura. Modifica ed invia.",
-    reviewsTitle: "Risultati reali da utenti reali",
-    faqTitle: "Domande frequenti",
+    aiDemoHeader: "Strumenti AI — esempio",
+    letterT: "Lettere su Misura",
+    letterD: "Genera lettere personalizzate ad alto tasso di conversione in 30 secondi con 16+ modelli professionali.",
+    atsT: "Ottimizzatore CV per ATS",
+    atsD: "Analizza il tuo CV, rileva le parole chiave mancanti e ottieni punti elenco ottimizzati dall'AI con metriche di impatto.",
+    interviewT: "Domande per Colloquio",
+    interviewD: "Ricevi 8 domande personalizzate basate sulla tua candidatura con risposte ideali metodo STAR.",
+    trackerT: "Tracker Candidature",
+    trackerD: "Traccia lo stato dei tuoi invii, aggiungi note e ricevi notifiche per inviare i follow-up puntualmente.",
+    outreachT: "LinkedIn e Outreach",
+    outreachD: "Genera brevi messaggi di presentazione per Easy Apply e oggetti email che raddoppiano i tassi di risposta.",
+    bentoTitle: "Toolkit Completo per la Ricerca Lavoro",
+    bentoSubtitle: "Perché usare strumenti separati? AIletter copre l'intero percorso dalla prima ricerca fino all'offerta.",
+    compareTitle: "Perché i Candidati Scelgono AIletter", oldWay: "Il vecchio modo", newWay: "Con la suite AIletter",
+    compare1: "Ore spese a scrivere a mano e sistemare l'impaginazione", new1: "Lettera personalizzata pronta in 30 secondi",
+    compare2: "Candidature sparse tra email e fogli Excel disordinati", new2: "Pipeline visuale con notifiche automatiche di follow-up",
+    compare3: "CV scartato dai filtri di selezione ATS automatici", new3: "Analisi del punteggio ATS e ottimizzazione integrate",
+    compare4: "Ansia e mancanza di preparazione al colloquio", new4: "8 domande e risposte personalizzate basate sul CV",
+    reviewsTitle: "Risultati Reali da Candidati Reali",
+    review1Text: "L'ottimizzatore CV ha trovato 4 lacune nel mio curriculum. Ho ottenuto un colloquio in soli 4 giorni!", review1Author: "Sofia M., Sviluppatrice Frontend",
+    review2Text: "Il Tracker mi ha salvato dall'inferno dei fogli Excel. Il promemoria mi ha spinto a scrivere, e quella mail mi ha portato l'offerta.", review2Author: "Daniele K., Product Manager",
+    review3Text: "Prepararsi al colloquio con le risposte personalizzate STAR mi ha dato una sicurezza incredibile. Lavoro ottenuto!", review3Author: "Marco P., Business Analyst",
+    faqTitle: "Domande Frequenti",
     footerDesc: "Il futuro delle candidature.",
     login: "Accedi", openApp: "Apri l'app", welcomeBack: "Bentornato",
     terms: "Termini di servizio", privacy: "Privacy Policy", linkedinGen: "LinkedIn Generator",
   },
   de: {
-    badge: "V2.5 Jetzt verfügbar",
-    heroTitle1: "Eingestellt", heroTitle2: "10x schneller", heroTitle3: "mit KI",
-    heroSubtitle: "Lebenslauf hochladen, Stellenbeschreibung einfügen und in 30 Sekunden ein maßgeschneidertes Anschreiben erhalten.",
-    ctaButton: "Kostenlos generieren", ctaSubtext: "Keine Kreditkarte · 5 kostenlose Generierungen",
+    badge: "V3.0 Jetzt Live",
+    heroTitle1: "Job Finden", heroTitle2: "10x Schneller", heroTitle3: "mit der KI-Suite",
+    heroSubtitle: "Lebenslauf-Optimierung, maßgeschneiderte Anschreiben, Interview-Vorbereitung und Bewerbungs-Tracker — alles an einem Ort.",
+    ctaButton: "Kostenlos Starten", ctaSubtext: "Keine Kreditkarte erforderlich · 5 kostenlose Generierungen",
     trust: "Vertrauen von Kandidaten bei",
-    feature1: "ATS-optimiert", feature2: "30 Sekunden", feature3: "4 Sprachen",
-    aiTitle: "Neue KI-Tools",
-    aiSubtitle: "Mehr als Anschreiben — schneller vorbereiten und smarter bewerben.",
-    aiDemoBtn: "Beispiel ansehen",
-    aiDemoClose: "Schließen",
+    howItWorksTitle: "Eingestellt werden in 3 einfachen Schritten",
+    step1T: "1. Lebenslauf & Stelle hochladen", step1D: "Laden Sie Ihren Lebenslauf hoch und fügen Sie die Stellenanzeige ein. Die KI gleicht Ihre Fähigkeiten ab.",
+    step2T: "2. Optimieren & Anpassen", step2D: "Prüfen Sie den ATS-Score, schließen Sie Keyword-Lücken und wählen Sie eine Designvorlage für das Anschreiben.",
+    step3T: "3. Tracken & Vorbereiten", step3D: "Organisieren Sie Bewerbungen im Tracker, bereiten Sie sich auf das Gespräch vor und senden Sie Follow-ups.",
+    aiTitle: "KI-Jobsuche-Suite",
+    aiSubtitle: "Alles, was Sie brauchen, um Ihre Bewerbungen zu beschleunigen, das ATS-Screening zu bestehen und das Interview zu meistern.",
+    aiDemoHint: "Wählen Sie ein Tool, um ein Beispiel zu sehen.",
     aiDemoHeader: "KI-Tools — Beispiel",
-    aiDemoHint: "Wähle ein Tool, um ein Beispiel zu sehen.",
-    ai1T: "ATS-CV-Reviewer & Optimierer",
-    ai1D: "Lebenslauf hochladen, mit Stellenbeschreibung abgleichen, Keyword-Lücken finden und KI-optimierte Erfolge erhalten.",
-    ai2T: "Interview Q&A",
-    ai2D: "8 wahrscheinliche Fragen mit idealen Antworten aus Brief + Stellenanzeige.",
-    ai3T: "LinkedIn Easy Apply Nachricht",
-    ai3D: "Kurze, selbstbewusste Nachricht zum Einfügen — passend zur Rolle.",
-    ai4T: "E-Mail-Betreffzeilen",
-    ai4D: "3 Optionen (formal / direkt / kreativ) unter 60 Zeichen.",
-    compareTitle: "Warum AIletter?", oldWay: "Der alte Weg", newWay: "Mit AIletter",
-    old1: "2+ Stunden pro Bewerbung", new1: "30 Sekunden pro Bewerbung",
-    old2: "Generische Vorlagen", new2: "Personalisierter Inhalt",
-    old3: "Stress & Schreibblockade", new3: "Selbstvertrauen & Geschwindigkeit",
-    stepsTitle: "So funktioniert es",
-    step1T: "Lebenslauf hochladen", step1D: "PDF hochladen — wir extrahieren alle relevanten Infos.",
-    step2T: "Stelle einfügen", step2D: "Stellenbeschreibung oder Link zur Ausschreibung einfügen.",
-    step3T: "Brief erhalten", step3D: "KI erstellt ein maßgeschneidertes Anschreiben. Bearbeiten & senden.",
-    reviewsTitle: "Echte Ergebnisse von echten Nutzern",
-    faqTitle: "Häufige Fragen",
+    letterT: "Maßgeschneiderte Anschreiben",
+    letterD: "Erstellen Sie in 30 Sekunden ein maßgeschneidertes Anschreiben in verschiedenen professionellen Vorlagen.",
+    atsT: "ATS-CV-Optimierer",
+    atsD: "Analysieren Sie Ihren Lebenslauf, identifizieren Sie Keyword-Lücken und erhalten Sie KI-optimierte Erfolge.",
+    interviewT: "Interview-Vorbereitung",
+    interviewD: "Erhalten Sie 8 maßgeschneiderte Fragen und ideale STAR-Antworten basierend auf Ihrer Bewerbung.",
+    trackerT: "Bewerbungs-Tracker",
+    trackerD: "Verfolgen Sie den Status Ihrer Bewerbungen und erhalten Sie automatische Erinnerungen für Follow-ups.",
+    outreachT: "LinkedIn & Outreach",
+    outreachD: "Erstellen Sie kurze LinkedIn-Nachrichten und Betreffzeilen, um Ihre Rücklaufquote zu verdoppeln.",
+    bentoTitle: "Komplettes Bewerbungs-Toolkit",
+    bentoSubtitle: "Warum separate Tools nutzen? AIletter deckt Ihren gesamten Bewerbungsprozess ab.",
+    compareTitle: "Warum Kandidaten AIletter wählen", oldWay: "Der alte Weg", newWay: "Mit der AIletter Suite",
+    compare1: "Stundenlanges manuelles Schreiben und Formatieren von Anschreiben", new1: "Maßgeschneidertes Anschreiben bereit in 30 Sekunden",
+    compare2: "Unübersichtliche Bewerbungen in E-Mails und verstreuten Notizen", new2: "Visualisierter Tracker mit automatischen Erinnerungen",
+    compare3: "Lebenslauf wird von automatischen ATS-Systemen abgelehnt", new3: "Integriertes ATS-Audit und Keyword-Optimierung",
+    compare4: "Unsicherheit und mangelnde Vorbereitung auf Vorstellungsgespräche", new4: "8 personalisierte Interviewfragen mit STAR-Antworten",
+    reviewsTitle: "Echte Ergebnisse von echten Kandidaten",
+    review1Text: "Der ATS-CV-Optimierer fand 4 Keyword-Lücken in meinem Lebenslauf. Ich hatte in 4 Tagen ein Interview!", review1Author: "Sarah M., Frontend-Entwicklerin",
+    review2Text: "Der Job-Tracker hat mich gerettet. Die Follow-up-Erinnerung war perfekt — genau diese E-Mail hat mir das Angebot eingebracht.", review2Author: "Dmitri K., Product Manager",
+    review3Text: "Die Vorbereitung mit den maßgeschneiderten STAR-Antworten hat mir so viel Sicherheit gegeben. Job bekommen!", review3Author: "Marco P., Business Analyst",
+    faqTitle: "Häufig gestellte Fragen",
     footerDesc: "Die Zukunft der Bewerbungen.",
     login: "Anmelden", openApp: "App öffnen", welcomeBack: "Willkommen zurück",
     terms: "Nutzungsbedingungen", privacy: "Datenschutz", linkedinGen: "LinkedIn Generator",
   },
 };
 
-const FaqItem = ({ q, a }) => {
+const FaqItem = ({ q, a, id }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className={`border rounded-xl transition-all duration-200 ${open ? 'border-indigo-500/30 bg-indigo-500/5' : 'border-white/5 bg-white/[0.015]'}`}>
+    <div 
+      id={id}
+      className={`border rounded-xl transition-all duration-200 ${open ? 'border-indigo-500/30 bg-indigo-500/5' : 'border-white/5 bg-white/[0.015]'}`}
+    >
       <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
         <span className="font-semibold text-sm text-white">{q}</span>
         <span className={`shrink-0 ${open ? 'text-indigo-400' : 'text-gray-600'}`}><IconChevron open={open} /></span>
@@ -245,7 +267,25 @@ const Landing = () => {
   const { uiLang, setUiLang } = useLanguage();
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showAiDemo, setShowAiDemo] = useState(false);
+  const [demoTab, setDemoTab] = useState('letter');
+  const [isInteracting, setIsInteracting] = useState(false);
+
+  useEffect(() => {
+    if (isInteracting) return;
+    const interval = setInterval(() => {
+      const tabs = ['letter', 'ats', 'interview', 'tracker', 'outreach'];
+      setDemoTab((prev) => {
+        const idx = (tabs.indexOf(prev) + 1) % tabs.length;
+        return tabs[idx];
+      });
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [isInteracting]);
+
+  const handleDemoTabChange = (key) => {
+    setDemoTab(key);
+    setIsInteracting(true);
+  };
 
   useEffect(() => {
     const schema = {
@@ -301,12 +341,12 @@ const Landing = () => {
               LinkedIn ↗
             </Link>
             {user ? (
-              <Link to="/dashboard" className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all">
+              <Link id="open-app-header-btn" to="/dashboard" className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all">
                 <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black">{user.displayName?.[0]?.toUpperCase() || 'U'}</div>
                 {t('openApp')}
               </Link>
             ) : (
-              <Link to="/login" className="px-4 py-2 bg-white text-[#0f172a] rounded-lg text-xs font-black uppercase tracking-widest hover:bg-gray-100 transition-all">{t('login')}</Link>
+              <Link id="login-header-btn" to="/login" className="px-4 py-2 bg-white text-[#0f172a] rounded-lg text-xs font-black uppercase tracking-widest hover:bg-gray-100 transition-all">{t('login')}</Link>
             )}
           </div>
           <button onClick={() => setMobileMenuOpen(o => !o)} className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
@@ -328,9 +368,9 @@ const Landing = () => {
               LinkedIn Easy Apply Generator ↗
             </Link>
             {user ? (
-              <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 rounded-xl text-sm font-black uppercase tracking-widest">{t('openApp')}</Link>
+              <Link id="open-app-mobile-btn" to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 rounded-xl text-sm font-black uppercase tracking-widest">{t('openApp')}</Link>
             ) : (
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center w-full py-3 bg-white text-[#0f172a] rounded-xl text-sm font-black uppercase tracking-widest">{t('login')}</Link>
+              <Link id="login-mobile-btn" to="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center w-full py-3 bg-white text-[#0f172a] rounded-xl text-sm font-black uppercase tracking-widest">{t('login')}</Link>
             )}
           </div>
         )}
@@ -352,7 +392,7 @@ const Landing = () => {
               </h1>
               <p className="fu fu3 text-gray-400 text-base md:text-lg leading-relaxed mb-8 max-w-md mx-auto lg:mx-0">{t('heroSubtitle')}</p>
               <div className="fu fu4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-6">
-                <Link to={user ? '/dashboard' : '/login'}
+                <Link id="hero-cta-btn" to={user ? '/dashboard' : '/login'}
                   className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25 text-sm">
                   {user ? t('openApp') : t('ctaButton')} <IconRocket />
                 </Link>
@@ -364,18 +404,11 @@ const Landing = () => {
                   {t('welcomeBack')}, {user.displayName?.split(' ')[0] || 'User'} 👋
                 </div>
               )}
-              <div className="fu fu5 flex flex-wrap items-center justify-center lg:justify-start gap-2">
-                {[t('feature1'), t('feature2'), t('feature3')].map((feat, i) => (
-                  <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.04] rounded-full border border-white/[0.07] text-xs font-medium text-gray-400">
-                    <IconCheck /> {feat}
-                  </div>
-                ))}
-              </div>
             </div>
             <div className="fu fu3 w-full lg:flex-1 lg:max-w-[640px] overflow-hidden">
               <div className="relative rounded-2xl p-[1.5px]" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }}>
                 <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-20 pointer-events-none" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }} />
-                <div className="relative rounded-2xl overflow-hidden" style={{ maxHeight: 420 }}>
+                <div className="relative rounded-2xl overflow-hidden bg-[#0f172a]" style={{ maxHeight: 420 }}>
                   <HeroMockup />
                 </div>
               </div>
@@ -402,130 +435,214 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* AI TOOLS */}
-      <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto z-10 relative">
-        <div className="text-center mb-10 md:mb-14">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black">{t('aiTitle')}</h2>
-          <p className="text-gray-400 text-sm mt-3 max-w-2xl mx-auto">{t('aiSubtitle')}</p>
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={() => setShowAiDemo(true)}
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-white text-[#0f172a] font-black text-xs uppercase tracking-widest hover:bg-gray-100 transition-all"
-            >
-              {t('aiDemoBtn')}
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { icon: '📊', title: t('ai1T'), desc: t('ai1D'), tint: 'border-emerald-500/15 bg-emerald-500/[0.04] text-emerald-300' },
-            { icon: '🎤', title: t('ai2T'), desc: t('ai2D'), tint: 'border-indigo-500/15 bg-indigo-500/[0.05] text-indigo-300' },
-            { icon: '💼', title: t('ai3T'), desc: t('ai3D'), tint: 'border-sky-500/15 bg-sky-500/[0.04] text-sky-300' },
-            { icon: '✉️', title: t('ai4T'), desc: t('ai4D'), tint: 'border-purple-500/15 bg-purple-500/[0.04] text-purple-300' },
-          ].map((card, i) => (
-            <div key={i} className={`glass p-6 rounded-2xl border ${card.tint} hover:border-white/10 transition-all`}>
-              <div className="text-3xl mb-3">{card.icon}</div>
-              <h3 className="text-base font-black text-white mb-2">{card.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{card.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* HOW IT WORKS */}
-      <section className="py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto z-10 relative">
-        <div className="text-center mb-10 md:mb-14">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black">{t('stepsTitle')}</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <section className="py-20 px-4 md:px-6 relative z-10 max-w-7xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-black text-center mb-16 tracking-tight">{t('howItWorksTitle')}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { num: '01', title: t('step1T'), desc: t('step1D'), color: 'from-blue-500 to-indigo-500' },
-            { num: '02', title: t('step2T'), desc: t('step2D'), color: 'from-indigo-500 to-purple-500' },
-            { num: '03', title: t('step3T'), desc: t('step3D'), color: 'from-purple-500 to-pink-500' },
-          ].map((step, i) => (
-            <div key={i} className="glass p-6 rounded-2xl relative overflow-hidden group hover:border-white/10 transition-all">
-              <div className={`absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r ${step.color} opacity-60`} />
-              <span className={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br ${step.color} opacity-70 block mb-3`}>{step.num}</span>
-              <h3 className="text-base font-black text-white mb-2">{step.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+            { key: 'step1', icon: '⚡', title: t('step1T'), desc: t('step1D') },
+            { key: 'step2', icon: '🛠️', title: t('step2T'), desc: t('step2D') },
+            { key: 'step3', icon: '🎯', title: t('step3T'), desc: t('step3D') },
+          ].map((step, idx) => (
+            <div key={step.key} className="glass rounded-2xl p-6 border border-white/5 relative hover:border-indigo-500/20 transition-all duration-300">
+              <span className="absolute -top-4 left-6 w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-black text-sm text-white">
+                {idx + 1}
+              </span>
+              <div className="text-3xl mb-4 mt-2">{step.icon}</div>
+              <h3 className="text-lg font-black text-white mb-2">{step.title}</h3>
+              <p className="text-sm text-gray-400 leading-relaxed">{step.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* COMPARISON */}
-      <section className="py-16 md:py-20 px-4 md:px-6 relative z-10 bg-[#1e293b]/20">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-10">{t('compareTitle')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-6 rounded-2xl border border-red-500/10 bg-red-500/[0.03]">
-              <h3 className="text-sm font-black text-red-400 mb-5 flex items-center gap-2 uppercase tracking-wider"><IconX /> {t('oldWay')}</h3>
-              <ul className="space-y-3">
-                {[t('old1'), t('old2'), t('old3')].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-gray-500">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500/40 shrink-0" /> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-6 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.06]">
-              <h3 className="text-sm font-black text-indigo-400 mb-5 flex items-center gap-2 uppercase tracking-wider"><IconCheck /> {t('newWay')}</h3>
-              <ul className="space-y-3">
-                {[t('new1'), t('new2'), t('new3')].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-white font-medium">
-                    <div className="w-4 h-4 rounded-full bg-indigo-500/80 flex items-center justify-center text-[9px] shrink-0 font-black">✓</div>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+      {/* AI TOOLS SECTION (INLINE INTERACTIVE SUITE DEMO) */}
+      <section className="py-20 md:py-28 px-4 md:px-6 max-w-7xl mx-auto z-10 relative">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-glow text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-indigo-200">
+            {t('aiTitle')}
+          </h2>
+          <p className="text-gray-400 text-sm sm:text-base mt-4 max-w-2xl mx-auto leading-relaxed">
+            {t('aiSubtitle')}
+          </p>
+        </div>
+
+        {/* Inline Interactive Suite Demo */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-[#1e293b]/20 rounded-3xl p-6 md:p-8 border border-white/5 shadow-2xl relative overflow-hidden">
+          {/* Subtle background glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
+
+          {/* Left: Interactive Info Cards / Controls */}
+          <div className="lg:col-span-5 flex flex-col justify-center space-y-3 relative z-10">
+            {[
+              { key: 'letter', icon: '📄', title: t('letterT'), desc: t('letterD'), tint: 'from-indigo-500/10 to-transparent border-indigo-500/10' },
+              { key: 'ats', icon: '📊', title: t('atsT'), desc: t('atsD'), tint: 'from-emerald-500/10 to-transparent border-emerald-500/10' },
+              { key: 'interview', icon: '🎤', title: t('interviewT'), desc: t('interviewD'), tint: 'from-purple-500/10 to-transparent border-purple-500/10' },
+              { key: 'tracker', icon: '💼', title: t('trackerT'), desc: t('trackerD'), tint: 'from-amber-500/10 to-transparent border-amber-500/10' },
+              { key: 'outreach', icon: '✉️', title: t('outreachT'), desc: t('outreachD'), tint: 'from-sky-500/10 to-transparent border-sky-500/10' },
+            ].map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => handleDemoTabChange(item.key)}
+                className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-start gap-4 ${
+                  demoTab === item.key
+                    ? 'bg-[#1e293b]/50 border-white/10 shadow-lg shadow-black/20 scale-[1.01]'
+                    : 'border-transparent bg-white/[0.01] hover:bg-white/[0.02] opacity-60 hover:opacity-100'
+                }`}
+              >
+                <div className="text-2xl shrink-0 mt-0.5">{item.icon}</div>
+                <div>
+                  <h3 className="text-xs font-black text-white">{item.title}</h3>
+                  <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">{item.desc}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Right: Mockup Window */}
+          <div className="lg:col-span-7 relative z-10 w-full flex items-center">
+            <div className="w-full relative rounded-2xl p-[1.5px] bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
+              <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-10 pointer-events-none bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500" />
+              <div className="relative rounded-2xl overflow-hidden bg-[#0b1120]" style={{ height: 420 }}>
+                <AiToolsMockup t={t} activeTab={demoTab} onChangeTab={handleDemoTabChange} />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* AI DEMO MODAL */}
-      {showAiDemo && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-4xl">
-            <div className="flex items-center justify-between mb-3 px-1">
-              <div className="text-sm font-black text-white">{t('aiDemoHeader')}</div>
-              <button
-                type="button"
-                onClick={() => setShowAiDemo(false)}
-                className="px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-white/10 hover:bg-white/15 border border-white/10 text-white transition-all"
-              >
-                {t('aiDemoClose')}
-              </button>
+      {/* BENTO FEATURE DETAILS */}
+      <section className="py-20 px-4 md:px-6 relative z-10 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-black mb-4">{t('bentoTitle')}</h2>
+          <p className="text-gray-400 text-sm max-w-xl mx-auto">{t('bentoSubtitle')}</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { icon: '📄', title: t('letterT'), desc: t('letterD') },
+            { icon: '📊', title: t('atsT'), desc: t('atsD') },
+            { icon: '🎤', title: t('interviewT'), desc: t('interviewD') },
+            { icon: '💼', title: t('trackerT'), desc: t('trackerD') },
+            { icon: '✉️', title: t('outreachT'), desc: t('outreachD') },
+            { icon: '⚡', title: t('subjectPageTitle') || 'Subject Lines', desc: t('subjectPageLead') || 'Subject Line Generator' },
+          ].map((feat, idx) => (
+            <div key={idx} className="glass rounded-2xl p-6 border border-white/5 hover:border-white/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <div>
+                <div className="text-3xl mb-4">{feat.icon}</div>
+                <h3 className="text-base font-bold text-white mb-2">{feat.title}</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">{feat.desc}</p>
+              </div>
+              <div className="mt-6 flex items-center text-xs text-indigo-400 font-bold tracking-wider uppercase gap-1 hover:text-indigo-300">
+                <span>Learn More</span>
+                <span>→</span>
+              </div>
             </div>
-            <AiToolsMockup t={t} />
+          ))}
+        </div>
+      </section>
+
+      {/* COMPARISON BLOCK */}
+      <section className="py-20 px-4 md:px-6 relative z-10 max-w-4xl mx-auto">
+        <h2 className="text-3xl font-black text-center mb-16 tracking-tight">{t('compareTitle')}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+          {/* Old Way */}
+          <div className="bg-[#1e293b]/10 border border-rose-500/10 rounded-3xl p-6 md:p-8 space-y-6">
+            <h3 className="text-lg font-black text-rose-400 flex items-center gap-2">
+              <span className="text-xl">❌</span> {t('oldWay')}
+            </h3>
+            <div className="space-y-4">
+              {[t('compare1'), t('compare2'), t('compare3'), t('compare4')].map((item, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <IconX />
+                  <p className="text-xs text-gray-400 leading-relaxed">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* New Way */}
+          <div className="bg-indigo-600/[0.03] border border-indigo-500/15 rounded-3xl p-6 md:p-8 space-y-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+            <h3 className="text-lg font-black text-indigo-400 flex items-center gap-2">
+              <span className="text-xl">✨</span> {t('newWay')}
+            </h3>
+            <div className="space-y-4">
+              {[t('compare1New'), t('compare2New'), t('compare3New'), t('compare4New')].map((item, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <IconCheck />
+                  <p className="text-xs text-slate-200 leading-relaxed font-bold">{item}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      )}
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="py-20 px-4 md:px-6 relative z-10 bg-[#1e293b]/10 border-y border-white/[0.04]">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-black text-center mb-16 tracking-tight">{t('reviewsTitle')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { text: t('review1Text'), author: t('review1Author') },
+              { text: t('review2Text'), author: t('review2Author') },
+              { text: t('review3Text'), author: t('review3Author') },
+            ].map((rev, idx) => (
+              <div key={idx} className="glass rounded-2xl p-6 border border-white/5 flex flex-col justify-between space-y-6">
+                <div className="space-y-4">
+                  <Stars />
+                  <p className="text-sm text-gray-300 leading-relaxed italic">
+                    "{rev.text}"
+                  </p>
+                </div>
+                <div className="border-t border-white/5 pt-4 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-black text-xs text-white uppercase">
+                    {rev.author?.[0] || 'U'}
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-white">{rev.author}</h4>
+                    <p className="text-[9px] text-gray-500">Verified User</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* FAQ */}
-      <section className="py-16 md:py-20 px-4 md:px-6 relative z-10 bg-[#1e293b]/20">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-10">{t('faqTitle')}</h2>
-          <div className="space-y-2">
-            {faqs.map((item, i) => <FaqItem key={i} q={item.q} a={item.a} />)}
+      <section className="py-20 px-4 md:px-6 relative z-10">
+        <div className="max-w-2xl mx-auto animate-fade-in">
+          <h2 className="text-3xl font-black text-center mb-12 tracking-tight">{t('faqTitle')}</h2>
+          <div className="space-y-3">
+            {faqs.map((item, i) => (
+              <FaqItem 
+                key={i} 
+                q={item.q} 
+                a={item.a} 
+                id={`faq-item-${i}`}
+              />
+            ))}
           </div>
         </div>
       </section>
 
       {/* BOTTOM CTA */}
-      <section className="py-16 md:py-20 px-4 md:px-6 relative z-10">
+      <section className="py-20 px-4 md:px-6 relative z-10">
         <div className="max-w-xl mx-auto text-center">
-          <div className="glass rounded-2xl p-8 md:p-10 border border-indigo-500/15">
+          <div className="glass rounded-3xl p-8 md:p-10 border border-indigo-500/15 relative overflow-hidden">
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-2xl" />
             <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/30 text-lg">✦</div>
-            <h2 className="text-xl md:text-3xl font-black mb-3">Ready to land your dream job?</h2>
-            <p className="text-gray-400 mb-6 text-sm">Join thousands of candidates already using AIletter.</p>
-            <Link to={user ? '/dashboard' : '/login'}
+            <h2 className="text-2xl md:text-3xl font-black mb-3 text-white">Ready to Land Your Dream Job?</h2>
+            <p className="text-gray-400 mb-6 text-xs leading-relaxed max-w-sm mx-auto">
+              Join thousands of job hunters who optimize CVs, generate tailored letters, and track applications on auto-pilot.
+            </p>
+            <Link id="bottom-cta-btn" to={user ? '/dashboard' : '/login'}
               className="inline-flex items-center gap-2 px-7 py-3.5 font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25 text-sm">
               {user ? t('openApp') : t('ctaButton')} <IconRocket />
             </Link>
-            <p className="text-xs text-gray-600 mt-4">{t('ctaSubtext')}</p>
+            <p className="text-[10px] text-gray-500 mt-4">{t('ctaSubtext')}</p>
           </div>
         </div>
       </section>

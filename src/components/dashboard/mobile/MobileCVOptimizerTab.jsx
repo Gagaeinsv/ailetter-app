@@ -6,6 +6,7 @@ import { analyzeCV } from '../../../gemini';
 export default function MobileCVOptimizerTab({
   contactInfo,
   jobDescription,
+  setJobDescription,
   cvAnalysis,
   setCvAnalysis,
   cvAnalysisLoading,
@@ -17,6 +18,7 @@ export default function MobileCVOptimizerTab({
 }) {
   const [copiedIdx, setCopiedIdx] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [jdOpen, setJdOpen] = useState(false);
 
   const hasCv = contactInfo && (contactInfo.skills?.length > 0 || contactInfo.experience?.length > 0);
   const hasJd = jobDescription && jobDescription.trim().length > 10;
@@ -108,20 +110,28 @@ export default function MobileCVOptimizerTab({
             </div>
           </div>
 
-          <div className={`p-4 rounded-xl border ${hasJd ? 'border-emerald-500/10 bg-emerald-500/[0.02]' : 'border-rose-500/10 bg-rose-500/[0.02]'} flex items-start gap-3`}>
-            {hasJd ? (
-              <CheckCircle2 className="text-emerald-400 w-5 h-5 shrink-0 mt-0.5" />
-            ) : (
-              <AlertCircle className="text-rose-400 w-5 h-5 shrink-0 mt-0.5" />
-            )}
-            <div>
-              <h3 className="font-bold text-xs text-white">{dict.jobSection || 'Job Description'}</h3>
-              <p className="text-[11px] text-gray-400 mt-0.5">
-                {hasJd
-                  ? 'Job description loaded from dashboard. Ready to scan.'
-                  : (dict.cvOptimizerNoJd || 'Please paste a Job Description in the Dashboard tab first.')}
-              </p>
+          <div className={`p-4 rounded-xl border ${hasJd ? 'border-emerald-500/10 bg-emerald-500/[0.02]' : 'border-rose-500/10 bg-rose-500/[0.02]'} flex flex-col gap-3`}>
+            <div className="flex items-start gap-3">
+              {hasJd ? (
+                <CheckCircle2 className="text-emerald-400 w-5 h-5 shrink-0 mt-0.5" />
+              ) : (
+                <AlertCircle className="text-rose-400 w-5 h-5 shrink-0 mt-0.5" />
+              )}
+              <div>
+                <h3 className="font-bold text-xs text-white">{dict.jobSection || 'Job Description'}</h3>
+                <p className="text-[11px] text-gray-400 mt-0.5">
+                  {hasJd
+                    ? 'Job description loaded. Edit it below if needed.'
+                    : 'Paste the target job description details below to analyze match score.'}
+                </p>
+              </div>
             </div>
+            <textarea
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              placeholder={dict.jobPlaceholder || "Paste job description here..."}
+              className="w-full h-32 bg-[#0f172a]/50 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 resize-none"
+            />
           </div>
         </div>
       )}
@@ -156,6 +166,38 @@ export default function MobileCVOptimizerTab({
       {/* Analysis Results */}
       {cvAnalysis && !cvAnalysisLoading && (
         <div className="space-y-4 mb-6">
+          {/* Target Job Description Collapsible Panel */}
+          <div className="bg-[#1e293b]/30 rounded-xl border border-white/5 overflow-hidden">
+            <button
+              onClick={() => setJdOpen(o => !o)}
+              className="w-full flex items-center justify-between p-4 text-left font-black text-xs uppercase tracking-widest text-indigo-400"
+            >
+              <div className="flex items-center gap-2">
+                <span>💼</span>
+                <span>{dict.jobSection || 'Job Description'}</span>
+              </div>
+              <span className="text-gray-500 text-[10px]">{jdOpen ? '✕' : '▼'}</span>
+            </button>
+
+            {jdOpen && (
+              <div className="px-4 pb-4 space-y-3 border-t border-white/5 pt-3">
+                <textarea
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  placeholder={dict.jobPlaceholder || "Paste job description here..."}
+                  className="w-full h-32 bg-[#0f172a]/50 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 resize-none"
+                />
+                <button
+                  onClick={handleAnalyze}
+                  className="w-full py-2.5 bg-[#6366f1] hover:bg-[#5458ee] text-white rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-indigo-500/15"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  {dict.atsRetry || 'Re-Analyze'}
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Collapsible Loaded CV Profile */}
           <div className="bg-[#1e293b]/30 rounded-xl border border-white/5 overflow-hidden">
             <button
