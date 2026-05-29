@@ -71,7 +71,7 @@ const FAQS = {
     { q: 'Come funziona l’ottimizzatore CV per ATS?', a: 'Carichi il tuo CV e incolli l’offerta. L’AI valuta la struttura del testo, individua le parole chiave mancanti richieste dall’azienda e riscrive i punti elenco con indicatori di performance quantitativi.' },
     { q: 'Quanto sono personalizzate le lettere e le domande di colloquio?', a: 'Moltissimo. AIletter analizza i dati del tuo profilo e della vacancy per creare lettere su misura e formulare domande basate sul metodo STAR.' },
     { q: 'Cos’è il tracker delle candidature?', a: 'È una bacheca Kanban all’interno della dashboard dove puoi salvare le posizioni a cui ti sei candidato, aggiungere note e ricevere alert che ti segnalano quando è ora di inviare un follow-up.' },
-    { q: 'Quali lingue sono supportate?', a: 'English, Українська, Italiano e Deutsch. L’AI rileva automaticamente la lingua o puoi impostarla a mano.' },
+    { q: 'Quali lingue sono supportate?', a: 'English,  Italiano e Deutsch. L’AI rileva automaticamente la lingua o puoi impostarla a mano.' },
     { q: 'Cos’è il piano Pro?', a: 'Generazioni illimitate, 16+ template premium, esportazione DOCX, nessuna filigrana su PDF, stesura automatica dei follow-up ed elaborazione AI prioritaria. Da €6/mese.' },
   ],
   de: [
@@ -83,6 +83,135 @@ const FAQS = {
     { q: 'Was ist der Pro-Plan?', a: 'Unbegrenzte Generierungen, 16+ Vorlagen, DOCX-Export, keine Wasserzeichen auf PDFs, automatische Follow-up-Entwürfe. Ab €6/Monat.' },
   ],
 };
+
+const SAMPLE_TEMPLATES = [
+  {
+    key: 'dev',
+    icon: '💻',
+    title: { en: 'Software Engineer', uk: 'Розробник ПЗ', it: 'Sviluppatore Software', de: 'Softwareentwickler' },
+    company: 'Google',
+    roleName: 'Software Engineer',
+    desc: 'Focuses on scalable backends, microservices, cloud deployments, and clean code.',
+    text: {
+      en: `Dear Hiring Manager,
+
+I am writing to express my strong interest in the Software Engineer position at Google. With 4 years of experience building scalable web applications using React, Node.js, and cloud systems, I am excited about the opportunity to contribute to your engineering team.
+
+In my previous role at TechCorp, I led the migration of a legacy monolithic service to microservices, improving system performance by 40% and reducing server costs by $12k/year. I value clean code, automated testing, and agile collaboration.
+
+Best regards,
+Alex Johnson`,
+      uk: `Шановний менеджер з найму,
+
+Пишу, щоб висловити свій великий інтерес до вакансії розробника програмного забезпечення в Google. Маючи 4 роки досвіду розробки масштабованих вебдодатків з використанням React, Node.js та хмарних систем, я радий можливості приєднатися до вашої команди.
+
+На попередній посаді в TechCorp я керував міграцією застарілої системи на мікросервісну архітектуру, що покращило швидкість роботи на 40% та знизило витрати на сервер на $12,000/рік. Я ціную чистий код та автоматизоване тестування.
+
+З повагою,
+Олексій Іванов`,
+      it: `Gentile Responsabile delle Selezioni,
+
+Le scrivo per esprimere il mio forte interesse per la posizione di Sviluppatore Software presso Google. Con 4 anni di esperienza nella creazione di applicazioni web scalabili con React, Node.js e sistemi cloud, sono entusiasta dell'opportunità di contribuire al vostro team.
+
+Nel mio ruolo precedente presso TechCorp, ho guidato la migrazione di un servizio monolitico legacy verso microservizi, migliorando le prestazioni del 40% e riducendo i costi del server di $12.000 all'anno.
+
+Distinti saluti,
+Alessandro Rossi`,
+      de: `Sehr geehrte Damen und Herren,
+
+ich schreibe Ihnen, um mein großes Interesse an der Stelle als Softwareentwickler bei Google zu bekunden. Mit 4 Jahren Erfahrung in der Entwicklung skalierbarer Webanwendungen mit React, Node.js und Cloud-Systemen freue ich mich auf die Zusammenarbeit mit Ihrem Team.
+
+In meiner vorherigen Position bei TechCorp leitete ich die Migration eines monolithischen Dienstes zu Mikrodiensten, was die Leistung um 40 % verbesserte und die Serverkosten senkte.
+
+Mit freundlichen Grüßen,
+Alex Johnson`
+    }
+  },
+  {
+    key: 'design',
+    icon: '🎨',
+    title: { en: 'Product Designer', uk: 'Продуктовий дизайнер', it: 'Product Designer', de: 'Product Designer' },
+    company: 'Spotify',
+    roleName: 'Product Designer',
+    desc: 'Focuses on user research, user journey mapping, high-fidelity prototypes, and Figma systems.',
+    text: {
+      en: `Dear Hiring Manager,
+
+I am writing to express my strong interest in the Product Designer position at Spotify. With 5 years of user experience design and a passion for music technology, I am confident I would be a valuable addition to your team.
+
+At Figma, I led the redesign of our core editor interface, resulting in a 34% increase in user retention. I collaborated closely with engineering and product teams to ship features used by millions worldwide.
+
+Best regards,
+Alex Johnson`,
+      uk: `Шановний менеджер з найму,
+
+Пишу, щоб висловити свій великий інтерес до вакансії продуктового дизайнера в Spotify. Маючи 5 років досвіду дизайну інтерфейсів та пристрасть до музичних технологій, я впевнений, що зможу принести цінність вашій команді.
+
+У компанії Figma я очолював редизайн основного інтерфейсу редактора, що призвело до збільшення утримання користувачів на 34%. Я тісно співпрацював з інженерами та продуктовими командами.
+
+З повагою,
+Олексій Іванов`,
+      it: `Gentile Responsabile delle Selezioni,
+
+Le scrivo per esprimere il mio interesse per la posizione di Product Designer presso Spotify. Con 5 anni di esperienza nel design dell'esperienza utente e una forte passione per la tecnologia musicale, sono sicuro di poter dare un valore aggiunto al vostro team.
+
+Presso Figma, ho guidato la riprogettazione dell'interfaccia principale, ottenendo un aumento del 34% nella fidelizzazione degli utenti e collaborando a stretto contatto con gli sviluppatori.
+
+Distinti saluti,
+Alessandro Rossi`,
+      de: `Sehr geehrte Damen und Herren,
+
+ich schreibe Ihnen, um mein Interesse an der Stelle als Product Designer bei Spotify zu bekunden. Mit 5 Jahren Erfahrung im User Experience Design und einer Leidenschaft für Musiktechnologie bin ich zuversichtlich, eine Bereicherung für Ihr Team zu sein.
+
+Bei Figma leitete ich die Neugestaltung unserer Editor-Oberfläche, was zu einer Steigerung der Nutzerbindung um 34 % führte. Ich arbeitete eng mit Entwicklerteams zusammen.
+
+Mit freundlichen Grüßen,
+Alex Johnson`
+    }
+  },
+  {
+    key: 'marketing',
+    icon: '📈',
+    title: { en: 'Marketing Manager', uk: 'Маркетинг менеджер', it: 'Marketing Manager', de: 'Marketing Manager' },
+    company: 'Airbnb',
+    roleName: 'Marketing Manager',
+    desc: 'Focuses on SEO, PPC, email marketing campaigns, influencer outreach, and retention analytics.',
+    text: {
+      en: `Dear Hiring Manager,
+
+I am writing to apply for the Marketing Manager role at Airbnb. With a proven track record of scaling organic user acquisition by 150% and managing $50k+ monthly ad budgets, I am excited to drive growth for your travel experiences.
+
+At WebFlow, I built an inbound marketing engine that generated 20,000 sign-ups per month. I look forward to bringing my growth mindset and analytics background to Airbnb.
+
+Best regards,
+Alex Johnson`,
+      uk: `Шановний менеджер з найму,
+
+Пишу, щоб подати заявку на вакансію маркетинг-менеджера в Airbnb. Маючи підтверджений досвід збільшення органічного залучення користувачів на 150% та управління рекламним бюджетом понад $50,000/місяць, я радий можливості розвивати ваші сервіси.
+
+У компанії WebFlow я побудував систему вхідного маркетингу, яка приносила 20,000 реєстрацій щомісяця. Я з нетерпінням чекаю можливості принести свій аналітичний досвід в Airbnb.
+
+З повагою,
+Олексій Іванов`,
+      it: `Gentile Responsabile delle Selezioni,
+
+Le scrivo per candidarmi al ruolo di Marketing Manager presso Airbnb. Con un solido percorso di crescita dell'acquisizione organica degli utenti del 150% e la gestione di budget pubblicitari mensili superiori a $50.000, sono entusiasta di far crescere il vostro brand.
+
+Presso WebFlow, ho strutturato un canale di inbound marketing che ha generato 20.000 registrazioni al mese. Spero di poter portare questa mentalità orientata alla crescita in Airbnb.
+
+Distinti saluti,
+Alessandro Rossi`,
+      de: `Sehr geehrte Damen und Herren,
+
+ich bewerbe mich um die Stelle als Marketing Manager bei Airbnb. Mit einer nachgewiesenen Erfolgsbilanz bei der Steigerung der organischen Nutzerakquise um 150 % und der Verwaltung von Werbebudgets freue ich mich darauf, das Wachstum bei Airbnb voranzutreiben.
+
+Bei WebFlow baute ich eine Inbound-Marketing-Engine auf, die 20.000 Anmeldungen pro Monat generierte. Ich freue mich darauf, meine analytischen Fähigkeiten einzubringen.
+
+Mit freundlichen Grüßen,
+Alex Johnson`
+    }
+  }
+];
 
 const TRANSLATIONS = {
   en: {
@@ -124,6 +253,11 @@ const TRANSLATIONS = {
     footerDesc: "The future of job applications.",
     login: "Login", openApp: "Open App", welcomeBack: "Welcome back",
     terms: "Terms of Service", privacy: "Privacy Policy", linkedinGen: "LinkedIn Message Gen",
+    templateLibraryTitle: "Cover Letter Template Library",
+    templateLibrarySub: "Select a profession to preview a high-converting cover letter sample. Click Customize to load it directly into your AI dashboard.",
+    customizeTemplate: "Customize with AI ⚡",
+    copyAll: "Copy All Achievements",
+    exportPdf: "Export Resume PDF",
   },
   uk: {
     badge: "V3.0 Вже Доступно",
@@ -164,6 +298,11 @@ const TRANSLATIONS = {
     footerDesc: "Майбутнє пошуку роботи.",
     login: "Увійти", openApp: "Дашборд", welcomeBack: "З поверненням",
     terms: "Умови використання", privacy: "Політика конфіденційності", linkedinGen: "LinkedIn Генератор",
+    templateLibraryTitle: "Бібліотека шаблонів супровідних листів",
+    templateLibrarySub: "Обери професію, щоб переглянути приклад ефективного листа. Натисни «Налаштувати», щоб завантажити його у свій кабінет.",
+    customizeTemplate: "Налаштувати з AI ⚡",
+    copyAll: "Копіювати всі досягнення",
+    exportPdf: "Експортувати резюме PDF",
   },
   it: {
     badge: "V3.0 Ora Disponibile",
@@ -204,6 +343,11 @@ const TRANSLATIONS = {
     footerDesc: "Il futuro delle candidature.",
     login: "Accedi", openApp: "Apri l'app", welcomeBack: "Bentornato",
     terms: "Termini di servizio", privacy: "Privacy Policy", linkedinGen: "LinkedIn Generator",
+    templateLibraryTitle: "Libreria dei Modelli di Lettera",
+    templateLibrarySub: "Seleziona una professione per vedere un esempio di lettera ad alta conversione. Clicca su Personalizza per caricarlo direttamente nella dashboard.",
+    customizeTemplate: "Personalizza con AI ⚡",
+    copyAll: "Copia tutti i punti",
+    exportPdf: "Esporta CV PDF",
   },
   de: {
     badge: "V3.0 Jetzt Live",
@@ -244,6 +388,11 @@ const TRANSLATIONS = {
     footerDesc: "Die Zukunft der Bewerbungen.",
     login: "Anmelden", openApp: "App öffnen", welcomeBack: "Willkommen zurück",
     terms: "Nutzungsbedingungen", privacy: "Datenschutz", linkedinGen: "LinkedIn Generator",
+    templateLibraryTitle: "Muster-Anschreiben Bibliothek",
+    templateLibrarySub: "Wählen Sie einen Beruf, um ein erfolgreiches Anschreiben anzuzeigen. Klicken Sie auf Anpassen, um es direkt in Ihr Dashboard zu laden.",
+    customizeTemplate: "Mit KI anpassen ⚡",
+    copyAll: "Alle Erfolge kopieren",
+    exportPdf: "Lebenslauf PDF exportieren",
   },
 };
 
@@ -269,6 +418,7 @@ const Landing = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [demoTab, setDemoTab] = useState('letter');
   const [isInteracting, setIsInteracting] = useState(false);
+  const [activeTemplate, setActiveTemplate] = useState('dev');
 
   useEffect(() => {
     if (isInteracting) return;
@@ -285,6 +435,14 @@ const Landing = () => {
   const handleDemoTabChange = (key) => {
     setDemoTab(key);
     setIsInteracting(true);
+  };
+
+  const handleUseTemplate = (tmpl) => {
+    localStorage.setItem('preloaded_template', JSON.stringify({
+      profession: tmpl.title[uiLang] || tmpl.title.en,
+      jobDescription: `Position: ${tmpl.title[uiLang] || tmpl.title.en}\nCompany: ${tmpl.company}\nKey requirements: system performance, scale systems, clean code, engineering collaboration.`,
+    }));
+    window.location.href = user ? '/dashboard' : '/login';
   };
 
   useEffect(() => {
@@ -542,8 +700,76 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* TEMPLATE LIBRARY */}
+      <section className="py-20 px-4 md:px-6 relative z-10 max-w-7xl mx-auto border-t border-white/[0.04]">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-black mb-4">{t('templateLibraryTitle')}</h2>
+          <p className="text-gray-400 text-sm max-w-xl mx-auto">{t('templateLibrarySub')}</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Left Side: Category Tabs Selector */}
+          <div className="lg:col-span-4 flex flex-col justify-center space-y-3">
+            {SAMPLE_TEMPLATES.map((tmpl) => (
+              <button
+                key={tmpl.key}
+                type="button"
+                onClick={() => setActiveTemplate(tmpl.key)}
+                className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center gap-3 ${
+                  activeTemplate === tmpl.key
+                    ? 'bg-[#1e293b]/60 border-indigo-500/30 text-white shadow-lg'
+                    : 'border-transparent bg-white/[0.01] hover:bg-white/[0.02] text-gray-400 hover:text-white'
+                }`}
+              >
+                <span className="text-2xl shrink-0">{tmpl.icon}</span>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-bold truncate">{tmpl.title[uiLang] || tmpl.title.en}</h3>
+                  <p className="text-[10px] text-gray-500 truncate mt-0.5">{tmpl.desc}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Right Side: A4 Page Mockup Letter View */}
+          <div className="lg:col-span-8 flex flex-col">
+            {(() => {
+              const current = SAMPLE_TEMPLATES.find(x => x.key === activeTemplate) || SAMPLE_TEMPLATES[0];
+              const letterText = current.text[uiLang] || current.text.en;
+              return (
+                <div className="flex-1 flex flex-col bg-white text-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-white/5">
+                  {/* Top Header bar with custom styling */}
+                  <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between text-white">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-black text-sm uppercase">
+                        {t('logo')?.[0] || 'A'}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm">Template: {current.title[uiLang] || current.title.en}</h4>
+                        <p className="text-[10px] text-indigo-200">Ready to customize for {current.company}</p>
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={() => handleUseTemplate(current)}
+                      className="px-4 py-2 bg-white text-indigo-600 hover:bg-indigo-50 rounded-lg text-xs font-black uppercase tracking-wider transition-all active:scale-[0.98] shadow-md"
+                    >
+                      {t('customizeTemplate')}
+                    </button>
+                  </div>
+
+                  {/* Body Cover Letter content */}
+                  <div className="p-6 md:p-8 font-serif text-[11px] md:text-xs leading-relaxed text-slate-800 flex-1 whitespace-pre-wrap max-h-[320px] overflow-y-auto custom-scrollbar">
+                    {letterText}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      </section>
+
       {/* COMPARISON BLOCK */}
-      <section className="py-20 px-4 md:px-6 relative z-10 max-w-4xl mx-auto">
+      <section className="py-20 px-4 md:px-6 relative z-10 max-w-4xl mx-auto border-t border-white/[0.04]">
         <h2 className="text-3xl font-black text-center mb-16 tracking-tight">{t('compareTitle')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           {/* Old Way */}

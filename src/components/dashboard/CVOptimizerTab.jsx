@@ -1,7 +1,8 @@
 // src/components/dashboard/CVOptimizerTab.jsx
 import React, { useState } from 'react';
-import { Sparkles, Copy, Check, AlertCircle, FileText, CheckCircle2, Award } from 'lucide-react';
+import { Sparkles, Copy, Check, AlertCircle, FileText, CheckCircle2, Award, Download, ClipboardList } from 'lucide-react';
 import { analyzeCV } from '../../gemini';
+import html2pdf from 'html2pdf.js';
 
 export default function CVOptimizerTab({
   contactInfo,
@@ -42,6 +43,95 @@ export default function CVOptimizerTab({
     setCopiedIdx(idx);
     showNotification('Copied bullet point! ✓');
     setTimeout(() => setCopiedIdx(null), 2000);
+  };
+
+  const handleCopyAll = () => {
+    if (!cvAnalysis?.bulletPoints?.length) return;
+    const text = cvAnalysis.bulletPoints.map(bp => `• ${bp.optimized}`).join('\n');
+    navigator.clipboard.writeText(text);
+    showNotification(dict.copyAllSuccess || 'All achievements copied! ✓');
+  };
+
+  const handleExportPDF = () => {
+    if (!cvAnalysis) return;
+    const element = document.createElement('div');
+    element.style.padding = '20mm 15mm';
+    element.style.color = '#1e293b';
+    element.style.fontFamily = 'Calibri, sans-serif';
+    element.style.lineHeight = '1.6';
+    element.style.fontSize = '12px';
+    element.style.background = '#ffffff';
+
+    const header = document.createElement('div');
+    header.style.borderBottom = '2px solid #6366f1';
+    header.style.paddingBottom = '10px';
+    header.style.marginBottom = '20px';
+    header.innerHTML = `
+      <h1 style="margin: 0; font-size: 24px; color: #6366f1; font-weight: 800; text-transform: uppercase;">${contactInfo.fullName || 'User'}</h1>
+      <p style="margin: 5px 0 0 0; font-size: 13px; font-weight: bold; color: #475569;">${contactInfo.profession || 'Resume Profile'}</p>
+      <p style="margin: 5px 0 0 0; font-size: 10px; color: #64748b;">
+        ${[contactInfo.email ? `✉ ${contactInfo.email}` : '', contactInfo.phone ? `📞 ${contactInfo.phone}` : '', contactInfo.location ? `📍 ${contactInfo.location}` : '', contactInfo.linkedin ? `🔗 ${contactInfo.linkedin}` : ''].filter(Boolean).join('  ·  ')}
+      </p>
+    `;
+    element.appendChild(header);
+
+    if (contactInfo.skills) {
+      const skillsSec = document.createElement('div');
+      skillsSec.style.marginBottom = '20px';
+      const skillsList = Array.isArray(contactInfo.skills) ? contactInfo.skills.join(', ') : contactInfo.skills;
+      skillsSec.innerHTML = `
+        <h2 style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #6366f1; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 8px;">Key Skills</h2>
+        <p style="margin: 0; font-size: 10.5px; color: #334155;">${skillsList}</p>
+      `;
+      element.appendChild(skillsSec);
+    }
+
+    const expSec = document.createElement('div');
+    expSec.style.marginBottom = '20px';
+    let achievementsHtml = '';
+    if (cvAnalysis.bulletPoints && cvAnalysis.bulletPoints.length > 0) {
+      achievementsHtml = `<ul style="margin: 0; padding-left: 20px; list-style-type: disc;">`;
+      cvAnalysis.bulletPoints.forEach(bp => {
+        achievementsHtml += `<li style="margin-bottom: 8px; font-size: 10.5px; color: #1e293b; text-align: justify; font-weight: 500;">${bp.optimized}</li>`;
+      });
+      achievementsHtml += `</ul>`;
+    } else {
+      achievementsHtml = `<p style="margin: 0; font-style: italic; color: #64748b;">No optimized achievements available.</p>`;
+    }
+    expSec.innerHTML = `
+      <h2 style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #6366f1; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 10px;">Optimized Work Achievements</h2>
+      ${achievementsHtml}
+    `;
+    element.appendChild(expSec);
+
+    if (cvAnalysis.tips && cvAnalysis.tips.length > 0) {
+      const tipsSec = document.createElement('div');
+      tipsSec.style.marginTop = '30px';
+      tipsSec.style.padding = '10px 15px';
+      tipsSec.style.background = '#f8fafc';
+      tipsSec.style.border = '1px solid #e2e8f0';
+      tipsSec.style.borderRadius = '8px';
+      let tipsList = '<ul style="margin: 0; padding-left: 15px; list-style-type: decimal;">';
+      cvAnalysis.tips.slice(0, 3).forEach(tip => {
+        tipsList += `<li style="margin-bottom: 4px; font-size: 9.5px; color: #475569;">${tip}</li>`;
+      });
+      tipsList += '</ul>';
+      tipsSec.innerHTML = `
+        <h3 style="margin: 0 0 6px 0; font-size: 9px; text-transform: uppercase; font-weight: bold; color: #64748b;">ATS Compliance Suggestions</h3>
+        ${tipsList}
+      `;
+      element.appendChild(tipsSec);
+    }
+
+    const opt = {
+      margin: 0,
+      filename: `${contactInfo.fullName?.replace(/\s+/g, '_') || 'Resume'}_Optimized.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    };
+    html2pdf().set(opt).from(element).save();
+    showNotification('CV PDF exported successfully! ✓');
   };
 
   // Helper for Circular progress dial
@@ -422,7 +512,7 @@ export default function CVOptimizerTab({
 
             {/* Bottom Row: AI Bullet Point Optimizer */}
             <div className="bg-[#1e293b]/30 rounded-2xl border border-white/5 p-6">
-              <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 border-b border-white/5 pb-4">
                 <div>
                   <h3 className="font-black text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2">
                     <Sparkles className="text-amber-400 w-4.5 h-4.5" />
@@ -431,6 +521,22 @@ export default function CVOptimizerTab({
                   <p className="text-gray-500 text-[10px] mt-0.5">
                     Enhance your resume achievements with action verbs and target metrics.
                   </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={handleCopyAll}
+                    className="px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-white/5 text-white rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-all active:scale-[0.98]"
+                  >
+                    <ClipboardList className="w-3.5 h-3.5" />
+                    {dict.copyAll || 'Copy All'}
+                  </button>
+                  <button
+                    onClick={handleExportPDF}
+                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-md shadow-indigo-500/20"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    {dict.exportPdf || 'Export CV PDF'}
+                  </button>
                 </div>
               </div>
 

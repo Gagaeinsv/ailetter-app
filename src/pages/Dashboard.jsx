@@ -130,6 +130,26 @@ const Dashboard = () => {
     }
   }, [profile, user]);
 
+  // ── Preload template from landing page template library ──
+  useEffect(() => {
+    try {
+      const preloaded = localStorage.getItem('preloaded_template');
+      if (preloaded) {
+        const data = JSON.parse(preloaded);
+        if (data.profession) {
+          setContactInfo(prev => ({ ...prev, profession: data.profession }));
+        }
+        if (data.jobDescription) {
+          setJobDescription(data.jobDescription);
+        }
+        localStorage.removeItem('preloaded_template');
+        setTimeout(() => showNotification('Template preloaded successfully! ⚡'), 400);
+      }
+    } catch (e) {
+      console.warn('Could not parse preloaded template:', e);
+    }
+  }, [user]);
+
   // ── Скидаємо ID збереження при новій генерації (крім завантаження з історії) ──
   useEffect(() => {
     if (skipNextGeneratedLetterSaveIdReset.current) {
