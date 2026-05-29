@@ -21,7 +21,16 @@ async function callGemini({ modelId, temperature, maxOutputTokens, contents, res
     throw error;
   }
 
-  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const candidate = data.candidates?.[0];
+  const finishReason = candidate?.finishReason;
+  if (finishReason && finishReason !== "STOP") {
+    console.warn(`Gemini finished with reason: ${finishReason}`, data);
+    const error = new Error(`Gemini generation incomplete: ${finishReason}`);
+    error.status = 400;
+    throw error;
+  }
+
+  return candidate?.content?.parts?.[0]?.text ?? "";
 }
 
 async function tryModel(modelFn) {
@@ -744,7 +753,7 @@ ${String(originalLetter || '').substring(0, 1200)}
     const text = await callGemini({
       modelId,
       temperature: typeof temp === 'number' ? temp : 0.6,
-      maxOutputTokens: 1024,
+      maxOutputTokens: 2048,
       contents: [basePrompt],
     });
     
