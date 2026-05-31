@@ -216,10 +216,13 @@ Alex Johnson`
 const TRANSLATIONS = {
   en: {
     badge: "V3.0 Now Live",
-    heroTitle1: "Land Your Next", heroTitle2: "Role 10x Faster", heroTitle3: "with AI Suite",
-    heroSubtitle: "Resume optimization, tailormade cover letters, interview Q&A prep, and application tracking — all in one place.",
+    heroTitle1: "Tailor CV & Letter", heroTitle2: "in under 60 seconds", heroTitle3: "instead of hours",
+    heroSubtitle: "Speed up your manual job application preparation by 10x. Automatically audit your ATS keyword matches, tailor your resume inline, and write personalized cover letters.",
     ctaButton: "Get Started For Free", ctaSubtext: "No credit card required · 5 free generations",
-    trust: "Trusted by candidates hired at",
+    assurancePrivacy: "100% Data Privacy",
+    assuranceNoCard: "No Credit Card Required",
+    assuranceA4: "Standard A4 PDF Exports",
+    assuranceAts: "ATS-Friendly Layouts",
     howItWorksTitle: "Get Hired in 3 Simple Steps",
     step1T: "1. Scan CV & Vacancy", step1D: "Upload your CV and paste the job description. AIletter extracts your skills and matches them against requirements.",
     step2T: "2. Optimize & Generate", step2D: "Review your ATS match score, fill keyword gaps, edit your resume accomplishments, and generate a tailored cover letter.",
@@ -230,8 +233,8 @@ const TRANSLATIONS = {
     aiDemoHeader: "AI tools — Example output",
     letterT: "Tailor-made Cover Letters",
     letterD: "Generate personalized, high-converting cover letters in 30 seconds with 16+ professional templates.",
-    atsT: "ATS CV Optimizer",
-    atsD: "Audit your CV, identify keyword gaps, and get AI-optimized resume achievements with impact metrics.",
+    atsT: "CV Tailoring & ATS Match",
+    atsD: "Upload your CV, paste the job description, edit your achievements inline, and instantly check keyword matches to pass automated ATS filters.",
     interviewT: "Interview prep Q&A",
     interviewD: "Practice with 8 custom behavioral and role-specific questions and ideal answers prepared using the STAR methodology.",
     trackerT: "Smart Job Tracker",
@@ -261,13 +264,16 @@ const TRANSLATIONS = {
   },
   uk: {
     badge: "V3.0 Вже Доступно",
-    heroTitle1: "Отримай офер", heroTitle2: "у 10 разів швидше", heroTitle3: "з AI Кабінетом",
-    heroSubtitle: "Оптимізація резюме, персоналізовані листи, підготовка до співбесід та трекер вакансій — все в одному місці.",
+    heroTitle1: "Адаптуй резюме та лист", heroTitle2: "менш ніж за 60 секунд", heroTitle3: "замість довгих годин",
+    heroSubtitle: "Прискорюй підготовку до подачі вакансій у 10 разів. Автоматично перевіряй збіг ключових слів ATS, адаптуй свій досвід inline та генеруй супровідні листи.",
     ctaButton: "Почати безкоштовно", ctaSubtext: "Картка не потрібна · 5 безкоштовних спроб",
-    trust: "Нашим користувачам довіряють в",
+    assurancePrivacy: "100% приватність даних",
+    assuranceNoCard: "Без кредитної картки",
+    assuranceA4: "Стандартний A4 PDF експорт",
+    assuranceAts: "ATS-сумісні шаблони",
     howItWorksTitle: "Отримай роботу за 3 прості кроки",
     step1T: "1. Завантаж CV та вакансію", step1D: "Завантаж резюме та встав текст вакансії. AI автоматично проаналізує твої навички та вимоги.",
-    step2T: "2. Оптимізуй та налаштуй", step2D: "Переглянь ATS-оцінку, додай пропущені ключові слова, оптимізуй досвід та згенеруй лист.",
+    step2T: "2. Оптимізуй та налаштуй", step2D: "Переглянь ATS-оцінку, додай пропущені ключові слова, онови досвід та згенеруй лист.",
     step3T: "3. Відстежуй та готуйся", step3D: "Організуй відгуки на дошці трекера, пройди тренувальне інтерв'ю та надсилай follow-up.",
     aiTitle: "AI Кабінет Пошуку Роботи",
     aiSubtitle: "Все необхідне, щоб прискорити твій пошук роботи, пройти ATS-фільтри та блискуче пройти інтерв'ю.",
@@ -275,8 +281,8 @@ const TRANSLATIONS = {
     aiDemoHeader: "AI інструменти — приклад результату",
     letterT: "Персоналізовані листи",
     letterD: "Генеруй високоефективні супровідні листи за 30 секунд у 16+ професійних візуальних шаблонах.",
-    atsT: "ATS CV Оптимізатор",
-    atsD: "Аналізуй резюме, знаходь прогалини у ключових словах та отримуй AI-оптимізовані формулювання досвіду.",
+    atsT: "Адаптація CV та Оцінка ATS",
+    atsD: "Завантажуй резюме, вставляй вакансію, редагуй свої досягнення inline та миттєво перевіряй збіг ключових слів для проходження автоматичних фільтрів ATS.",
     interviewT: "Підготовка до співбесіди",
     interviewD: "Отримуй 8 персоналізованих запитань та ідеальних відповідей за методом STAR на основі твого резюме.",
     trackerT: "Розумний трекер вакансій",
@@ -306,22 +312,25 @@ const TRANSLATIONS = {
   },
   it: {
     badge: "V3.0 Ora Disponibile",
-    heroTitle1: "Trova Lavoro", heroTitle2: "10x Più Veloce", heroTitle3: "con la Suite AI",
-    heroSubtitle: "Ottimizzazione del CV, lettere di presentazione su misura, preparazione ai colloqui e tracciamento delle candidature — tutto in un unico posto.",
+    heroTitle1: "Adatta CV e Lettera", heroTitle2: "in meno di 60 secondi", heroTitle3: "invece di ore di lavoro",
+    heroSubtitle: "Velocizza la preparazione manuale delle candidature di 10 volte. Ottimizza le parole chiave per ATS, modifica il CV inline e genera lettere di presentazione su misura.",
     ctaButton: "Inizia Gratis", ctaSubtext: "Nessuna carta richiesta · 5 generazioni gratis",
-    trust: "Candidati assunti da",
+    assurancePrivacy: "100% Privacy dei Dati",
+    assuranceNoCard: "Nessuna Carta Richiesta",
+    assuranceA4: "Esportazione PDF A4 Standard",
+    assuranceAts: "Layout Compatibili ATS",
     howItWorksTitle: "Fatti Assumere in 3 Semplici Passaggi",
     step1T: "1. Carica CV e Offerta", step1D: "Carica il tuo curriculum e inserisci la descrizione del lavoro. L'AI estrarrà le competenze e le confronterà con l'annuncio.",
     step2T: "2. Ottimizza e Personalizza", step2D: "Controlla il punteggio ATS, colma le lacune, migliora le frasi del curriculum e scegli un modello di lettera.",
-    step3T: "3. Traccia e Allenati", step3D: "Organizza i tuoi contatti nella pipeline visuale, esercitati per i colloqui e ricevi alert per i follow-up.",
+    step3T: "3. Traccia e Allenati", step3D: "Organizza i tuoi contatti nella pipeline visuale, esercitasi per i colloqui e ricevi alert per i follow-up.",
     aiTitle: "Suite AI per la Ricerca di Lavoro",
     aiSubtitle: "Tutto ciò di cui hai bisogno per accelerare la ricerca, superare i filtri ATS e superare brillantemente i colloqui.",
     aiDemoHint: "Scegli uno strumento per vedere un esempio.",
     aiDemoHeader: "Strumenti AI — esempio",
     letterT: "Lettere su Misura",
     letterD: "Genera lettere personalizzate ad alto tasso di conversione in 30 secondi con 16+ modelli professionali.",
-    atsT: "Ottimizzatore CV per ATS",
-    atsD: "Analizza il tuo CV, rileva le parole chiave mancanti e ottieni punti elenco ottimizzati dall'AI con metriche di impatto.",
+    atsT: "Personalizzazione CV e Check ATS",
+    atsD: "Carica il CV, incolla la descrizione del lavoro, modifica i tuoi traguardi inline e verifica all'istante la corrispondenza delle parole chiave per superare i filtri ATS.",
     interviewT: "Domande per Colloquio",
     interviewD: "Ricevi 8 domande personalizzate basate sulla tua candidatura con risposte ideali metodo STAR.",
     trackerT: "Tracker Candidature",
@@ -351,10 +360,13 @@ const TRANSLATIONS = {
   },
   de: {
     badge: "V3.0 Jetzt Live",
-    heroTitle1: "Job Finden", heroTitle2: "10x Schneller", heroTitle3: "mit der KI-Suite",
-    heroSubtitle: "Lebenslauf-Optimierung, maßgeschneiderte Anschreiben, Interview-Vorbereitung und Bewerbungs-Tracker — alles an einem Ort.",
+    heroTitle1: "Lebenslauf & Anschreiben", heroTitle2: "in unter 60 Sekunden anpassen", heroTitle3: "statt stundenlanger Arbeit",
+    heroSubtitle: "Beschleunigen Sie Ihre Bewerbungsvorbereitung um das 10-Fache. Analysieren Sie ATS-Keywords, passen Sie Ihren Lebenslauf inline an und erstellen Sie Anschreiben.",
     ctaButton: "Kostenlos Starten", ctaSubtext: "Keine Kreditkarte erforderlich · 5 kostenlose Generierungen",
-    trust: "Vertrauen von Kandidaten bei",
+    assurancePrivacy: "100% Datenschutz",
+    assuranceNoCard: "Keine Kreditkarte nötig",
+    assuranceA4: "Standard-A4-PDF-Export",
+    assuranceAts: "ATS-freundliche Vorlagen",
     howItWorksTitle: "Eingestellt werden in 3 einfachen Schritten",
     step1T: "1. Lebenslauf & Stelle hochladen", step1D: "Laden Sie Ihren Lebenslauf hoch und fügen Sie die Stellenanzeige ein. Die KI gleicht Ihre Fähigkeiten ab.",
     step2T: "2. Optimieren & Anpassen", step2D: "Prüfen Sie den ATS-Score, schließen Sie Keyword-Lücken und wählen Sie eine Designvorlage für das Anschreiben.",
@@ -365,8 +377,8 @@ const TRANSLATIONS = {
     aiDemoHeader: "KI-Tools — Beispiel",
     letterT: "Maßgeschneiderte Anschreiben",
     letterD: "Erstellen Sie in 30 Sekunden ein maßgeschneidertes Anschreiben in verschiedenen professionellen Vorlagen.",
-    atsT: "ATS-CV-Optimierer",
-    atsD: "Analysieren Sie Ihren Lebenslauf, identifizieren Sie Keyword-Lücken und erhalten Sie KI-optimierte Erfolge.",
+    atsT: "CV-Anpassung & ATS-Check",
+    atsD: "Laden Sie Ihren Lebenslauf hoch, fügen Sie die Stellenbeschreibung ein, bearbeiten Sie Ihre Erfolge direkt inline und prüfen Sie die Keyword-Übereinstimmung für ATS-Filter.",
     interviewT: "Interview-Vorbereitung",
     interviewD: "Erhalten Sie 8 maßgeschneiderte Fragen und ideale STAR-Antworten basierend auf Ihrer Bewerbung.",
     trackerT: "Bewerbungs-Tracker",
@@ -381,7 +393,7 @@ const TRANSLATIONS = {
     compare3: "Lebenslauf wird von automatischen ATS-Systemen abgelehnt", new3: "Integriertes ATS-Audit und Keyword-Optimierung",
     compare4: "Unsicherheit und mangelnde Vorbereitung auf Vorstellungsgespräche", new4: "8 personalisierte Interviewfragen mit STAR-Antworten",
     reviewsTitle: "Echte Ergebnisse von echten Kandidaten",
-    review1Text: "Der ATS-CV-Optimierer fand 4 Keyword-Lücken in meinem Lebenslauf. Ich hatte in 4 Tagen ein Interview!", review1Author: "Sarah M., Frontend-Entwicklerin",
+    review1Text: "Der ATS-CV-Optimierer fand 4 Keyword-Lücken in meinem Lebenslauf. Ich hatte in 4 Tagen ein Interview!", review1Author: "Sarah M., Frontend-Entwickler",
     review2Text: "Der Job-Tracker hat mich gerettet. Die Follow-up-Erinnerung war perfekt — genau diese E-Mail hat mir das Angebot eingebracht.", review2Author: "Dmitri K., Product Manager",
     review3Text: "Die Vorbereitung mit den maßgeschneiderten STAR-Antworten hat mir so viel Sicherheit gegeben. Job bekommen!", review3Author: "Marco P., Business Analyst",
     faqTitle: "Häufig gestellte Fragen",
@@ -575,21 +587,25 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* LOGO SCROLL */}
-      <section className="py-6 border-y border-white/[0.05] bg-[#0f172a]/60 relative overflow-hidden z-10">
-        <p className="text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">{t('trust')}</p>
-        <div className="relative w-full overflow-hidden">
-          <div className="flex w-[200%] landing-scroll">
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex justify-around w-full opacity-20 grayscale">
-                {['Google', 'Netflix', 'Spotify', 'Amazon', 'Meta', 'Apple', 'Tesla', 'Figma'].map(logo => (
-                  <span key={logo} className="text-sm font-black text-white px-6">{logo}</span>
-                ))}
-              </div>
-            ))}
+      {/* TRUST ASSURANCES / KEY METRICS */}
+      <section className="py-8 border-y border-white/[0.05] bg-[#0f172a]/60 relative overflow-hidden z-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-wrap justify-around items-center gap-6 text-center text-xs font-bold text-gray-400 tracking-wider">
+          <div className="flex items-center gap-2">
+            <span className="text-indigo-400 text-lg">🛡️</span>
+            <span>{t('assurancePrivacy')}</span>
           </div>
-          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0f172a] to-transparent" />
-          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0f172a] to-transparent" />
+          <div className="flex items-center gap-2">
+            <span className="text-indigo-400 text-lg">💳</span>
+            <span>{t('assuranceNoCard')}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-indigo-400 text-lg">📄</span>
+            <span>{t('assuranceA4')}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-indigo-400 text-lg">⚡</span>
+            <span>{t('assuranceAts')}</span>
+          </div>
         </div>
       </section>
 
