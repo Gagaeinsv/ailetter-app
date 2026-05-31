@@ -821,38 +821,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-20 px-4 md:px-6 relative z-10 bg-[#1e293b]/10 border-y border-white/[0.04]">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-black text-center mb-16 tracking-tight">{t('reviewsTitle')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { text: t('review1Text'), author: t('review1Author') },
-              { text: t('review2Text'), author: t('review2Author') },
-              { text: t('review3Text'), author: t('review3Author') },
-            ].map((rev, idx) => (
-              <div key={idx} className="glass rounded-2xl p-6 border border-white/5 flex flex-col justify-between space-y-6">
-                <div className="space-y-4">
-                  <Stars />
-                  <p className="text-sm text-gray-300 leading-relaxed italic">
-                    "{rev.text}"
-                  </p>
-                </div>
-                <div className="border-t border-white/5 pt-4 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-black text-xs text-white uppercase">
-                    {rev.author?.[0] || 'U'}
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-white">{rev.author}</h4>
-                    <p className="text-[9px] text-gray-500">Verified User</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* FAQ */}
       <section className="py-20 px-4 md:px-6 relative z-10">
         <div className="max-w-2xl mx-auto animate-fade-in">
