@@ -12,6 +12,14 @@ import LinkedInModal from '../LinkedInModal';
 import ReviewModal from '../ReviewModal';
 import AISuggestions from '../AISuggestions';
 import ATSScore from '../ATSScore';
+import VoiceDictationModal from '../VoiceDictationModal';
+
+const dictationTexts = {
+  en: { orDictate: "Or dictate your bio:", btn: "🎙️ Dictate Bio" },
+  uk: { orDictate: "Або надиктуйте про себе:", btn: "🎙️ Надиктувати" },
+  it: { orDictate: "O detta la tua biografia:", btn: "🎙️ Detta" },
+  de: { orDictate: "Oder Biografie diktieren:", btn: "🎙️ Diktieren" }
+};
 
 const IconMagic    = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>;
 const IconDownload = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
@@ -79,6 +87,11 @@ const MobileDashboardTab = ({
   const [showLinkedIn, setShowLinkedIn] = useState(false);
   const [showReview, setShowReview] = useState(false);
   const [atsKey, setAtsKey] = useState(0);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+
+  const handleVoiceParsed = (parsed) => {
+    setContactInfo({ ...contactInfo, ...parsed });
+  };
 
   // Typing animation
   const [displayedLetter, setDisplayedLetter] = useState('');
@@ -173,6 +186,15 @@ const MobileDashboardTab = ({
               <span className="mt-2 text-xs font-semibold text-[#64748b]">{fileName || (dict?.cvUploadBtn || 'Upload PDF')}</span>
               <input type="file" className="hidden" accept=".pdf" onChange={handleFileChange} />
             </label>
+            <div className="mt-3 flex items-center justify-between border-t border-[#334155] pt-3">
+              <span className="text-[10px] text-slate-400 font-medium">{(dictationTexts[uiLang] || dictationTexts.en).orDictate}</span>
+              <button
+                onClick={() => setShowVoiceModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-[10px] uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 shrink-0"
+              >
+                {(dictationTexts[uiLang] || dictationTexts.en).btn}
+              </button>
+            </div>
           </div>
 
           {/* Name & Role — same as desktop */}
@@ -472,6 +494,14 @@ const MobileDashboardTab = ({
         />
       )}
       {showReview && <ReviewModal onClose={() => setShowReview(false)} user={user} />}
+      {showVoiceModal && (
+        <VoiceDictationModal
+          uiLang={uiLang}
+          onClose={() => setShowVoiceModal(false)}
+          onParsed={handleVoiceParsed}
+          showNotification={showNotification}
+        />
+      )}
     </div>
   );
 };

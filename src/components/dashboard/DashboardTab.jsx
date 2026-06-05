@@ -14,6 +14,14 @@ import JobUrlInput from './JobUrlInput';
 import AISuggestions from './AISuggestions';
 import ATSScore from './ATSScore';
 import ReviewModal from './ReviewModal';
+import VoiceDictationModal from './VoiceDictationModal';
+
+const dictationTexts = {
+  en: { orDictate: "Or dictate your bio:", btn: "🎙️ Dictate Bio" },
+  uk: { orDictate: "Або надиктуйте про себе:", btn: "🎙️ Надиктувати" },
+  it: { orDictate: "O detta la tua biografia:", btn: "🎙️ Detta" },
+  de: { orDictate: "Oder Biografie diktieren:", btn: "🎙️ Diktieren" }
+};
 
 const DashboardTab = (props) => {
   const {
@@ -40,7 +48,12 @@ const DashboardTab = (props) => {
   const [displayedLetter, setDisplayedLetter] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [atsKey, setAtsKey] = useState(0);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
   const typingRef = useRef(null);
+
+  const handleVoiceParsed = (parsed) => {
+    setContactInfo({ ...contactInfo, ...parsed });
+  };
 
   useEffect(() => {
     if (!generatedLetter) {
@@ -128,6 +141,15 @@ const DashboardTab = (props) => {
                 className="w-1/3 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 rounded-xl flex flex-col items-center justify-center gap-1 text-[10px] font-bold uppercase transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                 {parsingCV ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                 {parsingCV ? 'Parsing...' : (dict.autoFill || 'Auto-fill')}
+              </button>
+            </div>
+            <div className="mt-3 flex items-center justify-between border-t border-slate-700/50 pt-3">
+              <span className="text-[10px] text-slate-400 font-medium">{(dictationTexts[uiLang] || dictationTexts.en).orDictate}</span>
+              <button
+                onClick={() => setShowVoiceModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-[10px] uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 shrink-0"
+              >
+                {(dictationTexts[uiLang] || dictationTexts.en).btn}
               </button>
             </div>
           </div>
@@ -425,6 +447,14 @@ const DashboardTab = (props) => {
           contactInfo={contactInfo} jobDescription={jobDescription} isPro={isPro} setShowUpgrade={setShowUpgrade} uiLang={uiLang} />
       )}
       {showReview && <ReviewModal onClose={() => setShowReview(false)} user={user} />}
+      {showVoiceModal && (
+        <VoiceDictationModal
+          uiLang={uiLang}
+          onClose={() => setShowVoiceModal(false)}
+          onParsed={handleVoiceParsed}
+          showNotification={showNotification}
+        />
+      )}
     </div>
   );
 };
