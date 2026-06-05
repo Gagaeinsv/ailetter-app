@@ -267,6 +267,47 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
   });
 };
 
+export const parseVoiceCV = async (dictatedText) => {
+  const promptText = `Analyze the following transcribed text from a user describing their professional profile. Extract details into valid JSON only.
+Return ONLY raw JSON — no markdown, no backticks, no explanation.
+
+{
+  "fullName": "Name Surname (or empty string)",
+  "email": "email@example.com (or empty string)",
+  "phone": "+123... (or empty string)",
+  "location": "City, Country (or empty string)",
+  "linkedin": "url (or empty string)",
+  "profession": "Current Job Title",
+  "skills": ["skill1", "skill2", "skill3", "skill4", "skill5"],
+  "experience": [
+    {
+      "title": "Job Title",
+      "company": "Company Name",
+      "duration": "Jan 2023 – Present (or estimate/empty string)",
+      "achievements": ["Achievement/responsibility 1", "Achievement/responsibility 2"]
+    }
+  ],
+  "education": "Degree, University, Year (or empty string)",
+  "languages": ["Language 1", "Language 2"],
+  "certifications": ["Cert 1", "Cert 2"]
+}
+
+Transcribed text:
+${dictatedText}`;
+
+  return await tryEveryModel(async (modelId, temp) => {
+    const text = await callGemini({
+      modelId,
+      temperature: typeof temp === "number" ? temp : 0.2,
+      maxOutputTokens: 4000,
+      contents: [promptText],
+    });
+    const obj = parseJsonFromModel(text);
+    if (!obj || typeof obj !== "object") throw new Error("Invalid voice parse shape");
+    return obj;
+  });
+};
+
 export const extractCompanyName = async (jobDescription) => {
   const promptText = `Extract the company name from this job description. Return ONLY the company name, nothing else. If you cannot find it, return "Unknown".
 

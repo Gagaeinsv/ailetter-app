@@ -1,9 +1,17 @@
 // src/components/dashboard/mobile/MobileSettingsTab.jsx
 import React, { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import VoiceDictationModal from '../VoiceDictationModal';
 
 const inputClass = "w-full bg-[#0f172a] border border-[#334155] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#6366f1] transition-all mt-1.5";
 const labelClass = "text-[10px] font-black text-[#64748b] uppercase tracking-widest";
+
+const voiceBtnText = {
+  en: "🎙️ Dictate Profile",
+  uk: "🎙️ Надиктувати профіль",
+  it: "🎙️ Detta Profilo",
+  de: "🎙️ Profil diktieren"
+};
 
 const TEMPLATE_LIST = ['Influx','Iconic','Minimal','Nova','Breeze','Enfold','Modern','Executive','Nordic','Berlin','Tokyo','Milano','Sydney','Atlas','Onyx','Pearl'];
 
@@ -28,6 +36,11 @@ const MobileSettingsTab = ({
   const [activeSection, setActiveSection] = useState('profile');
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState(null);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+
+  const handleVoiceParsed = (parsed) => {
+    setContactInfo({ ...contactInfo, ...parsed });
+  };
 
   const openPortal = async () => {
     setPortalLoading(true);
@@ -73,13 +86,21 @@ const MobileSettingsTab = ({
         {/* ── Profile ── */}
         {activeSection === 'profile' && (
           <Section title={dict.tabProfile || 'Profile'}>
-            {user?.uid && (
-              <p className="text-[10px] text-slate-500 -mt-2 mb-2">
-                {profileSyncStatus === 'syncing' && (dict?.historySyncing || 'Syncing…')}
-                {profileSyncStatus === 'synced' && (dict?.historySynced || 'Synced')}
-                {profileSyncStatus === 'error' && (dict?.historySyncError || 'Cloud sync issue — using local copy')}
-              </p>
-            )}
+            <div className="flex items-center justify-between -mt-2 mb-2">
+              {user?.uid ? (
+                <p className="text-[10px] text-slate-500">
+                  {profileSyncStatus === 'syncing' && (dict?.historySyncing || 'Syncing…')}
+                  {profileSyncStatus === 'synced' && (dict?.historySynced || 'Synced')}
+                  {profileSyncStatus === 'error' && (dict?.historySyncError || 'Cloud sync issue — using local copy')}
+                </p>
+              ) : <div />}
+              <button
+                onClick={() => setShowVoiceModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-[10px] uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 shrink-0"
+              >
+                {voiceBtnText[uiLang] || voiceBtnText.en}
+              </button>
+            </div>
             <div className="flex items-center gap-4 p-4 bg-[#1e293b] rounded-2xl border border-[#334155]">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-black text-2xl shrink-0">
                 {contactInfo.fullName?.[0] || user?.displayName?.[0] || 'U'}
@@ -261,6 +282,14 @@ const MobileSettingsTab = ({
 
         <div className="h-4" />
       </div>
+      {showVoiceModal && (
+        <VoiceDictationModal
+          uiLang={uiLang}
+          onClose={() => setShowVoiceModal(false)}
+          onParsed={handleVoiceParsed}
+          showNotification={showNotification}
+        />
+      )}
     </div>
   );
 };

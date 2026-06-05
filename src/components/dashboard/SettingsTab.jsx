@@ -1,9 +1,17 @@
 // src/components/dashboard/SettingsTab.jsx
 import React, { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import VoiceDictationModal from './VoiceDictationModal';
 
 const inputClass = "w-full bg-[#0f172a] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#475569] focus:outline-none focus:border-[#6366f1] transition-all mt-1";
 const labelClass = "text-xs font-semibold text-[#64748b] uppercase tracking-widest";
+
+const voiceBtnText = {
+  en: "🎙️ Dictate Profile",
+  uk: "🎙️ Надиктувати профіль",
+  it: "🎙️ Detta Profilo",
+  de: "🎙️ Profil diktieren"
+};
 
 const TEMPLATE_LIST = ['Influx','Iconic','Minimal','Nova','Breeze','Enfold','Modern','Executive','Nordic','Berlin','Tokyo','Milano','Sydney','Atlas','Onyx','Pearl'];
 
@@ -11,6 +19,11 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
   const [settingsTab, setSettingsTab] = useState('profile');
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError]     = useState(null);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+
+  const handleVoiceParsed = (parsed) => {
+    setContactInfo({ ...contactInfo, ...parsed });
+  };
 
   const openPortal = async () => {
     setPortalLoading(true);
@@ -54,9 +67,17 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
           {/* ── Profile ── */}
           {settingsTab === 'profile' && (
             <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-black text-white">{dict.tabProfile}</h3>
-                <p className="text-xs text-[#64748b] mt-1">Manage your personal information</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-black text-white">{dict.tabProfile}</h3>
+                  <p className="text-xs text-[#64748b] mt-1">Manage your personal information</p>
+                </div>
+                <button
+                  onClick={() => setShowVoiceModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 shrink-0"
+                >
+                  {voiceBtnText[uiLang] || voiceBtnText.en}
+                </button>
               </div>
               {user?.uid && (
                 <p className="text-[10px] text-slate-500 -mt-2">
@@ -246,6 +267,14 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
 
         </div>
       </div>
+      {showVoiceModal && (
+        <VoiceDictationModal
+          uiLang={uiLang}
+          onClose={() => setShowVoiceModal(false)}
+          onParsed={handleVoiceParsed}
+          showNotification={showNotification}
+        />
+      )}
     </div>
   );
 };
