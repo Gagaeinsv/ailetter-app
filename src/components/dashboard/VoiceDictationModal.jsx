@@ -70,9 +70,17 @@ const TRANSLATIONS = {
   }
 };
 
+const LANGS = [
+  { code: 'uk', label: 'Українська' },
+  { code: 'en', label: 'English' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'de', label: 'Deutsch' }
+];
+
 const VoiceDictationModal = ({ uiLang, onClose, onParsed, showNotification }) => {
   const t = TRANSLATIONS[uiLang] || TRANSLATIONS.en;
   
+  const [selectedLang, setSelectedLang] = useState(uiLang || 'en');
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
@@ -105,7 +113,7 @@ const VoiceDictationModal = ({ uiLang, onClose, onParsed, showNotification }) =>
     rec.interimResults = true;
     
     const langMap = { en: 'en-US', uk: 'uk-UA', it: 'it-IT', de: 'de-DE' };
-    rec.lang = langMap[uiLang] || 'en-US';
+    rec.lang = langMap[selectedLang] || 'en-US';
 
     rec.onstart = () => {
       setIsListening(true);
@@ -216,6 +224,27 @@ const VoiceDictationModal = ({ uiLang, onClose, onParsed, showNotification }) =>
             </div>
           ) : (
             <>
+              {/* Language Selector */}
+              <div className="flex items-center gap-2 mb-3 bg-[#1e293b]/60 border border-[#334155]/50 p-2.5 rounded-xl">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Language to speak:</span>
+                <div className="flex gap-1.5 flex-1 justify-end">
+                  {LANGS.map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => setSelectedLang(l.code)}
+                      disabled={isListening || loading}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all border ${
+                        selectedLang === l.code
+                          ? 'bg-amber-500 border-amber-500 text-black shadow-sm'
+                          : 'border-[#334155] text-slate-400 hover:text-white hover:border-slate-600 disabled:opacity-40'
+                      }`}
+                    >
+                      {l.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Transcript Display Box */}
               <div className="relative">
                 <div 
