@@ -71,6 +71,7 @@ const TRANSLATIONS = {
 };
 
 const LANGS = [
+  { code: 'auto', label: 'Auto' },
   { code: 'uk', label: 'Українська' },
   { code: 'en', label: 'English' },
   { code: 'it', label: 'Italiano' },
@@ -80,7 +81,7 @@ const LANGS = [
 const VoiceDictationModal = ({ uiLang, onClose, onParsed, showNotification }) => {
   const t = TRANSLATIONS[uiLang] || TRANSLATIONS.en;
   
-  const [selectedLang, setSelectedLang] = useState(uiLang || 'en');
+  const [selectedLang, setSelectedLang] = useState('auto');
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
@@ -113,7 +114,13 @@ const VoiceDictationModal = ({ uiLang, onClose, onParsed, showNotification }) =>
     rec.interimResults = true;
     
     const langMap = { en: 'en-US', uk: 'uk-UA', it: 'it-IT', de: 'de-DE' };
-    rec.lang = langMap[selectedLang] || 'en-US';
+    let targetLang = selectedLang;
+    if (targetLang === 'auto') {
+      targetLang = navigator.language || 'en-US';
+    } else {
+      targetLang = langMap[selectedLang] || 'en-US';
+    }
+    rec.lang = targetLang;
 
     rec.onstart = () => {
       setIsListening(true);
@@ -239,7 +246,7 @@ const VoiceDictationModal = ({ uiLang, onClose, onParsed, showNotification }) =>
                           : 'border-[#334155] text-slate-400 hover:text-white hover:border-slate-600 disabled:opacity-40'
                       }`}
                     >
-                      {l.label}
+                      {l.code === 'auto' ? `Auto (${navigator.language?.split('-')[0].toUpperCase() || '?'})` : l.label}
                     </button>
                   ))}
                 </div>
