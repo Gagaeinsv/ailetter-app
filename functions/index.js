@@ -8,14 +8,16 @@ const db = admin.firestore();
 setGlobalOptions({ region: "us-central1" });
 
 const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
+const GROQ_API_KEY = defineSecret("GROQ_API_KEY");
 const geminiGenerateHttp = require("./geminiGenerate");
 const parseJobHttp = require("./parseJob");
 
 /** Gemini proxy for Hosting rewrite /api/generate. Run: firebase functions:secrets:set GEMINI_API_KEY */
 exports.geminiGenerate = onRequest(
-  { cors: true, secrets: [GEMINI_API_KEY] },
+  { cors: true, secrets: [GEMINI_API_KEY, GROQ_API_KEY] },
   (req, res) => {
     process.env.GEMINI_API_KEY = GEMINI_API_KEY.value();
+    process.env.GROQ_API_KEY = GROQ_API_KEY.value();
     return geminiGenerateHttp(req, res);
   }
 );

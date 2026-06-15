@@ -1,6 +1,7 @@
 const MODELS = [
   { id: "gemini-2.5-flash",      temp: 0.7 },
   { id: "gemini-2.5-flash-lite", temp: 0.6 },
+  { id: "groq/llama-3.3-70b-versatile", temp: 0.7 },
   { id: "gemini-2.5-pro",        temp: 0.7 },
 ];
 
