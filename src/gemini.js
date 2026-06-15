@@ -508,9 +508,9 @@ const escapeRegExp = (string) => {
 
 const getCaseSensitiveMatch = (text, lowercaseKeyword) => {
   const escaped = escapeRegExp(lowercaseKeyword);
-  const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+  const regex = new RegExp(`(?:^|[^\\p{L}\\p{N}+#.])(${escaped})(?:$|[^\\p{L}\\p{N}+#.])`, 'iu');
   const match = text.match(regex);
-  if (match) return match[0];
+  if (match && match[1]) return match[1];
   
   const index = text.toLowerCase().indexOf(lowercaseKeyword);
   if (index !== -1) {
@@ -519,22 +519,89 @@ const getCaseSensitiveMatch = (text, lowercaseKeyword) => {
   return lowercaseKeyword;
 };
 
-const appearsInText = (haystack, needle) => {
+const normalizeForCompare = (str) => {
+  return String(str || "")
+    .toLowerCase()
+    .replace(/node\.?js/g, "nodejs")
+    .replace(/react\.?js/g, "react")
+    .replace(/vue\.?js/g, "vue")
+    .replace(/next\.?js/g, "nextjs")
+    .replace(/nuxt\.?js/g, "nuxtjs")
+    .replace(/three\.?js/g, "threejs")
+    .replace(/nest\.?js/g, "nestjs")
+    .replace(/express\.?js/g, "express")
+    .replace(/chart\.?js/g, "chartjs")
+    .replace(/ci\s*[\/-]?\s*cd/g, "cicd")
+    .replace(/typescript/g, "ts")
+    .replace(/javascript/g, "js")
+    .replace(/c\s*\+\+/g, "c++")
+    .replace(/c\s*#/g, "c#")
+    .replace(/css\s*3?/g, "css")
+    .replace(/html\s*5?/g, "html")
+    .replace(/power\s*bi/g, "powerbi")
+    .replace(/ms\s*excel/g, "excel")
+    .replace(/microsoft\s*excel/g, "excel")
+    .replace(/ms\s*word/g, "word")
+    .replace(/microsoft\s*word/g, "word")
+    .replace(/project\s*management/g, "projectmanagement")
+    .replace(/project\s*manager/g, "projectmanagement");
+};
+
+export const appearsInText = (haystack, needle) => {
   const h = String(haystack || "").toLowerCase();
   const n = String(needle || "").toLowerCase().trim();
   if (!n || n.length < 2) return false;
+
+  // 1. Try a direct normalized token comparison for common synonyms
+  const normH = normalizeForCompare(h);
+  const normN = normalizeForCompare(n);
   
-  const escapedNeedle = escapeRegExp(n);
-  const regex = new RegExp(`(?:^|[^a-zA-Z0-9+#.])${escapedNeedle}(?:$|[^a-zA-Z0-9+#.])`, 'i');
-  return regex.test(h);
+  // Split into tokens based on non-alphanumeric characters (keeping + and #)
+  const tokens = normH.split(/[^a-z0-9а-яіїєґ+#]+/i).filter(Boolean);
+  if (tokens.includes(normN)) {
+    return true;
+  }
+
+  // 2. Fallback to a regex check with unicode-aware boundaries
+  const escapedNeedle = escapeRegExp(normN);
+  const regex = new RegExp(`(?:^|[^\\p{L}\\p{N}+#.])${escapedNeedle}(?:$|[^\\p{L}\\p{N}+#.])`, 'iu');
+  if (regex.test(normH)) {
+    return true;
+  }
+  
+  const escapedOriginal = escapeRegExp(n);
+  const regexOrig = new RegExp(`(?:^|[^\\p{L}\\p{N}+#.])${escapedOriginal}(?:$|[^\\p{L}\\p{N}+#.])`, 'iu');
+  if (regexOrig.test(h)) {
+    return true;
+  }
+
+  // 3. For Ukrainian / Cyrillic inflections, check prefix matching on words of length >= 4
+  const isCyrillic = /[а-яіїєґ]/i.test(n);
+  if (isCyrillic && n.length >= 4) {
+    const len = n.length;
+    // For length 4-5, prefix is len - 1. For length >= 6, prefix is len - 3.
+    const prefixLen = len <= 5 ? len - 1 : len - 3;
+    const prefix = n.substring(0, prefixLen);
+    
+    // Check if any token in the haystack starts with this prefix
+    if (tokens.some(t => t.startsWith(prefix))) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
-const isBadATSKeyword = (kw) => {
+export const isBadATSKeyword = (kw) => {
   const s = String(kw || "").trim().replace(/\s+/g, " ");
   if (!s || s.length < 2 || s.length > 42) return true;
-  if (/[.!?]/.test(s)) return true;
+  if (/[!?]/.test(s) || /\.\s/.test(s)) return true;
   if (s.split(/\s+/).length > 4) return true;
-  if (/^(tip|note|add|include|mention|try|consider|make sure)\b/i.test(s)) return true;
+
+  const firstWord = s.toLowerCase().split(/\s+/)[0];
+  const badStarts = ["tip", "note", "add", "include", "mention", "try", "consider", "make", "додати", "включити", "згадати", "спробувати", "вкажіть", "вказати"];
+  if (badStarts.includes(firstWord)) return true;
+
   if (ATS_GENERIC_FLUFF.has(s.toLowerCase())) return true;
   return false;
 };
@@ -957,8 +1024,50 @@ const normalizeCVPayload = (raw, profile, jobDescription) => {
   let metrics = Number(raw?.atsBreakdown?.metrics ?? raw?.atsBreakdown?.metricsScore ?? 50);
   let structure = Number(raw?.atsBreakdown?.structure ?? raw?.atsBreakdown?.structureScore ?? 50);
 
-  const matched = Array.isArray(raw?.matchedKeywords) ? raw.matchedKeywords.map(k => String(k || "").trim()).filter(Boolean).slice(0, 6) : [];
-  const missing = Array.isArray(raw?.missingKeywords) ? raw.missingKeywords.map(k => String(k || "").trim()).filter(Boolean).slice(0, 5) : [];
+  const matchedRaw = Array.isArray(raw?.matchedKeywords) ? raw.matchedKeywords.map(k => String(k || "").trim()).filter(Boolean) : [];
+  const missingRaw = Array.isArray(raw?.missingKeywords) ? raw.missingKeywords.map(k => String(k || "").trim()).filter(Boolean) : [];
+
+  let matched = matchedRaw;
+  let missing = missingRaw;
+
+  if (jobDescription && profile) {
+    const cvText = `
+Profession: ${profile?.profession || ""}
+Skills: ${Array.isArray(profile?.skills) ? profile.skills.join(", ") : (profile?.skills || "")}
+Experience: ${
+      Array.isArray(profile?.experience)
+        ? profile.experience.map(e =>
+            `${e.title} at ${e.company}: ${(e.achievements || []).join("; ")}`
+          ).join(" | ")
+        : (profile?.experience || "")
+    }
+Education: ${profile?.education || ""}
+Certifications: ${Array.isArray(profile?.certifications) ? profile.certifications.join(", ") : (profile?.certifications || "")}
+    `.trim();
+
+    const refined = refineATSLists(matchedRaw, missingRaw, jobDescription, cvText);
+    matched = refined.matched;
+    missing = refined.missing;
+
+    // Recalculate score based on actual matched vs missing keywords ratio (50% weight)
+    let keywordScore = 50;
+    if (matched.length + missing.length > 0) {
+      const ratio = matched.length / (matched.length + missing.length);
+      keywordScore = 40 + Math.round(ratio * 60);
+    }
+    keywords = Math.round((keywords * 0.5) + (keywordScore * 0.5));
+    score = Math.round((score * 0.5) + (keywordScore * 0.5));
+
+    if (matched.length === 0) {
+      score = Math.min(score, 20);
+    }
+    if (missing.length === 0 && matched.length > 0) {
+      score = Math.max(score, 85);
+    }
+  } else {
+    matched = matched.filter((k) => !isBadATSKeyword(cleanATSKeyword(k))).slice(0, 6);
+    missing = missing.filter((k) => !isBadATSKeyword(cleanATSKeyword(k))).slice(0, 5);
+  }
 
   const tips = Array.isArray(raw?.tips) ? raw.tips.map(t => String(t || "").trim()).filter(Boolean).slice(0, 3) : [];
   const bulletPoints = Array.isArray(raw?.bulletPoints)
