@@ -13,9 +13,6 @@ const daysSince = (savedAt) => {
 
 // Статус follow-up для запису
 const FollowUpStatus = ({ item, isPro, onFollowUp, setShowUpgrade, dict }) => {
-  const days = daysSince(item.savedAt);
-  if (days === null) return null;
-
   if (item.followUpSent) {
     return (
       <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">
@@ -23,6 +20,17 @@ const FollowUpStatus = ({ item, isPro, onFollowUp, setShowUpgrade, dict }) => {
       </span>
     );
   }
+
+  if (!item.applied || !item.appliedAt) {
+    return (
+      <span className="text-[10px] text-slate-500 bg-slate-800/30 border border-slate-700/30 px-2 py-1 rounded-lg">
+        {dict?.waitingForApplication || 'Waiting for application...'}
+      </span>
+    );
+  }
+
+  const days = daysSince(item.appliedAt);
+  if (days === null) return null;
 
   if (days >= 7) {
     return isPro ? (
@@ -85,7 +93,7 @@ const HistoryTab = ({
 
   // Кількість записів що чекають follow-up
   const pendingFollowUps = safeHistory.filter(h =>
-    h.savedAt && !h.followUpSent && daysSince(h.savedAt) >= 7
+    h.applied && h.appliedAt && !h.followUpSent && daysSince(h.appliedAt) >= 7
   ).length;
 
   return (
@@ -170,7 +178,7 @@ const HistoryTab = ({
               </thead>
               <tbody>
                 {getFiltered().map(item => {
-                  const days = daysSince(item.savedAt);
+                  const days = item.applied && item.appliedAt ? daysSince(item.appliedAt) : null;
                   const isOverdue = days !== null && days >= 7 && !item.followUpSent;
 
                   return (

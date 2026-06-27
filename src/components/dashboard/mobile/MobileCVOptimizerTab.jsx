@@ -1,7 +1,7 @@
 // src/components/dashboard/mobile/MobileCVOptimizerTab.jsx
 import React, { useState } from 'react';
 import { Sparkles, Copy, Check, AlertCircle, FileText, CheckCircle2, Award, Download, ClipboardList } from 'lucide-react';
-import { analyzeCV } from '../../../gemini';
+import { analyzeCV, parseCV } from '../../../gemini';
 import html2pdf from 'html2pdf.js';
 
 export default function MobileCVOptimizerTab({
@@ -16,10 +16,63 @@ export default function MobileCVOptimizerTab({
   showNotification,
   isPro,
   setShowUpgrade,
+  ...props
 }) {
   const [copiedIdx, setCopiedIdx] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [jdOpen, setJdOpen] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingPdf(true);
+    setCvAnalysisLoading(true);
+    showNotification('Uploading and parsing CV PDF...');
+
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise((resolve) => {
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      });
+      reader.readAsDataURL(file);
+      const base64Data = await base64Promise;
+
+      const cvFilePart = {
+        inlineData: { data: base64Data, mimeType: file.type }
+      };
+
+      const parsedData = await parseCV(cvFilePart);
+      if (!parsedData || !parsedData.skills) {
+        throw new Error("Invalid parse response");
+      }
+
+      if (props.setFileName) props.setFileName(file.name);
+      if (props.setCvFile) props.setCvFile(cvFilePart);
+      
+      const updatedProfile = { ...contactInfo, ...parsedData };
+      if (props.setContactInfo) props.setContactInfo(updatedProfile);
+      if (props.saveProfile) {
+        await props.saveProfile(updatedProfile);
+      }
+
+      showNotification('CV successfully parsed ✓');
+
+      if (jobDescription && jobDescription.trim().length > 10) {
+        showNotification('Analyzing CV against Job Description...');
+        const result = await analyzeCV(updatedProfile, jobDescription);
+        setCvAnalysis(result);
+        showNotification('CV optimized successfully! ✓');
+      }
+    } catch (err) {
+      console.error("PDF upload failed:", err);
+      showNotification('Parsing failed — try another PDF');
+    } finally {
+      setUploadingPdf(false);
+      setCvAnalysisLoading(false);
+    }
+  };
 
   const hasCv = contactInfo && (contactInfo.skills?.length > 0 || contactInfo.experience?.length > 0);
   const hasJd = jobDescription && jobDescription.trim().length > 10;
@@ -171,13 +224,20 @@ export default function MobileCVOptimizerTab({
         </p>
 
         {hasCv && hasJd && !cvAnalysisLoading && (
-          <button
-            onClick={handleAnalyze}
-            className="w-full mt-3 py-3 bg-[#6366f1] hover:bg-[#5458ee] rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-[#6366f1]/20"
-          >
-            <Sparkles className="w-4 h-4" />
-            {cvAnalysis ? (dict.atsRetry || 'Re-Analyze') : (dict.cvOptimizerAnalyze || 'Analyze CV')}
-          </button>
+          <div className="flex flex-col gap-2 w-full mt-3">
+            <label className="w-full py-3 bg-[#1e293b] hover:bg-slate-800 border border-[#334155] text-slate-300 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]">
+              <FileText className="w-4 h-4" />
+              Upload CV PDF
+              <input type="file" className="hidden" accept=".pdf" onChange={handlePdfUpload} />
+            </label>
+            <button
+              onClick={handleAnalyze}
+              className="w-full py-3 bg-[#6366f1] hover:bg-[#5458ee] rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-[#6366f1]/20"
+            >
+              <Sparkles className="w-4 h-4" />
+              {cvAnalysis ? (dict.atsRetry || 'Re-Analyze') : (dict.cvOptimizerAnalyze || 'Analyze CV')}
+            </button>
+          </div>
         )}
       </div>
 
@@ -190,13 +250,20 @@ export default function MobileCVOptimizerTab({
             ) : (
               <AlertCircle className="text-rose-400 w-5 h-5 shrink-0 mt-0.5" />
             )}
-            <div>
-              <h3 className="font-bold text-xs text-white">{dict.cvSection || 'CV Profile'}</h3>
-              <p className="text-[11px] text-gray-400 mt-0.5">
-                {hasCv
-                  ? 'CV profile loaded successfully from your settings. Ready to scan.'
-                  : (dict.cvOptimizerNoCv || 'Please upload your CV in the Create tab or complete onboarding first.')}
-              </p>
+            <div className="flex-1 space-y-3">
+              <div>
+                <h3 className="font-bold text-xs text-white">{dict.cvSection || 'CV Profile'}</h3>
+                <p className="text-[11px] text-gray-400 mt-0.5">
+                  {hasCv
+                    ? 'CV profile loaded successfully from your settings. Ready to scan.'
+                    : (dict.cvOptimizerNoCv || 'Please upload your CV here or in the Create tab to evaluate it.')}
+                </p>
+              </div>
+              <label className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#6366f1] hover:bg-[#5458ee] text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer transition-all shadow-md active:scale-95 w-fit">
+                <FileText size={14} />
+                {hasCv ? 'Upload different CV PDF' : 'Upload CV PDF'}
+                <input type="file" className="hidden" accept=".pdf" onChange={handlePdfUpload} />
+              </label>
             </div>
           </div>
 
@@ -434,7 +501,7 @@ export default function MobileCVOptimizerTab({
           </div>
 
           {/* Keywords Matched & Missing */}
-          <div className="bg-[#1e293b]/30 rounded-xl border border-white/5 p-4 space-y-4">
+          <div className="bg-[#1e293b]/30 rounded-xl border border-white/5 p-6 space-y-4">
             <div>
               <h4 className="text-[9px] font-black uppercase tracking-widest text-emerald-400/90 mb-2">
                 {dict.atsMatched || '✓ Matched Keywords'}
@@ -442,7 +509,7 @@ export default function MobileCVOptimizerTab({
               <div className="flex flex-wrap gap-1.5">
                 {cvAnalysis.matchedKeywords?.length > 0 ? (
                   cvAnalysis.matchedKeywords.map((k) => (
-                    <span key={k} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                    <span key={k} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 transition-all duration-200 hover:scale-105 cursor-default">
                       {k}
                     </span>
                   ))
@@ -459,7 +526,7 @@ export default function MobileCVOptimizerTab({
               <div className="flex flex-wrap gap-1.5">
                 {cvAnalysis.missingKeywords?.length > 0 ? (
                   cvAnalysis.missingKeywords.map((k) => (
-                    <span key={k} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                    <span key={k} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 transition-all duration-200 hover:scale-105 cursor-default">
                       {k}
                     </span>
                   ))

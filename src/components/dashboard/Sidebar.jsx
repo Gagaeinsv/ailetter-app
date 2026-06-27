@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconDash, IconTemplate, IconHist, IconSettings, IconInterview, IconCV } from '../ui/Icons';
+import { IconDash, IconTemplate, IconHist, IconSettings, IconInterview, IconCV, IconMagic } from '../ui/Icons';
 
 const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, logout, dict, uiLang, setUiLang, navItems, handleNav, navigate }) => (
   <>
@@ -115,6 +115,7 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
 
   const navItems = [
     { id: 'dashboard', label: dict.dashboard, icon: <IconDash /> },
+    { id: 'cover-letter', label: dict.coverLetterTab || 'Cover Letter', icon: <IconMagic /> },
     { id: 'cv-optimizer', label: dict.cvOptimizer || 'CV Optimizer', icon: <IconCV /> },
     { id: 'templates', label: dict.templates, icon: <IconTemplate /> },
     { id: 'history', label: dict.history, icon: <IconHist /> },

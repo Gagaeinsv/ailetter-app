@@ -51,6 +51,8 @@ const toLetterDoc = (entry) => {
     ...rest,
     id,
     savedAt: typeof entry.savedAt === 'number' ? entry.savedAt : id,
+    applied: !!entry.applied,
+    appliedAt: entry.appliedAt ?? null,
   };
 };
 
@@ -97,6 +99,8 @@ export const useHistory = (user, isPro) => {
             company: data.company ?? 'Unknown',
             followUpSent: !!data.followUpSent,
             savedVia: data.savedVia ?? 'manual',
+            applied: !!data.applied,
+            appliedAt: data.appliedAt ?? null,
           };
         });
 

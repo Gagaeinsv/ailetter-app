@@ -310,19 +310,124 @@ ${dictatedText}`;
 };
 
 export const extractCompanyName = async (jobDescription) => {
-  const promptText = `Extract the company name from this job description. Return ONLY the company name, nothing else. If you cannot find it, return "Unknown".
+  if (!jobDescription || typeof jobDescription !== 'string') return 'Unknown';
+  
+  const text = jobDescription.trim();
+
+  // Helper to clean up company name slug (e.g. "google-cloud" -> "Google Cloud")
+  const cleanCompanySlug = (slug) => {
+    if (!slug) return '';
+    return slug
+      .split(/[-_]/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+      .trim();
+  };
+
+  // 1. Try URL Regex Matching (supports LinkedIn, Indeed, etc.)
+  try {
+    if (/^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/i.test(text)) {
+      // Indeed Company Page URL: e.g. indeed.com/cmp/Google
+      const indeedCmpMatch = text.match(/indeed\.com\/cmp\/([^/?#\s]+)/i);
+      if (indeedCmpMatch && indeedCmpMatch[1]) {
+        return cleanCompanySlug(decodeURIComponent(indeedCmpMatch[1]));
+      }
+
+      // LinkedIn Company Page URL: e.g. linkedin.com/company/google
+      const linkedinCmpMatch = text.match(/linkedin\.com\/company\/([^/?#\s]+)/i);
+      if (linkedinCmpMatch && linkedinCmpMatch[1]) {
+        return cleanCompanySlug(decodeURIComponent(linkedinCmpMatch[1]));
+      }
+
+      // LinkedIn Jobs URL with company query param
+      const linkedinJobCompany = text.match(/[?&]f_C=([^&]+)/i);
+      if (linkedinJobCompany && linkedinJobCompany[1]) {
+        return cleanCompanySlug(decodeURIComponent(linkedinJobCompany[1]));
+      }
+    }
+  } catch (err) {
+    console.warn("Regex URL company parsing failed:", err);
+  }
+
+  // 2. Try Text-based Regex Matching for common headers
+  try {
+    const patterns = [
+      /^(?:company\s*name|company|employer|работодатель|компанія|firma|unternehmen)\s*:\s*([^\n]+)/im,
+      /^(?:about|про|über)\s+([a-zA-Z0-9а-яіїєґ\s]+)\s*:/im,
+      /^(?:join|приєднуйтесь\s+до|join\s+the)\s+([a-zA-Z0-9а-яіїєґ\s]+)\s+team/im,
+    ];
+
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match && match[1]) {
+        const candidate = match[1].trim().replace(/["'.*]/g, '');
+        if (candidate.length > 1 && candidate.length < 50) {
+          return candidate;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Regex text company parsing failed:", err);
+  }
+
+  // 3. Fallback to LLM Prompt Extraction
+  try {
+    const promptText = `Extract the company name from this job description. Return ONLY the company name, nothing else. If you cannot find it, return "Unknown".
 
 Job description:
-${jobDescription.substring(0, 500)}`;
+${text.substring(0, 700)}`;
+
+    return await tryModel(async (modelId) => {
+      const responseText = await callGemini({
+        modelId,
+        temperature: 0.1,
+        maxOutputTokens: 50,
+        contents: [promptText],
+      });
+      return responseText.trim().replace(/["'.]/g, '') || "Unknown";
+    });
+  } catch (err) {
+    console.warn("LLM company extraction failed:", err);
+    return "Unknown";
+  }
+};
+
+export const integrateKeyword = async (coverLetter, jobDescription, keyword) => {
+  const promptText = `You are an expert career consultant and copywriter.
+We have a cover letter and want to naturally integrate a missing keyword into one of its paragraphs.
+
+Cover Letter:
+"""
+${coverLetter}
+"""
+
+Missing Keyword/Phrase: "${keyword}"
+Job Description:
+"""
+${jobDescription}
+"""
+
+Instructions:
+1. Choose the single most relevant paragraph of the cover letter where the keyword "${keyword}" fits naturally and professionally.
+2. Rewrite ONLY that paragraph to weave in the keyword.
+3. Return a JSON object with exactly two keys:
+   - "originalParagraph": The exact text of the paragraph you chose to rewrite (must match the original text).
+   - "updatedParagraph": The rewritten version of that paragraph.
+
+Return ONLY valid JSON. No markdown code blocks (like \`\`\`json), no explanation.`;
 
   return await tryModel(async (modelId) => {
-    const text = await callGemini({
+    const responseText = await callGemini({
       modelId,
-      temperature: 0.1,
-      maxOutputTokens: 50,
+      temperature: 0.3,
+      maxOutputTokens: 1024,
       contents: [promptText],
     });
-    return text.trim().replace(/["'.]/g, '') || "Unknown";
+    
+    // Clean JSON response
+    const cleanJson = responseText.trim().replace(/^```json\s*/i, '').replace(/```$/, '').trim();
+    const parsed = JSON.parse(cleanJson);
+    return parsed;
   });
 };
 

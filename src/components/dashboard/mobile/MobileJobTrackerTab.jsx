@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const getStatuses = (dict) => {
   const t = (k, fb) => dict?.[k] || fb;
@@ -20,6 +20,12 @@ const MobileJobTrackerTab = ({
   upsertTrackerJob,
   patchTrackerJob,
   removeTrackerJob,
+  trackerFilter,
+  setTrackerFilter,
+  trackerEditJob,
+  setTrackerEditJob,
+  trackerAddDate,
+  setTrackerAddDate,
 }) => {
   const t = (k, fb) => dict?.[k] || fb;
   const STATUSES = getStatuses(dict);
@@ -29,6 +35,33 @@ const MobileJobTrackerTab = ({
   const [editJob, setEditJob] = useState(null);
   const [filter, setFilter]   = useState('all');
   const [form, setForm]       = useState({ company: '', role: '', url: '', notes: '', status: 'applied', date: new Date().toISOString().slice(0, 10) });
+
+  // Sync tracker filter
+  useEffect(() => {
+    if (trackerFilter) {
+      setFilter(trackerFilter);
+    }
+  }, [trackerFilter]);
+
+  // Sync edit job
+  useEffect(() => {
+    if (trackerEditJob) {
+      setEditJob(trackerEditJob);
+      setForm({ ...trackerEditJob });
+      setShowAdd(true);
+      if (setTrackerEditJob) setTrackerEditJob(null);
+    }
+  }, [trackerEditJob, setTrackerEditJob]);
+
+  // Sync prefilled date
+  useEffect(() => {
+    if (trackerAddDate) {
+      setEditJob(null);
+      setForm({ company: '', role: '', url: '', notes: '', status: 'applied', date: trackerAddDate });
+      setShowAdd(true);
+      if (setTrackerAddDate) setTrackerAddDate(null);
+    }
+  }, [trackerAddDate, setTrackerAddDate]);
 
   const setF = (k, v) => setForm(f => ({ ...f, [k]: v }));
 

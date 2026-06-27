@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const getStatuses = (dict) => {
   const t = (k, fb) => dict?.[k] || fb;
@@ -125,6 +125,12 @@ const JobTrackerTab = ({
   upsertTrackerJob,
   patchTrackerJob,
   removeTrackerJob,
+  trackerFilter,
+  setTrackerFilter,
+  trackerEditJob,
+  setTrackerEditJob,
+  trackerAddDate,
+  setTrackerAddDate,
 }) => {
   const t = (k, fb) => dict?.[k] || fb;
   const STATUSES = getStatuses(dict);
@@ -134,6 +140,33 @@ const JobTrackerTab = ({
   const [editJob, setEditJob]           = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [search, setSearch]             = useState('');
+
+  // Sync filter status
+  useEffect(() => {
+    if (trackerFilter) {
+      setFilterStatus(trackerFilter);
+    }
+  }, [trackerFilter]);
+
+  // Sync edit job state
+  useEffect(() => {
+    if (trackerEditJob) {
+      setEditJob(trackerEditJob);
+      setShowForm(true);
+      if (setTrackerEditJob) setTrackerEditJob(null);
+    }
+  }, [trackerEditJob, setTrackerEditJob]);
+
+  // Sync add date state
+  const [prefilledDate, setPrefilledDate] = useState('');
+  useEffect(() => {
+    if (trackerAddDate) {
+      setEditJob(null);
+      setPrefilledDate(trackerAddDate);
+      setShowForm(true);
+      if (setTrackerAddDate) setTrackerAddDate(null);
+    }
+  }, [trackerAddDate, setTrackerAddDate]);
 
   const addJob = (form) => {
     upsertTrackerJob?.({ ...form, id: Date.now() });
@@ -195,9 +228,9 @@ const JobTrackerTab = ({
         {(showForm || editJob) && (
           <div className="mb-6">
             <JobForm
-              initial={editJob || undefined}
+              initial={editJob || (prefilledDate ? { company: '', role: '', url: '', notes: '', status: 'applied', date: prefilledDate } : undefined)}
               onSave={editJob ? updateJob : addJob}
-              onCancel={() => { setShowForm(false); setEditJob(null); }}
+              onCancel={() => { setShowForm(false); setEditJob(null); setPrefilledDate(''); }}
               dict={dict}
             />
           </div>

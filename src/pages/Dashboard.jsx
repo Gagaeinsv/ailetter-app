@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { generateLetter, parseCV, extractCompanyName } from '../gemini';
+import { generateLetter, parseCV, extractCompanyName, integrateKeyword } from '../gemini';
 import html2pdf from 'html2pdf.js';
 import { usePlan } from '../hooks/usePlan';
 import { useHistory } from '../hooks/useHistory';
@@ -12,7 +12,8 @@ import useMediaQuery from '../hooks/useMediaQuery';
 
 // Desktop Components
 import Sidebar from '../components/dashboard/Sidebar';
-import DashboardTab from '../components/dashboard/DashboardTab';
+import DashboardOverviewTab from '../components/dashboard/DashboardOverviewTab';
+import CoverLetterTab from '../components/dashboard/CoverLetterTab';
 import TemplatesTab from '../components/dashboard/TemplatesTab';
 import HistoryTab from '../components/dashboard/HistoryTab';
 import SettingsTab from '../components/dashboard/SettingsTab';
@@ -23,7 +24,8 @@ import CVOptimizerTab from '../components/dashboard/CVOptimizerTab';
 
 // Mobile Components
 import MobileNav from '../components/dashboard/mobile/MobileNav';
-import MobileDashboardTab from '../components/dashboard/mobile/MobileDashboardTab';
+import MobileDashboardOverviewTab from '../components/dashboard/mobile/MobileDashboardOverviewTab';
+import MobileCoverLetterTab from '../components/dashboard/mobile/MobileCoverLetterTab';
 import MobileHistoryTab from '../components/dashboard/mobile/MobileHistoryTab';
 import MobileTemplatesTab from '../components/dashboard/mobile/MobileTemplatesTab';
 import MobileSettingsTab from '../components/dashboard/mobile/MobileSettingsTab';
@@ -62,6 +64,9 @@ const Dashboard = () => {
   const [activeTab, setActiveTab]     = useState('dashboard');
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [toast, setToast]             = useState({ show: false, msg: '' });
+  const [trackerFilter, setTrackerFilter] = useState('all');
+  const [trackerEditJob, setTrackerEditJob] = useState(null);
+  const [trackerAddDate, setTrackerAddDate] = useState(null);
 
   // ── CV Optimizer State ──
   const [cvAnalysis, setCvAnalysis] = useState(() => {
@@ -164,9 +169,10 @@ const Dashboard = () => {
     if (!history.length) return;
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const pending = history.find(h =>
-      h.savedAt &&
+      h.applied &&
+      h.appliedAt &&
       !h.followUpSent &&
-      h.savedAt < sevenDaysAgo
+      h.appliedAt < sevenDaysAgo
     );
     setFollowUpEntry(pending || null);
   }, [history]);
@@ -207,6 +213,64 @@ const Dashboard = () => {
   };
 
   // ── Generate ──
+  // ── Save to history (внутрішня) ──
+  // trigger: 'manual' | 'generate' | 'copy' | 'pdf' | 'docx'
+  const saveToHistory = async (trigger = 'manual', letterText = null) => {
+    const textToSave = letterText || generatedLetter;
+    if (!textToSave) return null;
+
+    let company = 'Unknown';
+    try {
+      company = await extractCompanyName(jobDescription);
+    } catch (e) {
+      console.warn('Could not extract company name:', e);
+    }
+
+    const isAppliedTrigger = ['copy', 'pdf', 'docx'].includes(trigger);
+
+    // Якщо вже збережено — оновимо його статус при копіюванні/скачуванні
+    if (currentLetterSavedId) {
+      if (isAppliedTrigger) {
+        await updateEntry(currentLetterSavedId, {
+          applied: true,
+          appliedAt: Date.now(),
+          company,
+        });
+      }
+      return currentLetterSavedId;
+    }
+
+    const id = Date.now();
+    const entry = {
+      id,
+      date:          new Date().toLocaleDateString(),
+      savedAt:       id,
+      job:           jobDescription.substring(0, 60) + '...',
+      jobDescription,
+      text:          textToSave,
+      lang:          settings.language,
+      company,
+      followUpSent:  false,
+      savedVia:      trigger,
+      applied:       isAppliedTrigger,
+      appliedAt:     isAppliedTrigger ? Date.now() : null,
+    };
+
+    await addEntry(entry);
+    setCurrentLetterSavedId(id);
+    return id;
+  };
+
+  // ── Публічний handleSaveToHistory (для кнопки Save) ──
+  const handleSaveToHistory = async () => {
+    const id = await saveToHistory('manual');
+    if (id === currentLetterSavedId && currentLetterSavedId !== null) {
+      showNotification('Already saved ✓');
+    } else {
+      showNotification('Saved ✓ — copy or download to start follow-up timer');
+    }
+  };
+
   const getMonthlyCount = () => {
     const key = `gen_count_${new Date().getMonth()}_${new Date().getFullYear()}`;
     return parseInt(localStorage.getItem(key) || '0', 10);
@@ -231,6 +295,13 @@ const Dashboard = () => {
       setGeneratedLetter(text);
       setEditMode(false);
 
+      // Auto save on generation
+      try {
+        await saveToHistory('generate', text);
+      } catch (err) {
+        console.warn('Auto-saving to history failed:', err);
+      }
+
       if (!isAdmin && !isPro) {
         const key = `gen_count_${new Date().getMonth()}_${new Date().getFullYear()}`;
         const newCount = getMonthlyCount() + 1;
@@ -246,50 +317,6 @@ const Dashboard = () => {
       alert('AI Busy. Please try again.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  // ── Save to history (внутрішня) ──
-  // trigger: 'manual' | 'copy' | 'pdf' | 'docx'
-  const saveToHistory = async (trigger = 'manual') => {
-    if (!generatedLetter) return null;
-
-    // Якщо вже збережено — не дублювати
-    if (currentLetterSavedId) return currentLetterSavedId;
-
-    let company = 'Unknown';
-    try {
-      company = await extractCompanyName(jobDescription);
-    } catch (e) {
-      console.warn('Could not extract company name:', e);
-    }
-
-    const id = Date.now();
-    const entry = {
-      id,
-      date:          new Date().toLocaleDateString(),
-      savedAt:       id,
-      job:           jobDescription.substring(0, 60) + '...',
-      jobDescription,
-      text:          generatedLetter,
-      lang:          settings.language,
-      company,
-      followUpSent:  false,
-      savedVia:      trigger,
-    };
-
-    await addEntry(entry);
-    setCurrentLetterSavedId(id);
-    return id;
-  };
-
-  // ── Публічний handleSaveToHistory (для кнопки Save) ──
-  const handleSaveToHistory = async () => {
-    const id = await saveToHistory('manual');
-    if (id === currentLetterSavedId && currentLetterSavedId !== null) {
-      showNotification('Already saved ✓');
-    } else {
-      showNotification('Saved ✓ — follow-up reminder in 7 days');
     }
   };
 
@@ -436,6 +463,71 @@ const Dashboard = () => {
     showNotification('Copied to clipboard ✓');
   };
 
+  // ── Keyword Integration ──
+  const handleIntegrateKeyword = async (keyword) => {
+    if (!generatedLetter || !jobDescription || !keyword) return;
+
+    setLoading(true);
+    showNotification(`Integrating "${keyword}" into cover letter...`);
+
+    try {
+      const result = await integrateKeyword(generatedLetter, jobDescription, keyword);
+      if (result && result.originalParagraph && result.updatedParagraph) {
+        const originalText = result.originalParagraph.trim();
+        const updatedText = result.updatedParagraph.trim();
+
+        let newLetterText = generatedLetter;
+        if (newLetterText.includes(originalText)) {
+          newLetterText = newLetterText.replace(originalText, updatedText);
+        } else {
+          // Paragraph matching fallback
+          const paragraphs = newLetterText.split(/\n\s*\n/);
+          let bestIndex = -1;
+          let bestScore = 0;
+          
+          for (let i = 0; i < paragraphs.length; i++) {
+            const p = paragraphs[i].trim();
+            if (!p) continue;
+            
+            const wordsP = new Set(p.toLowerCase().split(/\s+/));
+            const wordsOrig = new Set(originalText.toLowerCase().split(/\s+/));
+            let overlap = 0;
+            for (const w of wordsOrig) {
+              if (wordsP.has(w)) overlap++;
+            }
+            const score = overlap / Math.max(wordsOrig.size, 1);
+            if (score > bestScore && score > 0.4) {
+              bestScore = score;
+              bestIndex = i;
+            }
+          }
+
+          if (bestIndex !== -1) {
+            paragraphs[bestIndex] = updatedText;
+            newLetterText = paragraphs.join('\n\n');
+          } else {
+            newLetterText = newLetterText + '\n\n' + updatedText;
+          }
+        }
+
+        setGeneratedLetter(newLetterText);
+        
+        if (currentLetterSavedId) {
+          await updateEntry(currentLetterSavedId, { text: newLetterText });
+        }
+
+        showNotification(`Integrated "${keyword}" ✓`);
+      } else {
+        showNotification('Failed to integrate keyword');
+      }
+    } catch (err) {
+      console.error("Keyword integration failed:", err);
+      showNotification('AI Busy. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // ── History helpers ──
   const markFollowUpSent = async (id) => {
     await updateEntry(id, { followUpSent: true });
@@ -511,6 +603,7 @@ const Dashboard = () => {
     trackerSyncStatus,
     upsertTrackerJob,
     patchTrackerJob,
+    handleIntegrateKeyword,
     removeTrackerJob,
     profileSyncStatus,
     mobileHistoryLoadNonce,
@@ -522,6 +615,10 @@ const Dashboard = () => {
     onFollowUp: (entry) => { setFollowUpModalEntry(entry); setShowFollowUpModal(true); },
     cvAnalysis, setCvAnalysis,
     cvAnalysisLoading, setCvAnalysisLoading,
+    trackerFilter, setTrackerFilter,
+    trackerEditJob, setTrackerEditJob,
+    trackerAddDate, setTrackerAddDate,
+    followUpEntry,
   };
 
   return (
@@ -590,7 +687,8 @@ const Dashboard = () => {
           <MobileNav {...props} />
           <div className="flex-1 overflow-y-auto pt-14 pb-20 landscape:pb-4 landscape:pl-14 w-full scroll-smooth">
             <div className="min-h-full">
-              {activeTab === 'dashboard' && <MobileDashboardTab {...props} />}
+              {activeTab === 'dashboard' && <MobileDashboardOverviewTab {...props} />}
+              {activeTab === 'cover-letter' && <MobileCoverLetterTab {...props} />}
               {activeTab === 'cv-optimizer' && <MobileCVOptimizerTab {...props} />}
               {activeTab === 'history' && <MobileHistoryTab {...props} />}
               {activeTab === 'templates' && <MobileTemplatesTab {...props} />}
@@ -605,7 +703,8 @@ const Dashboard = () => {
           <Sidebar {...props} />
           <main className="flex-1 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-hidden relative">
-               {activeTab === 'dashboard' && <DashboardTab {...props} />}
+              {activeTab === 'dashboard' && <DashboardOverviewTab {...props} />}
+              {activeTab === 'cover-letter' && <CoverLetterTab {...props} />}
               {activeTab === 'cv-optimizer' && <CVOptimizerTab {...props} />}
               {activeTab === 'templates' && <TemplatesTab {...props} />}
               {activeTab === 'interview' && <InterviewTab {...props} />}

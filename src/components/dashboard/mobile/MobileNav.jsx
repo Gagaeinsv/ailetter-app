@@ -24,7 +24,8 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
   const [open, setOpen] = useState(false);
 
   const navItems = [
-    { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Create' },
+    { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Overview' },
+    { id: 'cover-letter', icon: <IconMagic />, label: dict?.coverLetterTab || 'Cover Letter' },
     { id: 'cv-optimizer', icon: <IconCV />, label: dict?.cvOptimizer || 'CV Optimizer' },
     { id: 'templates', icon: <IconGrid />, label: dict?.templates || 'Templates' },
     { id: 'history', icon: <IconClock />, label: dict?.history || 'History' },
@@ -34,11 +35,11 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
   ];
 
   const bottomNavItems = [
-    { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Create' },
-    { id: 'cv-optimizer', icon: <IconCV />, label: dict?.cvOptimizer || 'CV Optimizer' },
+    { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Overview' },
+    { id: 'cover-letter', icon: <IconMagic />, label: dict?.coverLetterTab || 'Cover Letter' },
+    { id: 'cv-optimizer', icon: <IconCV />, label: dict?.cvOptimizer || 'CV' },
     { id: 'jobtracker', icon: <span className="text-base leading-none">📋</span>, label: dict?.jobtracker || 'Tracker' },
     { id: 'history', icon: <IconClock />, label: dict?.history || 'History' },
-    { id: 'templates', icon: <IconGrid />, label: dict?.templates || 'Templates' },
   ];
 
   const go = (id) => { setActiveTab(id); setOpen(false); };
