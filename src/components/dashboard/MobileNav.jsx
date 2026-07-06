@@ -146,14 +146,14 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
       )}
 
       {/* ── BOTTOM NAV ── */}
-      <div className="landscape:hidden h-20 bg-[#1e293b] border-t border-[#334155] flex items-start justify-around px-2 fixed bottom-0 left-0 right-0 z-40 pt-3 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+      <div className="landscape:hidden h-20 bg-[#1e293b] border-t border-[#334155] flex items-start justify-around px-1 fixed bottom-0 left-0 right-0 z-40 pt-2.5 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
         {bottomNavItems.map(item => (
           <button key={item.id} onClick={() => setActiveTab(item.id)}
-            className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all flex-1 ${
+            className={`flex flex-col items-center gap-1 py-1.5 px-0.5 rounded-xl transition-all flex-1 min-w-0 ${
               activeTab === item.id ? 'text-[#6366f1] translate-y-[-2px]' : 'text-gray-500'
             }`}>
             {item.icon}
-            <span className="text-[9px] font-bold tracking-wide">{item.label}</span>
+            <span className="text-[8px] sm:text-[9.5px] font-black tracking-wide truncate max-w-full text-center px-0.5">{item.label}</span>
           </button>
         ))}
       </div>

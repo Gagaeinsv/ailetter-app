@@ -139,8 +139,8 @@ export default function DashboardOverviewTab({
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-[#0f172a] p-4 md:p-8 custom-scrollbar text-white">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="h-full overflow-y-auto bg-[#0f172a] p-3 sm:p-6 md:p-8 custom-scrollbar text-white">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
         
         {/* Header Section */}
         <div className="flex items-center justify-between">
@@ -237,7 +237,7 @@ export default function DashboardOverviewTab({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Card 1: Application Overview */}
-          <div className="bg-[#1e293b] border border-[#334155] rounded-3xl p-6 flex flex-col justify-between shadow-xl relative overflow-hidden">
+          <div className="bg-[#1e293b] border border-[#334155] rounded-3xl p-4 sm:p-6 flex flex-col justify-between shadow-xl relative overflow-hidden">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Briefcase size={14} className="text-indigo-400" />
@@ -256,12 +256,12 @@ export default function DashboardOverviewTab({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 mt-6 pt-4 border-t border-[#334155]/60">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mt-6 pt-4 border-t border-[#334155]/60">
               
               {/* Pending sub-card */}
               <button 
                 onClick={() => handleMetricToggle('applied')}
-                className={`border rounded-2xl p-3 flex flex-col items-center justify-center text-center transition-all ${
+                className={`border rounded-2xl p-2 sm:p-3 flex flex-col items-center justify-center text-center transition-all ${
                   selectedStatusFilter === 'applied'
                     ? 'bg-indigo-600/30 border-indigo-500 ring-2 ring-indigo-500/20 scale-[1.03]'
                     : 'bg-[#0f172a]/60 border-[#334155]/40 hover:border-indigo-500/50'
@@ -275,7 +275,7 @@ export default function DashboardOverviewTab({
               {/* Interviews sub-card */}
               <button 
                 onClick={() => handleMetricToggle('interview')}
-                className={`border rounded-2xl p-3 flex flex-col items-center justify-center text-center relative transition-all ${
+                className={`border rounded-2xl p-2 sm:p-3 flex flex-col items-center justify-center text-center relative transition-all ${
                   selectedStatusFilter === 'interview'
                     ? 'bg-indigo-600 border-indigo-400 ring-2 ring-indigo-400/20 scale-[1.03]'
                     : 'bg-white border-[#334155] hover:scale-[1.02]'
@@ -290,7 +290,7 @@ export default function DashboardOverviewTab({
               {/* Rejected sub-card */}
               <button 
                 onClick={() => handleMetricToggle('rejected')}
-                className={`border rounded-2xl p-3 flex flex-col items-center justify-center text-center transition-all ${
+                className={`border rounded-2xl p-2 sm:p-3 flex flex-col items-center justify-center text-center transition-all ${
                   selectedStatusFilter === 'rejected'
                     ? 'bg-indigo-600/30 border-indigo-500 ring-2 ring-indigo-500/20 scale-[1.03]'
                     : 'bg-[#0f172a]/60 border-[#334155]/40 hover:border-indigo-500/50'
@@ -307,7 +307,7 @@ export default function DashboardOverviewTab({
           {/* Card 2: AI Readiness */}
           <button 
             onClick={() => setActiveTab('settings')}
-            className="bg-[#1e293b] border border-[#334155] rounded-3xl p-6 flex flex-col justify-between shadow-xl text-left hover:scale-[1.01] hover:border-slate-500 transition-all group"
+            className="bg-[#1e293b] border border-[#334155] rounded-3xl p-4 sm:p-6 flex flex-col justify-between shadow-xl text-left hover:scale-[1.01] hover:border-slate-500 transition-all group"
           >
             <div className="flex items-center justify-between w-full mb-4">
               <span className="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -344,7 +344,7 @@ export default function DashboardOverviewTab({
 
           {/* Card 3: Resume Health */}
           <div 
-            className="bg-[#1e293b] border border-[#334155] rounded-3xl p-6 flex flex-col justify-between shadow-xl"
+            className="bg-[#1e293b] border border-[#334155] rounded-3xl p-4 sm:p-6 flex flex-col justify-between shadow-xl"
           >
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -418,7 +418,7 @@ export default function DashboardOverviewTab({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Recent Applications (Left Wide Card) */}
-          <div className="bg-[#1e293b] border border-[#334155] rounded-3xl p-6 lg:col-span-8 flex flex-col h-[480px]">
+          <div className="bg-[#1e293b] border border-[#334155] rounded-3xl p-4 sm:p-6 lg:col-span-8 flex flex-col h-[480px]">
             <div className="flex items-center justify-between mb-4 border-b border-[#334155]/60 pb-3">
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-black text-white uppercase tracking-wider">
@@ -533,7 +533,7 @@ export default function DashboardOverviewTab({
           </div>
 
           {/* Up Next Calendar (Right Smaller Card) */}
-          <div className="bg-[#1e293b] border border-[#334155] rounded-3xl p-6 lg:col-span-4 flex flex-col h-[480px] justify-between relative overflow-hidden">
+          <div className="bg-[#1e293b] border border-[#334155] rounded-3xl p-4 sm:p-6 lg:col-span-4 flex flex-col h-[480px] justify-between relative overflow-hidden">
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-[#334155]/60 pb-3">
                 <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
