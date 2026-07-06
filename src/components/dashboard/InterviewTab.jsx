@@ -89,7 +89,7 @@ const InterviewTab = ({
   ];
 
   return (
-    <div className="h-full overflow-y-auto bg-[#0f172a] p-8 custom-scrollbar">
+    <div className="h-full overflow-y-auto bg-[#0f172a] p-4 md:p-8 custom-scrollbar">
       <div className="max-w-3xl mx-auto">
 
         <div className="mb-8">

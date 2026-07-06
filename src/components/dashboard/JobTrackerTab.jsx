@@ -191,7 +191,7 @@ const JobTrackerTab = ({
   const countByStatus = (key) => jobs.filter(j => j.status === key).length;
 
   return (
-    <div className="h-full overflow-y-auto bg-[#0f172a] p-8 custom-scrollbar">
+    <div className="h-full overflow-y-auto bg-[#0f172a] p-4 md:p-8 custom-scrollbar">
       <div className="max-w-6xl mx-auto">
 
         <div className="flex items-center justify-between mb-6">
@@ -216,7 +216,7 @@ const JobTrackerTab = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {STATUSES.map(s => (
             <div key={s.key} className={`${s.bg} border ${s.border} rounded-xl p-4`}>
               <p className="text-2xl font-black" style={{ color: s.color }}>{countByStatus(s.key)}</p>
@@ -236,11 +236,11 @@ const JobTrackerTab = ({
           </div>
         )}
 
-        <div className="flex gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder={t('trackerSearch', 'Search company or role…')}
             className="flex-1 bg-[#1e293b] border border-[#334155] rounded-xl py-2.5 px-4 text-sm text-white outline-none focus:border-[#6366f1] transition-colors" />
-          <div className="flex bg-[#1e293b] rounded-xl p-1 border border-[#334155]">
+          <div className="flex bg-[#1e293b] rounded-xl p-1 border border-[#334155] overflow-x-auto max-w-full shrink-0 custom-scrollbar">
             <button onClick={() => setFilterStatus('all')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'all' ? 'bg-[#6366f1] text-white' : 'text-slate-400 hover:text-white'}`}>
               {t('trackerAll', 'All')}

@@ -97,7 +97,7 @@ const HistoryTab = ({
   ).length;
 
   return (
-    <div className="h-full overflow-y-auto bg-[#0f172a] p-8 custom-scrollbar">
+    <div className="h-full overflow-y-auto bg-[#0f172a] p-4 md:p-8 custom-scrollbar">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
@@ -167,86 +167,168 @@ const HistoryTab = ({
               )}
             </div>
           ) : (
-            <table className="w-full text-left">
-              <thead className="bg-[#0f172a]/50 border-b border-[#334155]">
-                <tr>
-                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.historyColJob || 'Job'}</th>
-                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.colDate || 'Date'}</th>
-                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.historyColFollowUp || 'Follow-up'}</th>
-                  <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider text-right">{dict?.colActions || 'Actions'}</th>
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              {/* Desktop Table View */}
+              <table className="hidden md:table w-full text-left">
+                <thead className="bg-[#0f172a]/50 border-b border-[#334155]">
+                  <tr>
+                    <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.historyColJob || 'Job'}</th>
+                    <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.colDate || 'Date'}</th>
+                    <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider">{dict?.historyColFollowUp || 'Follow-up'}</th>
+                    <th className="p-5 text-[10px] font-black uppercase text-slate-500 tracking-wider text-right">{dict?.colActions || 'Actions'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getFiltered().map(item => {
+                    const days = item.applied && item.appliedAt ? daysSince(item.appliedAt) : null;
+                    const isOverdue = days !== null && days >= 7 && !item.followUpSent;
+
+                    return (
+                      <tr key={item.id}
+                        className={`border-b border-[#334155]/50 hover:bg-[#334155]/20 transition-all ${isOverdue ? 'bg-amber-500/5' : ''}`}>
+
+                        {/* Company / Job */}
+                        <td className="p-5">
+                          <div className="flex items-center gap-3">
+                            {isOverdue && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />}
+                            <div>
+                              {item.company && item.company !== 'Unknown' && (
+                                <p className="text-xs font-black text-indigo-400 mb-0.5">{item.company}</p>
+                              )}
+                              <p className="font-semibold text-white text-sm truncate max-w-[280px]">{item.job}</p>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Date */}
+                        <td className="p-5">
+                          <p className="text-xs text-slate-400">{item.date}</p>
+                          {days !== null && (
+                            <p className="text-[10px] text-slate-600 mt-0.5">
+                              {days === 0
+                                ? (dict?.historyToday || 'Today')
+                                : (dict?.historyDaysAgo || '{n} days ago').replace('{n}', String(days))}
+                            </p>
+                          )}
+                          {item.lang && (
+                            <span className="text-[9px] font-bold text-slate-600 uppercase">{item.lang}</span>
+                          )}
+                        </td>
+
+                        {/* Follow-up status */}
+                        <td className="p-5">
+                          <FollowUpStatus
+                            item={item}
+                            isPro={isPro}
+                            onFollowUp={onFollowUp}
+                            setShowUpgrade={setShowUpgrade}
+                            dict={dict}
+                          />
+                        </td>
+
+                        {/* Actions */}
+                        <td className="p-5">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => loadLetterFromHistory?.(item)}
+                              className="px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 rounded-lg text-xs font-bold transition-all"
+                            >
+                              {dict?.loadLetter || 'Load'}
+                            </button>
+                            <button onClick={() => duplicateHistoryItem(item)} className="p-2 text-slate-500 hover:text-white rounded-lg transition-all">
+                              <IconCopy />
+                            </button>
+                            <button onClick={() => deleteHistoryItem(item.id)} className="p-2 text-slate-500 hover:text-red-400 rounded-lg transition-all">
+                              <IconTrash />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+
+              {/* Mobile Card List View */}
+              <div className="block md:hidden divide-y divide-[#334155]/50">
                 {getFiltered().map(item => {
                   const days = item.applied && item.appliedAt ? daysSince(item.appliedAt) : null;
                   const isOverdue = days !== null && days >= 7 && !item.followUpSent;
 
                   return (
-                    <tr key={item.id}
-                      className={`border-b border-[#334155]/50 hover:bg-[#334155]/20 transition-all ${isOverdue ? 'bg-amber-500/5' : ''}`}>
-
-                      {/* Company / Job */}
-                      <td className="p-5">
-                        <div className="flex items-center gap-3">
-                          {isOverdue && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />}
-                          <div>
-                            {item.company && item.company !== 'Unknown' && (
-                              <p className="text-xs font-black text-indigo-400 mb-0.5">{item.company}</p>
-                            )}
-                            <p className="font-semibold text-white text-sm truncate max-w-[280px]">{item.job}</p>
-                          </div>
+                    <div key={item.id} className={`p-4 space-y-3 ${isOverdue ? 'bg-amber-500/5' : ''}`}>
+                      {/* Header: Company & Job */}
+                      <div className="flex items-start gap-2.5">
+                        {isOverdue && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0 mt-1.5" />}
+                        <div className="min-w-0 flex-1">
+                          {item.company && item.company !== 'Unknown' && (
+                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-wider mb-0.5">{item.company}</p>
+                          )}
+                          <p className="font-bold text-white text-sm truncate">{item.job}</p>
                         </div>
-                      </td>
-
-                      {/* Date */}
-                      <td className="p-5">
-                        <p className="text-xs text-slate-400">{item.date}</p>
-                        {days !== null && (
-                          <p className="text-[10px] text-slate-600 mt-0.5">
-                            {days === 0
-                              ? (dict?.historyToday || 'Today')
-                              : (dict?.historyDaysAgo || '{n} days ago').replace('{n}', String(days))}
-                          </p>
-                        )}
                         {item.lang && (
-                          <span className="text-[9px] font-bold text-slate-600 uppercase">{item.lang}</span>
+                          <span className="text-[9px] font-black text-slate-500 bg-[#0f172a]/60 px-1.5 py-0.5 rounded border border-white/5 uppercase shrink-0">
+                            {item.lang}
+                          </span>
                         )}
-                      </td>
+                      </div>
 
-                      {/* Follow-up status */}
-                      <td className="p-5">
-                        <FollowUpStatus
-                          item={item}
-                          isPro={isPro}
-                          onFollowUp={onFollowUp}
-                          setShowUpgrade={setShowUpgrade}
-                          dict={dict}
-                        />
-                      </td>
+                      {/* Date and Follow-up Row */}
+                      <div className="flex items-center justify-between gap-4 bg-[#0f172a]/20 p-2.5 rounded-xl border border-[#334155]/40">
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-500 uppercase block">Saved Date</span>
+                          <span className="text-xs text-slate-300 font-medium">{item.date}</span>
+                          {days !== null && (
+                            <span className="text-[10px] text-slate-500 ml-1.5">
+                              ({days === 0
+                                ? (dict?.historyToday || 'Today')
+                                : (dict?.historyDaysAgo || '{n} days ago').replace('{n}', String(days))})
+                            </span>
+                          )}
+                        </div>
 
-                      {/* Actions */}
-                      <td className="p-5">
-                        <div className="flex items-center justify-end gap-2">
+                        <div>
+                          <FollowUpStatus
+                            item={item}
+                            isPro={isPro}
+                            onFollowUp={onFollowUp}
+                            setShowUpgrade={setShowUpgrade}
+                            dict={dict}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="flex items-center justify-between pt-1">
+                        <button
+                          type="button"
+                          onClick={() => loadLetterFromHistory?.(item)}
+                          className="px-4 py-2 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                        >
+                          {dict?.loadLetter || 'Load'}
+                        </button>
+
+                        <div className="flex gap-2">
                           <button
-                            type="button"
-                            onClick={() => loadLetterFromHistory?.(item)}
-                            className="px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 rounded-lg text-xs font-bold transition-all"
+                            onClick={() => duplicateHistoryItem(item)}
+                            className="p-2 text-slate-400 hover:text-white bg-[#0f172a]/40 border border-[#334155]/50 rounded-xl transition-all"
                           >
-                            {dict?.loadLetter || 'Load'}
-                          </button>
-                          <button onClick={() => duplicateHistoryItem(item)} className="p-2 text-slate-500 hover:text-white rounded-lg transition-all">
                             <IconCopy />
                           </button>
-                          <button onClick={() => deleteHistoryItem(item.id)} className="p-2 text-slate-500 hover:text-red-400 rounded-lg transition-all">
+                          <button
+                            onClick={() => deleteHistoryItem(item.id)}
+                            className="p-2 text-slate-400 hover:text-red-400 bg-[#0f172a]/40 border border-[#334155]/50 rounded-xl transition-all"
+                          >
                             <IconTrash />
                           </button>
                         </div>
-                      </td>
-                    </tr>
+                      </div>
+                    </div>
                   );
                 })}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
       </div>

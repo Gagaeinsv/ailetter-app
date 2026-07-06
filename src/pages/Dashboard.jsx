@@ -23,15 +23,7 @@ import JobTrackerTab from '../components/dashboard/JobTrackerTab';
 import CVOptimizerTab from '../components/dashboard/CVOptimizerTab';
 
 // Mobile Components
-import MobileNav from '../components/dashboard/mobile/MobileNav';
-import MobileDashboardOverviewTab from '../components/dashboard/mobile/MobileDashboardOverviewTab';
-import MobileCoverLetterTab from '../components/dashboard/mobile/MobileCoverLetterTab';
-import MobileHistoryTab from '../components/dashboard/mobile/MobileHistoryTab';
-import MobileTemplatesTab from '../components/dashboard/mobile/MobileTemplatesTab';
-import MobileSettingsTab from '../components/dashboard/mobile/MobileSettingsTab';
-import MobileInterviewTab from '../components/dashboard/mobile/MobileInterviewTab';
-import MobileJobTrackerTab from '../components/dashboard/mobile/MobileJobTrackerTab';
-import MobileCVOptimizerTab from '../components/dashboard/mobile/MobileCVOptimizerTab';
+import MobileNav from '../components/dashboard/MobileNav';
 
 import { TEMPLATES } from '../constants/templates';
 import translations from '../locales/translations';
@@ -682,39 +674,31 @@ const Dashboard = () => {
         />
       )}
 
-      {isMobile ? (
-        <div className="fixed inset-0 flex flex-col h-[100dvh] bg-[#0f172a]">
-          <MobileNav {...props} />
-          <div className="flex-1 overflow-y-auto pt-14 pb-20 landscape:pb-4 landscape:pl-14 w-full scroll-smooth">
-            <div className="min-h-full">
-              {activeTab === 'dashboard' && <MobileDashboardOverviewTab {...props} />}
-              {activeTab === 'cover-letter' && <MobileCoverLetterTab {...props} />}
-              {activeTab === 'cv-optimizer' && <MobileCVOptimizerTab {...props} />}
-              {activeTab === 'history' && <MobileHistoryTab {...props} />}
-              {activeTab === 'templates' && <MobileTemplatesTab {...props} />}
-              {activeTab === 'interview' && <MobileInterviewTab {...props} />}
-              {activeTab === 'jobtracker' && <MobileJobTrackerTab {...props} />}
-              {activeTab === 'settings' && <MobileSettingsTab {...props} />}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="flex h-screen">
+      <div className="flex flex-col lg:flex-row h-[100dvh] lg:h-screen w-full overflow-hidden bg-[#0f172a]">
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:block w-64 shrink-0 h-full">
           <Sidebar {...props} />
-          <main className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-hidden relative">
-              {activeTab === 'dashboard' && <DashboardOverviewTab {...props} />}
-              {activeTab === 'cover-letter' && <CoverLetterTab {...props} />}
-              {activeTab === 'cv-optimizer' && <CVOptimizerTab {...props} />}
-              {activeTab === 'templates' && <TemplatesTab {...props} />}
-              {activeTab === 'interview' && <InterviewTab {...props} />}
-              {activeTab === 'history' && <HistoryTab {...props} />}
-              {activeTab === 'jobtracker' && <JobTrackerTab {...props} />}
-              {activeTab === 'settings' && <SettingsTab {...props} />}
-            </div>
-          </main>
         </div>
-      )}
+
+        {/* Mobile Navigation */}
+        <div className="lg:hidden">
+          <MobileNav {...props} />
+        </div>
+
+        {/* Main Content Area */}
+        <main className="flex-1 flex flex-col h-full overflow-hidden pt-14 pb-20 lg:pt-0 lg:pb-0 landscape:pb-4 landscape:pl-14 lg:landscape:pb-0 lg:landscape:pl-0">
+          <div className="flex-1 overflow-hidden relative min-h-0 w-full">
+            {activeTab === 'dashboard' && <DashboardOverviewTab {...props} />}
+            {activeTab === 'cover-letter' && <CoverLetterTab {...props} />}
+            {activeTab === 'cv-optimizer' && <CVOptimizerTab {...props} />}
+            {activeTab === 'templates' && <TemplatesTab {...props} />}
+            {activeTab === 'interview' && <InterviewTab {...props} />}
+            {activeTab === 'history' && <HistoryTab {...props} />}
+            {activeTab === 'jobtracker' && <JobTrackerTab {...props} />}
+            {activeTab === 'settings' && <SettingsTab {...props} />}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

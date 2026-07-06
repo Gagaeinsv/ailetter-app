@@ -52,6 +52,19 @@ const CoverLetterTab = (props) => {
   const [showVoiceModal, setShowVoiceModal] = useState(false);
   const typingRef = useRef(null);
 
+  const [mobileView, setMobileView] = useState('inputs'); // 'inputs' | 'preview'
+
+  useEffect(() => {
+    if (!props.mobileHistoryLoadNonce || !generatedLetter) return;
+    setMobileView('preview');
+  }, [props.mobileHistoryLoadNonce, generatedLetter]);
+
+  useEffect(() => {
+    if (generatedLetter && !loading) {
+      setMobileView('preview');
+    }
+  }, [generatedLetter, loading]);
+
   const handleVoiceParsed = (parsed) => {
     setContactInfo({ ...contactInfo, ...parsed });
   };
@@ -113,10 +126,32 @@ const CoverLetterTab = (props) => {
   };
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-[#0f172a]">
+    <div className="flex flex-col lg:flex-row h-full w-full overflow-hidden bg-[#0f172a]">
+
+      {/* Tab Switcher for Mobile */}
+      <div className="flex border-b border-[#1e293b] lg:hidden shrink-0 w-full bg-[#1e293b]/40">
+        <button
+          type="button"
+          onClick={() => setMobileView('inputs')}
+          className={`flex-1 py-3 text-xs font-black uppercase tracking-wider text-center transition-all ${
+            mobileView === 'inputs' ? 'border-b-2 border-indigo-500 text-indigo-400' : 'text-slate-400'
+          }`}
+        >
+          {dict.step1 || 'Edit Details'}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileView('preview')}
+          className={`flex-1 py-3 text-xs font-black uppercase tracking-wider text-center transition-all ${
+            mobileView === 'preview' ? 'border-b-2 border-indigo-500 text-indigo-400' : 'text-slate-400'
+          }`}
+        >
+          {dict.preview || 'Preview'}
+        </button>
+      </div>
 
       {/* ── LEFT COLUMN ── */}
-      <div className="w-[450px] flex-shrink-0 flex flex-col border-r border-[#1e293b] bg-[#0f172a] h-full overflow-hidden">
+      <div className={`w-full lg:w-[450px] flex-shrink-0 flex flex-col border-r border-[#1e293b] bg-[#0f172a] h-full overflow-hidden ${mobileView === 'inputs' ? 'flex' : 'hidden lg:flex'}`}>
         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
 
           <div>
@@ -248,7 +283,7 @@ const CoverLetterTab = (props) => {
       </div>
 
       {/* ── RIGHT COLUMN ── */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#0f172a] relative">
+      <div className={`flex-1 flex flex-col h-full overflow-hidden bg-[#0f172a] relative ${mobileView === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
 
         {/* Toolbar */}

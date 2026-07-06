@@ -41,9 +41,9 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
   };
 
   return (
-    <div className="h-full flex overflow-hidden">
-      {/* Vertical tabs */}
-      <div className="w-48 shrink-0 bg-[#1e293b] border-r border-[#334155] p-4 space-y-1">
+    <div className="h-full flex flex-col md:flex-row overflow-hidden bg-[#0f172a]">
+      {/* Vertical/Horizontal tabs */}
+      <div className="w-full md:w-48 shrink-0 bg-[#1e293b] border-b md:border-b-0 md:border-r border-[#334155] p-4 flex flex-row md:flex-col gap-2 md:gap-0 md:space-y-1 overflow-x-auto md:overflow-x-visible custom-scrollbar">
         {[
           { key: 'profile',     label: dict.tabProfile },
           { key: 'preferences', label: dict.tabPreferences },
@@ -53,7 +53,7 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
           <button
             key={t.key}
             onClick={() => setSettingsTab(t.key)}
-            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${settingsTab === t.key ? 'bg-[#6366f1] text-white shadow-md shadow-[#6366f1]/20' : 'text-[#64748b] hover:text-white hover:bg-[#334155]/50'}`}
+            className={`whitespace-nowrap text-center md:text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-all shrink-0 md:shrink ${settingsTab === t.key ? 'bg-[#6366f1] text-white shadow-md shadow-[#6366f1]/20' : 'text-[#64748b] hover:text-white hover:bg-[#334155]/50'}`}
           >
             {t.label}
           </button>
@@ -61,7 +61,7 @@ const SettingsTab = ({ dict, contactInfo, setContactInfo, uiLang, setUiLang, set
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-8" style={{ scrollbarWidth: 'thin', scrollbarColor: '#334155 transparent' }}>
+      <div className="flex-1 overflow-y-auto p-4 md:p-8" style={{ scrollbarWidth: 'thin', scrollbarColor: '#334155 transparent' }}>
         <div className="max-w-2xl space-y-8">
 
           {/* ── Profile ── */}

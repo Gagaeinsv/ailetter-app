@@ -39,7 +39,7 @@ const TemplatesTab = ({ selectedTemplate, setSelectedTemplate, setActiveTab, sho
   };
 
   return (
-    <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', padding: '40px', scrollbarWidth: 'thin', scrollbarColor: '#334155 transparent', background: '#0f172a' }}>
+    <div className="absolute inset-0 overflow-y-auto p-4 md:p-10 bg-[#0f172a] text-white custom-scrollbar">
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
         <div style={{ marginBottom: '36px' }}>
