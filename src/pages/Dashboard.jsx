@@ -79,6 +79,41 @@ const Dashboard = () => {
     }
   }, [cvAnalysis, user]);
 
+
+
+  // ── Follow-up State ──
+  const [followUpEntry, setFollowUpEntry]         = useState(null);
+  const [showFollowUpModal, setShowFollowUpModal] = useState(false);
+  const [followUpModalEntry, setFollowUpModalEntry] = useState(null);
+
+  // ── Letter State ──
+  const [contactInfo, setContactInfo] = useState({
+    fullName: '', profession: '', email: '', phone: '', location: '', linkedin: ''
+  });
+  const [jobDescription, setJobDescription] = useState('');
+  const [cvFile, setCvFile]           = useState(null);
+  const [fileName, setFileName]       = useState('');
+  const [settings, setSettings]       = useState({ language: 'Auto', tone: 'Professional', length: 'Standard' });
+  const [generatedLetter, setGeneratedLetter] = useState('');
+  const [currentLetterSavedId, setCurrentLetterSavedId] = useState(null); // ID збереженого запису
+  const [selectedTemplate, setSelectedTemplate] = useState('influx');
+  const [loading, setLoading]         = useState(false);
+  const [parsingCV, setParsingCV]     = useState(false);
+  const [editMode, setEditMode]       = useState(false);
+  const [editText, setEditText]       = useState('');
+
+  // ── History filters (desktop history tab) ──
+  const [historySearch, setHistorySearch] = useState('');
+  const [historyFilter, setHistoryFilter] = useState('all');
+  /** Incremented when loading a letter from history so mobile dashboard switches to the Result tab */
+  const [mobileHistoryLoadNonce, setMobileHistoryLoadNonce] = useState(0);
+  const skipNextGeneratedLetterSaveIdReset = useRef(false);
+
+  const documentRef = useRef();
+  const dict        = translations[uiLang] || translations.en;
+  const todayStr    = new Date().toLocaleDateString('uk-UA');
+  const placeholderText = 'Your letter will appear here...';
+
   // Load CV from cache when user changes
   useEffect(() => {
     const keyFile = `cv_file_${user?.uid || 'guest'}`;
@@ -120,39 +155,6 @@ const Dashboard = () => {
       console.warn('Failed to save CV to cache (usually quota exceeded):', e);
     }
   }, [cvFile, fileName, user]);
-
-  // ── Follow-up State ──
-  const [followUpEntry, setFollowUpEntry]         = useState(null);
-  const [showFollowUpModal, setShowFollowUpModal] = useState(false);
-  const [followUpModalEntry, setFollowUpModalEntry] = useState(null);
-
-  // ── Letter State ──
-  const [contactInfo, setContactInfo] = useState({
-    fullName: '', profession: '', email: '', phone: '', location: '', linkedin: ''
-  });
-  const [jobDescription, setJobDescription] = useState('');
-  const [cvFile, setCvFile]           = useState(null);
-  const [fileName, setFileName]       = useState('');
-  const [settings, setSettings]       = useState({ language: 'Auto', tone: 'Professional', length: 'Standard' });
-  const [generatedLetter, setGeneratedLetter] = useState('');
-  const [currentLetterSavedId, setCurrentLetterSavedId] = useState(null); // ID збереженого запису
-  const [selectedTemplate, setSelectedTemplate] = useState('influx');
-  const [loading, setLoading]         = useState(false);
-  const [parsingCV, setParsingCV]     = useState(false);
-  const [editMode, setEditMode]       = useState(false);
-  const [editText, setEditText]       = useState('');
-
-  // ── History filters (desktop history tab) ──
-  const [historySearch, setHistorySearch] = useState('');
-  const [historyFilter, setHistoryFilter] = useState('all');
-  /** Incremented when loading a letter from history so mobile dashboard switches to the Result tab */
-  const [mobileHistoryLoadNonce, setMobileHistoryLoadNonce] = useState(0);
-  const skipNextGeneratedLetterSaveIdReset = useRef(false);
-
-  const documentRef = useRef();
-  const dict        = translations[uiLang] || translations.en;
-  const todayStr    = new Date().toLocaleDateString('uk-UA');
-  const placeholderText = 'Your letter will appear here...';
 
   // ── Load synced profile ──
   useEffect(() => {
