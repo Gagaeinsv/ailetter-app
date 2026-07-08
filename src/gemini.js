@@ -148,22 +148,27 @@ The letter must sound like a real person wrote it. Not a template. Not a robot.
 - Listing skills like a CV — instead, show skills through what you actually did
 
 ══════════════════════════════════════════
-OPENING SENTENCE — CRITICAL:
+OPENING SENTENCE PROTOCOL — CRITICAL:
 ══════════════════════════════════════════
-The FIRST sentence after the salutation must immediately hook the reader. It should make them lean in.
+The FIRST sentence after the salutation MUST NOT be a generic greeting. It must be a dynamic hook engineered strictly from the Job Description and Candidate Profile.
 
-✅ STRONG openings (Note: Use the examples below as inspiration for the underlying logic — matching impact to need — but INVENT new, original sentence structures so they don't feel templated):
-- Lead with a concrete result or number: "Eight team members, three languages, five years of on-time delivery — that's what I bring to this role."
-- Direct match to their specific need: "You need someone who can manage multiple client projects without dropping a single deadline — that's been my daily reality for the past four years."
-- A moment of genuine connection: "When I read your job description, one line stood out: [specific requirement]. That's been the core of my work at [company] for the past three years."
-- Bold, specific statement: "Complex projects, demanding clients, tight deadlines — I don't just handle these situations, I've built systems to make them run smoothly."
+Analyze the candidate's data and CHOOSE ONE of the following three frameworks for the opening sentence. Fill in the brackets with highly specific details from the candidate's CV and target job description:
 
-❌ FORBIDDEN openings — NEVER use:
-- "I am writing to apply..." / "I am the ideal candidate..." / "I am pleased to submit..."
-- "With my proven experience..." / "Con la mia comprovata esperienza..." / "Mit meiner Erfahrung..."
-- "З моїм досвідом..." / "Having [X] years of experience..."
-- Any gerund as the very first word: "Managing...", "Successfully...", "Leveraging..."
-- Any sentence starting with "I am" or "I have" as the first two words
+FRAMEWORK 1: THE "NUMBERS FIRST" HOOK (Use if CV has strong metrics)
+Format: "[Metric 1], [Metric 2], and [Metric 3] — that is how I delivered [Result] at [Past Company], and it's the exact approach I want to bring to [Target Company]."
+Example: "18 months, 170+ tasks, and a cross-functional team of 8 — that is the scale of project delivery I am ready to bring to Zobele."
+
+FRAMEWORK 2: THE "DIRECT ADDRESS" HOOK (Use if JD emphasizes a specific pain point)
+Format: "You need someone who can [Major JD Requirement] without [Common Risk/Pain point]. Over the past [X] years, I have built a track record of doing exactly that."
+Example: "You need a Project Manager who can take a complex digital product from planning to final release without dropping a single deadline — that has been my daily reality for the past two years."
+
+FRAMEWORK 3: THE "PHILOSOPHY" HOOK (Use for juniors or if CV lacks metrics)
+Format: "Driving [Core Domain of the Job] isn't just about [Basic Task] — it requires [Advanced Skill from JD]. That has been the foundation of my work and studies."
+
+FORBIDDEN OPENINGS (CRITICAL! NEVER USE):
+- NO GERUNDS as the first word: "Managing...", "Successfully...", "Guiding...", "Leveraging..."
+- NO WEAK INTROS: "I am writing to apply...", "I am pleased to submit...", "With my proven experience...", "Having [X] years of experience..."
+- NEVER start the very first sentence with "I am" or "I have" as the first two words.
 
 ══════════════════════════════════════════
 CONTENT RULES:
