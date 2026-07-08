@@ -79,6 +79,48 @@ const Dashboard = () => {
     }
   }, [cvAnalysis, user]);
 
+  // Load CV from cache when user changes
+  useEffect(() => {
+    const keyFile = `cv_file_${user?.uid || 'guest'}`;
+    const keyName = `cv_filename_${user?.uid || 'guest'}`;
+    try {
+      const savedFile = localStorage.getItem(keyFile);
+      const savedName = localStorage.getItem(keyName);
+      if (savedFile) {
+        setCvFile(JSON.parse(savedFile));
+      } else {
+        setCvFile(null);
+      }
+      if (savedName) {
+        setFileName(savedName);
+      } else {
+        setFileName('');
+      }
+    } catch (e) {
+      console.warn('Failed to load CV from cache:', e);
+    }
+  }, [user]);
+
+  // Save CV to cache when it changes
+  useEffect(() => {
+    const keyFile = `cv_file_${user?.uid || 'guest'}`;
+    const keyName = `cv_filename_${user?.uid || 'guest'}`;
+    try {
+      if (cvFile) {
+        localStorage.setItem(keyFile, JSON.stringify(cvFile));
+      } else {
+        localStorage.removeItem(keyFile);
+      }
+      if (fileName) {
+        localStorage.setItem(keyName, fileName);
+      } else {
+        localStorage.removeItem(keyName);
+      }
+    } catch (e) {
+      console.warn('Failed to save CV to cache (usually quota exceeded):', e);
+    }
+  }, [cvFile, fileName, user]);
+
   // ── Follow-up State ──
   const [followUpEntry, setFollowUpEntry]         = useState(null);
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
