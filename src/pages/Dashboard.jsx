@@ -156,6 +156,75 @@ const Dashboard = () => {
     }
   }, [cvFile, fileName, user]);
 
+  // ── Saved CVs List State ──
+  const [savedCvs, setSavedCvs] = useState([]);
+
+  // Load saved CVs from cache when user changes
+  useEffect(() => {
+    const key = `saved_cvs_${user?.uid || 'guest'}`;
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        setSavedCvs(JSON.parse(saved));
+      } else {
+        setSavedCvs([]);
+      }
+    } catch (e) {
+      console.warn('Failed to load saved CVs:', e);
+    }
+  }, [user]);
+
+  // Save CVs list to cache when it changes
+  useEffect(() => {
+    if (!user) return;
+    const key = `saved_cvs_${user.uid || 'guest'}`;
+    try {
+      localStorage.setItem(key, JSON.stringify(savedCvs));
+    } catch (e) {
+      console.warn('Failed to save CVs list to cache:', e);
+    }
+  }, [savedCvs, user]);
+
+  const addSavedCv = (filePart, name, parsedData) => {
+    setSavedCvs((prev) => {
+      const filtered = prev.filter(c => c.fileName !== name);
+      return [
+        ...filtered,
+        {
+          id: Date.now().toString(),
+          fileName: name,
+          cvFile: filePart,
+          parsedData: parsedData || {}
+        }
+      ];
+    });
+  };
+
+  const handleSelectSavedCv = (cv) => {
+    setCvFile(cv.cvFile);
+    setFileName(cv.fileName);
+    if (cv.parsedData) {
+      const updated = { ...contactInfo, ...cv.parsedData };
+      setContactInfo(updated);
+      setProfile(updated);
+    }
+    showNotification(`Active CV: ${cv.fileName}`);
+  };
+
+  const handleDeleteSavedCv = (id) => {
+    if (!window.confirm('Delete this saved resume?')) return;
+    setSavedCvs((prev) => {
+      const next = prev.filter(c => c.id !== id);
+      const deletedCv = prev.find(c => c.id === id);
+      if (deletedCv && deletedCv.fileName === fileName) {
+        setCvFile(null);
+        setFileName('');
+      }
+      return next;
+    });
+    showNotification('Resume deleted from cache');
+  };
+
   // ── Load synced profile ──
   useEffect(() => {
     if (profile) {
@@ -225,9 +294,13 @@ const Dashboard = () => {
     if (!file) return;
     setFileName(file.name);
     const reader = new FileReader();
-    reader.onloadend = () => setCvFile({
-      inlineData: { data: reader.result.split(',')[1], mimeType: file.type }
-    });
+    reader.onloadend = () => {
+      const cvData = {
+        inlineData: { data: reader.result.split(',')[1], mimeType: file.type }
+      };
+      setCvFile(cvData);
+      addSavedCv(cvData, file.name, contactInfo);
+    };
     reader.readAsDataURL(file);
     showNotification('CV uploaded ✓');
   };
@@ -240,6 +313,12 @@ const Dashboard = () => {
       const updated = { ...contactInfo, ...data };
       setContactInfo(updated);
       setProfile(updated);
+      setSavedCvs((prev) => prev.map(c => {
+        if (c.fileName === fileName) {
+          return { ...c, parsedData: data };
+        }
+        return c;
+      }));
       showNotification('Auto-filled ✓');
     } catch (e) {
       alert('AI Error: Could not parse CV');
@@ -655,6 +734,7 @@ const Dashboard = () => {
     trackerEditJob, setTrackerEditJob,
     trackerAddDate, setTrackerAddDate,
     followUpEntry,
+    savedCvs, addSavedCv, handleSelectSavedCv, handleDeleteSavedCv,
   };
 
   return (

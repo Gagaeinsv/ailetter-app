@@ -49,6 +49,7 @@ export default function CVOptimizerTab({
 
       if (props.setFileName) props.setFileName(file.name);
       if (props.setCvFile) props.setCvFile(cvFilePart);
+      if (props.addSavedCv) props.addSavedCv(cvFilePart, file.name, parsedData);
       
       const updatedProfile = { ...contactInfo, ...parsedData };
       if (props.setContactInfo) props.setContactInfo(updatedProfile);
@@ -239,6 +240,54 @@ export default function CVOptimizerTab({
           </div>
         )}
       </div>
+
+      {props.savedCvs && props.savedCvs.length > 0 && (
+        <div className="bg-[#1e293b]/70 p-4 rounded-2xl border border-[#334155]/50 flex flex-wrap items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-2">
+            <FileText className="text-[#6366f1] w-4 h-4" />
+            <span className="text-xs font-bold text-slate-300">{dict.activeCv || 'Active Resume:'}</span>
+            {props.fileName ? (
+              <span className="text-xs font-black bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 truncate max-w-[200px]">
+                {props.fileName}
+              </span>
+            ) : (
+              <span className="text-xs font-bold text-rose-400">None</span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <select
+              value={props.savedCvs.find(c => c.fileName === props.fileName)?.id || ''}
+              onChange={(e) => {
+                const selected = props.savedCvs.find(c => c.id === e.target.value);
+                if (selected && props.handleSelectSavedCv) {
+                  props.handleSelectSavedCv(selected);
+                }
+              }}
+              className="text-xs font-bold bg-[#0f172a] border border-[#334155] rounded-xl px-3 py-2 text-white outline-none cursor-pointer hover:border-indigo-500 transition-colors"
+            >
+              <option value="" disabled>-- Switch Resume --</option>
+              {props.savedCvs.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.fileName}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => {
+                const currentId = props.savedCvs.find(c => c.fileName === props.fileName)?.id;
+                if (currentId && props.handleDeleteSavedCv) {
+                  props.handleDeleteSavedCv(currentId);
+                }
+              }}
+              disabled={!props.fileName}
+              className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold transition-all disabled:opacity-40"
+              title="Delete saved resume"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Warnings & Setup */}
       {(!hasCv || !hasJd) && (

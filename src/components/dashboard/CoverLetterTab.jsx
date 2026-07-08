@@ -42,6 +42,9 @@ const CoverLetterTab = (props) => {
     uiLang, setUiLang,
     user,
     handleIntegrateKeyword,
+    savedCvs = [],
+    handleSelectSavedCv,
+    handleDeleteSavedCv,
   } = props;
 
   const [showLinkedIn, setShowLinkedIn] = useState(false);
@@ -164,6 +167,43 @@ const CoverLetterTab = (props) => {
 
           {/* CV Upload */}
           <div className="bg-[#1e293b] p-5 rounded-2xl border border-[#334155]/50 hover:border-indigo-500/30 transition-colors group">
+            {savedCvs && savedCvs.length > 0 && (
+              <div className="mb-4 space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-wider text-[#6366f1]">{dict.selectSavedCv || 'Select Saved Resume:'}</label>
+                <div className="flex gap-2">
+                  <select
+                    value={savedCvs.find(c => c.fileName === fileName)?.id || ''}
+                    onChange={(e) => {
+                      const selected = savedCvs.find(c => c.id === e.target.value);
+                      if (selected && handleSelectSavedCv) {
+                        handleSelectSavedCv(selected);
+                      }
+                    }}
+                    className="flex-1 text-xs font-bold bg-[#0f172a] border border-[#334155] rounded-xl px-3 py-2.5 text-white outline-none cursor-pointer hover:border-indigo-500 transition-colors"
+                  >
+                    <option value="" disabled>-- Choose Resume --</option>
+                    {savedCvs.map(c => (
+                      <option key={c.id} value={c.id}>
+                        {c.fileName}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => {
+                      const currentId = savedCvs.find(c => c.fileName === fileName)?.id;
+                      if (currentId && handleDeleteSavedCv) {
+                        handleDeleteSavedCv(currentId);
+                      }
+                    }}
+                    disabled={!fileName}
+                    className="px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold transition-all disabled:opacity-40"
+                    title="Delete saved resume"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="flex justify-between items-center mb-3">
               <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-400 transition-colors">{dict.cvSection || 'RESUME / CV'}</label>
               {fileName && <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 truncate max-w-[120px]">{fileName}</span>}
