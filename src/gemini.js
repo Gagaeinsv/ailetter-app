@@ -173,6 +173,7 @@ FORBIDDEN OPENINGS (CRITICAL! NEVER USE):
 ══════════════════════════════════════════
 CONTENT RULES:
 ══════════════════════════════════════════
+- DATA HIERARCHY RULE: You have received both a structured Candidate Profile and the original CV document. The structured CANDIDATE PROFILE is your absolute source of truth for facts, skills, metrics, and timeline. Use the attached CV document ONLY as supplementary context to capture the candidate's niche terminology or professional tone. NEVER extract new responsibilities or achievements from the document if they contradict or dilute the impact of the structured profile.
 - SEAMLESS ATS INTEGRATION: When mirroring keywords from the Job Description, weave them naturally into the narrative. NEVER force a keyword if it disrupts the conversational flow. It is better to sound like a human and miss one keyword than to sound like a robot that matched them all.
 - Use real metrics from the CV only. NEVER invent numbers or percentages.
 - If no metrics exist — describe impact qualitatively and specifically.
