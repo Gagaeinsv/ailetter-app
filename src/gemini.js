@@ -134,10 +134,11 @@ VOICE & TONE — THE MOST IMPORTANT SECTION:
 The letter must sound like a real person wrote it. Not a template. Not a robot.
 
 ✅ WHAT THIS MEANS:
+- The "Bridge" Technique: Don't just state a skill. Build a bridge between the candidate's past action and the company's future need (e.g., "I noticed your team is migrating to a new CRM. Over the last year, I led a similar migration for 50+ users...").
+- Conversational Cadence: Read the text out loud in your head. Does it sound like something a confident professional would say over coffee? Use phrasing like: "Here’s how I can help," "What interests me most about this role is...", "In my previous project, we faced a similar challenge."
 - Vary sentence length. Mix short punchy sentences with longer ones.
-- Use natural transitions: "That's exactly why...", "What drew me to this role...", "Over the past three years...", "The reason I'm reaching out..."
 - Show genuine curiosity about the company or role — reference something specific from the job description.
-- Let the candidate's personality come through. Confident but not arrogant. Direct but not cold.
+- Show Vulnerability/Authenticity: It's okay to sound intensely focused on one specific aspect of the job rather than trying to be perfect at everything. Let the candidate's personality come through. Confident but not arrogant. Direct but not cold.
 - One moment of genuine connection: a line that shows the candidate actually read the job description and thought about why they want THIS role at THIS company.
 
 ❌ WHAT TO AVOID:
@@ -151,7 +152,7 @@ OPENING SENTENCE — CRITICAL:
 ══════════════════════════════════════════
 The FIRST sentence after the salutation must immediately hook the reader. It should make them lean in.
 
-✅ STRONG openings:
+✅ STRONG openings (Note: Use the examples below as inspiration for the underlying logic — matching impact to need — but INVENT new, original sentence structures so they don't feel templated):
 - Lead with a concrete result or number: "Eight team members, three languages, five years of on-time delivery — that's what I bring to this role."
 - Direct match to their specific need: "You need someone who can manage multiple client projects without dropping a single deadline — that's been my daily reality for the past four years."
 - A moment of genuine connection: "When I read your job description, one line stood out: [specific requirement]. That's been the core of my work at [company] for the past three years."
@@ -167,7 +168,7 @@ The FIRST sentence after the salutation must immediately hook the reader. It sho
 ══════════════════════════════════════════
 CONTENT RULES:
 ══════════════════════════════════════════
-- Mirror EXACT keywords from the Job Description naturally (ATS optimization).
+- SEAMLESS ATS INTEGRATION: When mirroring keywords from the Job Description, weave them naturally into the narrative. NEVER force a keyword if it disrupts the conversational flow. It is better to sound like a human and miss one keyword than to sound like a robot that matched them all.
 - Use real metrics from the CV only. NEVER invent numbers or percentages.
 - If no metrics exist — describe impact qualitatively and specifically.
 - Do NOT invent degrees, companies, tools, or certifications not in the CV.
@@ -189,7 +190,7 @@ STRUCTURE:
 - Salutation
 - Opening paragraph: Strong hook + immediate connection to the role
 - Body (1-2 paragraphs): 3-5 key JD requirements matched with real experience + specific achievements
-- Closing: Genuine motivation for THIS company/role + clear call to action for interview
+- Closing: Find ONE hyper-specific detail from the job description (a tool they use, a project they are building, a specific market challenge) and connect it to the candidate's intrinsic motivation. Avoid generic praise like "innovative company" or "industry leader". End with a clear call to action for an interview.
 - NO sign-off, NO "Sincerely,", NO name — the template adds these automatically
 
 ══════════════════════════════════════════
@@ -197,6 +198,7 @@ LENGTH & FORMAT:
 ══════════════════════════════════════════
 - Approximately ${wordLimit} words. Concise and punchy.
 - Tone: ${tone || "Professional, Confident, and Direct"}.
+- PARAGRAPH PACING: Keep paragraphs short (maximum 3-4 sentences). Use single-sentence paragraphs occasionally to emphasize a key point or transition. This creates breathing room and mimics natural human writing.
 - Plain text only. No markdown, no bullets, no headers, no asterisks.
 - Blank line between paragraphs.
 - No subject line, no meta-text, no explanations before or after the letter.
