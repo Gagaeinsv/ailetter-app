@@ -24,44 +24,57 @@ export default function CVMakerTab({
   handleSelectSavedCv,
   handleDeleteSavedCv,
   fileName,
-  uiLang = 'en'
+  uiLang = 'en',
+  setUiLang
 }) {
   const labels = {
     en: {
+      personal: 'Personal',
       experience: 'Work Experience',
       education: 'Education',
       skills: 'Skills',
       languages: 'Languages',
       certifications: 'Certifications',
       summary: 'Summary',
-      contact: 'Contact'
+      contact: 'Contact',
+      more: 'More',
+      personalDetails: 'Personal Details'
     },
     uk: {
+      personal: 'Профіль',
       experience: 'Досвід роботи',
       education: 'Освіта',
       skills: 'Навички',
       languages: 'Мови',
       certifications: 'Сертифікати',
       summary: 'Про себе',
-      contact: 'Контакти'
+      contact: 'Контакти',
+      more: 'Додатково',
+      personalDetails: 'Особисті дані'
     },
     de: {
+      personal: 'Persönlich',
       experience: 'Berufserfahrung',
       education: 'Ausbildung',
       skills: 'Fähigkeiten',
       languages: 'Sprachen',
       certifications: 'Zertifikate',
       summary: 'Zusammenfassung',
-      contact: 'Kontakt'
+      contact: 'Kontakt',
+      more: 'Mehr',
+      personalDetails: 'Persönliche Daten'
     },
     it: {
+      personal: 'Personale',
       experience: 'Esperienza',
       education: 'Istruzione',
       skills: 'Competenze',
       languages: 'Lingue',
       certifications: 'Certificazioni',
       summary: 'Riepilogo',
-      contact: 'Contatti'
+      contact: 'Contatti',
+      more: 'Altro',
+      personalDetails: 'Dati Personali'
     }
   };
 
@@ -420,6 +433,24 @@ export default function CVMakerTab({
             </p>
           </div>
           <div className="flex items-center gap-3">
+            {/* CV Language Switcher */}
+            <div className="flex gap-0.5 bg-[#1e293b] rounded-lg p-0.5 border border-[#334155] mr-2">
+              {['EN', 'UK', 'DE', 'IT'].map((lang) => (
+                <button 
+                  key={lang} 
+                  onClick={() => setUiLang && setUiLang(lang.toLowerCase())}
+                  className={`px-2 py-1 rounded-md text-[9px] font-black uppercase transition-all ${
+                    uiLang === lang.toLowerCase() 
+                      ? 'bg-[#6366f1] text-white' 
+                      : 'text-[#475569] hover:text-white'
+                  }`}
+                  title={`Switch Resume language to ${lang}`}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
+
             <button
               onClick={handleSave}
               className="px-4 py-2.5 bg-[#1e293b] hover:bg-slate-800 border border-[#334155] rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
@@ -499,11 +530,11 @@ export default function CVMakerTab({
             {/* Section selector tabs */}
             <div className="flex flex-wrap gap-1 bg-[#1e293b] p-1 rounded-xl">
               {[
-                { id: 'personal', label: 'Personal', icon: User },
-                { id: 'experience', label: 'Experience', icon: Briefcase },
-                { id: 'skills', label: 'Skills', icon: Award },
-                { id: 'education', label: 'Education', icon: GraduationCap },
-                { id: 'misc', label: 'More', icon: Globe }
+                { id: 'personal', label: t.personal || 'Personal', icon: User },
+                { id: 'experience', label: t.experience || 'Experience', icon: Briefcase },
+                { id: 'skills', label: t.skills || 'Skills', icon: Award },
+                { id: 'education', label: t.education || 'Education', icon: GraduationCap },
+                { id: 'misc', label: t.more || 'More', icon: Globe }
               ].map(s => {
                 const Icon = s.icon;
                 return (
@@ -526,7 +557,7 @@ export default function CVMakerTab({
             {/* TAB CONTENT: PERSONAL */}
             {activeSection === 'personal' && (
               <div className="bg-[#1e293b]/50 border border-[#334155]/50 p-6 rounded-2xl space-y-4">
-                <h3 className="text-sm font-black uppercase tracking-wider text-indigo-400 mb-2">Personal Details</h3>
+                <h3 className="text-sm font-black uppercase tracking-wider text-indigo-400 mb-2">{t.personalDetails || 'Personal Details'}</h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -608,7 +639,7 @@ export default function CVMakerTab({
             {activeSection === 'experience' && (
               <div className="bg-[#1e293b]/50 border border-[#334155]/50 p-6 rounded-2xl space-y-6">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-sm font-black uppercase tracking-wider text-indigo-400">Work Experience</h3>
+                  <h3 className="text-sm font-black uppercase tracking-wider text-indigo-400">{t.experience || 'Work Experience'}</h3>
                   <button
                     onClick={handleAddExperience}
                     className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold uppercase flex items-center gap-1 transition-all"
@@ -778,7 +809,7 @@ export default function CVMakerTab({
             {/* TAB CONTENT: EDUCATION */}
             {activeSection === 'education' && (
               <div className="bg-[#1e293b]/50 border border-[#334155]/50 p-6 rounded-2xl space-y-4">
-                <h3 className="text-sm font-black uppercase tracking-wider text-indigo-400">Education Details</h3>
+                 <h3 className="text-sm font-black uppercase tracking-wider text-indigo-400">{t.education || 'Education'}</h3>
                 
                 <div>
                   <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Degree, Institution, Dates</label>
