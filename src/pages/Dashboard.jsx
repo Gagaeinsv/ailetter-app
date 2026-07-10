@@ -3,6 +3,11 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { generateLetter, parseCV, extractCompanyName, integrateKeyword } from '../gemini';
 import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas-pro';
+
+if (typeof window !== 'undefined') {
+  window.html2canvas = html2canvas;
+}
 import { usePlan } from '../hooks/usePlan';
 import { useHistory } from '../hooks/useHistory';
 import { useJobTracker } from '../hooks/useJobTracker';

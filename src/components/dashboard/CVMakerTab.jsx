@@ -6,6 +6,11 @@ import {
 } from 'lucide-react';
 import { enhanceAchievement } from '../../gemini';
 import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas-pro';
+
+if (typeof window !== 'undefined') {
+  window.html2canvas = html2canvas;
+}
 
 export default function CVMakerTab({
   contactInfo,
