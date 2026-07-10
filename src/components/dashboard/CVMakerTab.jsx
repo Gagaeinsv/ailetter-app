@@ -373,12 +373,50 @@ export default function CVMakerTab({
 
     try {
       const element = previewRef.current;
+      
+      // Dynamic page breaks insertion to avoid splitting elements
+      const pageHeightPx = 1120;
+      const targets = element.querySelectorAll('.cv-avoid-break');
+      const insertedSpacers = [];
+      
+      for (let i = 0; i < targets.length; i++) {
+        const targetEl = targets[i];
+        const containerRect = element.getBoundingClientRect();
+        const targetRect = targetEl.getBoundingClientRect();
+        
+        const top = targetRect.top - containerRect.top;
+        const bottom = targetRect.bottom - containerRect.top;
+        
+        const startPage = Math.floor(top / pageHeightPx);
+        const endPage = Math.floor(bottom / pageHeightPx);
+        
+        if (startPage !== endPage) {
+          const remainingSpace = pageHeightPx - (top % pageHeightPx);
+          
+          const spacer = document.createElement('div');
+          spacer.style.height = `${remainingSpace}px`;
+          spacer.style.width = '100%';
+          spacer.style.backgroundColor = 'transparent';
+          
+          targetEl.parentNode.insertBefore(spacer, targetEl);
+          insertedSpacers.push(spacer);
+        }
+      }
+      
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff',
         logging: false
       });
+      
+      // Clean up temporary spacers
+      insertedSpacers.forEach(spacer => {
+        if (spacer.parentNode) {
+          spacer.parentNode.removeChild(spacer);
+        }
+      });
+      
       const imgData = canvas.toDataURL('image/jpeg', 0.98);
       
       const { jsPDF } = await import('jspdf');
@@ -1019,7 +1057,7 @@ export default function CVMakerTab({
                             <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.experience}</h4>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
                               {cvData.experience.map((exp, idx) => (
-                                <div key={idx} className="space-y-1.5">
+                                <div key={idx} className="cv-avoid-break space-y-1.5">
                                   <div className="flex justify-between items-baseline">
                                     <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-black text-slate-900">{exp.title}</h5>
                                     <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500 whitespace-nowrap">{exp.duration}</span>
@@ -1042,7 +1080,7 @@ export default function CVMakerTab({
 
                         {/* Education */}
                         {cvData.education && (
-                          <div className="space-y-2">
+                          <div className="cv-avoid-break space-y-2">
                             <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.education}</h4>
                             <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed whitespace-pre-line font-medium">{cvData.education}</p>
                           </div>
@@ -1055,7 +1093,7 @@ export default function CVMakerTab({
                         
                         {/* Skills */}
                         {cvData.skills.length > 0 && (
-                          <div className="space-y-2">
+                          <div className="cv-avoid-break space-y-2">
                             <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.skills}</h4>
                             <div className="flex flex-wrap gap-1.5">
                               {cvData.skills.map((skill, idx) => (
@@ -1069,7 +1107,7 @@ export default function CVMakerTab({
 
                         {/* Languages */}
                         {cvData.languages.length > 0 && (
-                          <div className="space-y-2">
+                          <div className="cv-avoid-break space-y-2">
                             <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.languages}</h4>
                             <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
                               {cvData.languages.map((l, idx) => (
@@ -1085,7 +1123,7 @@ export default function CVMakerTab({
                             <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.certifications}</h4>
                             <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
                               {cvData.certifications.map((c, idx) => (
-                                <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="font-bold text-slate-600 leading-relaxed">• {c}</li>
+                                <li key={idx} className="cv-avoid-break font-bold text-slate-600 leading-relaxed">• {c}</li>
                               ))}
                             </ul>
                           </div>
@@ -1125,7 +1163,7 @@ export default function CVMakerTab({
                         <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.experience}</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
                           {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="space-y-1">
+                            <div key={idx} className="cv-avoid-break space-y-1">
                               <div className="flex justify-between items-baseline">
                                 <span style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-slate-900">{exp.title} | <span className="font-medium italic">{exp.company}</span></span>
                                 <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500">{exp.duration}</span>
@@ -1147,7 +1185,7 @@ export default function CVMakerTab({
 
                     {/* Education */}
                     {cvData.education && (
-                      <div className="space-y-1 text-left">
+                      <div className="cv-avoid-break space-y-1 text-left">
                         <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.education}</h4>
                         <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed whitespace-pre-line">{cvData.education}</p>
                       </div>
@@ -1155,7 +1193,7 @@ export default function CVMakerTab({
 
                     {/* Skills Grid */}
                     {cvData.skills.length > 0 && (
-                      <div className="space-y-1 text-left">
+                      <div className="cv-avoid-break space-y-1 text-left">
                         <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.skills}</h4>
                         <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed">
                           {cvData.skills.join(' • ')}
@@ -1167,13 +1205,13 @@ export default function CVMakerTab({
                     {(cvData.languages.length > 0 || cvData.certifications.length > 0) && (
                       <div className="grid grid-cols-2 gap-6 text-left pt-1" style={{ gap: 'var(--cv-section-gap)' }}>
                         {cvData.languages.length > 0 && (
-                          <div className="space-y-1">
+                          <div className="cv-avoid-break space-y-1">
                             <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.languages}</h4>
                             <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700">{cvData.languages.join(', ')}</p>
                           </div>
                         )}
                         {cvData.certifications.length > 0 && (
-                          <div className="space-y-1">
+                          <div className="cv-avoid-break space-y-1">
                             <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.certifications}</h4>
                             <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed">{cvData.certifications.join(', ')}</p>
                           </div>
@@ -1215,7 +1253,7 @@ export default function CVMakerTab({
                         <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-955 border-b border-slate-200 pb-0.5">{t.experience}</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
                           {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="space-y-1">
+                            <div key={idx} className="cv-avoid-break space-y-1">
                               <div className="flex justify-between items-baseline">
                                 <span style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-black text-slate-900">{exp.title}</span>
                                 <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-extrabold text-slate-400 uppercase tracking-wider">{exp.duration}</span>
@@ -1238,7 +1276,7 @@ export default function CVMakerTab({
 
                     {/* Skills */}
                     {cvData.skills.length > 0 && (
-                      <div className="space-y-1.5">
+                      <div className="cv-avoid-break space-y-1.5">
                         <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-955 border-b border-slate-200 pb-0.5">{t.skills}</h4>
                         <div className="flex flex-wrap gap-x-3 gap-y-1">
                           {cvData.skills.map((skill, idx) => (
@@ -1254,7 +1292,7 @@ export default function CVMakerTab({
                     <div className="grid grid-cols-3 gap-6 pt-1 border-t border-slate-100" style={{ gap: 'var(--cv-section-gap)' }}>
                       {/* Education */}
                       {cvData.education && (
-                        <div className="col-span-1 space-y-1">
+                        <div className="cv-avoid-break col-span-1 space-y-1">
                           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-950">{t.education}</h4>
                           <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed whitespace-pre-line font-medium">{cvData.education}</p>
                         </div>
@@ -1262,8 +1300,8 @@ export default function CVMakerTab({
                       
                       {/* Languages */}
                       {cvData.languages.length > 0 && (
-                        <div className="col-span-1 space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-950">{t.languages}</h4>
+                        <div className="cv-avoid-break col-span-1 space-y-1">
+                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-955">{t.languages}</h4>
                           <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
                             {cvData.languages.map((l, idx) => (
                               <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="font-bold text-slate-600">• {l}</li>
@@ -1274,7 +1312,7 @@ export default function CVMakerTab({
 
                       {/* Certs */}
                       {cvData.certifications.length > 0 && (
-                        <div className="col-span-1 space-y-1">
+                        <div className="cv-avoid-break col-span-1 space-y-1">
                           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-955">{t.certifications}</h4>
                           <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
                             {cvData.certifications.map((c, idx) => (
