@@ -253,12 +253,14 @@ export default function CVMakerTab({
     setPdfGenerating(true);
     showNotification('Preparing PDF for download...');
 
+    const safeName = (cvData.fullName || '').trim().replace(/\s+/g, '_') || 'CV';
+
     const opt = {
-      margin:       [0.2, 0.2, 0.2, 0.2],
-      filename:     `Resume_${cvData.fullName.replace(/\s+/g, '_') || 'CV'}.pdf`,
+      margin:       0,
+      filename:     `Resume_${safeName}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2.5, useCORS: true, letterRendering: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     html2pdf()
@@ -270,7 +272,7 @@ export default function CVMakerTab({
         showNotification('PDF downloaded successfully! ✓');
       })
       .catch((err) => {
-        console.error(err);
+        console.error("PDF generation error:", err);
         setPdfGenerating(false);
         alert('Failed to generate PDF');
       });
