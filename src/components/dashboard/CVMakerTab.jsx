@@ -375,17 +375,25 @@ export default function CVMakerTab({
       const element = previewRef.current;
       
       // Dynamic page breaks insertion to avoid splitting elements
-      const pageHeightPx = 1120;
+      const elementWidth = element.offsetWidth || 794;
+      const pageHeightPx = Math.floor(elementWidth * 1.414); // Exact A4 aspect ratio height in layout pixels
       const targets = element.querySelectorAll('.cv-avoid-break');
       const insertedSpacers = [];
       
+      const getAbsoluteOffsetTop = (el, container) => {
+        let top = 0;
+        let current = el;
+        while (current && current !== container) {
+          top += current.offsetTop || 0;
+          current = current.offsetParent;
+        }
+        return top;
+      };
+      
       for (let i = 0; i < targets.length; i++) {
         const targetEl = targets[i];
-        const containerRect = element.getBoundingClientRect();
-        const targetRect = targetEl.getBoundingClientRect();
-        
-        const top = targetRect.top - containerRect.top;
-        const bottom = targetRect.bottom - containerRect.top;
+        const top = getAbsoluteOffsetTop(targetEl, element);
+        const bottom = top + targetEl.offsetHeight;
         
         const startPage = Math.floor(top / pageHeightPx);
         const endPage = Math.floor(bottom / pageHeightPx);
@@ -393,10 +401,16 @@ export default function CVMakerTab({
         if (startPage !== endPage) {
           const remainingSpace = pageHeightPx - (top % pageHeightPx);
           
-          const spacer = document.createElement('div');
+          const isListItem = targetEl.tagName.toLowerCase() === 'li';
+          const spacer = document.createElement(isListItem ? 'li' : 'div');
           spacer.style.height = `${remainingSpace}px`;
           spacer.style.width = '100%';
+          spacer.style.display = 'block';
+          spacer.style.clear = 'both';
+          spacer.style.overflow = 'hidden';
+          spacer.style.listStyleType = 'none';
           spacer.style.backgroundColor = 'transparent';
+          spacer.className = 'temp-pdf-spacer';
           
           targetEl.parentNode.insertBefore(spacer, targetEl);
           insertedSpacers.push(spacer);
@@ -1066,7 +1080,7 @@ export default function CVMakerTab({
                                   <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
                                     {exp.achievements.map((ach, aIdx) => (
                                       ach.trim() && (
-                                        <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-medium">
+                                        <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-600 leading-relaxed font-medium">
                                           {ach}
                                         </li>
                                       )
@@ -1171,7 +1185,7 @@ export default function CVMakerTab({
                               <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
                                 {exp.achievements.map((ach, aIdx) => (
                                   ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed">
+                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-700 leading-relaxed">
                                       {ach}
                                     </li>
                                   )
@@ -1262,7 +1276,7 @@ export default function CVMakerTab({
                               <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
                                 {exp.achievements.map((ach, aIdx) => (
                                   ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-medium">
+                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-600 leading-relaxed font-medium">
                                       {ach}
                                     </li>
                                   )
