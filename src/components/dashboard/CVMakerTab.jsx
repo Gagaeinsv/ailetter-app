@@ -14,7 +14,11 @@ export default function CVMakerTab({
   dict,
   showNotification,
   isPro,
-  setShowUpgrade
+  setShowUpgrade,
+  savedCvs = [],
+  handleSelectSavedCv,
+  handleDeleteSavedCv,
+  fileName
 }) {
   // --- Local states copy for active editing ---
   const [cvData, setCvData] = useState({
@@ -309,6 +313,54 @@ export default function CVMakerTab({
             </button>
           </div>
         </div>
+
+        {savedCvs && savedCvs.length > 0 && (
+          <div className="bg-[#1e293b]/70 p-4 rounded-2xl border border-[#334155]/50 flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-2">
+              <FileText className="text-[#6366f1] w-4 h-4" />
+              <span className="text-xs font-bold text-slate-300">{dict?.activeCv || 'Active Resume:'}</span>
+              {fileName ? (
+                <span className="text-xs font-black bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 truncate max-w-[200px]">
+                  {fileName}
+                </span>
+              ) : (
+                <span className="text-xs font-bold text-rose-400">None</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <select
+                value={savedCvs.find(c => c.fileName === fileName)?.id || ''}
+                onChange={(e) => {
+                  const selected = savedCvs.find(c => c.id === e.target.value);
+                  if (selected && handleSelectSavedCv) {
+                    handleSelectSavedCv(selected);
+                  }
+                }}
+                className="text-xs font-bold bg-[#0f172a] border border-[#334155] rounded-xl px-3 py-2 text-white outline-none cursor-pointer hover:border-indigo-500 transition-colors"
+              >
+                <option value="" disabled>-- Switch Resume --</option>
+                {savedCvs.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.fileName}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={() => {
+                  const currentId = savedCvs.find(c => c.fileName === fileName)?.id;
+                  if (currentId && handleDeleteSavedCv) {
+                    handleDeleteSavedCv(currentId);
+                  }
+                }}
+                disabled={!fileName}
+                className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold transition-all disabled:opacity-40"
+                title="Delete saved resume"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Dual Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
