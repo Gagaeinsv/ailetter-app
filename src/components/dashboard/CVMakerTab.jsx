@@ -18,8 +18,50 @@ export default function CVMakerTab({
   savedCvs = [],
   handleSelectSavedCv,
   handleDeleteSavedCv,
-  fileName
+  fileName,
+  uiLang = 'en'
 }) {
+  const labels = {
+    en: {
+      experience: 'Work Experience',
+      education: 'Education',
+      skills: 'Skills',
+      languages: 'Languages',
+      certifications: 'Certifications',
+      summary: 'Summary',
+      contact: 'Contact'
+    },
+    uk: {
+      experience: 'Досвід роботи',
+      education: 'Освіта',
+      skills: 'Навички',
+      languages: 'Мови',
+      certifications: 'Сертифікати',
+      summary: 'Про себе',
+      contact: 'Контакти'
+    },
+    de: {
+      experience: 'Berufserfahrung',
+      education: 'Ausbildung',
+      skills: 'Fähigkeiten',
+      languages: 'Sprachen',
+      certifications: 'Zertifikate',
+      summary: 'Zusammenfassung',
+      contact: 'Kontakt'
+    },
+    it: {
+      experience: 'Esperienza',
+      education: 'Istruzione',
+      skills: 'Competenze',
+      languages: 'Lingue',
+      certifications: 'Certificazioni',
+      summary: 'Riepilogo',
+      contact: 'Contatti'
+    }
+  };
+
+  const t = labels[uiLang] || labels.en;
+
   // --- Local states copy for active editing ---
   const [cvData, setCvData] = useState({
     fullName: '',
@@ -799,7 +841,7 @@ export default function CVMakerTab({
                     {/* Summary */}
                     {cvData.summary && (
                       <div className="space-y-1.5">
-                        <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600">Professional Summary</h4>
+                        <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600">{t.summary}</h4>
                         <p className="text-[11px] text-slate-600 leading-relaxed font-medium">{cvData.summary}</p>
                       </div>
                     )}
@@ -812,7 +854,7 @@ export default function CVMakerTab({
                         {/* Work Exp */}
                         {cvData.experience.length > 0 && (
                           <div className="space-y-4">
-                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">Work Experience</h4>
+                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.experience}</h4>
                             <div className="space-y-4">
                               {cvData.experience.map((exp, idx) => (
                                 <div key={idx} className="space-y-1.5">
@@ -839,7 +881,7 @@ export default function CVMakerTab({
                         {/* Education */}
                         {cvData.education && (
                           <div className="space-y-2">
-                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">Education</h4>
+                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.education}</h4>
                             <p className="text-[10.5px] text-slate-600 leading-relaxed whitespace-pre-line font-medium">{cvData.education}</p>
                           </div>
                         )}
@@ -852,7 +894,7 @@ export default function CVMakerTab({
                         {/* Skills */}
                         {cvData.skills.length > 0 && (
                           <div className="space-y-2">
-                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">Skills</h4>
+                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.skills}</h4>
                             <div className="flex flex-wrap gap-1.5">
                               {cvData.skills.map((skill, idx) => (
                                 <span key={idx} className="text-[9.5px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
@@ -866,7 +908,7 @@ export default function CVMakerTab({
                         {/* Languages */}
                         {cvData.languages.length > 0 && (
                           <div className="space-y-2">
-                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">Languages</h4>
+                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.languages}</h4>
                             <ul className="space-y-1">
                               {cvData.languages.map((l, idx) => (
                                 <li key={idx} className="text-[10px] font-bold text-slate-600">• {l}</li>
@@ -878,7 +920,7 @@ export default function CVMakerTab({
                         {/* Certs */}
                         {cvData.certifications.length > 0 && (
                           <div className="space-y-2">
-                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">Certifications</h4>
+                            <h4 className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.certifications}</h4>
                             <ul className="space-y-1">
                               {cvData.certifications.map((c, idx) => (
                                 <li key={idx} className="text-[9.5px] font-bold text-slate-600 leading-relaxed">• {c}</li>
@@ -910,7 +952,7 @@ export default function CVMakerTab({
                     {/* Summary */}
                     {cvData.summary && (
                       <div className="space-y-1 text-left">
-                        <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">Professional Summary</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.summary}</h4>
                         <p className="text-[11px] text-slate-700 leading-relaxed italic">{cvData.summary}</p>
                       </div>
                     )}
@@ -918,7 +960,7 @@ export default function CVMakerTab({
                     {/* Work Exp */}
                     {cvData.experience.length > 0 && (
                       <div className="space-y-3 text-left">
-                        <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">Work Experience</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.experience}</h4>
                         <div className="space-y-3.5">
                           {cvData.experience.map((exp, idx) => (
                             <div key={idx} className="space-y-1">
@@ -944,7 +986,7 @@ export default function CVMakerTab({
                     {/* Education */}
                     {cvData.education && (
                       <div className="space-y-1 text-left">
-                        <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">Education</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.education}</h4>
                         <p className="text-[10.5px] text-slate-700 leading-relaxed whitespace-pre-line">{cvData.education}</p>
                       </div>
                     )}
@@ -952,7 +994,7 @@ export default function CVMakerTab({
                     {/* Skills Grid */}
                     {cvData.skills.length > 0 && (
                       <div className="space-y-1 text-left">
-                        <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">Core Skills</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.skills}</h4>
                         <p className="text-[10.5px] text-slate-700 leading-relaxed">
                           {cvData.skills.join(' • ')}
                         </p>
@@ -964,13 +1006,13 @@ export default function CVMakerTab({
                       <div className="grid grid-cols-2 gap-6 text-left pt-1">
                         {cvData.languages.length > 0 && (
                           <div className="space-y-1">
-                            <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">Languages</h4>
+                            <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.languages}</h4>
                             <p className="text-[10px] text-slate-700">{cvData.languages.join(', ')}</p>
                           </div>
                         )}
                         {cvData.certifications.length > 0 && (
                           <div className="space-y-1">
-                            <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">Certifications</h4>
+                            <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.certifications}</h4>
                             <p className="text-[10px] text-slate-700 leading-relaxed">{cvData.certifications.join(', ')}</p>
                           </div>
                         )}
@@ -1000,7 +1042,7 @@ export default function CVMakerTab({
                     {/* Summary */}
                     {cvData.summary && (
                       <div className="space-y-1">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950">Summary</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-955">{t.summary}</h4>
                         <p className="text-[10.5px] text-slate-600 leading-relaxed font-medium">{cvData.summary}</p>
                       </div>
                     )}
@@ -1008,7 +1050,7 @@ export default function CVMakerTab({
                     {/* Work Exp */}
                     {cvData.experience.length > 0 && (
                       <div className="space-y-3">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950 border-b border-slate-200 pb-0.5">Experience</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950 border-b border-slate-200 pb-0.5">{t.experience}</h4>
                         <div className="space-y-4">
                           {cvData.experience.map((exp, idx) => (
                             <div key={idx} className="space-y-1">
@@ -1035,7 +1077,7 @@ export default function CVMakerTab({
                     {/* Skills */}
                     {cvData.skills.length > 0 && (
                       <div className="space-y-1.5">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950 border-b border-slate-200 pb-0.5">Skills</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-955 border-b border-slate-200 pb-0.5">{t.skills}</h4>
                         <div className="flex flex-wrap gap-x-3 gap-y-1">
                           {cvData.skills.map((skill, idx) => (
                             <span key={idx} className="text-[10px] font-bold text-slate-600">
@@ -1051,7 +1093,7 @@ export default function CVMakerTab({
                       {/* Education */}
                       {cvData.education && (
                         <div className="col-span-1 space-y-1">
-                          <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950">Education</h4>
+                          <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950">{t.education}</h4>
                           <p className="text-[9.5px] text-slate-600 leading-relaxed whitespace-pre-line font-medium">{cvData.education}</p>
                         </div>
                       )}
@@ -1059,7 +1101,7 @@ export default function CVMakerTab({
                       {/* Languages */}
                       {cvData.languages.length > 0 && (
                         <div className="col-span-1 space-y-1">
-                          <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950">Languages</h4>
+                          <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950">{t.languages}</h4>
                           <ul className="space-y-0.5">
                             {cvData.languages.map((l, idx) => (
                               <li key={idx} className="text-[9.5px] font-bold text-slate-600">• {l}</li>
@@ -1071,7 +1113,7 @@ export default function CVMakerTab({
                       {/* Certs */}
                       {cvData.certifications.length > 0 && (
                         <div className="col-span-1 space-y-1">
-                          <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950">Certifications</h4>
+                          <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-950">{t.certifications}</h4>
                           <ul className="space-y-0.5">
                             {cvData.certifications.map((c, idx) => (
                               <li key={idx} className="text-[9.5px] font-bold text-slate-600 leading-normal">• {c}</li>
