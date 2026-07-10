@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconDash, IconTemplate, IconHist, IconSettings, IconInterview, IconCV, IconMagic } from '../ui/Icons';
+import { FileText } from 'lucide-react';
 
 const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, logout, dict, uiLang, setUiLang, navItems, handleNav, navigate }) => (
   <>
@@ -115,6 +116,7 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
 
   const navItems = [
     { id: 'dashboard', label: dict.dashboard, icon: <IconDash /> },
+    { id: 'cv-maker', label: dict.cvMaker || 'CV Maker', icon: <FileText size={18} /> },
     { id: 'cover-letter', label: dict.coverLetterTab || 'Cover Letter', icon: <IconMagic /> },
     { id: 'cv-optimizer', label: dict.cvOptimizer || 'CV Optimizer', icon: <IconCV /> },
     { id: 'templates', label: dict.templates, icon: <IconTemplate /> },

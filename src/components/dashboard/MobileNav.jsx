@@ -26,6 +26,7 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
 
   const navItems = [
     { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Overview' },
+    { id: 'cv-maker', icon: <IconCV />, label: dict?.cvMaker || 'CV Maker' },
     { id: 'cover-letter', icon: <IconMagic />, label: dict?.coverLetterTab || 'Cover Letter' },
     { id: 'cv-optimizer', icon: <IconCV />, label: dict?.cvOptimizer || 'CV Optimizer' },
     { id: 'templates', icon: <IconGrid />, label: dict?.templates || 'Templates' },

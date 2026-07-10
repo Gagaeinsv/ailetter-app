@@ -21,6 +21,7 @@ import FollowUpModal from '../components/dashboard/FollowUpModal';
 import InterviewTab from '../components/dashboard/InterviewTab';
 import JobTrackerTab from '../components/dashboard/JobTrackerTab';
 import CVOptimizerTab from '../components/dashboard/CVOptimizerTab';
+import CVMakerTab from '../components/dashboard/CVMakerTab';
 
 // Mobile Components
 import MobileNav from '../components/dashboard/MobileNav';
@@ -815,6 +816,7 @@ const Dashboard = () => {
             {activeTab === 'dashboard' && <DashboardOverviewTab {...props} />}
             {activeTab === 'cover-letter' && <CoverLetterTab {...props} />}
             {activeTab === 'cv-optimizer' && <CVOptimizerTab {...props} />}
+            {activeTab === 'cv-maker' && <CVMakerTab {...props} />}
             {activeTab === 'templates' && <TemplatesTab {...props} />}
             {activeTab === 'interview' && <InterviewTab {...props} />}
             {activeTab === 'history' && <HistoryTab {...props} />}

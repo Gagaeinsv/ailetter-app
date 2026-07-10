@@ -1288,3 +1288,19 @@ ${jd.substring(0, 1500)}
     return normalizeCVPayload(parsed, userProfile, jd);
   });
 };
+
+export const enhanceAchievement = async (text, jobTitle) => {
+  const prompt = `You are an expert resume writer. Rewrite the following resume bullet point to make it more professional, impactful, and outcome-oriented.
+Use strong action verbs and imply or include realistic metrics if appropriate, matching the context of a ${jobTitle || 'professional'}.
+Keep it to one concise sentence (bullet point style). Do not include any quotes, markdown, or extra explanations. Just output the rewritten sentence.
+
+Original: "${text}"`;
+
+  return await tryEveryModel(async (modelId) => {
+    return await callGemini({
+      modelId,
+      temperature: 0.7,
+      contents: [prompt]
+    });
+  });
+};
