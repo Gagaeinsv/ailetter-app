@@ -295,34 +295,50 @@ export default function CVMakerTab({
   };
 
   // --- EXPORT TO PDF ---
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     if (pdfGenerating) return;
     setPdfGenerating(true);
     showNotification('Preparing PDF for download...');
 
     const safeName = (cvData.fullName || '').trim().replace(/\s+/g, '_') || 'CV';
 
-    const opt = {
-      margin:       0,
-      filename:     `Resume_${safeName}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    html2pdf()
-      .from(previewRef.current)
-      .set(opt)
-      .save()
-      .then(() => {
-        setPdfGenerating(false);
-        showNotification('PDF downloaded successfully! ✓');
-      })
-      .catch((err) => {
-        console.error("PDF generation error:", err);
-        setPdfGenerating(false);
-        alert('Failed to generate PDF');
+    try {
+      const element = previewRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
       });
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      
+      const { jsPDF } = await import('jspdf');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      let heightLeft = imgHeight;
+      let position = 0;
+      
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+      
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      
+      pdf.save(`Resume_${safeName}.pdf`);
+      showNotification('PDF downloaded successfully! ✓');
+    } catch (err) {
+      console.error("PDF generation error:", err);
+      alert('Failed to generate PDF');
+    } finally {
+      setPdfGenerating(false);
+    }
   };
 
   return (

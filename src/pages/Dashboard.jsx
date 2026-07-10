@@ -489,22 +489,46 @@ const Dashboard = () => {
       element.appendChild(watermarkEl);
     }
 
-    const opt = {
-      margin: 0,
-      filename: 'Cover_Letter_AIletter.pdf',
-      image: { type: 'jpeg', quality: isPro ? 0.98 : 0.88 },
-      html2canvas: { scale: isPro ? 2 : 1.5, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    };
-
-    html2pdf().set(opt).from(element).save().then(() => {
+    try {
+      const canvas = await html2canvas(element, {
+        scale: isPro ? 2 : 1.5,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+      const imgData = canvas.toDataURL('image/jpeg', isPro ? 0.98 : 0.88);
+      
+      const { jsPDF } = await import('jspdf');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      let heightLeft = imgHeight;
+      let position = 0;
+      
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+      
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      
+      pdf.save('Cover_Letter_AIletter.pdf');
+    } catch (err) {
+      console.error("PDF generation error:", err);
+      alert('Failed to generate PDF');
+    } finally {
       if (watermarkEl && element.contains(watermarkEl)) {
         element.removeChild(watermarkEl);
       }
       if (!isPro) {
         setTimeout(() => showNotification('💡 Upgrade Pro — HD export, DOCX & no watermark'), 800);
       }
-    });
+    }
   };
 
   // ── DOCX ──

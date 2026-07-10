@@ -24,6 +24,7 @@
     "html2canvas-pro": "^2.2.3",
     "html2pdf.js": "^0.14.0",
     "i18next": "^25.8.11",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.574.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
