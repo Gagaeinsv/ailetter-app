@@ -47,6 +47,30 @@ export default function CVMakerTab({
   // Sync from props on load or profile update
   useEffect(() => {
     if (contactInfo) {
+      const formatEdu = (edu) => {
+        if (!edu) return '';
+        if (Array.isArray(edu)) {
+          return edu.map(e => {
+            if (typeof e === 'object' && e !== null) {
+              const parts = [];
+              if (e.degree) parts.push(e.degree);
+              if (e.university || e.school || e.institution) parts.push(e.university || e.school || e.institution);
+              if (e.year || e.date) parts.push(e.year || e.date);
+              return parts.join(', ');
+            }
+            return String(e);
+          }).join('\n');
+        }
+        if (typeof edu === 'object' && edu !== null) {
+          const parts = [];
+          if (edu.degree) parts.push(edu.degree);
+          if (edu.university || edu.school || edu.institution) parts.push(edu.university || edu.school || edu.institution);
+          if (edu.year || edu.date) parts.push(edu.year || edu.date);
+          return parts.join(', ');
+        }
+        return String(edu);
+      };
+
       setCvData({
         fullName: contactInfo.fullName || '',
         profession: contactInfo.profession || '',
@@ -61,7 +85,7 @@ export default function CVMakerTab({
           : typeof contactInfo.experience === 'string' && contactInfo.experience.trim() 
             ? [{ title: 'Experience', company: '', duration: '', achievements: [contactInfo.experience] }]
             : [],
-        education: contactInfo.education || '',
+        education: formatEdu(contactInfo.education),
         languages: Array.isArray(contactInfo.languages) ? [...contactInfo.languages] : [],
         certifications: Array.isArray(contactInfo.certifications) ? [...contactInfo.certifications] : []
       });
