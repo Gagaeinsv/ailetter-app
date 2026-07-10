@@ -1,7 +1,8 @@
 const MODELS = [
   { id: "gemini-2.5-flash",      temp: 0.7 },
+  { id: "gemini-1.5-flash",      temp: 0.7 },
   { id: "gemini-2.5-flash-lite", temp: 0.6 },
-  { id: "groq/llama-3.3-70b-versatile", temp: 0.7 },
+  { id: "gemini-1.5-pro",        temp: 0.7 },
   { id: "gemini-2.5-pro",        temp: 0.7 },
 ];
 
@@ -36,25 +37,27 @@ async function callGemini({ modelId, temperature, maxOutputTokens, contents, res
 
 async function tryModel(modelFn) {
   let modelIndex = 0;
+  let lastError = null;
   while (modelIndex < MODELS.length) {
     const current = MODELS[modelIndex];
     try {
       console.log(`Using model: ${current.id}`);
       return await modelFn(current.id, current.temp);
     } catch (error) {
+      lastError = error;
       console.warn(`${current.id} failed:`, error);
-      const isCritical = error.status === 429 || error.status === 404 || error.status === 503;
-      if (isCritical) {
-        modelIndex++;
-        if (modelIndex < MODELS.length) {
-          await sleep(1000);
-          continue;
-        }
+      modelIndex++;
+      if (modelIndex < MODELS.length) {
+        await sleep(1000);
+        continue;
       }
-      throw error;
     }
   }
-  throw new Error("AI is busy. Please try again.");
+  
+  if (lastError && (lastError.message?.includes("quota") || lastError.message?.includes("Quota") || lastError.message?.includes("limit") || lastError.message?.includes("Rate") || lastError.message?.includes("exceeded"))) {
+    throw new Error("AI Rate Limit/Quota Exceeded: You have exceeded the free tier limits. Please wait a few seconds and try again, or check your Gemini API key plan and billing details.");
+  }
+  throw lastError || new Error("AI is busy. Please try again.");
 }
 
 /** Try each model in order (for flaky parse / empty tokens); rotates on every failure */
@@ -70,6 +73,10 @@ async function tryEveryModel(modelFn) {
       console.warn(`${current.id} failed (tryEveryModel):`, error);
       if (i + 1 < MODELS.length) await sleep(600);
     }
+  }
+  
+  if (lastError && (lastError.message?.includes("quota") || lastError.message?.includes("Quota") || lastError.message?.includes("limit") || lastError.message?.includes("Rate") || lastError.message?.includes("exceeded"))) {
+    throw new Error("AI Rate Limit/Quota Exceeded: You have exceeded the free tier limits. Please wait a few seconds and try again, or check your Gemini API key plan and billing details.");
   }
   throw lastError || new Error("AI is busy. Please try again.");
 }
