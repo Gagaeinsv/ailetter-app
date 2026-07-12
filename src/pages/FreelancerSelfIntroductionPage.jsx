@@ -277,7 +277,7 @@ export default function FreelancerSelfIntroductionPage() {
             </li>
             <li className="flex gap-2">
               <span className="text-indigo-400">⚡</span>
-              <span>{guideText.rule2 || guideData.rule2}</span>
+              <span>{guideData.rule2}</span>
             </li>
             <li className="flex gap-2">
               <span className="text-indigo-400">⚡</span>

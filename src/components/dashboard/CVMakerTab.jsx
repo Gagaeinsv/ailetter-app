@@ -26,7 +26,9 @@ export default function CVMakerTab({
   fileName,
   uiLang = 'en',
   setUiLang,
-  bonusGenerations = 0
+  bonusGenerations = 0,
+  selectedCVTemplate,
+  setSelectedCVTemplate
 }) {
   const labels = {
     en: {
@@ -123,8 +125,8 @@ export default function CVMakerTab({
   });
 
   const [activeSection, setActiveSection] = useState('personal'); // personal | experience | skills | education | misc
-  const selectedTemplate = props.selectedCVTemplate || 'modern';
-  const setSelectedTemplate = props.setSelectedCVTemplate || (() => {});
+  const selectedTemplate = selectedCVTemplate || 'modern';
+  const setSelectedTemplate = setSelectedCVTemplate || (() => {});
   const [spacingPreset, setSpacingPreset] = useState('normal'); // compact | normal | spacious
   const [textSizePreset, setTextSizePreset] = useState('normal'); // small | normal | large
   const [aiLoadingIdx, setAiLoadingIdx] = useState(null); // tracking AI sparkles loading state
