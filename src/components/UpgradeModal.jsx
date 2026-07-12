@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { redirectToCheckout, PRICES } from '../stripe';
+import { db } from '../firebase';
+import { doc, updateDoc, increment } from 'firebase/firestore';
 
 const T = {
   en: {
@@ -12,15 +14,29 @@ const T = {
     btn: (price) => `✦ Upgrade — ${price}`,
     loading: '⏳ Redirecting to Stripe...',
     secure: 'Secure payment via Stripe · Cancel anytime',
+    viralTitle: 'Option B: Get +2 free generations',
+    viralDesc: 'Help us spread the word or invite a friend to receive bonus credits instantly.',
+    shareLinkedIn: 'Share on LinkedIn',
+    shareTwitter: 'Share on Twitter (X)',
+    copyLink: 'Copy Referral Link',
+    copied: 'Copied!',
+    claimed: '✓ Reward claimed!',
   },
   uk: {
     title: 'Перейти на AIletter Pro',
     sub: 'Необмежені генерації · Без водяного знаку · Всі шаблони',
     monthly: 'Щомісяця', yearly: 'Щороку', save: 'Знижка 46%',
-    warning: (price) => `З вас автоматично списуватиметься ${price} щокожного розрахункового періоду, якщо ви не скасуєте підписку до оновлення. Скасувати можна будь-коли.`,
+    warning: (price) => `З вас автоматично списуватиметься ${price} щокожного розрахункового періоду, якщо ви не скасуєте підписку до оновлення. Скасувати можна будьколи.`,
     btn: (price) => `✦ Оновити — ${price}`,
     loading: '⏳ Перенаправлення на Stripe...',
-    secure: 'Безпечна оплата через Stripe · Скасувати будь-коли',
+    secure: 'Безпечна оплата через Stripe · Скасувати будьколи',
+    viralTitle: 'Варіант Б: Отримай +2 безкоштовні генерації',
+    viralDesc: 'Допоможи розповісти про AILetter або запроси друга, щоб миттєво отримати додаткові ліміти.',
+    shareLinkedIn: 'Поділитися в LinkedIn',
+    shareTwitter: 'Поділитися в Twitter (X)',
+    copyLink: 'Копіювати посилання',
+    copied: 'Скопійовано!',
+    claimed: '✓ Бонус нараховано!',
   },
   it: {
     title: 'Passa ad AIletter Pro',
@@ -30,6 +46,13 @@ const T = {
     btn: (price) => `✦ Aggiorna — ${price}`,
     loading: '⏳ Reindirizzamento a Stripe...',
     secure: 'Pagamento sicuro via Stripe · Annulla quando vuoi',
+    viralTitle: 'Opzione B: Ottieni +2 generazioni gratuite',
+    viralDesc: 'Aiutaci a spargere la voce o invita un amico per ricevere crediti bonus all\'istante.',
+    shareLinkedIn: 'Condividi su LinkedIn',
+    shareTwitter: 'Condividi su Twitter (X)',
+    copyLink: 'Copia link di invito',
+    copied: 'Copiato!',
+    claimed: '✓ Bonus accreditato!',
   },
   de: {
     title: 'Auf AIletter Pro upgraden',
@@ -39,16 +62,25 @@ const T = {
     btn: (price) => `✦ Upgraden — ${price}`,
     loading: '⏳ Weiterleitung zu Stripe...',
     secure: 'Sichere Zahlung über Stripe · Jederzeit kündigen',
+    viralTitle: 'Option B: Holen Sie sich +2 freie Generierungen',
+    viralDesc: 'Helfen Sie uns, die Nachricht zu verbreiten, oder laden Sie einen Freund ein, um sofort Bonus-Credits zu erhalten.',
+    shareLinkedIn: 'Auf LinkedIn teilen',
+    shareTwitter: 'Auf Twitter (X) teilen',
+    copyLink: 'Referral-Link kopieren',
+    copied: 'Kopiert!',
+    claimed: '✓ Bonus gutgeschrieben!',
   },
 };
 
-const UpgradeModal = ({ onClose }) => {
+const UpgradeModal = ({ onClose, isLimitReached }) => {
   const { user } = useAuth();
   const { uiLang } = useLanguage();
   const t = T[uiLang] || T.en;
   const [billing, setBilling] = useState('yearly');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [shareClaimed, setShareClaimed] = useState(false);
 
   const handleUpgrade = async () => {
     if (!user) return;
@@ -62,6 +94,40 @@ const UpgradeModal = ({ onClose }) => {
       console.error(e);
       setError('Payment initialization failed. Please try again.');
       setLoading(false);
+    }
+  };
+
+  const handleCopyLink = () => {
+    if (!user) return;
+    const refLink = `https://ailetter.pro/?ref=${user.uid}`;
+    navigator.clipboard.writeText(refLink);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 3000);
+  };
+
+  const handleShareClick = async (platform) => {
+    if (!user) return;
+    
+    const shareUrl = "https://ailetter.pro";
+    const shareText = "Write professional, highly personalized cover letters in seconds with AI! Try @AIletter";
+    
+    let url = "";
+    if (platform === "linkedin") {
+      url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+    } else {
+      url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+    }
+    
+    window.open(url, '_blank', 'width=600,height=400');
+
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        bonusGenerations: increment(2)
+      });
+      setShareClaimed(true);
+    } catch (err) {
+      console.error('Error crediting share reward:', err);
     }
   };
 
@@ -82,7 +148,7 @@ const UpgradeModal = ({ onClose }) => {
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
       style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
     >
-      <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '24px', width: '100%', maxWidth: '520px', overflow: 'hidden', boxShadow: '0 40px 80px rgba(0,0,0,0.6)' }}>
+      <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '24px', width: '100%', maxWidth: '520px', overflowY: 'auto', maxHeight: '95vh', boxShadow: '0 40px 80px rgba(0,0,0,0.6)' }}>
 
         {/* Header */}
         <div style={{ background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', padding: '28px 32px 24px', position: 'relative' }}>
@@ -139,9 +205,55 @@ const UpgradeModal = ({ onClose }) => {
             {loading ? t.loading : t.btn(price)}
           </button>
 
-          <p style={{ textAlign: 'center', fontSize: 11, color: '#475569', marginTop: 10 }}>
+          <p style={{ textAlign: 'center', fontSize: 11, color: '#475569', marginTop: 10, marginBottom: isLimitReached ? 0 : 0 }}>
             {t.secure}
           </p>
+
+          {isLimitReached && (
+            <>
+              {/* Divider */}
+              <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0', gap: 12 }}>
+                <div style={{ flex: 1, height: 1, background: '#334155' }} />
+                <span style={{ fontSize: 11, fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em' }}>OR</span>
+                <div style={{ flex: 1, height: 1, background: '#334155' }} />
+              </div>
+
+              {/* Option B: Viral Rewards */}
+              <div style={{ background: 'rgba(99,102,241,0.05)', border: '1px dashed rgba(99,102,241,0.3)', borderRadius: 18, padding: 20 }}>
+                <span style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e', padding: '3px 8px', borderRadius: 20, fontSize: 9, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>BONUS</span>
+                <h3 style={{ color: 'white', fontSize: 16, fontWeight: 900, margin: '6px 0 4px' }}>{t.viralTitle}</h3>
+                <p style={{ color: '#94a3b8', fontSize: 11, margin: '0 0 16px', lineHeight: 1.4 }}>{t.viralDesc}</p>
+
+                {/* Social Sharing Buttons */}
+                <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+                  <button onClick={() => handleShareClick('linkedin')}
+                    style={{ flex: 1, padding: '12px 8px', background: '#0a66c2', border: 'none', borderRadius: 10, color: 'white', fontWeight: 700, fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                    <span>🔗</span> {t.shareLinkedIn}
+                  </button>
+                  <button onClick={() => handleShareClick('twitter')}
+                    style={{ flex: 1, padding: '12px 8px', background: '#1d9bf0', border: 'none', borderRadius: 10, color: 'white', fontWeight: 700, fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                    <span>𝕏</span> {t.shareTwitter}
+                  </button>
+                </div>
+
+                {shareClaimed && (
+                  <p style={{ color: '#22c55e', fontSize: 11, fontWeight: 700, textAlign: 'center', margin: '0 0 14px' }}>
+                    {t.claimed}
+                  </p>
+                )}
+
+                {/* Referral Link Copy */}
+                <div style={{ display: 'flex', gap: 8, background: '#0f172a', border: '1px solid #334155', borderRadius: 10, padding: 4 }}>
+                  <input readOnly value={user ? `https://ailetter.pro/?ref=${user.uid}` : ''}
+                    style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: '#64748b', fontSize: 10, paddingLeft: 8, fontFamily: 'monospace' }} />
+                  <button onClick={handleCopyLink}
+                    style={{ padding: '8px 14px', background: copiedLink ? '#22c55e' : '#6366f1', border: 'none', borderRadius: 8, color: 'white', fontWeight: 700, fontSize: 10, cursor: 'pointer', minWidth: 70, textAlign: 'center' }}>
+                    {copiedLink ? t.copied : t.copyLink}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

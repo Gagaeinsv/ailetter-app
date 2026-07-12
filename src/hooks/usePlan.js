@@ -4,11 +4,13 @@ import { db } from '../firebase';
 
 export const usePlan = (user) => {
   const [isPro, setIsPro] = useState(false);
+  const [bonusGenerations, setBonusGenerations] = useState(0);
   const [planLoading, setPlanLoading] = useState(true);
 
   useEffect(() => {
     if (!user?.uid) {
       setIsPro(false);
+      setBonusGenerations(0);
       setPlanLoading(false);
       return;
     }
@@ -24,14 +26,17 @@ export const usePlan = (user) => {
               ? new Date(data.planExpiry)
               : null;
           setIsPro(data.plan === 'pro' && (!expiry || expiry > new Date()));
+          setBonusGenerations(data.bonusGenerations || 0);
         } else {
           setIsPro(false);
+          setBonusGenerations(0);
         }
         setPlanLoading(false);
       },
       (error) => {
         console.error('Plan check failed:', error.code);
         setIsPro(false);
+        setBonusGenerations(0);
         setPlanLoading(false);
       }
     );
@@ -39,5 +44,5 @@ export const usePlan = (user) => {
     return () => unsubscribe();
   }, [user?.uid]);
 
-  return { isPro, planLoading };
+  return { isPro, bonusGenerations, planLoading };
 };

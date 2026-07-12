@@ -21,8 +21,9 @@ const LANGS = [
   { code: 'de', label: 'Deutsch',    flag: '🇩🇪' },
 ];
 
-const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrade, uiLang, setUiLang }) => {
+const MobileNav = ({ user, activeTab, setActiveTab, dict, logout, isPro, setShowUpgrade, uiLang, setUiLang }) => {
   const [open, setOpen] = useState(false);
+  const [showMobileUserMenu, setShowMobileUserMenu] = useState(false);
 
   const navItems = [
     { id: 'dashboard', icon: <IconHome />, label: dict?.dashboard || 'Overview' },
@@ -55,9 +56,54 @@ const MobileNav = ({ activeTab, setActiveTab, dict, logout, isPro, setShowUpgrad
           <span className="font-black text-white tracking-tight text-sm">AIletter</span>
           {isPro && <span className="text-[9px] font-black text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">PRO</span>}
         </a>
-        <button onClick={() => setOpen(true)} className="p-2 text-gray-300 active:scale-95 transition-transform">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
+        <div className="flex items-center gap-2">
+          {/* User Photo trigger */}
+          <div className="relative">
+            <div 
+              onClick={() => setShowMobileUserMenu(!showMobileUserMenu)}
+              className="w-8 h-8 rounded-full overflow-hidden border border-[#334155] cursor-pointer bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-bold text-xs select-none"
+            >
+              {user?.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName || 'U'}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              ) : (
+                user?.displayName?.[0]?.toUpperCase() || 'U'
+              )}
+            </div>
+
+            {showMobileUserMenu && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowMobileUserMenu(false)} />
+                <div className="absolute right-0 mt-2 w-48 bg-[#1e293b] border border-[#334155] rounded-xl shadow-2xl z-50 p-2 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div className="px-2.5 py-1.5 border-b border-[#334155]/60 mb-1">
+                    <p className="text-xs font-black text-white truncate">{user?.displayName || 'User'}</p>
+                    <p className="text-[9px] text-slate-400 truncate">{user?.email || ''}</p>
+                  </div>
+                  <button
+                    onClick={() => { go('settings'); setShowMobileUserMenu(false); }}
+                    className="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-[#334155]/60 transition-colors flex items-center gap-2"
+                  >
+                    ⚙️ {dict?.settings || 'Settings'}
+                  </button>
+                  <button
+                    onClick={() => { logout(); setShowMobileUserMenu(false); }}
+                    className="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors flex items-center gap-2 border-t border-[#334155]/30 pt-2"
+                  >
+                    🚪 {dict?.logout || 'Log out'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          <button onClick={() => setOpen(true)} className="p-2 text-gray-300 active:scale-95 transition-transform">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+        </div>
       </div>
 
       {/* ── SIDEBAR DRAWER ── */}

@@ -28,7 +28,7 @@ const CoverLetterTab = (props) => {
     contactInfo, setContactInfo,
     jobDescription, setJobDescription,
     cvFile, fileName, handleFileChange, handleAutoFill, parsingCV,
-    settings, setSettings, selectedTemplate, setSelectedTemplate,
+    settings, setSettings, selectedTemplate, setSelectedTemplate, showCvSuggestion,
     handleGenerate, loading, generatedLetter, setGeneratedLetter,
     downloadPDF, downloadDOCX,
     copyLetter,           // з Dashboard.jsx — copy + автозбереження
@@ -228,6 +228,16 @@ const CoverLetterTab = (props) => {
                 {(dictationTexts[uiLang] || dictationTexts.en).btn}
               </button>
             </div>
+            {showCvSuggestion && (
+              <div className="mt-4 p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl">
+                <p className="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 mb-1">
+                  <span>💡</span> {dict.cvTipTitle}
+                </p>
+                <p className="text-[10px] text-slate-300 leading-relaxed font-medium">
+                  {dict.cvTipText}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Name & Role */}
@@ -421,11 +431,11 @@ const CoverLetterTab = (props) => {
 
         {/* Quick Settings Bar */}
         <div className="border-b border-[#1e293b] bg-[#0f172a]/50 backdrop-blur p-2 flex gap-4 shrink-0 overflow-x-auto items-center z-10 pl-6" style={{ scrollbarWidth: 'none' }}>
-          <div className="flex items-center gap-2 text-slate-500">
+          <div className="flex items-center gap-2 text-slate-500 shrink-0">
             <Settings2 className="w-3.5 h-3.5" />
             <span className="text-[10px] font-bold uppercase tracking-wider">Settings:</span>
           </div>
-          <div className="flex bg-[#1e293b] rounded-lg p-0.5 border border-[#334155]">
+          <div className="flex bg-[#1e293b] rounded-lg p-0.5 border border-[#334155] shrink-0">
             {['Professional', 'Friendly', 'Formal'].map(t => (
               <button key={t} onClick={() => setSettings({ ...settings, tone: t })}
                 className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all ${settings.tone === t ? 'bg-[#6366f1] text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`}>
@@ -433,7 +443,7 @@ const CoverLetterTab = (props) => {
               </button>
             ))}
           </div>
-          <div className="flex bg-[#1e293b] rounded-lg p-0.5 border border-[#334155]">
+          <div className="flex bg-[#1e293b] rounded-lg p-0.5 border border-[#334155] shrink-0">
             {[
               { val: 'Short',    label: 'Short',    hint: '~280w' },
               { val: 'Standard', label: 'Standard', hint: '~350w' },
@@ -446,15 +456,50 @@ const CoverLetterTab = (props) => {
               </button>
             ))}
           </div>
-          <div className="relative">
+          
+          <div className="flex bg-[#1e293b] rounded-lg p-0.5 border border-[#334155] shrink-0">
+            {[
+              { val: 'Junior', label: 'Junior' },
+              { val: 'Middle', label: 'Middle' },
+              { val: 'Senior-Executive', label: 'Senior-Executive' },
+            ].map(({ val, label }) => {
+              const isExec = val === 'Senior-Executive';
+              return (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => {
+                    if (isExec && !isPro) {
+                      setShowUpgrade(true);
+                      return;
+                    }
+                    setSettings({ ...settings, level: val });
+                  }}
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all flex items-center gap-1 ${
+                    settings.level === val || (!settings.level && val === 'Middle')
+                      ? 'bg-[#6366f1] text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                  }`}
+                >
+                  {isExec ? (
+                    <span className="flex items-center gap-1">
+                      <span>Exec</span>
+                      <span className="text-[8px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-black border border-amber-500/20">PRO</span>
+                    </span>
+                  ) : label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="relative shrink-0">
             <select value={settings.language} onChange={e => setSettings({ ...settings, language: e.target.value })}
               className="appearance-none bg-[#1e293b] border border-[#334155] text-slate-300 hover:text-white text-[10px] font-bold py-1.5 pl-3 pr-8 rounded-lg outline-none cursor-pointer focus:border-indigo-500 transition-colors">
               <option>Auto</option><option>English</option><option>Ukrainian</option><option>Italiano</option><option>Deutsch</option>
             </select>
             <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">▼</div>
           </div>
-          <div className="h-4 w-px bg-[#334155] mx-2" />
-          <div className="flex gap-2 items-center">
+          <div className="h-4 w-px bg-[#334155] mx-2 shrink-0" />
+          <div className="flex gap-2 items-center shrink-0">
             <span className="text-[10px] font-bold text-slate-500 uppercase">Template:</span>
             <div className="flex gap-2">
               {TEMPLATES.slice(0, 4).map(t => (

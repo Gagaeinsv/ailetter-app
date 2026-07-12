@@ -1,8 +1,8 @@
-// Use native fetch
+// Use native fetch to test gemini-2.5-flash-lite
 
 async function run() {
   const body = {
-    modelId: "groq/llama-3.3-70b-versatile",
+    modelId: "gemini-2.5-flash-lite",
     temperature: 0.7,
     maxOutputTokens: 100,
     contents: ["Hi, who are you? Please reply with exactly one sentence."]
@@ -19,10 +19,6 @@ async function run() {
 
     console.log("Status:", res.status);
     console.log("Status Text:", res.statusText);
-    const headers = {};
-    res.headers.forEach((val, key) => { headers[key] = val; });
-    console.log("Headers:", JSON.stringify(headers, null, 2));
-    
     const text = await res.text();
     console.log("Body:", text);
   } catch (err) {

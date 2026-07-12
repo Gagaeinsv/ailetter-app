@@ -141,6 +141,9 @@ const translations = {
       cvOptimizerTips: 'Actionable CV Checklist',
       cvProfileTitle: 'Loaded CV Profile',
       cvProfileDesc: 'Resume data currently analyzed.',
+      cvTipTitle: '💡 AI Tip: Your resume seems a bit brief.',
+      cvTipText: 'Consider adding 2-3 sentences about your key achievements or project details at your most recent job to help the AI write a highly personalized cover letter.',
+      levelLabel: 'Position Level',
     },
     uk: {
       logo: 'AIletter', dashboard: 'Дашборд', cvMaker: 'Конструктор резюме', cvMakerTitle: 'Конструктор резюме з ШІ', cvMakerDesc: 'Створюйте, редагуйте та завантажуйте професійне резюме, оптимізоване під ATS.', coverLetterTab: 'Супровідний лист', templates: 'Шаблони', history: 'Історія', settings: 'Налаштування', logout: 'Вийти',
@@ -283,6 +286,9 @@ const translations = {
       cvOptimizerTips: 'Покроковий чек-лист для покращення CV',
       cvProfileTitle: 'Завантажений профіль CV',
       cvProfileDesc: 'Дані вашого резюме, які аналізуються.',
+      cvTipTitle: '💡 Порада від AI: Ваше резюме виглядає лаконічним.',
+      cvTipText: 'Додайте 2-3 речення про ваші ключові досягнення або специфіку проєктів на останньому місці роботи, щоб супровідний лист вийшов максимально персоналізованим і живим.',
+      levelLabel: 'Рівень позиції',
     },
     it: {
       logo: 'AIletter', dashboard: 'Dashboard', cvMaker: 'CV Maker', cvMakerTitle: 'AI Resume & CV Maker', cvMakerDesc: 'Crea, ottimizza con l\'IA e scarica un curriculum professionale pronto per la stampa.', coverLetterTab: 'Lettera di presentaz.', templates: 'Template', history: 'Cronologia', settings: 'Impostazioni', logout: 'Esci',
@@ -425,6 +431,9 @@ const translations = {
       cvOptimizerTips: 'Checklist per migliorare il CV',
       cvProfileTitle: 'Profilo CV caricato',
       cvProfileDesc: 'Dati del curriculum analizzati.',
+      cvTipTitle: '💡 Suggerimento AI: Il tuo curriculum sembra un po\' sintetico.',
+      cvTipText: 'Aggiungi 2-3 frasi sui tuoi risultati chiave o dettagli dei progetti nel tuo ultimo lavoro per ottenere una lettera di presentazione altamente personalizzata.',
+      levelLabel: 'Livello di posizione',
     },
     de: {
       logo: 'AIletter', dashboard: 'Dashboard', cvMaker: 'CV Maker', cvMakerTitle: 'KI Lebenslauf Maker', cvMakerDesc: 'Erstellen, optimieren Sie mit KI und laden Sie einen professionellen, druckfertigen Lebenslauf herunter.', coverLetterTab: 'Anschreiben', templates: 'Vorlagen', history: 'Verlauf', settings: 'Einstellungen', logout: 'Abmelden',
@@ -567,6 +576,9 @@ const translations = {
       cvOptimizerTips: 'Checkliste zur Lebenslauf-Optimierung',
       cvProfileTitle: 'Geladenes CV-Profil',
       cvProfileDesc: 'Lebenslaufdaten, die analysiert werden.',
+      cvTipTitle: '💡 AI-Tipp: Ihr Lebenslauf wirkt etwas kurz.',
+      cvTipText: 'Fügen Sie 2-3 Sätze über Ihre wichtigsten Erfolge oder Projektdetails bei Ihrer letzten Stelle hinzu, damit das Anschreiben maximal personalisiert wird.',
+      levelLabel: 'Karrierelevel',
     },
   };
 

@@ -4,7 +4,7 @@ import {
   Sparkles, Plus, Trash2, FileText, Download, Briefcase, 
   GraduationCap, Award, Globe, User, Save, RefreshCw, Check, ArrowUp, ArrowDown 
 } from 'lucide-react';
-import { enhanceAchievement } from '../../gemini';
+import { enhanceAchievement, parseVoiceCV } from '../../gemini';
 import html2pdf from 'html2pdf.js';
 import html2canvas from 'html2canvas-pro';
 
@@ -25,7 +25,8 @@ export default function CVMakerTab({
   handleDeleteSavedCv,
   fileName,
   uiLang = 'en',
-  setUiLang
+  setUiLang,
+  bonusGenerations = 0
 }) {
   const labels = {
     en: {
@@ -38,7 +39,13 @@ export default function CVMakerTab({
       summary: 'Summary',
       contact: 'Contact',
       more: 'More',
-      personalDetails: 'Personal Details'
+      personalDetails: 'Personal Details',
+      aiWriterTitle: '✦ Magic AI Resume Fill',
+      aiWriterDesc: 'Just describe your education, jobs, and skills in freeform text below. The AI will instantly structure and populate your resume fields.',
+      aiWriterPlaceholder: 'E.g.: I am Igor, a Frontend developer with 3 years of experience. I studied Computer Science at KPI, graduated in 2022. I worked at SoftServe doing React and Redux...',
+      aiWriterBtn: 'Generate Resume with AI',
+      aiWriting: 'Generating...',
+      aiFillSuccess: 'Resume populated successfully! ✓'
     },
     uk: {
       personal: 'Профіль',
@@ -50,7 +57,13 @@ export default function CVMakerTab({
       summary: 'Про себе',
       contact: 'Контакти',
       more: 'Додатково',
-      personalDetails: 'Особисті дані'
+      personalDetails: 'Особисті дані',
+      aiWriterTitle: '✦ ШІ-Генератор резюме з тексту',
+      aiWriterDesc: 'Просто опишіть своє навчання, роботу та навички своїми словами нижче. ШІ розпізнає та автоматично заповнить усі поля конструктора.',
+      aiWriterPlaceholder: 'Наприклад: Мене звати Ігор, я розробник інтерфейсів з 3 роками досвіду. Навчався в КПІ на комп\'ютерних науках (2022 рік випуску). Працював у SoftServe на React та Redux...',
+      aiWriterBtn: 'Створити резюме через ШІ',
+      aiWriting: 'Створення...',
+      aiFillSuccess: 'Резюме успішно заповнено! ✓'
     },
     de: {
       personal: 'Persönlich',
@@ -62,7 +75,13 @@ export default function CVMakerTab({
       summary: 'Zusammenfassung',
       contact: 'Kontakt',
       more: 'Mehr',
-      personalDetails: 'Persönliche Daten'
+      personalDetails: 'Persönliche Daten',
+      aiWriterTitle: '✦ KI-Lebenslauf-Assistent (Freitext)',
+      aiWriterDesc: 'Beschreiben Sie Ihre Ausbildung, Jobs und Fähigkeiten im Freitext. Die KI strukturiert und befüllt Ihren Lebenslauf sofort.',
+      aiWriterPlaceholder: 'Z.B.: Ich bin Igor, Frontend-Entwickler mit 3 Jahren Erfahrung. Ich habe Informatik an der KPI studiert...',
+      aiWriterBtn: 'Lebenslauf mit KI generieren',
+      aiWriting: 'Generierung...',
+      aiFillSuccess: 'Lebenslauf erfolgreich ausgefüllt! ✓'
     },
     it: {
       personal: 'Personale',
@@ -71,10 +90,16 @@ export default function CVMakerTab({
       skills: 'Competenze',
       languages: 'Lingue',
       certifications: 'Certificazioni',
-      summary: 'Riepilogo',
+      summary: 'Rieplogo',
       contact: 'Contatti',
       more: 'Altro',
-      personalDetails: 'Dati Personali'
+      personalDetails: 'Dati Personali',
+      aiWriterTitle: '✦ Generatore di CV con IA',
+      aiWriterDesc: 'Descrivi la tua istruzione, i tuoi lavori e le tue competenze a parole tue. L\'IA strutturerà e popolerà istantaneamente il tuo curriculum.',
+      aiWriterPlaceholder: 'Ad es.: Sono Igor, sviluppatore Frontend con 3 anni di esperienza. Ho studiato informatica alla KPI...',
+      aiWriterBtn: 'Genera curriculum con l\'IA',
+      aiWriting: 'Generazione in corso...',
+      aiFillSuccess: 'Curriculum popolato con successo! ✓'
     }
   };
 
@@ -107,6 +132,61 @@ export default function CVMakerTab({
   const [newSkill, setNewSkill] = useState('');
   const [newLang, setNewLang] = useState('');
   const [newCert, setNewCert] = useState('');
+  
+  const [rawCvText, setRawCvText] = useState('');
+  const [aiTextWriting, setAiTextWriting] = useState(false);
+
+  const handleGenerateFromRawText = async () => {
+    if (!rawCvText.trim()) return alert('Please enter some text first');
+    
+    const getMonthlyCount = () => {
+      const key = `gen_count_${new Date().getMonth()}_${new Date().getFullYear()}`;
+      return parseInt(localStorage.getItem(key) || '0', 10);
+    };
+
+    if (!isPro) {
+      const totalAllowed = 5 + (bonusGenerations || 0);
+      if (getMonthlyCount() >= totalAllowed) {
+        setShowUpgrade(true);
+        return;
+      }
+    }
+
+    setAiTextWriting(true);
+    try {
+      const parsed = await parseVoiceCV(rawCvText);
+      if (parsed && typeof parsed === 'object') {
+        setCvData(prev => ({
+          ...prev,
+          fullName: parsed.fullName || prev.fullName,
+          profession: parsed.profession || prev.profession,
+          email: parsed.email || prev.email,
+          phone: parsed.phone || prev.phone,
+          location: parsed.location || prev.location,
+          linkedin: parsed.linkedin || prev.linkedin,
+          summary: parsed.summary || prev.summary || '',
+          skills: Array.isArray(parsed.skills) ? parsed.skills : prev.skills,
+          experience: Array.isArray(parsed.experience) ? parsed.experience : prev.experience,
+          education: parsed.education || prev.education,
+          languages: Array.isArray(parsed.languages) ? parsed.languages : prev.languages,
+          certifications: Array.isArray(parsed.certifications) ? parsed.certifications : prev.certifications
+        }));
+        
+        if (!isPro) {
+          const key = `gen_count_${new Date().getMonth()}_${new Date().getFullYear()}`;
+          localStorage.setItem(key, String(getMonthlyCount() + 1));
+        }
+
+        setRawCvText('');
+        showNotification(t.aiFillSuccess);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('AI Error: Could not generate CV fields. Please try again.');
+    } finally {
+      setAiTextWriting(false);
+    }
+  };
 
   const previewRef = useRef();
 
@@ -578,6 +658,38 @@ export default function CVMakerTab({
           
           {/* LEFT: FORM EDITOR */}
           <div className="xl:col-span-5 space-y-4">
+
+            {/* AI Resume Auto-Writer (Raw Text) */}
+            <div className="bg-gradient-to-br from-[#1e293b]/70 to-[#0f172a]/70 border border-[#334155]/60 p-4 rounded-2xl shadow-xl space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="text-amber-400 w-4 h-4 animate-pulse" />
+                <h3 className="text-xs font-black uppercase tracking-wider text-amber-300">
+                  {t.aiWriterTitle}
+                </h3>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-normal font-medium">
+                {t.aiWriterDesc}
+              </p>
+              <textarea
+                value={rawCvText}
+                onChange={(e) => setRawCvText(e.target.value)}
+                placeholder={t.aiWriterPlaceholder}
+                disabled={aiTextWriting}
+                className="w-full h-20 bg-[#0f172a]/80 border border-[#334155] rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:border-indigo-500 outline-none resize-none font-medium custom-scrollbar"
+              />
+              <button
+                onClick={handleGenerateFromRawText}
+                disabled={aiTextWriting || !rawCvText.trim()}
+                className="w-full py-2.5 bg-gradient-to-r from-amber-500/10 to-indigo-600/10 hover:from-amber-500/20 hover:to-indigo-600/20 text-indigo-300 hover:text-white border border-indigo-500/30 hover:border-indigo-500/50 rounded-xl font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {aiTextWriting ? (
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                )}
+                {aiTextWriting ? t.aiWriting : t.aiWriterBtn}
+              </button>
+            </div>
             
             {/* Section selector tabs */}
             <div className="flex flex-wrap gap-1 bg-[#1e293b] p-1 rounded-xl">
@@ -1137,7 +1249,7 @@ export default function CVMakerTab({
                             <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.certifications}</h4>
                             <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
                               {cvData.certifications.map((c, idx) => (
-                                <li key={idx} className="cv-avoid-break font-bold text-slate-600 leading-relaxed">• {c}</li>
+                                <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break font-bold text-slate-600 leading-relaxed">• {c}</li>
                               ))}
                             </ul>
                           </div>

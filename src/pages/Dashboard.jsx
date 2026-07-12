@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { generateLetter, parseCV, extractCompanyName, integrateKeyword } from '../gemini';
+import { generateLetter, parseCV, extractCompanyName, integrateKeyword, analyzeCVQuality } from '../gemini';
 import html2pdf from 'html2pdf.js';
 import html2canvas from 'html2canvas-pro';
 
@@ -37,7 +37,7 @@ import translations from '../locales/translations';
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const { uiLang, setUiLang } = useLanguage();
-  const { isPro, planLoading } = usePlan(user);
+  const { isPro, bonusGenerations = 0, planLoading } = usePlan(user);
   const {
     history,
     setHistory: replaceAllHistory,
@@ -99,7 +99,8 @@ const Dashboard = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [cvFile, setCvFile]           = useState(null);
   const [fileName, setFileName]       = useState('');
-  const [settings, setSettings]       = useState({ language: 'Auto', tone: 'Professional', length: 'Standard' });
+  const [settings, setSettings]       = useState({ language: 'Auto', tone: 'Professional', length: 'Standard', level: 'Middle' });
+  const [showCvSuggestion, setShowCvSuggestion] = useState(false);
   const [generatedLetter, setGeneratedLetter] = useState('');
   const [currentLetterSavedId, setCurrentLetterSavedId] = useState(null); // ID збереженого запису
   const [selectedTemplate, setSelectedTemplate] = useState('influx');
@@ -288,6 +289,24 @@ const Dashboard = () => {
     setFollowUpEntry(pending || null);
   }, [history]);
 
+  // ── CV Input quality check observer ──
+  useEffect(() => {
+    if (!contactInfo) {
+      setShowCvSuggestion(true);
+      return;
+    }
+    const totalAchievementsLength = (contactInfo.experience || [])
+      .flatMap(e => e.achievements || [])
+      .join(" ").length;
+    const skillsLength = (contactInfo.skills || []).join(" ").length;
+    
+    if (totalAchievementsLength + skillsLength < 150) {
+      setShowCvSuggestion(true);
+    } else {
+      setShowCvSuggestion(false);
+    }
+  }, [contactInfo]);
+
   // ── Notifications ──
   const showNotification = (msg) => {
     setToast({ show: true, msg });
@@ -326,6 +345,14 @@ const Dashboard = () => {
         return c;
       }));
       showNotification('Auto-filled ✓');
+      
+      // Background express quality validation check
+      try {
+        const quality = await analyzeCVQuality(data);
+        setShowCvSuggestion(!!quality.isLackingDetail);
+      } catch (err) {
+        console.warn('Express CV quality check failed:', err);
+      }
     } catch (e) {
       alert('AI Error: Could not parse CV');
     } finally {
@@ -402,7 +429,8 @@ const Dashboard = () => {
     if (planLoading) return showNotification('Checking plan...');
 
     const isAdmin = user?.email === 'gagatinsv@gmail.com';
-    if (!isAdmin && !isPro && getMonthlyCount() >= 5) {
+    const totalAllowed = 5 + (bonusGenerations || 0);
+    if (!isAdmin && !isPro && getMonthlyCount() >= totalAllowed) {
       setShowUpgrade(true);
       return;
     }
@@ -427,7 +455,7 @@ const Dashboard = () => {
         const key = `gen_count_${new Date().getMonth()}_${new Date().getFullYear()}`;
         const newCount = getMonthlyCount() + 1;
         localStorage.setItem(key, String(newCount));
-        const left = 5 - newCount;
+        const left = totalAllowed - newCount;
         if (left <= 0) {
           showNotification('Monthly limit reached — upgrade for unlimited');
         } else if (left <= 2) {
@@ -722,6 +750,7 @@ const Dashboard = () => {
     jobDescription, setJobDescription,
     cvFile, setCvFile, fileName, setFileName, handleFileChange, handleAutoFill, parsingCV,
     settings, setSettings,
+    showCvSuggestion, setShowCvSuggestion, bonusGenerations,
     selectedTemplate, setSelectedTemplate,
     TEMPLATES,
     generatedLetter, setGeneratedLetter,
@@ -777,7 +806,12 @@ const Dashboard = () => {
         {toast.msg}
       </div>
 
-      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
+      {showUpgrade && (
+        <UpgradeModal 
+          onClose={() => setShowUpgrade(false)} 
+          isLimitReached={getMonthlyCount() >= 5 + (bonusGenerations || 0)} 
+        />
+      )}
 
       {/* ── Follow-up Banner ── */}
       {followUpEntry && activeTab === 'dashboard' && (

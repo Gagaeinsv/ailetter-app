@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { IconDash, IconTemplate, IconHist, IconSettings, IconInterview, IconCV, IconMagic } from '../ui/Icons';
 import { FileText } from 'lucide-react';
 
-const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, logout, dict, uiLang, setUiLang, navItems, handleNav, navigate }) => (
+const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, logout, dict, uiLang, setUiLang, navItems, handleNav, navigate, showUserMenu, setShowUserMenu }) => (
   <>
     {/* ── Logo + Language switcher ── */}
     <div className="p-5 border-b border-[#334155]">
@@ -12,30 +12,58 @@ const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, l
         <span className="text-lg font-black tracking-tight text-white group-hover:text-[#a5b4fc] transition-colors">{dict.logo}</span>
       </div>
 
-      {/* User card */}
-      <div className="flex items-center gap-3 p-3 bg-[#0f172a]/60 rounded-xl border border-[#334155]">
-        <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-bold text-sm">
-          {user?.photoURL ? (
-            <img
-              src={user.photoURL}
-              alt={user.displayName || 'U'}
-              className="w-full h-full object-cover"
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
-          ) : (
-            user?.displayName?.[0]?.toUpperCase() || 'U'
-          )}
+      {/* User card with dropdown */}
+      <div className="relative">
+        <div 
+          onClick={() => setShowUserMenu(!showUserMenu)}
+          className="flex items-center gap-3 p-3 bg-[#0f172a]/60 rounded-xl border border-[#334155] cursor-pointer hover:bg-[#0f172a] hover:border-indigo-500/50 transition-all select-none"
+        >
+          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center font-bold text-sm">
+            {user?.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt={user.displayName || 'U'}
+                className="w-full h-full object-cover"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+            ) : (
+              user?.displayName?.[0]?.toUpperCase() || 'U'
+            )}
+          </div>
+          <div className="overflow-hidden min-w-0 flex-1">
+            <p className="text-[13px] font-bold text-white truncate">{user?.displayName || 'User'}</p>
+            {planLoading ? (
+              <p className="text-[9px] font-black uppercase tracking-widest text-[#475569] animate-pulse">Loading...</p>
+            ) : (
+              <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: isPro ? '#34d399' : '#6366f1' }}>
+                {isPro ? '✦ Pro' : 'Free Plan'}
+              </p>
+            )}
+          </div>
+          <span className="text-[9px] text-slate-500 transition-transform duration-200" style={{ transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
         </div>
-        <div className="overflow-hidden min-w-0">
-          <p className="text-[13px] font-bold text-white truncate">{user?.displayName || 'User'}</p>
-          {planLoading ? (
-            <p className="text-[9px] font-black uppercase tracking-widest text-[#475569] animate-pulse">Loading...</p>
-          ) : (
-            <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: isPro ? '#34d399' : '#6366f1' }}>
-              {isPro ? '✦ Pro' : 'Free Plan'}
-            </p>
-          )}
-        </div>
+
+        {showUserMenu && (
+          <>
+            {/* Click-outside backdrop */}
+            <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
+            {/* Dropdown Menu */}
+            <div className="absolute left-0 right-0 mt-1 bg-[#1e293b] border border-[#334155] rounded-xl shadow-2xl z-50 p-1.5 space-y-0.5 animate-in fade-in slide-in-from-top-1 duration-150">
+              <button
+                onClick={() => { handleNav('settings'); setShowUserMenu(false); }}
+                className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-[#334155]/60 transition-colors flex items-center gap-2"
+              >
+                ⚙️ {dict.settings}
+              </button>
+              <button
+                onClick={() => { logout(); setShowUserMenu(false); }}
+                className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors flex items-center gap-2 border-t border-[#334155]/30 pt-2"
+              >
+                🚪 {dict.logout}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
 
@@ -113,6 +141,7 @@ const SidebarContent = ({ user, activeTab, isPro, planLoading, setShowUpgrade, l
 const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpgrade, logout, dict, uiLang, setUiLang }) => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const navItems = [
     { id: 'dashboard', label: dict.dashboard, icon: <IconDash /> },
@@ -134,6 +163,7 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
   const contentProps = {
     user, activeTab, isPro, planLoading, setShowUpgrade,
     logout, dict, uiLang, setUiLang, navItems, handleNav, navigate,
+    showUserMenu, setShowUserMenu,
   };
 
   return (

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebase'; // Імпорт db потрібен!
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
 import { 
   onAuthStateChanged, 
   signOut, 
@@ -51,6 +51,21 @@ export const AuthProvider = ({ children }) => {
             setupComplete: false // Флаг для онбордингу
           });
           setIsNewUser(true);
+
+          // Credit referrer if applicable
+          const referrerUid = localStorage.getItem('referrer_uid');
+          if (referrerUid && referrerUid !== currentUser.uid) {
+            try {
+              const referrerRef = doc(db, 'users', referrerUid);
+              await updateDoc(referrerRef, {
+                bonusGenerations: increment(2)
+              });
+              localStorage.removeItem('referrer_uid');
+              console.log('Referrer credited with 2 bonus generations!');
+            } catch (err) {
+              console.error('Could not credit referrer:', err);
+            }
+          }
         } else {
           // 2. Документ є -> Перевіряємо setupComplete
           // Якщо setupComplete == false (або undefined), то це теж "новий" для нас
