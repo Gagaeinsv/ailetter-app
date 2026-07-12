@@ -1127,10 +1127,10 @@ export default function CVMakerTab({
                 <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Template Style</span>
                 <div className="flex flex-wrap gap-1 bg-[#0f172a] p-1 rounded-xl border border-[#334155]">
                   {[
-                    { id: 'modern', label: 'Modern', pro: false },
-                    { id: 'classic', label: 'Classic', pro: false },
-                    { id: 'minimal', label: 'Minimal ✦ PRO', pro: true },
-                    { id: 'photo-modern', label: 'Creative Photo ✦ PRO', pro: true },
+                    { id: 'modern', label: 'Influx (Modern)', pro: false },
+                    { id: 'classic', label: 'Iconic (Classic)', pro: false },
+                    { id: 'minimal', label: 'Minimal', pro: false },
+                    { id: 'photo-modern', label: 'Breeze (Photo)', pro: false },
                     { id: 'photo-classic', label: 'Executive Photo ✦ PRO', pro: true }
                   ].map(item => (
                     <button
