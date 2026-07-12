@@ -11,6 +11,9 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LinkedInGeneratorPage from './pages/LinkedInGeneratorPage';
 import SubjectLineGeneratorPage from './pages/SubjectLineGeneratorPage';
+import AIDeveloperCoverLetterPage from './pages/AIDeveloperCoverLetterPage';
+import LinkedInColdMessagesPage from './pages/LinkedInColdMessagesPage';
+import FreelancerSelfIntroductionPage from './pages/FreelancerSelfIntroductionPage';
 import translations from './locales/translations';
 
 const OG_IMAGE = 'https://ailetter.pro/android-chrome-512x512.png';
@@ -67,6 +70,27 @@ const PageSEO = () => {
       title: dict.seoSubjectTitle,
       description: dict.seoSubjectDesc,
       canonical: 'https://ailetter.pro/subject-line',
+      ogImage: OG_IMAGE,
+      index: true,
+    },
+    '/cover-letter-ai-developer': {
+      title: dict.seoAIDevTitle,
+      description: dict.seoAIDevDesc,
+      canonical: 'https://ailetter.pro/cover-letter-ai-developer',
+      ogImage: OG_IMAGE,
+      index: true,
+    },
+    '/linkedin-cold-message-templates': {
+      title: dict.seoLinkedInColdTitle,
+      description: dict.seoLinkedInColdDesc,
+      canonical: 'https://ailetter.pro/linkedin-cold-message-templates',
+      ogImage: OG_IMAGE,
+      index: true,
+    },
+    '/freelancer-self-introduction': {
+      title: dict.seoFreelancerTitle,
+      description: dict.seoFreelancerDesc,
+      canonical: 'https://ailetter.pro/freelancer-self-introduction',
       ogImage: OG_IMAGE,
       index: true,
     },
@@ -137,6 +161,9 @@ function App() {
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/linkedin-message" element={<LinkedInGeneratorPage />} />
               <Route path="/subject-line" element={<SubjectLineGeneratorPage />} />
+              <Route path="/cover-letter-ai-developer" element={<AIDeveloperCoverLetterPage />} />
+              <Route path="/linkedin-cold-message-templates" element={<LinkedInColdMessagesPage />} />
+              <Route path="/freelancer-self-introduction" element={<FreelancerSelfIntroductionPage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>

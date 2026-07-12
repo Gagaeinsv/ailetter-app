@@ -46,6 +46,21 @@ const ROUTES = [
     title: 'Privacy Policy | AIletter',
     description: 'Learn how AIletter collects, uses, and protects your personal data. Our privacy policy explains your rights and how we handle your information.',
   },
+  {
+    path: '/cover-letter-ai-developer',
+    title: 'How to Write a Cover Letter for an AI Developer | AIletter',
+    description: 'Learn how to write a job-winning AI Developer cover letter. Get templates, skills to highlight, and generate custom opening hooks with AI. Free to start.',
+  },
+  {
+    path: '/linkedin-cold-message-templates',
+    title: 'LinkedIn Cold Message Templates & AI Generator | AIletter',
+    description: 'Get high-converting LinkedIn cold message templates for job applications, referrals, and networking. Customize with AI instantly.',
+  },
+  {
+    path: '/freelancer-self-introduction',
+    title: 'Freelancer Self-Introduction Examples & AI Pitch Generator | AIletter',
+    description: 'Find freelancer self-introduction examples for Upwork, Fiverr, and cold client pitches. Generate a custom, high-converting proposal with AI.',
+  },
 ];
 
 const template = fs.readFileSync(path.join(DIST, 'index.html'), 'utf-8');

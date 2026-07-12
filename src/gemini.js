@@ -1360,3 +1360,82 @@ Original: "${text}"`;
     });
   });
 };
+
+export const generateAIDevHook = async (fullName, skills, experienceYears, jobDescription, options = {}) => {
+  const lang = options.outputLanguage || 'English';
+  const prompt = `You are a professional technical recruiter and CV writer. Generate 2 strong, attention-grabbing opening hooks (intro paragraphs) for an AI Developer cover letter.
+One hook should be bold and metric-driven, and the second should be tech-focused highlighting deep expertise in AI/ML (LLMs, RAG, Neural Networks, Python, PyTorch/TensorFlow, Agentic workflows).
+Apply formatting to match a high-end application.
+Output language must be ${lang}.
+Return a JSON array with exactly two strings:
+[
+  "Bold opening...",
+  "Tech-focused opening..."
+]
+Do not return any markdown formatting outside the JSON array. Output ONLY valid JSON.
+Candidate: ${fullName || 'Candidate'}
+Experience: ${experienceYears || 'some'} years
+Skills: ${skills || 'Python, PyTorch, Deep Learning'}
+Job: ${jobDescription || 'AI Engineer'}`;
+
+  return await tryEveryModel(async (modelId) => {
+    const text = await callGemini({
+      modelId,
+      temperature: 0.7,
+      contents: [prompt]
+    });
+    try {
+      return parseJsonFromModel(text);
+    } catch {
+      // fallback if json parsing fails
+      return [
+        text,
+        text
+      ];
+    }
+  });
+};
+
+export const generateLinkedInColdMessage = async (fullName, senderProfession, recipientName, company, tone, options = {}) => {
+  const lang = options.outputLanguage || 'English';
+  const prompt = `You are a career coach. Write a highly personalized, high-converting LinkedIn cold message to a recruiter or hiring manager.
+The message should be short, concise (under 150 words), and structured with a clear hook and call-to-action.
+Tone: ${tone || 'Professional & Warm'}
+Output language must be ${lang}.
+Recipient Name: ${recipientName || 'Hiring Manager'}
+Company: ${company || 'Target Company'}
+Sender Name: ${fullName || 'Candidate'}
+Sender Profession: ${senderProfession || 'Software Engineer'}
+
+Output ONLY the final cold message text. Do not include subject lines, placeholders like [Date], quotes, markdown, or extra explanations.`;
+
+  return await tryEveryModel(async (modelId) => {
+    return await callGemini({
+      modelId,
+      temperature: 0.7,
+      contents: [prompt]
+    });
+  });
+};
+
+export const generateFreelancerProposal = async (fullName, niche, clientProject, experience, options = {}) => {
+  const lang = options.outputLanguage || 'English';
+  const prompt = `You are a successful top-rated freelancer. Generate a high-converting project proposal/pitch for a client project.
+The proposal should address the client's needs immediately, explain your relevant experience in ${niche || 'freelancing'}, outline your proposed solution/action plan, and end with a strong call-to-action.
+Keep it under 250 words and format with clean spacing.
+Output language must be ${lang}.
+Freelancer Name: ${fullName || 'Freelancer'}
+Niche: ${niche || 'Web Developer'}
+Experience: ${experience || '3 years'}
+Client Project Description: ${clientProject || 'Build a website'}
+
+Output ONLY the proposal text. Do not include placeholders like [Price], quotes, markdown, or extra explanations.`;
+
+  return await tryEveryModel(async (modelId) => {
+    return await callGemini({
+      modelId,
+      temperature: 0.7,
+      contents: [prompt]
+    });
+  });
+};
