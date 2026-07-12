@@ -131,6 +131,29 @@ export default function CVMakerTab({
   const [textSizePreset, setTextSizePreset] = useState('normal'); // small | normal | large
   const [aiLoadingIdx, setAiLoadingIdx] = useState(null); // tracking AI sparkles loading state
   const [pdfGenerating, setPdfGenerating] = useState(false);
+
+  // Section Reordering state & handlers
+  const [sectionOrder, setSectionOrder] = useState(['summary', 'experience', 'education', 'skills', 'languages', 'certifications']);
+
+  const moveSectionUp = (index) => {
+    if (index === 0) return;
+    const newOrder = [...sectionOrder];
+    const temp = newOrder[index - 1];
+    newOrder[index - 1] = newOrder[index];
+    newOrder[index] = temp;
+    setSectionOrder(newOrder);
+    showNotification('Section moved up ↑');
+  };
+
+  const moveSectionDown = (index) => {
+    if (index === sectionOrder.length - 1) return;
+    const newOrder = [...sectionOrder];
+    const temp = newOrder[index + 1];
+    newOrder[index + 1] = newOrder[index];
+    newOrder[index] = temp;
+    setSectionOrder(newOrder);
+    showNotification('Section moved down ↓');
+  };
   
   // New entry temp states
   const [newSkill, setNewSkill] = useState('');
@@ -190,6 +213,175 @@ export default function CVMakerTab({
     } finally {
       setAiTextWriting(false);
     }
+  };
+
+  const renderTemplateSection = (secId, templateId) => {
+    const isClassic = templateId === 'classic' || templateId === 'milano' || templateId === 'onyx' || templateId === 'photo-classic';
+    const isNova = templateId === 'nova';
+    const isNordic = templateId === 'nordic';
+    const isMilano = templateId === 'milano';
+    const isOnyx = templateId === 'onyx';
+    
+    let accentColorClass = 'text-indigo-600';
+    let headingBorderClass = 'border-slate-200';
+    let skillBg = 'bg-slate-100 text-slate-800';
+    let skillBorder = 'border-slate-200';
+    let listTextClass = 'text-slate-700 font-semibold';
+    let companyClass = 'text-slate-500 font-bold';
+
+    if (templateId === 'modern') {
+      accentColorClass = 'text-indigo-600';
+      headingBorderClass = 'border-slate-200';
+    } else if (templateId === 'classic') {
+      accentColorClass = 'text-slate-900';
+      headingBorderClass = 'border-slate-300';
+      listTextClass = 'text-slate-700';
+      companyClass = 'text-slate-500 font-bold';
+    } else if (templateId === 'minimal') {
+      accentColorClass = 'text-slate-955';
+      headingBorderClass = 'border-slate-200';
+    } else if (templateId === 'photo-modern') {
+      accentColorClass = 'text-indigo-600';
+      headingBorderClass = 'border-slate-200';
+      skillBg = 'bg-indigo-50 text-indigo-700';
+      skillBorder = 'border-indigo-100';
+    } else if (templateId === 'photo-classic') {
+      accentColorClass = 'text-indigo-600';
+      headingBorderClass = 'border-slate-200';
+    } else if (isNova) {
+      accentColorClass = 'text-indigo-400';
+      headingBorderClass = 'border-indigo-500/20';
+      skillBg = 'bg-slate-800 text-indigo-300';
+      skillBorder = 'border-slate-700';
+      listTextClass = 'text-slate-300';
+      companyClass = 'text-indigo-400 italic';
+    } else if (isNordic) {
+      accentColorClass = 'text-sky-700';
+      headingBorderClass = 'border-sky-100';
+      skillBg = 'bg-sky-50 text-sky-700';
+      skillBorder = 'border-sky-100';
+      listTextClass = 'text-slate-600';
+      companyClass = 'text-sky-600';
+    } else if (isMilano) {
+      accentColorClass = 'text-amber-800';
+      headingBorderClass = 'border-amber-600/20';
+      skillBg = 'bg-amber-500/10 text-amber-900';
+      skillBorder = 'border-amber-600/20';
+      listTextClass = 'text-amber-955';
+      companyClass = 'text-amber-800 italic';
+    } else if (isOnyx) {
+      accentColorClass = 'text-slate-900';
+      headingBorderClass = 'border-slate-300';
+      skillBg = 'bg-slate-100 text-slate-800';
+      skillBorder = 'border-slate-200';
+      listTextClass = 'text-slate-600';
+      companyClass = 'text-amber-600';
+    }
+
+    if (secId === 'summary' && cvData.summary) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} ${templateId === 'milano' ? 'border-b border-amber-600/20 pb-0.5' : ''}`}>
+            {t.summary}
+          </h4>
+          <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955/80 italic' : 'text-slate-600'} leading-relaxed font-medium`}>
+            {cvData.summary}
+          </p>
+        </div>
+      );
+    }
+
+    if (secId === 'experience' && cvData.experience.length > 0) {
+      return (
+        <div className="space-y-3 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
+            {t.experience}
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
+            {cvData.experience.map((exp, idx) => (
+              <div key={idx} className="cv-avoid-break space-y-1">
+                <div className="flex justify-between items-baseline">
+                  <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className={`font-black ${templateId === 'nova' ? 'text-white' : 'text-slate-900'}`}>{exp.title}</h5>
+                  <span style={{ fontSize: 'var(--cv-font-meta)' }} className={`font-bold ${templateId === 'nova' ? 'text-slate-400' : 'text-slate-500'} whitespace-nowrap`}>{exp.duration}</span>
+                </div>
+                <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className={`font-black uppercase tracking-wider ${companyClass}`}>{exp.company}</h6>
+                <ul className="list-disc pl-4 mt-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
+                  {exp.achievements.map((ach, aIdx) => (
+                    ach.trim() && (
+                      <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className={`cv-avoid-break ${listTextClass} leading-relaxed font-medium`}>
+                        {ach}
+                      </li>
+                    )
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (secId === 'education' && cvData.education) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
+            {t.education}
+          </h4>
+          <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955' : 'text-slate-600'} leading-relaxed font-semibold`}>
+            {cvData.education}
+          </p>
+        </div>
+      );
+    }
+
+    if (secId === 'skills' && cvData.skills.length > 0) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} ${templateId === 'milano' || templateId === 'nordic' || templateId === 'onyx' ? '' : `border-b ${headingBorderClass} pb-0.5`}`}>
+            {t.skills}
+          </h4>
+          <div className="flex flex-wrap gap-1">
+            {cvData.skills.map((skill, idx) => (
+              <span key={idx} style={{ fontSize: 'var(--cv-font-meta)' }} className={`font-bold px-2 py-0.5 rounded border ${skillBg} ${skillBorder}`}>
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (secId === 'languages' && cvData.languages.length > 0) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} ${templateId === 'milano' || templateId === 'nordic' || templateId === 'onyx' ? '' : `border-b ${headingBorderClass} pb-0.5`}`}>
+            {t.languages}
+          </h4>
+          <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
+            {cvData.languages.map((l, idx) => (
+              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className={`font-semibold ${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955' : 'text-slate-700'}`}>{l}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    if (secId === 'certifications' && cvData.certifications.length > 0) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
+            {t.certifications}
+          </h4>
+          <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
+            {cvData.certifications.map((c, idx) => (
+              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className={`font-semibold ${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955' : 'text-slate-700'}`}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   const previewRef = useRef();
@@ -1139,8 +1331,48 @@ export default function CVMakerTab({
           {/* RIGHT: LIVE PREVIEW & EXPORT */}
           <div className="xl:col-span-7 space-y-4">
             
+            {/* Section Order Controls */}
+            <div className="bg-[#1e293b] p-4 rounded-2xl border border-[#334155]/50 space-y-2 mb-4">
+              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Section Order / Порядок розділів</span>
+              <div className="flex flex-wrap gap-2">
+                {sectionOrder.map((secId, index) => {
+                  const label = {
+                    summary: 'Summary / Про себе',
+                    experience: 'Experience / Досвід',
+                    education: 'Education / Освіта',
+                    skills: 'Skills / Навички',
+                    languages: 'Languages / Мови',
+                    certifications: 'Certifications / Сертифікати'
+                  }[secId];
+                  return (
+                    <div key={secId} className="flex items-center gap-1.5 bg-[#0f172a] px-3 py-1.5 rounded-xl border border-[#334155]">
+                      <span className="text-[10px] font-extrabold text-slate-300">{label}</span>
+                      <div className="flex gap-1.5 items-center">
+                        <button
+                          type="button"
+                          onClick={() => moveSectionUp(index)}
+                          disabled={index === 0}
+                          className="p-0.5 hover:text-white text-slate-500 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                        >
+                          <ArrowUp size={12} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveSectionDown(index)}
+                          disabled={index === sectionOrder.length - 1}
+                          className="p-0.5 hover:text-white text-slate-500 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                        >
+                          <ArrowDown size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Design Controls */}
-            <div className="bg-[#1e293b] p-4 rounded-2xl border border-[#334155]/50 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-[#1e293b] p-4 rounded-2xl border border-[#334155]/50 grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               {/* Template Switcher */}
               <div className="space-y-1.5">
                 <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Template Style</span>
@@ -1257,96 +1489,18 @@ export default function CVMakerTab({
                     </div>
 
                     {/* Summary */}
-                    {cvData.summary && (
-                      <div className="space-y-1.5">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600">{t.summary}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-medium">{cvData.summary}</p>
-                      </div>
-                    )}
+                    {cvData.summary && renderTemplateSection('summary', 'modern')}
 
                     {/* Main experience and secondary sidebar grid */}
                     <div className="grid grid-cols-12 gap-8 pt-2" style={{ gap: 'var(--cv-section-gap)' }}>
                       {/* Left: Exp & Ed */}
-                      <div className="col-span-8 space-y-6">
-                        
-                        {/* Work Exp */}
-                        {cvData.experience.length > 0 && (
-                          <div className="space-y-4">
-                            <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.experience}</h4>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                              {cvData.experience.map((exp, idx) => (
-                                <div key={idx} className="cv-avoid-break space-y-1.5">
-                                  <div className="flex justify-between items-baseline">
-                                    <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-black text-slate-900">{exp.title}</h5>
-                                    <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500 whitespace-nowrap">{exp.duration}</span>
-                                  </div>
-                                  <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className="font-extrabold text-indigo-600 uppercase tracking-wider mt-0.5">{exp.company}</h6>
-                                  <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                    {exp.achievements.map((ach, aIdx) => (
-                                      ach.trim() && (
-                                        <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-600 leading-relaxed font-medium">
-                                          {ach}
-                                        </li>
-                                      )
-                                    ))}
-                                  </ul>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Education */}
-                        {cvData.education && (
-                          <div className="cv-avoid-break space-y-2">
-                            <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.education}</h4>
-                            <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed whitespace-pre-line font-medium">{cvData.education}</p>
-                          </div>
-                        )}
-
+                      <div className="col-span-8 space-y-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }}>
+                        {sectionOrder.filter(s => s === 'experience' || s === 'education').map(secId => renderTemplateSection(secId, 'modern'))}
                       </div>
 
                       {/* Right Sidebar: Skills, Langs, Certs */}
-                      <div className="col-span-4 space-y-6 border-l border-slate-100 pl-6">
-                        
-                        {/* Skills */}
-                        {cvData.skills.length > 0 && (
-                          <div className="cv-avoid-break space-y-2">
-                            <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.skills}</h4>
-                            <div className="flex flex-wrap gap-1.5">
-                              {cvData.skills.map((skill, idx) => (
-                                <span key={idx} style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
-                                  {skill}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Languages */}
-                        {cvData.languages.length > 0 && (
-                          <div className="cv-avoid-break space-y-2">
-                            <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.languages}</h4>
-                            <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                              {cvData.languages.map((l, idx) => (
-                                <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="font-bold text-slate-600">• {l}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {/* Certs */}
-                        {cvData.certifications.length > 0 && (
-                          <div className="space-y-2">
-                            <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.certifications}</h4>
-                            <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                              {cvData.certifications.map((c, idx) => (
-                                <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break font-bold text-slate-600 leading-relaxed">• {c}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
+                      <div className="col-span-4 space-y-6 border-l border-slate-100 pl-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }}>
+                        {sectionOrder.filter(s => s === 'skills' || s === 'languages' || s === 'certifications').map(secId => renderTemplateSection(secId, 'modern'))}
                       </div>
                     </div>
                   </div>
@@ -1356,92 +1510,23 @@ export default function CVMakerTab({
                 {selectedTemplate === 'classic' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-center">
                     {/* Header */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)', alignItems: 'center' }} className="border-b border-slate-300 pb-4">
+                    <div className="border-b border-slate-300 pb-4 flex flex-col items-center gap-1.5">
+                      <h2 style={{ fontSize: 'var(--cv-font-title)' }} className="font-bold tracking-tight text-slate-900">{cvData.fullName || 'Alex Morgan'}</h2>
+                      <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-semibold text-slate-500 uppercase tracking-widest">{cvData.profession || 'Product Manager'}</h4>
+                      <div style={{ fontSize: 'var(--cv-font-meta)' }} className="flex justify-center flex-wrap gap-x-4 gap-y-1 font-bold text-slate-500">
+                        {cvData.email && <span>{cvData.email}</span>}
+                        {cvData.phone && <span>{cvData.phone}</span>}
+                        {cvData.location && <span>{cvData.location}</span>}
+                        {cvData.linkedin && <span>{cvData.linkedin}</span>}
+                      </div>
                       {cvData.photo && (
-                        <div className="w-16 h-16 overflow-hidden border border-slate-300 mb-2 shrink-0">
+                        <div className="w-14 h-14 overflow-hidden border border-slate-200 mt-2 shrink-0">
                           <img src={cvData.photo} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                       )}
-                      <h2 style={{ fontSize: 'var(--cv-font-title)' }} className="font-bold tracking-wide text-slate-955 uppercase">{cvData.fullName || 'Alex Morgan'}</h2>
-                      <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-slate-600 italic tracking-widest uppercase">{cvData.profession || 'Product Manager'}</h4>
-                      <div style={{ fontSize: 'var(--cv-font-meta)' }} className="flex justify-center flex-wrap gap-x-4 gap-y-1 font-bold text-slate-600">
-                        {cvData.email && <span>✉ {cvData.email}</span>}
-                        {cvData.phone && <span>📞 {cvData.phone}</span>}
-                        {cvData.location && <span>📍 {cvData.location}</span>}
-                        {cvData.linkedin && <span>{cvData.linkedin}</span>}
-                      </div>
                     </div>
 
-                    {/* Summary */}
-                    {cvData.summary && (
-                      <div className="space-y-1 text-left">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.summary}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed italic">{cvData.summary}</p>
-                      </div>
-                    )}
-
-                    {/* Work Exp */}
-                    {cvData.experience.length > 0 && (
-                      <div className="space-y-3 text-left">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.experience}</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                          {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="cv-avoid-break space-y-1">
-                              <div className="flex justify-between items-baseline">
-                                <span style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-slate-900">{exp.title} | <span className="font-medium italic">{exp.company}</span></span>
-                                <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500">{exp.duration}</span>
-                              </div>
-                              <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                {exp.achievements.map((ach, aIdx) => (
-                                  ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-700 leading-relaxed">
-                                      {ach}
-                                    </li>
-                                  )
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Education */}
-                    {cvData.education && (
-                      <div className="cv-avoid-break space-y-1 text-left">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.education}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed whitespace-pre-line">{cvData.education}</p>
-                      </div>
-                    )}
-
-                    {/* Skills Grid */}
-                    {cvData.skills.length > 0 && (
-                      <div className="cv-avoid-break space-y-1 text-left">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.skills}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed">
-                          {cvData.skills.join(' • ')}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Misc row */}
-                    {(cvData.languages.length > 0 || cvData.certifications.length > 0) && (
-                      <div className="grid grid-cols-2 gap-6 text-left pt-1" style={{ gap: 'var(--cv-section-gap)' }}>
-                        {cvData.languages.length > 0 && (
-                          <div className="cv-avoid-break space-y-1">
-                            <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.languages}</h4>
-                            <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700">{cvData.languages.join(', ')}</p>
-                          </div>
-                        )}
-                        {cvData.certifications.length > 0 && (
-                          <div className="cv-avoid-break space-y-1">
-                            <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-200 pb-0.5">{t.certifications}</h4>
-                            <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed">{cvData.certifications.join(', ')}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'classic'))}
                   </div>
                 )}
 
@@ -1469,90 +1554,7 @@ export default function CVMakerTab({
                       </div>
                     </div>
 
-                    {/* Summary */}
-                    {cvData.summary && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-950">{t.summary}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-medium">{cvData.summary}</p>
-                      </div>
-                    )}
-
-                    {/* Work Exp */}
-                    {cvData.experience.length > 0 && (
-                      <div className="space-y-3">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-955 border-b border-slate-200 pb-0.5">{t.experience}</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                          {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="cv-avoid-break space-y-1">
-                              <div className="flex justify-between items-baseline">
-                                <span style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-black text-slate-900">{exp.title}</span>
-                                <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-extrabold text-slate-400 uppercase tracking-wider">{exp.duration}</span>
-                              </div>
-                              <div style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500 uppercase tracking-wide">{exp.company}</div>
-                              <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                {exp.achievements.map((ach, aIdx) => (
-                                  ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-600 leading-relaxed font-medium">
-                                      {ach}
-                                    </li>
-                                  )
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Skills */}
-                    {cvData.skills.length > 0 && (
-                      <div className="cv-avoid-break space-y-1.5">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-955 border-b border-slate-200 pb-0.5">{t.skills}</h4>
-                        <div className="flex flex-wrap gap-x-3 gap-y-1">
-                          {cvData.skills.map((skill, idx) => (
-                            <span key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="font-bold text-slate-600">
-                              {skill}{idx < cvData.skills.length - 1 ? '  |' : ''}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Ed, Lang, Certs Grid */}
-                    <div className="grid grid-cols-3 gap-6 pt-1 border-t border-slate-100" style={{ gap: 'var(--cv-section-gap)' }}>
-                      {/* Education */}
-                      {cvData.education && (
-                        <div className="cv-avoid-break col-span-1 space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-950">{t.education}</h4>
-                          <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed whitespace-pre-line font-medium">{cvData.education}</p>
-                        </div>
-                      )}
-                      
-                      {/* Languages */}
-                      {cvData.languages.length > 0 && (
-                        <div className="cv-avoid-break col-span-1 space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-955">{t.languages}</h4>
-                          <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                            {cvData.languages.map((l, idx) => (
-                              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="font-bold text-slate-600">• {l}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {/* Certs */}
-                      {cvData.certifications.length > 0 && (
-                        <div className="cv-avoid-break col-span-1 space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-slate-955">{t.certifications}</h4>
-                          <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                            {cvData.certifications.map((c, idx) => (
-                              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="font-bold text-slate-600 leading-normal">• {c}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'minimal'))}
                   </div>
                 )}
 
@@ -1581,33 +1583,7 @@ export default function CVMakerTab({
                         </div>
                       </div>
 
-                      {/* Skills */}
-                      {cvData.skills.length > 0 && (
-                        <div className="space-y-2">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.skills}</h4>
-                          <div className="flex flex-wrap gap-1 pt-1">
-                            {cvData.skills.map((skill, idx) => (
-                              <span key={idx} style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-100">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Languages */}
-                      {cvData.languages.length > 0 && (
-                        <div className="space-y-2">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.languages}</h4>
-                          <div style={{ fontSize: 'var(--cv-font-body)' }} className="font-bold text-slate-600 space-y-1">
-                            {cvData.languages.map((lang, idx) => (
-                              <div key={idx} className="flex justify-between">
-                                <span>{lang}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                      {sectionOrder.filter(s => s === 'skills' || s === 'languages').map(secId => renderTemplateSection(secId, 'photo-modern'))}
                     </div>
 
                     {/* Right Column (Main) */}
@@ -1618,178 +1594,40 @@ export default function CVMakerTab({
                         <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-extrabold text-indigo-600 uppercase tracking-wider">{cvData.profession || 'Product Manager'}</h4>
                       </div>
 
-                      {/* Summary */}
-                      {cvData.summary && (
-                        <div className="space-y-1.5">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.summary}</h4>
-                          <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-medium">{cvData.summary}</p>
-                        </div>
-                      )}
-
-                      {/* Work Exp */}
-                      {cvData.experience.length > 0 && (
-                        <div className="space-y-3">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.experience}</h4>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                            {cvData.experience.map((exp, idx) => (
-                              <div key={idx} className="cv-avoid-break space-y-1">
-                                <div className="flex justify-between items-baseline">
-                                  <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-black text-slate-900">{exp.title}</h5>
-                                  <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500 whitespace-nowrap">{exp.duration}</span>
-                                </div>
-                                <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className="font-extrabold text-indigo-600 uppercase tracking-wider">{exp.company}</h6>
-                                <ul className="list-disc pl-4 mt-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                  {exp.achievements.map((ach, aIdx) => (
-                                    ach.trim() && (
-                                      <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-600 leading-relaxed font-medium">
-                                        {ach}
-                                      </li>
-                                    )
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Education */}
-                      {cvData.education && (
-                        <div className="space-y-1.5">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.education}</h4>
-                          <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-semibold">{cvData.education}</p>
-                        </div>
-                      )}
-
-                      {/* Certifications */}
-                      {cvData.certifications.length > 0 && (
-                        <div className="space-y-1.5">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-extrabold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-1">{t.certifications}</h4>
-                          <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                            {cvData.certifications.map((c, idx) => (
-                              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 font-semibold">{c}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                      {sectionOrder.filter(s => s !== 'skills' && s !== 'languages').map(secId => renderTemplateSection(secId, 'photo-modern'))}
                     </div>
                   </div>
                 )}
 
                 {/* TEMPLATE 5: EXECUTIVE PHOTO (PRO) */}
                 {selectedTemplate === 'photo-classic' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-left font-serif text-slate-900">
-                    {/* Top Header layout: Left photo, Right details */}
-                    <div className="flex gap-6 items-center border-b border-slate-300 pb-4">
-                      {cvData.photo ? (
-                        <div className="w-20 h-24 overflow-hidden border border-slate-400 shrink-0">
-                          <img src={cvData.photo} alt="Profile" className="w-full h-full object-cover" />
-                        </div>
-                      ) : (
-                        <div className="w-20 h-24 bg-slate-100 flex items-center justify-center border border-slate-300 shrink-0 text-slate-400 font-bold text-[10px] uppercase">Photo</div>
-                      )}
-                      
-                      <div className="flex-1 space-y-1.5">
-                        <h2 style={{ fontSize: 'var(--cv-font-title)' }} className="font-bold tracking-wide text-slate-955 uppercase mb-0.5">{cvData.fullName || 'Alex Morgan'}</h2>
-                        <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-slate-600 italic tracking-widest uppercase">{cvData.profession || 'Product Manager'}</h4>
-                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="flex flex-wrap gap-x-4 gap-y-1 font-bold text-slate-600">
-                          {cvData.email && <span>✉ {cvData.email}</span>}
-                          {cvData.phone && <span>📞 {cvData.phone}</span>}
-                          {cvData.location && <span>📍 {cvData.location}</span>}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-left font-serif">
+                    {/* Header */}
+                    <div className="border-b border-slate-200 pb-4 flex items-center justify-between gap-4">
+                      <div>
+                        <h2 style={{ fontSize: 'var(--cv-font-title)' }} className="font-bold tracking-tight text-slate-900">{cvData.fullName || 'Alex Morgan'}</h2>
+                        <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-indigo-600 uppercase tracking-widest">{cvData.profession || 'Product Manager'}</h4>
+                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-slate-505 font-semibold">
+                          {cvData.email && <span>{cvData.email}</span>}
+                          {cvData.phone && <span>{cvData.phone}</span>}
+                          {cvData.location && <span>{cvData.location}</span>}
                           {cvData.linkedin && <span>{cvData.linkedin}</span>}
                         </div>
                       </div>
-                    </div>
-
-                    {/* Summary */}
-                    {cvData.summary && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-0.5">{t.summary}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed italic">{cvData.summary}</p>
-                      </div>
-                    )}
-
-                    {/* Work Exp */}
-                    {cvData.experience.length > 0 && (
-                      <div className="space-y-3">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-0.5">{t.experience}</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                          {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="cv-avoid-break space-y-1">
-                              <div className="flex justify-between items-baseline">
-                                <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-slate-900">{exp.title}</h5>
-                                <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-semibold text-slate-500 whitespace-nowrap">{exp.duration}</span>
-                              </div>
-                              <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-600 italic uppercase tracking-wider">{exp.company}</h6>
-                              <ul className="list-disc pl-4 mt-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                {exp.achievements.map((ach, aIdx) => (
-                                  ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-700 leading-relaxed font-medium">
-                                      {ach}
-                                    </li>
-                                  )
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Education */}
-                    {cvData.education && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-0.5">{t.education}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 leading-relaxed font-semibold">{cvData.education}</p>
-                      </div>
-                    )}
-
-                    {/* Skills & Langs Grid */}
-                    <div className="grid grid-cols-2 gap-8" style={{ gap: 'var(--cv-section-gap)' }}>
-                      {/* Skills */}
-                      {cvData.skills.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-0.5">{t.skills}</h4>
-                          <div className="flex flex-wrap gap-1 pt-1">
-                            {cvData.skills.map((skill, idx) => (
-                              <span key={idx} style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Languages */}
-                      {cvData.languages.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-0.5">{t.languages}</h4>
-                          <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                            {cvData.languages.map((l, idx) => (
-                              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 font-semibold">{l}</li>
-                            ))}
-                          </ul>
+                      {cvData.photo && (
+                        <div className="w-16 h-16 overflow-hidden border border-slate-200 shrink-0">
+                          <img src={cvData.photo} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                       )}
                     </div>
 
-                    {/* Certifications */}
-                    {cvData.certifications.length > 0 && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-indigo-600 border-b border-slate-200 pb-0.5">{t.certifications}</h4>
-                        <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                          {cvData.certifications.map((c, idx) => (
-                            <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-700 font-semibold">{c}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'photo-classic'))}
                   </div>
                 )}
 
                 {/* TEMPLATE 6: NOVA DARK MODE (FREE) */}
                 {selectedTemplate === 'nova' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-left font-sans">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-left font-sans text-slate-300">
                     {/* Header */}
                     <div className="border-b border-indigo-500/30 pb-4 flex items-center justify-between gap-4">
                       <div>
@@ -1809,87 +1647,7 @@ export default function CVMakerTab({
                       )}
                     </div>
 
-                    {/* Summary */}
-                    {cvData.summary && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-indigo-400">{t.summary}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-300 leading-relaxed font-medium">{cvData.summary}</p>
-                      </div>
-                    )}
-
-                    {/* Work Exp */}
-                    {cvData.experience.length > 0 && (
-                      <div className="space-y-3">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-indigo-400 border-b border-indigo-500/20 pb-0.5">{t.experience}</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                          {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="cv-avoid-break space-y-1">
-                              <div className="flex justify-between items-baseline">
-                                <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-black text-white">{exp.title}</h5>
-                                <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-400 whitespace-nowrap">{exp.duration}</span>
-                              </div>
-                              <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-indigo-400 italic uppercase tracking-wider">{exp.company}</h6>
-                              <ul className="list-disc pl-4 mt-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                {exp.achievements.map((ach, aIdx) => (
-                                  ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-300 leading-relaxed font-medium">
-                                      {ach}
-                                    </li>
-                                  )
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Education */}
-                    {cvData.education && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-indigo-400 border-b border-indigo-500/20 pb-0.5">{t.education}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-300 leading-relaxed font-semibold">{cvData.education}</p>
-                      </div>
-                    )}
-
-                    {/* Skills & Languages */}
-                    <div className="grid grid-cols-2 gap-6">
-                      {cvData.skills.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-indigo-400">{t.skills}</h4>
-                          <div className="flex flex-wrap gap-1">
-                            {cvData.skills.map((skill, idx) => (
-                              <span key={idx} style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold bg-slate-800 text-indigo-300 px-2 py-0.5 rounded border border-slate-700">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {cvData.languages.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-indigo-400">{t.languages}</h4>
-                          <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                            {cvData.languages.map((l, idx) => (
-                              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-300 font-semibold">{l}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Certifications */}
-                    {cvData.certifications.length > 0 && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-black uppercase tracking-widest text-indigo-400 border-b border-indigo-500/20 pb-0.5">{t.certifications}</h4>
-                        <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                          {cvData.certifications.map((c, idx) => (
-                            <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-300 font-semibold">{c}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'nova'))}
                   </div>
                 )}
 
@@ -1915,89 +1673,7 @@ export default function CVMakerTab({
                       )}
                     </div>
 
-                    {/* Summary */}
-                    {cvData.summary && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-wider text-sky-700">{t.summary}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-medium">{cvData.summary}</p>
-                      </div>
-                    )}
-
-                    {/* Work Exp */}
-                    {cvData.experience.length > 0 && (
-                      <div className="space-y-3">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-wider text-sky-700 border-b border-sky-100 pb-0.5">{t.experience}</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                          {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="cv-avoid-break space-y-1">
-                              <div className="flex justify-between items-baseline">
-                                <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-slate-900">{exp.title}</h5>
-                                <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500 whitespace-nowrap">{exp.duration}</span>
-                              </div>
-                              <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-sky-600 uppercase tracking-wider">{exp.company}</h6>
-                              <ul className="list-disc pl-4 mt-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                {exp.achievements.map((ach, aIdx) => (
-                                  ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-600 leading-relaxed font-medium">
-                                      {ach}
-                                    </li>
-                                  )
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Education */}
-                    {cvData.education && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-wider text-sky-700 border-b border-sky-100 pb-0.5">{t.education}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-semibold">{cvData.education}</p>
-                      </div>
-                    )}
-
-                    {/* Skills & Langs Grid */}
-                    <div className="grid grid-cols-2 gap-6">
-                      {/* Skills */}
-                      {cvData.skills.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-wider text-sky-700">{t.skills}</h4>
-                          <div className="flex flex-wrap gap-1">
-                            {cvData.skills.map((skill, idx) => (
-                              <span key={idx} style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold bg-sky-50 text-sky-700 px-2 py-0.5 rounded border border-sky-100">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Languages */}
-                      {cvData.languages.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-wider text-sky-700">{t.languages}</h4>
-                          <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                            {cvData.languages.map((l, idx) => (
-                              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 font-semibold">{l}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Certifications */}
-                    {cvData.certifications.length > 0 && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-wider text-sky-700 border-b border-sky-100 pb-0.5">{t.certifications}</h4>
-                        <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                          {cvData.certifications.map((c, idx) => (
-                            <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 font-semibold">{c}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'nordic'))}
                   </div>
                 )}
 
@@ -2021,89 +1697,7 @@ export default function CVMakerTab({
                       </div>
                     </div>
 
-                    {/* Summary */}
-                    {cvData.summary && (
-                      <div className="space-y-1 text-left">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-amber-800 border-b border-amber-600/20 pb-0.5">{t.summary}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-amber-950/80 leading-relaxed font-medium italic">{cvData.summary}</p>
-                      </div>
-                    )}
-
-                    {/* Work Exp */}
-                    {cvData.experience.length > 0 && (
-                      <div className="space-y-3 text-left">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-amber-800 border-b border-amber-600/20 pb-0.5">{t.experience}</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                          {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="cv-avoid-break space-y-1">
-                              <div className="flex justify-between items-baseline">
-                                <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-amber-900">{exp.title}</h5>
-                                <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-amber-700/80 whitespace-nowrap">{exp.duration}</span>
-                              </div>
-                              <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-amber-800 italic uppercase tracking-wider">{exp.company}</h6>
-                              <ul className="list-disc pl-4 mt-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                {exp.achievements.map((ach, aIdx) => (
-                                  ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-amber-955 leading-relaxed font-medium">
-                                      {ach}
-                                    </li>
-                                  )
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Education */}
-                    {cvData.education && (
-                      <div className="space-y-1 text-left">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-amber-800 border-b border-amber-600/20 pb-0.5">{t.education}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-amber-950/80 leading-relaxed font-semibold">{cvData.education}</p>
-                      </div>
-                    )}
-
-                    {/* Skills & Langs Grid */}
-                    <div className="grid grid-cols-2 gap-6 text-left">
-                      {/* Skills */}
-                      {cvData.skills.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-amber-800">{t.skills}</h4>
-                          <div className="flex flex-wrap gap-1">
-                            {cvData.skills.map((skill, idx) => (
-                              <span key={idx} style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold bg-amber-500/10 text-amber-900 px-2 py-0.5 rounded border border-amber-600/20">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Languages */}
-                      {cvData.languages.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-amber-800">{t.languages}</h4>
-                          <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                            {cvData.languages.map((l, idx) => (
-                              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-amber-955 font-semibold">{l}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Certifications */}
-                    {cvData.certifications.length > 0 && (
-                      <div className="space-y-1 text-left">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-amber-800 border-b border-amber-600/20 pb-0.5">{t.certifications}</h4>
-                        <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                          {cvData.certifications.map((c, idx) => (
-                            <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-amber-955 font-semibold">{c}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'milano'))}
                   </div>
                 )}
 
@@ -2129,92 +1723,9 @@ export default function CVMakerTab({
                       )}
                     </div>
 
-                    {/* Summary */}
-                    {cvData.summary && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-300 pb-0.5">{t.summary}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-medium">{cvData.summary}</p>
-                      </div>
-                    )}
-
-                    {/* Work Exp */}
-                    {cvData.experience.length > 0 && (
-                      <div className="space-y-3">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-300 pb-0.5">{t.experience}</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
-                          {cvData.experience.map((exp, idx) => (
-                            <div key={idx} className="cv-avoid-break space-y-1">
-                              <div className="flex justify-between items-baseline">
-                                <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-slate-900">{exp.title}</h5>
-                                <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500 whitespace-nowrap">{exp.duration}</span>
-                              </div>
-                              <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-amber-600 uppercase tracking-wider">{exp.company}</h6>
-                              <ul className="list-disc pl-4 mt-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                                {exp.achievements.map((ach, aIdx) => (
-                                  ach.trim() && (
-                                    <li key={aIdx} style={{ fontSize: 'var(--cv-font-body)' }} className="cv-avoid-break text-slate-600 leading-relaxed font-medium">
-                                      {ach}
-                                    </li>
-                                  )
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Education */}
-                    {cvData.education && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-300 pb-0.5">{t.education}</h4>
-                        <p style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 leading-relaxed font-semibold">{cvData.education}</p>
-                      </div>
-                    )}
-
-                    {/* Skills & Langs Grid */}
-                    <div className="grid grid-cols-2 gap-6">
-                      {/* Skills */}
-                      {cvData.skills.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900">{t.skills}</h4>
-                          <div className="flex flex-wrap gap-1">
-                            {cvData.skills.map((skill, idx) => (
-                              <span key={idx} style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Languages */}
-                      {cvData.languages.length > 0 && (
-                        <div className="space-y-1">
-                          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900">{t.languages}</h4>
-                          <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                            {cvData.languages.map((l, idx) => (
-                              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 font-semibold">{l}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Certifications */}
-                    {cvData.certifications.length > 0 && (
-                      <div className="space-y-1">
-                        <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className="font-bold uppercase tracking-widest text-slate-900 border-b border-slate-300 pb-0.5">{t.certifications}</h4>
-                        <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
-                          {cvData.certifications.map((c, idx) => (
-                            <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className="text-slate-600 font-semibold">{c}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'onyx'))}
                   </div>
                 )}
-
               </div>
             </div>
 
