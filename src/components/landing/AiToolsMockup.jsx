@@ -7,6 +7,7 @@ const BODY_H = TOTAL_H - CHROME_H;
 
 const TABS = [
   { key: 'letter', icon: '📄' },
+  { key: 'cvmaker', icon: '📝' },
   { key: 'ats', icon: '📊' },
   { key: 'interview', icon: '🎤' },
   { key: 'tracker', icon: '💼' },
@@ -37,6 +38,7 @@ const AiToolsMockup = ({ t, activeTab, onChangeTab }) => {
 
   const labels = useMemo(() => ({
     letter: t?.('dashboard') || 'Cover Letter',
+    cvmaker: t?.('cvMaker') || 'CV Maker',
     ats: t?.('cvOptimizer') || 'CV Optimizer',
     interview: t?.('interview') || 'Interview Prep',
     tracker: t?.('jobtracker') || 'Job Tracker',
@@ -73,6 +75,41 @@ const AiToolsMockup = ({ t, activeTab, onChangeTab }) => {
               At Figma, I spearheaded our design system migration, scaling component reuse by 45% and reducing developer handoff time.
             </p>
             <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#111827] to-transparent pointer-events-none" />
+          </div>
+        </div>
+      );
+    }
+
+    if (tab === 'cvmaker') {
+      return (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{labels.cvmaker}</div>
+            <div className="text-[9px] font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">✨ Magic AI Active</div>
+          </div>
+          <div className="rounded-xl border border-white/5 bg-[#111827] shadow-xl p-3 text-[10.5px] leading-relaxed text-slate-300 space-y-2">
+            <div className="flex items-center justify-between border-b border-white/5 pb-2">
+              <span className="text-[9.5px] font-bold text-white">Alex Johnson — CV</span>
+              <span className="text-[8.5px] text-indigo-400 font-bold">Template: Modern</span>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-2 text-[9px] border-b border-white/5 pb-2">
+              <div><span className="text-slate-500">Email:</span> alex@example.com</div>
+              <div><span className="text-slate-500">Phone:</span> +1 234 567 890</div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-[8.5px] font-black text-slate-500 uppercase tracking-widest">Work Experience</div>
+              <div className="bg-[#1e293b]/40 rounded-lg p-2 border border-white/5 space-y-1">
+                <div className="flex justify-between text-[9.5px] font-bold text-white">
+                  <span>Product Designer</span>
+                  <span className="text-slate-500">Spotify · Present</span>
+                </div>
+                <p className="text-[8.5px] text-slate-400 leading-normal">
+                  • Led core UI redesign of Spotify's Web Player, boosting active user retention by 34%.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       );

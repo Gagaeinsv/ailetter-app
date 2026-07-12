@@ -261,6 +261,24 @@ const TRANSLATIONS = {
     customizeTemplate: "Customize with AI ⚡",
     copyAll: "Copy All Achievements",
     exportPdf: "Export Resume PDF",
+    cvMakerT: "AI Resume & CV Builder",
+    cvMakerD: "Build a premium resume from scratch or generate it instantly using raw text. Choose print-ready templates.",
+    pricingTitle: "Simple, Transparent Pricing",
+    pricingSub: "Choose the plan that fits your career goals. Save over 45% with our yearly plan.",
+    pricingMonthly: "Monthly",
+    pricingYearly: "Yearly",
+    pricingFreeName: "Free Plan",
+    pricingFreePrice: "€0",
+    pricingFreePeriod: "forever",
+    pricingProName: "Pro Plan",
+    pricingProMonthlyPrice: "€5.99",
+    pricingProYearlyPrice: "€3.25",
+    pricingProPeriod: "per month",
+    pricingProBillNotice: "Billed annually (€39/year)",
+    pricingSaveText: "Save 45%",
+    pricingPopular: "Most Popular",
+    pricingStartBtn: "Get Started For Free",
+    pricingUpgradeBtn: "Upgrade to Pro Now",
   },
   uk: {
     badge: "V3.0 Вже Доступно",
@@ -309,6 +327,24 @@ const TRANSLATIONS = {
     customizeTemplate: "Налаштувати з AI ⚡",
     copyAll: "Копіювати всі досягнення",
     exportPdf: "Експортувати резюме PDF",
+    cvMakerT: "Конструктор резюме з ШІ",
+    cvMakerD: "Створюйте преміальні резюме з нуля або генеруйте їх миттєво з довільного опису своїми словами.",
+    pricingTitle: "Прості та прозорі тарифи",
+    pricingSub: "Оберіть план, який відповідає вашим кар'єрним цілям. Заощаджуйте понад 45% з річним планом.",
+    pricingMonthly: "Щомісячно",
+    pricingYearly: "Щорічно",
+    pricingFreeName: "Безкоштовно",
+    pricingFreePrice: "€0",
+    pricingFreePeriod: "назавжди",
+    pricingProName: "Pro план",
+    pricingProMonthlyPrice: "€5.99",
+    pricingProYearlyPrice: "€3.25",
+    pricingProPeriod: "на місяць",
+    pricingProBillNotice: "Сплачується щорічно (€39/рік)",
+    pricingSaveText: "Знижка 45%",
+    pricingPopular: "Популярний",
+    pricingStartBtn: "Почати безкоштовно",
+    pricingUpgradeBtn: "Перейти на Pro",
   },
   it: {
     badge: "V3.0 Ora Disponibile",
@@ -357,6 +393,24 @@ const TRANSLATIONS = {
     customizeTemplate: "Personalizza con AI ⚡",
     copyAll: "Copia tutti i punti",
     exportPdf: "Esporta CV PDF",
+    cvMakerT: "Costruttore di CV con IA",
+    cvMakerD: "Crea un curriculum premium da zero oificalo istantaneamente dal testo libero. Modelli pronti per la stampa.",
+    pricingTitle: "Prezzi Semplici e Trasparenti",
+    pricingSub: "Scegli il piano più adatto ai tuoi obiettivi di carriera. Risparmia oltre il 45% con il piano annuale.",
+    pricingMonthly: "Mensile",
+    pricingYearly: "Annuale",
+    pricingFreeName: "Piano Gratuito",
+    pricingFreePrice: "€0",
+    pricingFreePeriod: "per sempre",
+    pricingProName: "Piano Pro",
+    pricingProMonthlyPrice: "€5.99",
+    pricingProYearlyPrice: "€3.25",
+    pricingProPeriod: "al mese",
+    pricingProBillNotice: "Fatturato annualmente (€39/anno)",
+    pricingSaveText: "Risparmia 45%",
+    pricingPopular: "Più Popolare",
+    pricingStartBtn: "Inizia Gratis",
+    pricingUpgradeBtn: "Passa a Pro Ora",
   },
   de: {
     badge: "V3.0 Jetzt Live",
@@ -405,6 +459,24 @@ const TRANSLATIONS = {
     customizeTemplate: "Mit KI anpassen ⚡",
     copyAll: "Alle Erfolge kopieren",
     exportPdf: "Lebenslauf PDF exportieren",
+    cvMakerT: "KI Lebenslauf Maker",
+    cvMakerD: "Erstellen Sie einen Premium-Lebenslauf von Grund auf oder generieren Sie ihn direkt aus Freitext. Druckfertige Vorlagen.",
+    pricingTitle: "Einfache, transparente Preise",
+    pricingSub: "Wählen Sie den Plan, der zu Ihren Karrierezielen passt. Sparen Sie über 45% mit unserem Jahresplan.",
+    pricingMonthly: "Monatlich",
+    pricingYearly: "Jährlich",
+    pricingFreeName: "Kostenlos",
+    pricingFreePrice: "€0",
+    pricingFreePeriod: "kostenlos",
+    pricingProName: "Pro Plan",
+    pricingProMonthlyPrice: "€5.99",
+    pricingProYearlyPrice: "€3.25",
+    pricingProPeriod: "pro Monat",
+    pricingProBillNotice: "Jährlich abgerechnet (€39/Jahr)",
+    pricingSaveText: "45% sparen",
+    pricingPopular: "Sehr beliebt",
+    pricingStartBtn: "Kostenlos starten",
+    pricingUpgradeBtn: "Jetzt auf Pro upgraden",
   },
 };
 
@@ -431,11 +503,12 @@ const Landing = () => {
   const [demoTab, setDemoTab] = useState('letter');
   const [isInteracting, setIsInteracting] = useState(false);
   const [activeTemplate, setActiveTemplate] = useState('dev');
+  const [billingPeriod, setBillingPeriod] = useState('yearly');
 
   useEffect(() => {
     if (isInteracting) return;
     const interval = setInterval(() => {
-      const tabs = ['letter', 'ats', 'interview', 'tracker', 'outreach'];
+      const tabs = ['letter', 'cvmaker', 'ats', 'interview', 'tracker', 'outreach'];
       setDemoTab((prev) => {
         const idx = (tabs.indexOf(prev) + 1) % tabs.length;
         return tabs[idx];
@@ -488,6 +561,28 @@ const Landing = () => {
       try { document.head.removeChild(el); } catch(e) {}
     };
   }, []);
+
+  useEffect(() => {
+    const metaTitles = {
+      en: 'AIletter — AI Cover Letter Generator & Resume CV Builder',
+      uk: 'AIletter — Конструктор резюме з ШІ та супровідних листів',
+      de: 'AIletter — KI-Anschreiben & Lebenslauf Generator',
+      it: 'AIletter — Generatore di Lettere di Presentazione e CV con IA'
+    };
+
+    const metaDescs = {
+      en: 'Create tailored cover letters and build professional resumes using AI. Optimize your CV for ATS screening, track applications, and ace interviews.',
+      uk: 'Створюйте персоналізовані супровідні листи та професійні резюме за допомогою ШІ. Оптимізуйте CV під ATS, відстежуйте вакансії та готуйтеся до співбесід.',
+      de: 'Erstellen Sie maßgeschneiderte Anschreiben und professionelle Lebensläufe mit KI. Optimieren Sie Ihren Lebenslauf für ATS-Systeme, verwalten Sie Bewerbungen.',
+      it: 'Crea lettere di presentazione personalizzate e curricula professionali con l\'IA. Ottimizza il tuo CV per i filtri ATS, traccia le candidature e preparati al colloquio.'
+    };
+
+    document.title = metaTitles[uiLang] || metaTitles.en;
+    const descMeta = document.querySelector('meta[name="description"]');
+    if (descMeta) {
+      descMeta.setAttribute('content', metaDescs[uiLang] || metaDescs.en);
+    }
+  }, [uiLang]);
 
   const t = k => TRANSLATIONS[uiLang]?.[k] || TRANSLATIONS.en[k] || k;
   const faqs = FAQS[uiLang] || FAQS.en;
@@ -650,6 +745,7 @@ const Landing = () => {
           <div className="lg:col-span-5 flex flex-col justify-center space-y-3 relative z-10">
             {[
               { key: 'letter', icon: '📄', title: t('letterT'), desc: t('letterD'), tint: 'from-indigo-500/10 to-transparent border-indigo-500/10' },
+              { key: 'cvmaker', icon: '📝', title: t('cvMakerT'), desc: t('cvMakerD'), tint: 'from-fuchsia-500/10 to-transparent border-fuchsia-500/10' },
               { key: 'ats', icon: '📊', title: t('atsT'), desc: t('atsD'), tint: 'from-emerald-500/10 to-transparent border-emerald-500/10' },
               { key: 'interview', icon: '🎤', title: t('interviewT'), desc: t('interviewD'), tint: 'from-purple-500/10 to-transparent border-purple-500/10' },
               { key: 'tracker', icon: '💼', title: t('trackerT'), desc: t('trackerD'), tint: 'from-amber-500/10 to-transparent border-amber-500/10' },
@@ -695,11 +791,11 @@ const Landing = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
             { icon: '📄', title: t('letterT'), desc: t('letterD') },
+            { icon: '📝', title: t('cvMakerT'), desc: t('cvMakerD') },
             { icon: '📊', title: t('atsT'), desc: t('atsD') },
             { icon: '🎤', title: t('interviewT'), desc: t('interviewD') },
             { icon: '💼', title: t('trackerT'), desc: t('trackerD') },
             { icon: '✉️', title: t('outreachT'), desc: t('outreachD') },
-            { icon: '⚡', title: t('subjectPageTitle') || 'Subject Lines', desc: t('subjectPageLead') || 'Subject Line Generator' },
           ].map((feat, idx) => (
             <div key={idx} className="glass rounded-2xl p-6 border border-white/5 hover:border-white/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
               <div>
@@ -816,6 +912,143 @@ const Landing = () => {
                   <p className="text-xs text-slate-200 leading-relaxed font-bold">{item}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING SECTION */}
+      <section className="py-20 px-4 md:px-6 relative z-10 max-w-5xl mx-auto border-t border-white/[0.04]">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-black mb-4">{t('pricingTitle')}</h2>
+          <p className="text-gray-400 text-sm max-w-xl mx-auto">{t('pricingSub')}</p>
+          
+          {/* Switcher */}
+          <div className="inline-flex items-center gap-2 mt-6 bg-[#1e293b] p-1 rounded-xl border border-white/5">
+            <button 
+              onClick={() => setBillingPeriod('monthly')}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${billingPeriod === 'monthly' ? 'bg-[#6366f1] text-white' : 'text-slate-400 hover:text-white'}`}
+            >
+              {t('pricingMonthly')}
+            </button>
+            <button 
+              onClick={() => setBillingPeriod('yearly')}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${billingPeriod === 'yearly' ? 'bg-[#6366f1] text-white' : 'text-slate-400 hover:text-white'}`}
+            >
+              <span>{t('pricingYearly')}</span>
+              <span className="bg-emerald-500/20 text-emerald-400 text-[8px] px-1.5 py-0.5 rounded-full font-black border border-emerald-500/10">{t('pricingSaveText')}</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto mt-10">
+          {/* Card 1: Free */}
+          <div className="glass rounded-3xl p-8 border border-white/5 flex flex-col justify-between hover:border-white/10 transition-all duration-300">
+            <div>
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-lg font-black text-white">{t('pricingFreeName')}</h3>
+                  <p className="text-slate-500 text-[10px] mt-1 uppercase tracking-wider">Start building now</p>
+                </div>
+              </div>
+              
+              <div className="mb-6 flex items-baseline gap-1">
+                <span className="text-4xl font-black text-white">{t('pricingFreePrice')}</span>
+                <span className="text-xs text-slate-400">/ {t('pricingFreePeriod')}</span>
+              </div>
+
+              <div className="h-px bg-white/5 my-6" />
+
+              <ul className="space-y-3.5 text-xs text-slate-300">
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>5 {uiLang === 'uk' ? 'генерацій на місяць' : 'generations per month'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'Конструктор резюме (CV Maker)' : 'Resume CV Maker (manual editing)'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'Базові шаблони дизайну' : 'Basic templates library'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'ATS аналіз ключових слів' : 'ATS keyword scanner'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'Канбан-трекер вакансій' : 'Smart Kanban job tracker'}</span>
+                </li>
+                <li className="flex items-center gap-2 text-emerald-400 font-bold">
+                  <IconCheck /> <span>{uiLang === 'uk' ? '+2 додаткові генерації за кожного друга' : '+2 bonus generations per friend invited'}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-8">
+              <Link 
+                to={user ? '/dashboard' : '/login'} 
+                className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all border border-white/5"
+              >
+                {t('pricingStartBtn')}
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 2: Pro */}
+          <div className="bg-[#6366f1]/[0.02] border-2 border-[#6366f1]/50 rounded-3xl p-8 flex flex-col justify-between hover:border-[#6366f1]/80 transition-all duration-300 relative">
+            <div className="absolute top-0 right-6 -translate-y-1/2 bg-[#6366f1] text-white text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg shadow-[#6366f1]/20 border border-white/10">
+              {t('pricingPopular')}
+            </div>
+            
+            <div>
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-lg font-black text-indigo-400">{t('pricingProName')}</h3>
+                  <p className="text-slate-500 text-[10px] mt-1 uppercase tracking-wider">Unleash the full AI capability</p>
+                </div>
+              </div>
+
+              <div className="mb-1 flex items-baseline gap-1">
+                <span className="text-4xl font-black text-white">
+                  {billingPeriod === 'yearly' ? t('pricingProYearlyPrice') : t('pricingProMonthlyPrice')}
+                </span>
+                <span className="text-xs text-slate-400">/ {t('pricingProPeriod')}</span>
+              </div>
+              <p className="text-[10px] text-slate-400 italic">
+                {billingPeriod === 'yearly' ? t('pricingProBillNotice') : (uiLang === 'uk' ? 'Сплачується щомісячно' : 'Billed monthly')}
+              </p>
+
+              <div className="h-px bg-white/5 my-6" />
+
+              <ul className="space-y-3.5 text-xs text-slate-200 font-medium">
+                <li className="flex items-center gap-2 font-bold text-white">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'Безлімітні генерації ШІ' : 'Unlimited AI letter & CV generations'}</span>
+                </li>
+                <li className="flex items-center gap-2 text-indigo-300 font-bold">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'ШІ Авто-заповнення резюме з тексту' : 'Magic AI CV Generator (from freeform text)'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'Режим Executive (PRO)' : 'Executive Mode presets for senior roles'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'Преміальні шаблони CV та листів' : 'Premium resume & letter visual templates'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'ШІ супровідні листи нагадування (Follow-up)' : 'Auto-scheduled Follow-up drafts'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'Експорт без водяних знаків' : 'High-definition export without watermarks'}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheck /> <span>{uiLang === 'uk' ? 'Пріоритетний доступ до ШІ' : 'Priority access & advanced models'}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-8">
+              <Link 
+                to={user ? '/dashboard' : '/login'} 
+                className="w-full py-3 bg-[#6366f1] hover:bg-[#5458ee] text-white rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#6366f1]/25 border border-white/5"
+              >
+                {t('pricingUpgradeBtn')}
+              </Link>
             </div>
           </div>
         </div>
