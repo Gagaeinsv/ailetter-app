@@ -104,6 +104,7 @@ const Dashboard = () => {
   const [generatedLetter, setGeneratedLetter] = useState('');
   const [currentLetterSavedId, setCurrentLetterSavedId] = useState(null); // ID збереженого запису
   const [selectedTemplate, setSelectedTemplate] = useState('influx');
+  const [selectedCVTemplate, setSelectedCVTemplate] = useState('modern');
   const [loading, setLoading]         = useState(false);
   const [parsingCV, setParsingCV]     = useState(false);
   const [editMode, setEditMode]       = useState(false);
@@ -752,6 +753,7 @@ const Dashboard = () => {
     settings, setSettings,
     showCvSuggestion, setShowCvSuggestion, bonusGenerations,
     selectedTemplate, setSelectedTemplate,
+    selectedCVTemplate, setSelectedCVTemplate,
     TEMPLATES,
     generatedLetter, setGeneratedLetter,
     loading, handleGenerate,

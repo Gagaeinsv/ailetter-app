@@ -123,7 +123,8 @@ export default function CVMakerTab({
   });
 
   const [activeSection, setActiveSection] = useState('personal'); // personal | experience | skills | education | misc
-  const [selectedTemplate, setSelectedTemplate] = useState('modern'); // modern | classic | minimal
+  const selectedTemplate = props.selectedCVTemplate || 'modern';
+  const setSelectedTemplate = props.setSelectedCVTemplate || (() => {});
   const [spacingPreset, setSpacingPreset] = useState('normal'); // compact | normal | spacious
   const [textSizePreset, setTextSizePreset] = useState('normal'); // small | normal | large
   const [aiLoadingIdx, setAiLoadingIdx] = useState(null); // tracking AI sparkles loading state
