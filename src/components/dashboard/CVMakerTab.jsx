@@ -47,7 +47,12 @@ export default function CVMakerTab({
       aiWriterPlaceholder: 'E.g.: I am Igor, a Frontend developer with 3 years of experience. I studied Computer Science at KPI, graduated in 2022. I worked at SoftServe doing React and Redux...',
       aiWriterBtn: 'Generate Resume with AI',
       aiWriting: 'Generating...',
-      aiFillSuccess: 'Resume populated successfully! ✓'
+      aiFillSuccess: 'Resume populated successfully! ✓',
+      projects: 'Projects',
+      courses: 'Courses',
+      awards: 'Awards',
+      publications: 'Publications',
+      interests: 'Interests'
     },
     uk: {
       personal: 'Профіль',
@@ -65,7 +70,12 @@ export default function CVMakerTab({
       aiWriterPlaceholder: 'Наприклад: Мене звати Ігор, я розробник інтерфейсів з 3 роками досвіду. Навчався в КПІ на комп\'ютерних науках (2022 рік випуску). Працював у SoftServe на React та Redux...',
       aiWriterBtn: 'Створити резюме через ШІ',
       aiWriting: 'Створення...',
-      aiFillSuccess: 'Резюме успішно заповнено! ✓'
+      aiFillSuccess: 'Резюме успішно заповнено! ✓',
+      projects: 'Проекти',
+      courses: 'Курси',
+      awards: 'Нагороди',
+      publications: 'Публікації',
+      interests: 'Інтереси'
     },
     de: {
       personal: 'Persönlich',
@@ -83,7 +93,12 @@ export default function CVMakerTab({
       aiWriterPlaceholder: 'Z.B.: Ich bin Igor, Frontend-Entwickler mit 3 Jahren Erfahrung. Ich habe Informatik an der KPI studiert...',
       aiWriterBtn: 'Lebenslauf mit KI generieren',
       aiWriting: 'Generierung...',
-      aiFillSuccess: 'Lebenslauf erfolgreich ausgefüllt! ✓'
+      aiFillSuccess: 'Lebenslauf erfolgreich ausgefüllt! ✓',
+      projects: 'Projekte',
+      courses: 'Kurse',
+      awards: 'Auszeichnungen',
+      publications: 'Publikationen',
+      interests: 'Interessen'
     },
     it: {
       personal: 'Personale',
@@ -101,7 +116,12 @@ export default function CVMakerTab({
       aiWriterPlaceholder: 'Ad es.: Sono Igor, sviluppatore Frontend con 3 anni di esperienza. Ho studiato informatica alla KPI...',
       aiWriterBtn: 'Genera curriculum con l\'IA',
       aiWriting: 'Generazione in corso...',
-      aiFillSuccess: 'Curriculum popolato con successo! ✓'
+      aiFillSuccess: 'Curriculum popolato con successo! ✓',
+      projects: 'Progetti',
+      courses: 'Corsi',
+      awards: 'Premi',
+      publications: 'Pubblicazioni',
+      interests: 'Interessi'
     }
   };
 
@@ -339,7 +359,7 @@ export default function CVMakerTab({
       return (
         <div className="space-y-3 cv-avoid-break">
           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
-            {uiLang === 'uk' ? 'Проекти' : uiLang === 'de' ? 'Projekte' : uiLang === 'it' ? 'Progetti' : 'Projects'}
+            {t.projects}
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
             {cvData.projects.map((proj, idx) => (
@@ -375,7 +395,7 @@ export default function CVMakerTab({
       return (
         <div className="space-y-1.5 cv-avoid-break">
           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
-            {uiLang === 'uk' ? 'Курси' : uiLang === 'de' ? 'Kurse' : uiLang === 'it' ? 'Corsi' : 'Courses'}
+            {t.courses}
           </h4>
           <ul style={{ fontSize: 'var(--cv-font-body)', gap: 'var(--cv-list-gap)' }} className="list-disc pl-4 space-y-1 font-semibold leading-relaxed">
             {cvData.courses.map((item, idx) => (
@@ -390,7 +410,7 @@ export default function CVMakerTab({
       return (
         <div className="space-y-1.5 cv-avoid-break">
           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
-            {uiLang === 'uk' ? 'Нагороди' : uiLang === 'de' ? 'Auszeichnungen' : uiLang === 'it' ? 'Premi' : 'Awards'}
+            {t.awards}
           </h4>
           <ul style={{ fontSize: 'var(--cv-font-body)', gap: 'var(--cv-list-gap)' }} className="list-disc pl-4 space-y-1 font-semibold leading-relaxed">
             {cvData.awards.map((item, idx) => (
@@ -405,7 +425,7 @@ export default function CVMakerTab({
       return (
         <div className="space-y-1.5 cv-avoid-break">
           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
-            {uiLang === 'uk' ? 'Публікації' : uiLang === 'de' ? 'Publikationen' : uiLang === 'it' ? 'Pubblicazioni' : 'Publications'}
+            {t.publications}
           </h4>
           <ul style={{ fontSize: 'var(--cv-font-body)', gap: 'var(--cv-list-gap)' }} className="list-disc pl-4 space-y-1 font-semibold leading-relaxed">
             {cvData.publications.map((item, idx) => (
@@ -420,7 +440,7 @@ export default function CVMakerTab({
       return (
         <div className="space-y-1.5 cv-avoid-break">
           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
-            {uiLang === 'uk' ? 'Інтереси' : uiLang === 'de' ? 'Interessen' : uiLang === 'it' ? 'Interessi' : 'Interests'}
+            {t.interests}
           </h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }} className="pt-1 font-semibold">
             {cvData.interests.map((interest, idx) => (
@@ -1547,21 +1567,21 @@ export default function CVMakerTab({
             
             {/* Section Order Controls */}
             <div className="bg-[#1e293b] p-4 rounded-2xl border border-[#334155]/50 space-y-2 mb-4">
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Section Order / Порядок розділів</span>
+              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">{uiLang === 'uk' ? 'Порядок розділів' : uiLang === 'de' ? 'Reihenfolge der Abschnitte' : uiLang === 'it' ? 'Ordine delle sezioni' : 'Section Order'}</span>
               <div className="flex flex-wrap gap-2">
                 {sectionOrder.map((secId, index) => {
                   const label = {
-                    summary: 'Summary / Про себе',
-                    experience: 'Experience / Досвід',
-                    projects: 'Projects / Проекти',
-                    education: 'Education / Освіта',
-                    skills: 'Skills / Навички',
-                    languages: 'Languages / Мови',
-                    certifications: 'Certifications / Сертифікати',
-                    courses: 'Courses / Курси',
-                    awards: 'Awards / Нагороди',
-                    publications: 'Publications / Публікації',
-                    interests: 'Interests / Інтереси'
+                    summary: t.summary || 'Summary',
+                    experience: t.experience || 'Experience',
+                    projects: t.projects || 'Projects',
+                    education: t.education || 'Education',
+                    skills: t.skills || 'Skills',
+                    languages: t.languages || 'Languages',
+                    certifications: t.certifications || 'Certifications',
+                    courses: t.courses || 'Courses',
+                    awards: t.awards || 'Awards',
+                    publications: t.publications || 'Publications',
+                    interests: t.interests || 'Interests'
                   }[secId];
                   return (
                     <div key={secId} className="flex items-center gap-1.5 bg-[#0f172a] px-3 py-1.5 rounded-xl border border-[#334155]">
