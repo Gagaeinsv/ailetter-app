@@ -273,7 +273,7 @@ JSON Schema format:
   "location": "City, Country",
   "linkedin": "url or empty string",
   "profession": "Current Job Title",
-  "summary": "Short 2-3 sentence professional summary or bio from the CV (or empty string if not found)",
+  "summary": "The 'About Me' / 'Profile' / 'Summary' / 'Про мене' / 'Про себе' / 'Bio' section text (Extract the full text of this section. Do not leave empty if there is a summary/bio section in the CV!)",
   "skills": ["list", "of", "all", "extracted", "skills"],
   "projects": [
     {
@@ -309,7 +309,28 @@ JSON Schema format:
     });
     const obj = parseJsonFromModel(text);
     if (!obj || typeof obj !== "object") throw new Error("Invalid CV parse shape");
-    return obj;
+    
+    // Normalize keys to support varying naming conventions from LLM outputs
+    const normalized = {
+      fullName: obj.fullName || obj.name || obj.fullname || "",
+      email: obj.email || "",
+      phone: obj.phone || obj.telephone || "",
+      location: obj.location || obj.address || "",
+      linkedin: obj.linkedin || obj.linkedIn || "",
+      profession: obj.profession || obj.jobTitle || obj.title || "",
+      summary: obj.summary || obj.aboutMe || obj.about || obj.profile || obj.bio || "",
+      skills: Array.isArray(obj.skills) ? obj.skills : [],
+      projects: Array.isArray(obj.projects) ? obj.projects : [],
+      experience: Array.isArray(obj.experience) ? obj.experience : [],
+      education: obj.education || "",
+      languages: Array.isArray(obj.languages) ? obj.languages : [],
+      certifications: Array.isArray(obj.certifications) ? obj.certifications : [],
+      courses: Array.isArray(obj.courses) ? obj.courses : [],
+      awards: Array.isArray(obj.awards) ? obj.awards : [],
+      publications: Array.isArray(obj.publications) ? obj.publications : [],
+      interests: Array.isArray(obj.interests) ? obj.interests : [],
+    };
+    return normalized;
   });
 };
 
