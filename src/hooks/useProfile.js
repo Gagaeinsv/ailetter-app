@@ -47,6 +47,7 @@ const normalizeProfile = (p) => {
     phone: String(obj.phone || '').trim(),
     location: String(obj.location || '').trim(),
     linkedin: String(obj.linkedin || '').trim(),
+    summary: String(obj.summary || '').trim(),
     skills,
     // keep these for gemini prompt compatibility if ever added later
     experience: obj.experience ?? '',

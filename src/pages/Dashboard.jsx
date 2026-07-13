@@ -95,7 +95,7 @@ const Dashboard = () => {
 
   // ── Letter State ──
   const [contactInfo, setContactInfo] = useState({
-    fullName: '', profession: '', email: '', phone: '', location: '', linkedin: ''
+    fullName: '', profession: '', email: '', phone: '', location: '', linkedin: '', summary: ''
   });
   const [jobDescription, setJobDescription] = useState('');
   const [cvFile, setCvFile]           = useState(null);

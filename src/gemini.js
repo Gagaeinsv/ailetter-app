@@ -267,6 +267,7 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
   "location": "City, Country",
   "linkedin": "url or empty string",
   "profession": "Current Job Title",
+  "summary": "Short 2-3 sentence professional summary or bio from the CV (or empty string if not found)",
   "skills": ["skill1", "skill2", "skill3", "skill4", "skill5"],
   "experience": [
     {
