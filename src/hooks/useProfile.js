@@ -62,6 +62,10 @@ const normalizeProfile = (p) => {
     education: obj.education ?? '',
     languages: Array.isArray(obj.languages) ? obj.languages : obj.languages ? [obj.languages] : [],
     certifications: Array.isArray(obj.certifications) ? obj.certifications : obj.certifications ? [obj.certifications] : [],
+    courses: Array.isArray(obj.courses) ? obj.courses.map(String) : [],
+    awards: Array.isArray(obj.awards) ? obj.awards.map(String) : [],
+    publications: Array.isArray(obj.publications) ? obj.publications.map(String) : [],
+    interests: Array.isArray(obj.interests) ? obj.interests.map(String) : [],
     updatedAt: typeof obj.updatedAt === 'number' ? obj.updatedAt : Date.now(),
   };
 };

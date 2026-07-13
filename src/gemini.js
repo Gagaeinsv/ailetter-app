@@ -287,7 +287,11 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
   ],
   "education": "Degree, University, Year",
   "languages": ["Language 1", "Language 2"],
-  "certifications": ["Cert 1", "Cert 2"]
+  "certifications": ["Cert 1", "Cert 2"],
+  "courses": ["Course 1", "Course 2"],
+  "awards": ["Award 1", "Award 2"],
+  "publications": ["Publication 1", "Publication 2"],
+  "interests": ["Interest 1", "Interest 2"]
 }`;
 
   return await tryEveryModel(async (modelId, temp) => {
@@ -363,7 +367,11 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
   ],
   "education": "Degree, University, Year (or empty string)",
   "languages": ["Language 1", "Language 2"],
-  "certifications": ["Cert 1", "Cert 2"]
+  "certifications": ["Cert 1", "Cert 2"],
+  "courses": ["Course 1", "Course 2"],
+  "awards": ["Award 1", "Award 2"],
+  "publications": ["Publication 1", "Publication 2"],
+  "interests": ["Interest 1", "Interest 2"]
 }
 
 Transcribed text:

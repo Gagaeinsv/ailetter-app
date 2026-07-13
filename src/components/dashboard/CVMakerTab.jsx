@@ -122,7 +122,11 @@ export default function CVMakerTab({
     education: '',
     languages: [],
     certifications: [],
-    projects: []
+    projects: [],
+    courses: [],
+    awards: [],
+    publications: [],
+    interests: []
   });
 
   const [activeSection, setActiveSection] = useState('personal'); // personal | experience | projects | skills | education | misc
@@ -134,7 +138,7 @@ export default function CVMakerTab({
   const [pdfGenerating, setPdfGenerating] = useState(false);
 
   // Section Reordering state & handlers
-  const [sectionOrder, setSectionOrder] = useState(['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications']);
+  const [sectionOrder, setSectionOrder] = useState(['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications', 'courses', 'awards', 'publications', 'interests']);
 
   const moveSectionUp = (index) => {
     if (index === 0) return;
@@ -160,6 +164,10 @@ export default function CVMakerTab({
   const [newSkill, setNewSkill] = useState('');
   const [newLang, setNewLang] = useState('');
   const [newCert, setNewCert] = useState('');
+  const [newCourse, setNewCourse] = useState('');
+  const [newAward, setNewAward] = useState('');
+  const [newPub, setNewPub] = useState('');
+  const [newInterest, setNewInterest] = useState('');
   
   const [rawCvText, setRawCvText] = useState('');
   const [aiTextWriting, setAiTextWriting] = useState(false);
@@ -198,6 +206,10 @@ export default function CVMakerTab({
           education: parsed.education || prev.education,
           languages: Array.isArray(parsed.languages) ? parsed.languages : prev.languages,
           projects: Array.isArray(parsed.projects) ? parsed.projects : prev.projects,
+          courses: Array.isArray(parsed.courses) ? parsed.courses : prev.courses,
+          awards: Array.isArray(parsed.awards) ? parsed.awards : prev.awards,
+          publications: Array.isArray(parsed.publications) ? parsed.publications : prev.publications,
+          interests: Array.isArray(parsed.interests) ? parsed.interests : prev.interests,
           certifications: Array.isArray(parsed.certifications) ? parsed.certifications : prev.certifications
         }));
         
@@ -353,6 +365,71 @@ export default function CVMakerTab({
                   </p>
                 )}
               </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (secId === 'courses' && cvData.courses && cvData.courses.length > 0) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
+            {uiLang === 'uk' ? 'Курси' : uiLang === 'de' ? 'Kurse' : uiLang === 'it' ? 'Corsi' : 'Courses'}
+          </h4>
+          <ul style={{ fontSize: 'var(--cv-font-body)', gap: 'var(--cv-list-gap)' }} className="list-disc pl-4 space-y-1 font-semibold leading-relaxed">
+            {cvData.courses.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    if (secId === 'awards' && cvData.awards && cvData.awards.length > 0) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
+            {uiLang === 'uk' ? 'Нагороди' : uiLang === 'de' ? 'Auszeichnungen' : uiLang === 'it' ? 'Premi' : 'Awards'}
+          </h4>
+          <ul style={{ fontSize: 'var(--cv-font-body)', gap: 'var(--cv-list-gap)' }} className="list-disc pl-4 space-y-1 font-semibold leading-relaxed">
+            {cvData.awards.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    if (secId === 'publications' && cvData.publications && cvData.publications.length > 0) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
+            {uiLang === 'uk' ? 'Публікації' : uiLang === 'de' ? 'Publikationen' : uiLang === 'it' ? 'Pubblicazioni' : 'Publications'}
+          </h4>
+          <ul style={{ fontSize: 'var(--cv-font-body)', gap: 'var(--cv-list-gap)' }} className="list-disc pl-4 space-y-1 font-semibold leading-relaxed">
+            {cvData.publications.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    if (secId === 'interests' && cvData.interests && cvData.interests.length > 0) {
+      return (
+        <div className="space-y-1.5 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
+            {uiLang === 'uk' ? 'Інтереси' : uiLang === 'de' ? 'Interessen' : uiLang === 'it' ? 'Interessi' : 'Interests'}
+          </h4>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }} className="pt-1 font-semibold">
+            {cvData.interests.map((interest, idx) => (
+              <span 
+                key={idx} 
+                className={`px-2.5 py-0.5 border ${skillBorder} ${skillBg} rounded-md text-[9px] uppercase font-extrabold tracking-wider`}
+              >
+                {interest}
+              </span>
             ))}
           </div>
         </div>
@@ -539,6 +616,10 @@ export default function CVMakerTab({
         education: formatEdu(contactInfo.education),
         languages: Array.isArray(contactInfo.languages) ? [...contactInfo.languages] : [],
         projects: Array.isArray(contactInfo.projects) ? JSON.parse(JSON.stringify(contactInfo.projects)) : [],
+        courses: Array.isArray(contactInfo.courses) ? [...contactInfo.courses] : [],
+        awards: Array.isArray(contactInfo.awards) ? [...contactInfo.awards] : [],
+        publications: Array.isArray(contactInfo.publications) ? [...contactInfo.publications] : [],
+        interests: Array.isArray(contactInfo.interests) ? [...contactInfo.interests] : [],
         certifications: Array.isArray(contactInfo.certifications) ? [...contactInfo.certifications] : []
       });
     }
@@ -1476,7 +1557,11 @@ export default function CVMakerTab({
                     education: 'Education / Освіта',
                     skills: 'Skills / Навички',
                     languages: 'Languages / Мови',
-                    certifications: 'Certifications / Сертифікати'
+                    certifications: 'Certifications / Сертифікати',
+                    courses: 'Courses / Курси',
+                    awards: 'Awards / Нагороди',
+                    publications: 'Publications / Публікації',
+                    interests: 'Interests / Інтереси'
                   }[secId];
                   return (
                     <div key={secId} className="flex items-center gap-1.5 bg-[#0f172a] px-3 py-1.5 rounded-xl border border-[#334155]">
@@ -1634,7 +1719,7 @@ export default function CVMakerTab({
 
                       {/* Right Sidebar: Skills, Langs, Certs */}
                       <div className="col-span-4 space-y-6 border-l border-slate-100 pl-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }}>
-                        {sectionOrder.filter(s => s === 'skills' || s === 'languages' || s === 'certifications').map(secId => renderTemplateSection(secId, 'modern'))}
+                        {sectionOrder.filter(s => s === 'skills' || s === 'languages' || s === 'interests' || s === 'certifications' || s === 'courses' || s === 'awards' || s === 'publications' || s === 'interests').map(secId => renderTemplateSection(secId, 'modern'))}
                       </div>
                     </div>
                   </div>
@@ -1717,7 +1802,7 @@ export default function CVMakerTab({
                         </div>
                       </div>
 
-                      {sectionOrder.filter(s => s === 'skills' || s === 'languages').map(secId => renderTemplateSection(secId, 'photo-modern'))}
+                      {sectionOrder.filter(s => s === 'skills' || s === 'languages' || s === 'interests').map(secId => renderTemplateSection(secId, 'photo-modern'))}
                     </div>
 
                     {/* Right Column (Main) */}
@@ -1728,7 +1813,7 @@ export default function CVMakerTab({
                         <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-extrabold text-indigo-600 uppercase tracking-wider">{cvData.profession || 'Product Manager'}</h4>
                       </div>
 
-                      {sectionOrder.filter(s => s !== 'skills' && s !== 'languages').map(secId => renderTemplateSection(secId, 'photo-modern'))}
+                      {sectionOrder.filter(s => s !== 'skills' && s !== 'languages' && s !== 'interests').map(secId => renderTemplateSection(secId, 'photo-modern'))}
                     </div>
                   </div>
                 )}
