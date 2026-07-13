@@ -1462,7 +1462,7 @@ export default function CVMakerTab({
             <div className="bg-[#111827] border border-[#1e293b] rounded-3xl p-6 overflow-x-auto shadow-2xl flex justify-center custom-scrollbar">
               <div 
                 ref={previewRef}
-                className="w-[794px] min-h-[1123px] bg-white text-slate-900 shadow-xl overflow-hidden print-page select-text relative"
+                className="w-[794px] min-h-[1123px] shadow-xl overflow-hidden print-page select-text relative"
                 style={getSheetStyle()}
               >
                 
