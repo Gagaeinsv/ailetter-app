@@ -257,9 +257,15 @@ ${candidateProfile}
 };
 
 export const parseCV = async (cvFilePart) => {
-  const promptText = `Analyze this CV and extract details into valid JSON only.
-Return ONLY raw JSON — no markdown, no backticks, no explanation.
+  const promptText = `Analyze this CV and extract ALL details into valid JSON only.
 
+CRITICAL INSTRUCTIONS:
+1. Return ONLY raw JSON — no markdown, no backticks, no explanation.
+2. DO NOT truncate, summarize, simplify, or omit any details. Extract ALL work experiences, ALL projects, ALL education records, ALL skills, ALL languages, certifications, courses, awards, and publications found in the CV.
+3. Keep the extracted text in the ORIGINAL language of the CV (e.g. if the CV is written in Ukrainian, the JSON values should be in Ukrainian; if in English, they should be in English).
+4. Extract every single achievement, bullet point, and description. Do not limit the list lengths.
+
+JSON Schema format:
 {
   "fullName": "Name Surname",
   "email": "email@example.com",
@@ -268,13 +274,13 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
   "linkedin": "url or empty string",
   "profession": "Current Job Title",
   "summary": "Short 2-3 sentence professional summary or bio from the CV (or empty string if not found)",
-  "skills": ["skill1", "skill2", "skill3", "skill4", "skill5"],
+  "skills": ["list", "of", "all", "extracted", "skills"],
   "projects": [
     {
       "name": "Project Name",
-      "description": "Short description of the project and your role",
+      "description": "Full description of the project, achievements, and your role",
       "link": "url or empty string",
-      "technologies": "React, Node.js, Python..."
+      "technologies": "Technologies used (e.g. React, Node.js, Python)"
     }
   ],
   "experience": [
@@ -282,16 +288,16 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
       "title": "Job Title",
       "company": "Company Name",
       "duration": "Jan 2023 – Present",
-      "achievements": ["Achievement with metric if available", "Achievement 2"]
+      "achievements": ["Achievement with metric if available", "Achievement 2", "Extract ALL bullet points and descriptions"]
     }
   ],
-  "education": "Degree, University, Year",
-  "languages": ["Language 1", "Language 2"],
-  "certifications": ["Cert 1", "Cert 2"],
-  "courses": ["Course 1", "Course 2"],
-  "awards": ["Award 1", "Award 2"],
-  "publications": ["Publication 1", "Publication 2"],
-  "interests": ["Interest 1", "Interest 2"]
+  "education": "Degrees, Universities, Years (Extract ALL records, separated by newlines)",
+  "languages": ["Language 1", "Language 2", "Extract all languages"],
+  "certifications": ["Cert 1", "Cert 2", "Extract all certifications"],
+  "courses": ["Course 1", "Course 2", "Extract all courses/trainings"],
+  "awards": ["Award 1", "Award 2", "Extract all awards"],
+  "publications": ["Publication 1", "Publication 2", "Extract all publications"],
+  "interests": ["Interest 1", "Interest 2", "Extract all interests"]
 }`;
 
   return await tryEveryModel(async (modelId, temp) => {
