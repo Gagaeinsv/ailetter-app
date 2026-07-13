@@ -149,6 +149,7 @@ const Sidebar = ({ user, activeTab, setActiveTab, isPro, planLoading, setShowUpg
     { id: 'cover-letter', label: dict.coverLetterTab || 'Cover Letter', icon: <IconMagic /> },
     { id: 'cv-optimizer', label: dict.cvOptimizer || 'CV Optimizer', icon: <IconCV /> },
     { id: 'templates', label: dict.templates, icon: <IconTemplate /> },
+    { id: 'premium', label: dict.premiumTab || '✦ Pro & Rewards', icon: <span className="text-amber-400 font-bold">✦</span> },
     { id: 'history', label: dict.history, icon: <IconHist /> },
     { id: 'interview', label: dict.interviewFull || dict.interview, icon: <IconInterview /> },
     { id: 'jobtracker', label: dict.jobtrackerFull || dict.jobtracker, icon: <span>📋</span> },

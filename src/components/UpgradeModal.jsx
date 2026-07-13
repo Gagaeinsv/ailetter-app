@@ -5,7 +5,7 @@ import { redirectToCheckout, PRICES } from '../stripe';
 import { db } from '../firebase';
 import { doc, updateDoc, increment } from 'firebase/firestore';
 
-const T = {
+export const UpgradeTranslations = {
   en: {
     title: 'Upgrade to AIletter Pro',
     sub: 'Unlimited generations · No watermark · All templates',
@@ -75,7 +75,7 @@ const T = {
 const UpgradeModal = ({ onClose, isLimitReached }) => {
   const { user } = useAuth();
   const { uiLang } = useLanguage();
-  const t = T[uiLang] || T.en;
+  const t = UpgradeTranslations[uiLang] || UpgradeTranslations.en;
   const [billing, setBilling] = useState('yearly');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

@@ -27,6 +27,7 @@ import InterviewTab from '../components/dashboard/InterviewTab';
 import JobTrackerTab from '../components/dashboard/JobTrackerTab';
 import CVOptimizerTab from '../components/dashboard/CVOptimizerTab';
 import CVMakerTab from '../components/dashboard/CVMakerTab';
+import PremiumTab from '../components/dashboard/PremiumTab';
 
 // Mobile Components
 import MobileNav from '../components/dashboard/MobileNav';
@@ -783,7 +784,7 @@ const Dashboard = () => {
     removeTrackerJob,
     profileSyncStatus,
     mobileHistoryLoadNonce,
-    isPro, planLoading, setShowUpgrade,
+    isPro, planLoading, setShowUpgrade, getMonthlyCount,
     dict, showNotification,
     todayStr, placeholderText,
     uiLang, setUiLang,
@@ -883,6 +884,7 @@ const Dashboard = () => {
             {activeTab === 'cv-optimizer' && <CVOptimizerTab {...props} />}
             {activeTab === 'cv-maker' && <CVMakerTab {...props} />}
             {activeTab === 'templates' && <TemplatesTab {...props} />}
+            {activeTab === 'premium' && <PremiumTab {...props} />}
             {activeTab === 'interview' && <InterviewTab {...props} />}
             {activeTab === 'history' && <HistoryTab {...props} />}
             {activeTab === 'jobtracker' && <JobTrackerTab {...props} />}

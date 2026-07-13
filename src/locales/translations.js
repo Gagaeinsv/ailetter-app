@@ -2,7 +2,7 @@
 
 const translations = {
     en: {
-      logo: 'AIletter', dashboard: 'Dashboard', cvMaker: 'CV Maker', cvMakerTitle: 'AI Resume & CV Maker', cvMakerDesc: 'Build, polish with AI, and download a professional print-ready resume.', coverLetterTab: 'Cover Letter', templates: 'Templates', history: 'History', settings: 'Settings', logout: 'Log out',
+      logo: 'AIletter', dashboard: 'Dashboard', cvMaker: 'CV Maker', cvMakerTitle: 'AI Resume & CV Maker', cvMakerDesc: 'Build, polish with AI, and download a professional print-ready resume.', coverLetterTab: 'Cover Letter', templates: 'Templates', history: 'History', settings: 'Settings', premiumTab: '✦ Pro & Rewards', logout: 'Log out',
       interview: 'Interview', interviewFull: 'Interview Prep', jobtracker: 'Tracker', jobtrackerFull: 'Job Tracker',
       dbWelcome: "Hey, {{name}}! 👋",
       dbWelcomeDesc: "Welcome back to your career command center. Let\'s tailor some winning applications today!",
@@ -215,7 +215,7 @@ const translations = {
       levelLabel: 'Position Level',
     },
     uk: {
-      logo: 'AIletter', dashboard: 'Дашборд', cvMaker: 'Конструктор резюме', cvMakerTitle: 'Конструктор резюме з ШІ', cvMakerDesc: 'Створюйте, редагуйте та завантажуйте професійне резюме, оптимізоване під ATS.', coverLetterTab: 'Супровідний лист', templates: 'Шаблони', history: 'Історія', settings: 'Налаштування', logout: 'Вийти',
+      logo: 'AIletter', dashboard: 'Дашборд', cvMaker: 'Конструктор резюме', cvMakerTitle: 'Конструктор резюме з ШІ', cvMakerDesc: 'Створюйте, редагуйте та завантажуйте професійне резюме, оптимізоване під ATS.', coverLetterTab: 'Супровідний лист', templates: 'Шаблони', history: 'Історія', settings: 'Налаштування', premiumTab: '✦ Pro та Бонуси', logout: 'Вийти',
       interview: 'Інтерв\'ю', interviewFull: 'Підготовка до інтерв\'ю', jobtracker: 'Трекер', jobtrackerFull: 'Трекер вакансій',
       dbWelcome: "Привіт, {{name}}! 👋",
       dbWelcomeDesc: "З поверненням до центру управління кар'єрою. Давай створимо кілька виграшних заявок сьогодні!",
@@ -429,7 +429,7 @@ const translations = {
       levelLabel: 'Рівень позиції',
     },
     it: {
-      logo: 'AIletter', dashboard: 'Dashboard', cvMaker: 'CV Maker', cvMakerTitle: 'AI Resume & CV Maker', cvMakerDesc: 'Crea, ottimizza con l\'IA e scarica un curriculum professionale pronto per la stampa.', coverLetterTab: 'Lettera di presentaz.', templates: 'Template', history: 'Cronologia', settings: 'Impostazioni', logout: 'Esci',
+      logo: 'AIletter', dashboard: 'Dashboard', cvMaker: 'CV Maker', cvMakerTitle: 'AI Resume & CV Maker', cvMakerDesc: 'Crea, ottimizza con l\'IA e scarica un curriculum professionale pronto per la stampa.', coverLetterTab: 'Lettera di presentaz.', templates: 'Template', history: 'Cronologia', settings: 'Impostazioni', premiumTab: '✦ Pro & Premi', logout: 'Esci',
       interview: 'Colloquio', interviewFull: 'Prep. colloquio', jobtracker: 'Tracker', jobtrackerFull: 'Tracker candidature',
       dbWelcome: "Ehi, {{name}}! 👋",
       dbWelcomeDesc: "Bentornato nel tuo centro di controllo carriera. Prepariamo alcune candidature vincenti oggi!",
@@ -643,7 +643,7 @@ const translations = {
       levelLabel: 'Livello di posizione',
     },
     de: {
-      logo: 'AIletter', dashboard: 'Dashboard', cvMaker: 'CV Maker', cvMakerTitle: 'KI Lebenslauf Maker', cvMakerDesc: 'Erstellen, optimieren Sie mit KI und laden Sie einen professionellen, druckfertigen Lebenslauf herunter.', coverLetterTab: 'Anschreiben', templates: 'Vorlagen', history: 'Verlauf', settings: 'Einstellungen', logout: 'Abmelden',
+      logo: 'AIletter', dashboard: 'Dashboard', cvMaker: 'CV Maker', cvMakerTitle: 'KI Lebenslauf Maker', cvMakerDesc: 'Erstellen, optimieren Sie mit KI und laden Sie einen professionellen, druckfertigen Lebenslauf herunter.', coverLetterTab: 'Anschreiben', templates: 'Vorlagen', history: 'Verlauf', settings: 'Einstellungen', premiumTab: '✦ Pro & Prämien', logout: 'Abmelden',
       interview: 'Interview', interviewFull: 'Interview-Vorbereitung', jobtracker: 'Tracker', jobtrackerFull: 'Bewerbungs-Tracker',
       dbWelcome: "Hey, {{name}}! 👋",
       dbWelcomeDesc: "Willkommen zurück in deiner Karriere-Zentrale. Lass uns heute erfolgreiche Bewerbungen schreiben!",

@@ -31,6 +31,7 @@ const MobileNav = ({ user, activeTab, setActiveTab, dict, logout, isPro, setShow
     { id: 'cover-letter', icon: <IconMagic />, label: dict?.coverLetterTab || 'Cover Letter' },
     { id: 'cv-optimizer', icon: <IconCV />, label: dict?.cvOptimizer || 'CV Optimizer' },
     { id: 'templates', icon: <IconGrid />, label: dict?.templates || 'Templates' },
+    { id: 'premium', icon: <IconStar />, label: dict?.premiumTab || '✦ Pro & Rewards' },
     { id: 'history', icon: <IconClock />, label: dict?.history || 'History' },
     { id: 'interview', icon: <IconInterview />, label: dict?.interview || 'Interview' },
     { id: 'jobtracker', icon: <span className="text-base leading-none">📋</span>, label: dict?.jobtracker || 'Tracker' },
