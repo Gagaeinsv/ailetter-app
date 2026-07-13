@@ -121,10 +121,11 @@ export default function CVMakerTab({
     experience: [],
     education: '',
     languages: [],
-    certifications: []
+    certifications: [],
+    projects: []
   });
 
-  const [activeSection, setActiveSection] = useState('personal'); // personal | experience | skills | education | misc
+  const [activeSection, setActiveSection] = useState('personal'); // personal | experience | projects | skills | education | misc
   const selectedTemplate = selectedCVTemplate || 'modern';
   const setSelectedTemplate = setSelectedCVTemplate || (() => {});
   const [spacingPreset, setSpacingPreset] = useState('normal'); // compact | normal | spacious
@@ -133,7 +134,7 @@ export default function CVMakerTab({
   const [pdfGenerating, setPdfGenerating] = useState(false);
 
   // Section Reordering state & handlers
-  const [sectionOrder, setSectionOrder] = useState(['summary', 'experience', 'education', 'skills', 'languages', 'certifications']);
+  const [sectionOrder, setSectionOrder] = useState(['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications']);
 
   const moveSectionUp = (index) => {
     if (index === 0) return;
@@ -196,6 +197,7 @@ export default function CVMakerTab({
           experience: Array.isArray(parsed.experience) ? parsed.experience : prev.experience,
           education: parsed.education || prev.education,
           languages: Array.isArray(parsed.languages) ? parsed.languages : prev.languages,
+          projects: Array.isArray(parsed.projects) ? parsed.projects : prev.projects,
           certifications: Array.isArray(parsed.certifications) ? parsed.certifications : prev.certifications
         }));
         
@@ -314,6 +316,42 @@ export default function CVMakerTab({
                     )
                   ))}
                 </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (secId === 'projects' && cvData.projects && cvData.projects.length > 0) {
+      return (
+        <div className="space-y-3 cv-avoid-break">
+          <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
+            {uiLang === 'uk' ? 'Проекти' : uiLang === 'de' ? 'Projekte' : uiLang === 'it' ? 'Progetti' : 'Projects'}
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-item-gap)' }}>
+            {cvData.projects.map((proj, idx) => (
+              <div key={idx} className="cv-avoid-break space-y-1">
+                <div className="flex justify-between items-baseline">
+                  <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className={`font-black ${templateId === 'nova' ? 'text-white' : 'text-slate-900'}`}>
+                    {proj.name}
+                    {proj.link && (
+                      <a href={proj.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-400 hover:underline text-[9px] font-bold">
+                        🔗 {uiLang === 'uk' ? 'Посилання' : 'Link'}
+                      </a>
+                    )}
+                  </h5>
+                  {proj.technologies && (
+                    <span style={{ fontSize: 'var(--cv-font-meta)' }} className={`font-bold ${templateId === 'nova' ? 'text-slate-400' : 'text-slate-500'} whitespace-nowrap`}>
+                      {proj.technologies}
+                    </span>
+                  )}
+                </div>
+                {proj.description && (
+                  <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955' : 'text-slate-600'} leading-relaxed font-semibold`}>
+                    {proj.description}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -500,6 +538,7 @@ export default function CVMakerTab({
             : [],
         education: formatEdu(contactInfo.education),
         languages: Array.isArray(contactInfo.languages) ? [...contactInfo.languages] : [],
+        projects: Array.isArray(contactInfo.projects) ? JSON.parse(JSON.stringify(contactInfo.projects)) : [],
         certifications: Array.isArray(contactInfo.certifications) ? [...contactInfo.certifications] : []
       });
     }
@@ -538,6 +577,28 @@ export default function CVMakerTab({
   };
 
   // --- EXPERIENCE HANDLERS ---
+  const handleAddProject = () => {
+    setCvData(prev => ({
+      ...prev,
+      projects: [...prev.projects, { name: '', description: '', link: '', technologies: '' }]
+    }));
+  };
+
+  const handleProjectChange = (index, field, value) => {
+    setCvData(prev => {
+      const copy = [...prev.projects];
+      copy[index][field] = value;
+      return { ...prev, projects: copy };
+    });
+  };
+
+  const handleDeleteProject = (index) => {
+    setCvData(prev => ({
+      ...prev,
+      projects: prev.projects.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleAddExperience = () => {
     setCvData(prev => ({
       ...prev,
@@ -1064,6 +1125,78 @@ export default function CVMakerTab({
               </div>
             )}
 
+            {/* TAB CONTENT: PROJECTS */}
+            {activeSection === 'projects' && (
+              <div className="bg-[#1e293b]/50 border border-[#334155]/50 p-6 rounded-2xl space-y-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-indigo-400">{uiLang === 'uk' ? 'Мої проекти' : 'My Projects'}</h3>
+                  <button
+                    onClick={handleAddProject}
+                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold uppercase flex items-center gap-1 transition-all"
+                  >
+                    + {uiLang === 'uk' ? 'Додати проект' : 'Add Project'}
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {cvData.projects && cvData.projects.map((proj, idx) => (
+                    <div key={idx} className="p-4 bg-[#0f172a]/40 border border-[#334155]/30 rounded-xl relative space-y-4">
+                      <button
+                        onClick={() => handleDeleteProject(idx)}
+                        className="absolute top-3 right-3 text-slate-500 hover:text-rose-400 transition-colors text-xs font-bold"
+                      >
+                        {uiLang === 'uk' ? 'Видалити' : 'Delete'}
+                      </button>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[9px] font-bold uppercase text-slate-400 mb-1">{uiLang === 'uk' ? 'Назва проекту' : 'Project Name'}</label>
+                          <input
+                            type="text"
+                            value={proj.name}
+                            onChange={(e) => handleProjectChange(idx, 'name', e.target.value)}
+                            className="w-full bg-[#0f172a] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] font-bold uppercase text-slate-400 mb-1">{uiLang === 'uk' ? 'Технології' : 'Technologies / Tools'}</label>
+                          <input
+                            type="text"
+                            value={proj.technologies}
+                            onChange={(e) => handleProjectChange(idx, 'technologies', e.target.value)}
+                            placeholder="e.g. React, Node.js, Python"
+                            className="w-full bg-[#0f172a] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <label className="block text-[9px] font-bold uppercase text-slate-400 mb-1">{uiLang === 'uk' ? 'Посилання (URL)' : 'Project Link (URL)'}</label>
+                          <input
+                            type="text"
+                            value={proj.link}
+                            onChange={(e) => handleProjectChange(idx, 'link', e.target.value)}
+                            placeholder="https://..."
+                            className="w-full bg-[#0f172a] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] font-bold uppercase text-slate-400 mb-1">{uiLang === 'uk' ? 'Опис проекту' : 'Description / Achievements'}</label>
+                          <textarea
+                            rows={3}
+                            value={proj.description}
+                            onChange={(e) => handleProjectChange(idx, 'description', e.target.value)}
+                            className="w-full bg-[#0f172a] border border-[#334155] rounded-xl p-3 text-xs text-white focus:border-indigo-500 outline-none resize-y custom-scrollbar"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* TAB CONTENT: EXPERIENCE */}
             {activeSection === 'experience' && (
               <div className="bg-[#1e293b]/50 border border-[#334155]/50 p-6 rounded-2xl space-y-6">
@@ -1339,6 +1472,7 @@ export default function CVMakerTab({
                   const label = {
                     summary: 'Summary / Про себе',
                     experience: 'Experience / Досвід',
+                    projects: 'Projects / Проекти',
                     education: 'Education / Освіта',
                     skills: 'Skills / Навички',
                     languages: 'Languages / Мови',
@@ -1495,7 +1629,7 @@ export default function CVMakerTab({
                     <div className="grid grid-cols-12 gap-8 pt-2" style={{ gap: 'var(--cv-section-gap)' }}>
                       {/* Left: Exp & Ed */}
                       <div className="col-span-8 space-y-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }}>
-                        {sectionOrder.filter(s => s === 'experience' || s === 'education').map(secId => renderTemplateSection(secId, 'modern'))}
+                        {sectionOrder.filter(s => s === 'experience' || s === 'projects' || s === 'education').map(secId => renderTemplateSection(secId, 'modern'))}
                       </div>
 
                       {/* Right Sidebar: Skills, Langs, Certs */}

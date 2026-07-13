@@ -48,6 +48,14 @@ const normalizeProfile = (p) => {
     location: String(obj.location || '').trim(),
     linkedin: String(obj.linkedin || '').trim(),
     summary: String(obj.summary || '').trim(),
+    projects: Array.isArray(obj.projects)
+      ? obj.projects.map((proj) => ({
+          name: String(proj?.name || '').trim(),
+          description: String(proj?.description || '').trim(),
+          link: String(proj?.link || '').trim(),
+          technologies: String(proj?.technologies || '').trim(),
+        })).filter(p => p.name)
+      : [],
     skills,
     // keep these for gemini prompt compatibility if ever added later
     experience: obj.experience ?? '',

@@ -269,6 +269,14 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
   "profession": "Current Job Title",
   "summary": "Short 2-3 sentence professional summary or bio from the CV (or empty string if not found)",
   "skills": ["skill1", "skill2", "skill3", "skill4", "skill5"],
+  "projects": [
+    {
+      "name": "Project Name",
+      "description": "Short description of the project and your role",
+      "link": "url or empty string",
+      "technologies": "React, Node.js, Python..."
+    }
+  ],
   "experience": [
     {
       "title": "Job Title",
