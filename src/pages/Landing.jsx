@@ -1110,11 +1110,14 @@ const Landing = () => {
           </div>
           <div className="border-t border-white/[0.05] pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-700">
             <span>© 2025 AIletter. All rights reserved.</span>
-            <div className="flex gap-5">
+            <div className="flex flex-wrap justify-end gap-x-5 gap-y-2">
               <Link to="/terms" className="hover:text-gray-400 transition-colors">{t('terms')}</Link>
               <Link to="/privacy" className="hover:text-gray-400 transition-colors">{t('privacy')}</Link>
               <Link to="/linkedin-message" className="hover:text-indigo-400 transition-colors text-indigo-600">{t('linkedinGen')}</Link>
               <Link to="/subject-line" className="hover:text-indigo-400 transition-colors text-indigo-600">Subject Line</Link>
+              <Link to="/cover-letter-ai-developer" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Супровідний лист (AI)' : 'AI Developer Cover Letter'}</Link>
+              <Link to="/linkedin-cold-message-templates" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Шаблони LinkedIn' : 'LinkedIn Cold Messages'}</Link>
+              <Link to="/freelancer-self-introduction" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Фріланс Proposal' : 'Freelancer Pitch'}</Link>
             </div>
           </div>
         </div>
