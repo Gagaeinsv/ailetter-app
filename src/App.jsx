@@ -20,22 +20,22 @@ const OG_IMAGE = 'https://ailetter.pro/android-chrome-512x512.png';
 
 const STATIC_SEO = {
   '/terms': {
-    title: 'Terms of Service | AIletter',
-    description: 'Read the AIletter Terms of Service. Learn about usage rules, subscriptions, and your rights when using our AI cover letter generator.',
+    title: 'Terms of Service | AI-Letter',
+    description: 'Read the AI-Letter Terms of Service. Learn about usage rules, subscriptions, and your rights when using our AI cover letter generator.',
     canonical: 'https://ailetter.pro/terms',
     ogImage: OG_IMAGE,
     index: true,
   },
   '/privacy': {
-    title: 'Privacy Policy | AIletter',
-    description: 'Learn how AIletter collects, uses, and protects your personal data. Our privacy policy explains your rights and how we handle your information.',
+    title: 'Privacy Policy | AI-Letter',
+    description: 'Learn how AI-Letter collects, uses, and protects your personal data. Our privacy policy explains your rights and how we handle your information.',
     canonical: 'https://ailetter.pro/privacy',
     ogImage: OG_IMAGE,
     index: true,
   },
-  '/login': { title: 'Login | AIletter', description: '', canonical: null, ogImage: null, index: false },
-  '/onboarding': { title: 'Onboarding | AIletter', description: '', canonical: null, ogImage: null, index: false },
-  '/dashboard': { title: 'Dashboard | AIletter', description: '', canonical: null, ogImage: null, index: false },
+  '/login': { title: 'Login | AI-Letter', description: '', canonical: null, ogImage: null, index: false },
+  '/onboarding': { title: 'Onboarding | AI-Letter', description: '', canonical: null, ogImage: null, index: false },
+  '/dashboard': { title: 'Dashboard | AI-Letter', description: '', canonical: null, ogImage: null, index: false },
 };
 
 /** Match router paths so Helmet never marks public pages as noindex (e.g. /privacy/). */
@@ -53,7 +53,7 @@ const PageSEO = () => {
 
   const localized = useMemo(() => ({
     '/': {
-      title: `${dict.seoHomeTitle} | AIletter`,
+      title: `${dict.seoHomeTitle} | AI-Letter`,
       description: dict.seoHomeDesc,
       canonical: 'https://ailetter.pro/',
       ogImage: OG_IMAGE,
@@ -97,7 +97,7 @@ const PageSEO = () => {
   }), [dict]);
 
   const seoByPath = useMemo(() => ({ ...STATIC_SEO, ...localized }), [localized]);
-  const config = seoByPath[pathname] ?? { title: 'AIletter', description: '', canonical: null, ogImage: null, index: false };
+  const config = seoByPath[pathname] ?? { title: 'AI-Letter', description: '', canonical: null, ogImage: null, index: false };
 
   return (
     <Helmet>
