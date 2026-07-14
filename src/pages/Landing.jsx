@@ -51,9 +51,9 @@ const Stars = ({ n = 5 }) => (
 
 const FAQS = {
   en: [
-    { q: 'Is AIletter really free to start?', a: 'Yes — you get 5 free generations per month with no credit card required. Each generation produces a complete, ready-to-use cover letter, resume optimizer scan, or interview Q&A list.' },
+    { q: 'Is AI-Letter really free to start?', a: 'Yes — you get 5 free generations per month with no credit card required. Each generation produces a complete, ready-to-use cover letter, resume optimizer scan, or interview Q&A list.' },
     { q: 'How does the ATS Resume Optimizer work?', a: 'You upload your CV and paste the target vacancy. The AI audits your formatting, structure, and text achievements, highlights missing keywords, and automatically re-writes your bullet points with quantitative impact metrics to pass screening.' },
-    { q: 'How personalized are the letters and interview preps?', a: 'Extremely. AIletter analyzes your actual CV profile and the job description. It generates tailored letters referencing vacancy requirements and designs custom questions using the STAR interview methodology.' },
+    { q: 'How personalized are the letters and interview preps?', a: 'Extremely. AI-Letter analyzes your actual CV profile and the job description. It generates tailored letters referencing vacancy requirements and designs custom questions using the STAR interview methodology.' },
     { q: 'What is the Smart Job Tracker?', a: 'It is a visual board inside your dashboard where you can log applications, add notes, and move entries between columns (Applied, Interview, Offer, Rejected). The system tracks application dates and alerts you when it is time to follow up.' },
     { q: 'What languages are supported?', a: 'Currently English, Ukrainian, Italian, and German. The AI detects the job description language automatically or you can set it manually.' },
     { q: 'What is the Pro plan?', a: 'Pro gives you unlimited generations, 16+ premium templates, DOCX & HD PDF exports, no watermarks, automated follow-up draft generation, and priority AI processing. Plans start from €6/month.' },
@@ -69,15 +69,15 @@ const FAQS = {
   it: [
     { q: 'È davvero gratuito per iniziare?', a: 'Sì — ricevi 5 generazioni gratuite al mese senza carta di credito. Ogni generazione produce lettere, scansioni CV o domande di colloquio.' },
     { q: 'Come funziona l’ottimizzatore CV per ATS?', a: 'Carichi il tuo CV e incolli l’offerta. L’AI valuta la struttura del testo, individua le parole chiave mancanti richieste dall’azienda e riscrive i punti elenco con indicatori di performance quantitativi.' },
-    { q: 'Quanto sono personalizzate le lettere e le domande di colloquio?', a: 'Moltissimo. AIletter analizza i dati del tuo profilo e della vacancy per creare lettere su misura e formulare domande basate sul metodo STAR.' },
+    { q: 'Quanto sono personalizzate le lettere e le domande di colloquio?', a: 'Moltissimo. AI-Letter analizza i dati del tuo profilo e della vacancy per creare lettere su misura e formulare domande basate sul metodo STAR.' },
     { q: 'Cos’è il tracker delle candidature?', a: 'È una bacheca Kanban all’interno della dashboard dove puoi salvare le posizioni a cui ti sei candidato, aggiungere note e ricevere alert che ti segnalano quando è ora di inviare un follow-up.' },
     { q: 'Quali lingue sono supportate?', a: 'English,  Italiano e Deutsch. L’AI rileva automaticamente la lingua o puoi impostarla a mano.' },
     { q: 'Cos’è il piano Pro?', a: 'Generazioni illimitate, 16+ template premium, esportazione DOCX, nessuna filigrana su PDF, stesura automatica dei follow-up ed elaborazione AI prioritaria. Da €6/mese.' },
   ],
   de: [
-    { q: 'Ist AIletter wirklich kostenlos?', a: 'Ja — Sie erhalten 5 kostenlose Generierungen pro Monat ohne Kreditkarte. Jede Generierung liefert vollständige Anschreiben, ATS-Scans oder Interview-Fragen.' },
+    { q: 'Ist AI-Letter wirklich kostenlos?', a: 'Ja — Sie erhalten 5 kostenlose Generierungen pro Monat ohne Kreditkarte. Jede Generierung liefert vollständige Anschreiben, ATS-Scans oder Interview-Fragen.' },
     { q: 'Wie funktioniert der ATS-Lebenslauf-Optimierer?', a: 'Sie laden Ihren Lebenslauf hoch und fügen die Stellenanzeige ein. Die KI prüft die Struktur, findet Keyword-Lücken und schreibt Ihre Erfolge mit messbaren Ergebnissen um, um die Filter zu bestehen.' },
-    { q: 'Wie personalisiert sind Anschreiben und Interview-Fragen?', a: 'Absolut maßgeschneidert. AIletter analysiert die Fähigkeiten Ihres Profils und gleicht sie mit der Ausschreibung ab. Fragen und STAR-Antworten werden individuell erstellt.' },
+    { q: 'Wie personalisiert sind Anschreiben und Interview-Fragen?', a: 'Absolut maßgeschneidert. AI-Letter analysiert die Fähigkeiten Ihres Profils und gleicht sie mit der Ausschreibung ab. Fragen und STAR-Antworten werden individuell erstellt.' },
     { q: 'Was ist der Job-Tracker?', a: 'Ein visuelles Kanban-Board, auf dem Sie Ihre Bewerbungen verwalten (Beworben, Gespräch, Angebot, Abgelehnt). Der Tracker erinnert Sie automatisch, wenn ein Follow-up ansteht.' },
     { q: 'Welche Sprachen werden unterstützt?', a: 'English, Englisch, Ukrainisch, Italienisch und Deutsch. Die KI erkennt die Sprache automatisch.' },
     { q: 'Was ist der Pro-Plan?', a: 'Unbegrenzte Generierungen, 16+ Vorlagen, DOCX-Export, keine Wasserzeichen auf PDFs, automatische Follow-up-Entwürfe. Ab €6/Monat.' },
@@ -224,7 +224,7 @@ const TRANSLATIONS = {
     assuranceA4: "Standard A4 PDF Exports",
     assuranceAts: "ATS-Friendly Layouts",
     howItWorksTitle: "Get Hired in 3 Simple Steps",
-    step1T: "1. Scan CV & Vacancy", step1D: "Upload your CV and paste the job description. AIletter extracts your skills and matches them against requirements.",
+    step1T: "1. Scan CV & Vacancy", step1D: "Upload your CV and paste the job description. AI-Letter extracts your skills and matches them against requirements.",
     step2T: "2. Optimize & Generate", step2D: "Review your ATS match score, fill keyword gaps, edit your resume accomplishments, and generate a tailored cover letter.",
     step3T: "3. Track & Practice", step3D: "Organize applications on your pipeline board, practice role-specific interview Q&As, and get alerts for follow-ups.",
     aiTitle: "AI Job Search Suite",
@@ -242,8 +242,8 @@ const TRANSLATIONS = {
     outreachT: "LinkedIn & Email Outreach",
     outreachD: "Create short LinkedIn Easy Apply introductions and direct email subject lines to double your recruiter response rate.",
     bentoTitle: "Complete Job Application Toolkit",
-    bentoSubtitle: "Why use separate tools? AIletter covers your application from first search to signed offer.",
-    compareTitle: "Why Candidates Choose AIletter", oldWay: "The Old Way", newWay: "With AIletter Suite",
+    bentoSubtitle: "Why use separate tools? AI-Letter covers your application from first search to signed offer.",
+    compareTitle: "Why Candidates Choose AI-Letter", oldWay: "The Old Way", newWay: "With AI-Letter Suite",
     compare1: "Hours spent writing and formatting manual letters", new1: "Personalized letter ready in 30 seconds",
     compare2: "Untracked applications and lost spreadsheet data", new2: "Visual Kanban board with auto follow-up alerts",
     compare3: "Resume rejected by automated ATS screening systems", new3: "ATS keyword analysis and optimizer built-in",
@@ -308,8 +308,8 @@ const TRANSLATIONS = {
     outreachT: "Outreach та теми листів",
     outreachD: "Генеруй повідомлення для LinkedIn Easy Apply та теми електронних листів, щоб зацікавити рекрутерів.",
     bentoTitle: "Повний набір інструментів пошуку роботи",
-    bentoSubtitle: "Навіщо користуватися різними сервісами? AIletter покриває весь шлях від першого пошуку до оферу.",
-    compareTitle: "Чому шукачі обирають AIletter", oldWay: "Старий спосіб", newWay: "З кабінетом AIletter",
+    bentoSubtitle: "Навіщо користуватися різними сервісами? AI-Letter покриває весь шлях від першого пошуку до оферу.",
+    compareTitle: "Чому шукачі обирають AI-Letter", oldWay: "Старий спосіб", newWay: "З кабінетом AI-Letter",
     compare1: "Години на ручне написання листів та форматування дизайну", new1: "Супровідний лист готовий за 30 секунд",
     compare2: "Заявки губляться у пошті та хаотичних Excel файлах", new2: "Візуальна дошка трекера з нагадуваннями follow-up",
     compare3: "Резюме відхиляється автоматичними ATS-фільтрами", new3: "Аналіз ATS-оцінки та оптимізація ключових слів",
@@ -374,8 +374,8 @@ const TRANSLATIONS = {
     outreachT: "LinkedIn e Outreach",
     outreachD: "Genera brevi messaggi di presentazione per Easy Apply e oggetti email che raddoppiano i tassi di risposta.",
     bentoTitle: "Toolkit Completo per la Ricerca Lavoro",
-    bentoSubtitle: "Perché usare strumenti separati? AIletter copre l'intero percorso dalla prima ricerca fino all'offerta.",
-    compareTitle: "Perché i Candidati Scelgono AIletter", oldWay: "Il vecchio modo", newWay: "Con la suite AIletter",
+    bentoSubtitle: "Perché usare strumenti separati? AI-Letter copre l'intero percorso dalla prima ricerca fino all'offerta.",
+    compareTitle: "Perché i Candidati Scelgono AI-Letter", oldWay: "Il vecchio modo", newWay: "Con la suite AI-Letter",
     compare1: "Ore spese a scrivere a mano e sistemare l'impaginazione", new1: "Lettera personalizzata pronta in 30 secondi",
     compare2: "Candidature sparse tra email e fogli Excel disordinati", new2: "Pipeline visuale con notifiche automatiche di follow-up",
     compare3: "CV scartato dai filtri di selezione ATS automatici", new3: "Analisi del punteggio ATS e ottimizzazione integrate",
@@ -440,8 +440,8 @@ const TRANSLATIONS = {
     outreachT: "LinkedIn & Outreach",
     outreachD: "Erstellen Sie kurze LinkedIn-Nachrichten und Betreffzeilen, um Ihre Rücklaufquote zu verdoppeln.",
     bentoTitle: "Komplettes Bewerbungs-Toolkit",
-    bentoSubtitle: "Warum separate Tools nutzen? AIletter deckt Ihren gesamten Bewerbungsprozess ab.",
-    compareTitle: "Warum Kandidaten AIletter wählen", oldWay: "Der alte Weg", newWay: "Mit der AIletter Suite",
+    bentoSubtitle: "Warum separate Tools nutzen? AI-Letter deckt Ihren gesamten Bewerbungsprozess ab.",
+    compareTitle: "Warum Kandidaten AI-Letter wählen", oldWay: "Der alte Weg", newWay: "Mit der AI-Letter Suite",
     compare1: "Stundenlanges manuelles Schreiben und Formatieren von Anschreiben", new1: "Maßgeschneidertes Anschreiben bereit in 30 Sekunden",
     compare2: "Unübersichtliche Bewerbungen in E-Mails und verstreuten Notizen", new2: "Visualisierter Tracker mit automatischen Erinnerungen",
     compare3: "Lebenslauf wird von automatischen ATS-Systemen abgelehnt", new3: "Integriertes ATS-Audit und Keyword-Optimierung",
@@ -534,7 +534,7 @@ const Landing = () => {
     const schema = {
       '@context': 'https://schema.org',
       '@type': 'SoftwareApplication',
-      name: 'AIletter',
+      name: 'AI-Letter',
       applicationCategory: 'BusinessApplication',
       operatingSystem: 'Web',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
@@ -564,10 +564,10 @@ const Landing = () => {
 
   useEffect(() => {
     const metaTitles = {
-      en: 'AIletter — AI Cover Letter Generator & Resume CV Builder',
-      uk: 'AIletter — Конструктор резюме з ШІ та супровідних листів',
-      de: 'AIletter — KI-Anschreiben & Lebenslauf Generator',
-      it: 'AIletter — Generatore di Lettere di Presentazione e CV con IA'
+      en: 'AI-Letter — AI Cover Letter Generator & Resume CV Builder',
+      uk: 'AI-Letter — Конструктор резюме з ШІ та супровідних листів',
+      de: 'AI-Letter — KI-Anschreiben & Lebenslauf Generator',
+      it: 'AI-Letter — Generatore di Lettere di Presentazione e CV con IA'
     };
 
     const metaDescs = {
@@ -597,8 +597,8 @@ const Landing = () => {
       <header className="fixed w-full top-0 z-50 border-b border-white/[0.06] bg-[#0f172a]/85 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2 font-black tracking-tighter text-base">
-            <img src="/android-chrome-192x192.png" alt="AIletter" className="w-7 h-7 rounded-lg" />
-            AIletter
+            <img src="/android-chrome-192x192.png" alt="AI-Letter" className="w-7 h-7 rounded-lg" />
+            AI-Letter
           </div>
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher value={uiLang} onChange={setUiLang} />
@@ -1095,8 +1095,8 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
             <div className="flex items-center gap-2 font-black tracking-tighter text-base">
-              <img src="/android-chrome-192x192.png" alt="AIletter" className="w-7 h-7 rounded-lg" />
-              AIletter
+              <img src="/android-chrome-192x192.png" alt="AI-Letter" className="w-7 h-7 rounded-lg" />
+              AI-Letter
             </div>
             <p className="text-gray-600 text-xs">{t('footerDesc')}</p>
             <div className="flex items-center gap-5 text-xs text-gray-500">
@@ -1104,12 +1104,12 @@ const Landing = () => {
               <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
               <a href="#" className="hover:text-white transition-colors">Email</a>
               <a href="https://www.producthunt.com/products/ailetter-2/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-ailetter&#0045;2" target="_blank" rel="noopener noreferrer">
-                <img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1173518&theme=neutral" alt="AIletter on Product Hunt" style={{ width: '120px', height: '26px' }} width="120" height="26" />
+                <img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1173518&theme=neutral" alt="AI-Letter on Product Hunt" style={{ width: '120px', height: '26px' }} width="120" height="26" />
               </a>
             </div>
           </div>
           <div className="border-t border-white/[0.05] pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-700">
-            <span>© 2025 AIletter. All rights reserved.</span>
+            <span>© 2025 AI-Letter. All rights reserved.</span>
             <div className="flex flex-wrap justify-end gap-x-5 gap-y-2">
               <Link to="/terms" className="hover:text-gray-400 transition-colors">{t('terms')}</Link>
               <Link to="/privacy" className="hover:text-gray-400 transition-colors">{t('privacy')}</Link>
