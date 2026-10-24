@@ -491,7 +491,7 @@ const FaqItem = ({ q, a, id }) => {
         <span className="font-semibold text-sm text-white">{q}</span>
         <span className={`shrink-0 ${open ? 'text-indigo-400' : 'text-gray-600'}`}><IconChevron open={open} /></span>
       </button>
-      {open && <div className="px-5 pb-4 text-sm text-gray-400 leading-relaxed">{a}</div>}
+      <div className={open ? "px-5 pb-4 text-sm text-gray-400 leading-relaxed block" : "hidden"}>{a}</div>
     </div>
   );
 };
@@ -577,10 +577,10 @@ const Landing = () => {
       it: 'Crea lettere di presentazione personalizzate e curricula professionali con l\'IA. Ottimizza il tuo CV per i filtri ATS, traccia le candidature e preparati al colloquio.'
     };
 
-    document.title = metaTitles[uiLang] || metaTitles.en;
+    // Title & meta description are managed centrally by PageSEO (react-helmet-async)
     const descMeta = document.querySelector('meta[name="description"]');
     if (descMeta) {
-      descMeta.setAttribute('content', metaDescs[uiLang] || metaDescs.en);
+      // Handled by Helmet
     }
   }, [uiLang]);
 

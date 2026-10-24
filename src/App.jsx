@@ -1,12 +1,10 @@
-import React, { useMemo, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { useMemo, useEffect, Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Onboarding from './pages/Onboarding';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LinkedInGeneratorPage from './pages/LinkedInGeneratorPage';
@@ -15,6 +13,9 @@ import AIDeveloperCoverLetterPage from './pages/AIDeveloperCoverLetterPage';
 import LinkedInColdMessagesPage from './pages/LinkedInColdMessagesPage';
 import FreelancerSelfIntroductionPage from './pages/FreelancerSelfIntroductionPage';
 import translations from './locales/translations';
+
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
 
 const OG_IMAGE = 'https://ailetter.pro/android-chrome-512x512.png';
 
@@ -53,7 +54,7 @@ const PageSEO = () => {
 
   const localized = useMemo(() => ({
     '/': {
-      title: `${dict.seoHomeTitle} | AI-Letter`,
+      title: dict.seoHomeTitle,
       description: dict.seoHomeDesc,
       canonical: 'https://ailetter.pro/',
       ogImage: OG_IMAGE,
@@ -97,10 +98,11 @@ const PageSEO = () => {
   }), [dict]);
 
   const seoByPath = useMemo(() => ({ ...STATIC_SEO, ...localized }), [localized]);
-  const config = seoByPath[pathname] ?? { title: 'AI-Letter', description: '', canonical: null, ogImage: null, index: false };
+  const config = seoByPath[pathname] ?? { title: '404 — Page Not Found | AI-Letter', description: '', canonical: null, ogImage: null, index: false };
 
   return (
     <Helmet>
+      <html lang={uiLang || 'en'} />
       {config.title && <title>{config.title}</title>}
       {config.description && <meta name="description" content={config.description} />}
       <meta name="robots" content={config.index ? 'index, follow' : 'noindex, nofollow'} />
@@ -116,27 +118,45 @@ const PageSEO = () => {
   );
 };
 
+const PageLoader = () => (
+  <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-indigo-500 rounded-full animate-spin border-t-transparent" />
+  </div>
+);
+
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-indigo-500 rounded-full animate-spin border-t-transparent" />
-    </div>
-  );
-  return user ? children : <Navigate replace to="/" />;
+  if (loading) return <PageLoader />;
+  return user ? <Suspense fallback={<PageLoader />}>{children}</Suspense> : <Navigate replace to="/" />;
 };
 
 const DashboardRoute = () => {
   const { user, loading, isNewUser } = useAuth();
-  if (loading) return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-indigo-500 rounded-full animate-spin border-t-transparent" />
-    </div>
-  );
+  if (loading) return <PageLoader />;
   if (!user) return <Navigate replace to="/" />;
   if (isNewUser) return <Navigate replace to="/onboarding" />;
-  return <Dashboard />;
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Dashboard />
+    </Suspense>
+  );
 };
+
+const NotFoundPage = () => (
+  <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center justify-center px-4 text-center font-sans">
+    <h1 className="text-5xl font-black text-indigo-400 mb-3">404</h1>
+    <p className="text-slate-300 text-lg font-semibold mb-2">Page not found</p>
+    <p className="text-slate-500 text-sm max-w-md mb-6">
+      The page you are looking for does not exist or has been moved.
+    </p>
+    <Link
+      to="/"
+      className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold transition-colors"
+    >
+      Back to AI-Letter Home
+    </Link>
+  </div>
+);
 
 function App() {
   useEffect(() => {
@@ -164,7 +184,7 @@ function App() {
               <Route path="/cover-letter-ai-developer" element={<AIDeveloperCoverLetterPage />} />
               <Route path="/linkedin-cold-message-templates" element={<LinkedInColdMessagesPage />} />
               <Route path="/freelancer-self-introduction" element={<FreelancerSelfIntroductionPage />} />
-              <Route path="*" element={<Navigate to="/" />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Router>
         </LanguageProvider>

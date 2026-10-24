@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, logout, loading, signInWithGoogle, isNewUser, setIsNewUser }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
