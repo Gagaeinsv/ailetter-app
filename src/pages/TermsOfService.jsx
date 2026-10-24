@@ -17,7 +17,7 @@ const TermsOfService = () => {
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-black tracking-tighter text-lg">
             <span className="bg-gradient-to-r from-indigo-500 to-purple-600 w-7 h-7 rounded-lg flex items-center justify-center text-[10px]">AI</span>
-            AILETTER
+            AI-Letter
           </Link>
           <Link to="/" className="text-xs text-gray-400 hover:text-white transition-colors">← Back to Home</Link>
         </div>
@@ -89,7 +89,7 @@ const TermsOfService = () => {
         </Section>
 
         <Section title="11. Contact">
-          <p>For questions about these Terms, contact us at: <a href="mailto:legal@ailetter.app" className="text-indigo-400 hover:text-indigo-300 transition-colors">legal@ailetter.app</a></p>
+          <p>For questions about these Terms, contact us at: <a href="mailto:support@ailetter.pro" className="text-indigo-400 hover:text-indigo-300 transition-colors">support@ailetter.pro</a></p>
         </Section>
       </main>
 

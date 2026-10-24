@@ -17,7 +17,7 @@ const PrivacyPolicy = () => {
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-black tracking-tighter text-lg">
             <span className="bg-gradient-to-r from-indigo-500 to-purple-600 w-7 h-7 rounded-lg flex items-center justify-center text-[10px]">AI</span>
-            AILETTER
+            AI-Letter
           </Link>
           <Link to="/" className="text-xs text-gray-400 hover:text-white transition-colors">← Back to Home</Link>
         </div>
@@ -87,7 +87,7 @@ const PrivacyPolicy = () => {
             <li><strong className="text-white">Right to portability:</strong> Receive your data in a machine-readable format</li>
             <li><strong className="text-white">Right to object:</strong> Object to processing of your data for certain purposes</li>
           </ul>
-          <p className="mt-3">To exercise any of these rights, contact us at <a href="mailto:privacy@ailetter.app" className="text-indigo-400 hover:text-indigo-300 transition-colors">privacy@ailetter.app</a>. We will respond within 30 days.</p>
+          <p className="mt-3">To exercise any of these rights, contact us at <a href="mailto:privacy@ailetter.pro" className="text-indigo-400 hover:text-indigo-300 transition-colors">privacy@ailetter.pro</a>. We will respond within 30 days.</p>
         </Section>
 
         <Section title="7. Cookies">
@@ -107,7 +107,7 @@ const PrivacyPolicy = () => {
         <Section title="10. Contact Us">
           <p>For privacy-related questions or to exercise your rights, contact us at:</p>
           <p className="mt-2">
-            <a href="mailto:privacy@ailetter.app" className="text-indigo-400 hover:text-indigo-300 transition-colors">privacy@ailetter.app</a>
+            <a href="mailto:privacy@ailetter.pro" className="text-indigo-400 hover:text-indigo-300 transition-colors">privacy@ailetter.pro</a>
           </p>
         </Section>
       </main>

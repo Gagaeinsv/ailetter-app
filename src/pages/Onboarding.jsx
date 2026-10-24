@@ -101,7 +101,7 @@ const Onboarding = () => {
       {/* Logo */}
       <div className="mb-8 flex items-center gap-2 text-lg font-black tracking-tighter relative z-10">
         <span className="bg-indigo-600 w-7 h-7 rounded-lg flex items-center justify-center text-white text-[9px]">AI</span>
-        AILETTER
+        AI-Letter
       </div>
 
       <div className="w-full max-w-sm md:max-w-md relative z-10">
@@ -199,9 +199,9 @@ const Onboarding = () => {
         <div className="mt-4 text-center">
           <button
             onClick={handleSkip}
-            className="text-xs text-[#475569] hover:text-[#94a3b8] transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-indigo-500/20 bg-indigo-500/5 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/15 hover:text-white transition-all"
           >
-            {dict?.obSkip || 'Skip →'}
+            {dict?.obSkip || "Skip — I'll upload my CV in Dashboard →"}
           </button>
         </div>
       </div>

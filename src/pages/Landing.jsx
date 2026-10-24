@@ -661,7 +661,7 @@ const Landing = () => {
                   className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25 text-sm">
                   {user ? t('openApp') : t('ctaButton')} <IconRocket />
                 </Link>
-                <p className="text-xs text-gray-500">{t('ctaSubtext')}</p>
+                <p className="text-xs text-gray-500">{t('ctaSubtext')}</p></div><div className="fu fu5 flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-6"><span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{uiLang === 'uk' ? 'Без реєстрації:' : 'Try instant AI tools:'}</span><Link to="/linkedin-message" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">LinkedIn Note ↗</Link><Link to="/subject-line" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">Email Subject ↗</Link><Link to="/freelancer-self-introduction" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">Upwork Pitch ↗</Link>
               </div>
               {user && (
                 <div className="fu fu4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-green-300 text-xs font-bold mb-6">
@@ -790,22 +790,22 @@ const Landing = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
-            { icon: '📄', title: t('letterT'), desc: t('letterD') },
-            { icon: '📝', title: t('cvMakerT'), desc: t('cvMakerD') },
-            { icon: '📊', title: t('atsT'), desc: t('atsD') },
-            { icon: '🎤', title: t('interviewT'), desc: t('interviewD') },
-            { icon: '💼', title: t('trackerT'), desc: t('trackerD') },
-            { icon: '✉️', title: t('outreachT'), desc: t('outreachD') },
+            { icon: '📄', title: t('letterT'), desc: t('letterD'), href: user ? '/dashboard' : '/login' },
+            { icon: '📝', title: t('cvMakerT'), desc: t('cvMakerD'), href: user ? '/dashboard' : '/login' },
+            { icon: '📊', title: t('atsT'), desc: t('atsD'), href: user ? '/dashboard' : '/login' },
+            { icon: '🎤', title: t('interviewT'), desc: t('interviewD'), href: user ? '/dashboard' : '/login' },
+            { icon: '💼', title: t('trackerT'), desc: t('trackerD'), href: user ? '/dashboard' : '/login' },
+            { icon: '✉️', title: t('outreachT'), desc: t('outreachD'), href: '/linkedin-message' },
           ].map((feat, idx) => (
-            <div key={idx} className="glass rounded-2xl p-6 border border-white/5 hover:border-white/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+            <div key={idx} className="glass rounded-2xl p-6 border border-white/5 hover:border-indigo-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
               <div>
                 <div className="text-3xl mb-4">{feat.icon}</div>
                 <h3 className="text-base font-bold text-white mb-2">{feat.title}</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">{feat.desc}</p>
               </div>
-              <div className="mt-6 flex items-center text-xs text-indigo-400 font-bold tracking-wider uppercase gap-1 hover:text-indigo-300">
-                <span>Learn More</span>
-                <span>→</span>
+              <div className="mt-6"><Link to={feat.href} className="inline-flex items-center text-xs text-indigo-400 font-bold tracking-wider uppercase gap-1 group-hover:text-indigo-300"><span>{uiLang === 'uk' ? 'Спробувати' : 'Try Tool'}</span><span>→</span></Link>
+
+
               </div>
             </div>
           ))}
@@ -1047,7 +1047,7 @@ const Landing = () => {
                 to={user ? '/dashboard' : '/login'} 
                 className="w-full py-3 bg-[#6366f1] hover:bg-[#5458ee] text-white rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#6366f1]/25 border border-white/5"
               >
-                {t('pricingUpgradeBtn')}
+                <span>{t('pricingUpgradeBtn')}</span>
               </Link>
             </div>
           </div>
@@ -1056,7 +1056,7 @@ const Landing = () => {
 
       {/* FAQ */}
       <section className="py-20 px-4 md:px-6 relative z-10">
-        <div className="max-w-2xl mx-auto animate-fade-in">
+            <p className="text-[10px] text-slate-400 text-center mt-2.5">{uiLang === 'uk' ? '🔒 Скасування в 1 клік будь-коли · Захищена оплата Stripe' : '🔒 Cancel anytime in 1 click · Secure Stripe checkout'}</p><div className="max-w-2xl mx-auto animate-fade-in">
           <h2 className="text-3xl font-black text-center mb-12 tracking-tight">{t('faqTitle')}</h2>
           <div className="space-y-3">
             {faqs.map((item, i) => (
@@ -1100,16 +1100,16 @@ const Landing = () => {
             </div>
             <p className="text-gray-600 text-xs">{t('footerDesc')}</p>
             <div className="flex items-center gap-5 text-xs text-gray-500">
-              <a href="#" className="hover:text-white transition-colors">Twitter</a>
-              <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
-              <a href="#" className="hover:text-white transition-colors">Email</a>
+              <Link to="/linkedin-message" className="hover:text-white transition-colors">LinkedIn Tool</Link>
+              <Link to="/subject-line" className="hover:text-white transition-colors">Subject Lines</Link>
+              <a href="mailto:support@ailetter.pro" className="hover:text-white transition-colors">support@ailetter.pro</a>
               <a href="https://www.producthunt.com/products/ailetter-2/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-ailetter&#0045;2" target="_blank" rel="noopener noreferrer">
                 <img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1173518&theme=neutral" alt="AI-Letter on Product Hunt" style={{ width: '120px', height: '26px' }} width="120" height="26" />
               </a>
             </div>
           </div>
           <div className="border-t border-white/[0.05] pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-700">
-            <span>© 2025 AI-Letter. All rights reserved.</span>
+            <span>© 2026 AI-Letter. All rights reserved.</span>
             <div className="flex flex-wrap justify-end gap-x-5 gap-y-2">
               <Link to="/terms" className="hover:text-gray-400 transition-colors">{t('terms')}</Link>
               <Link to="/privacy" className="hover:text-gray-400 transition-colors">{t('privacy')}</Link>

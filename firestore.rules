@@ -3,20 +3,29 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{userId} {
-      // Читати може тільки сам юзер
+      // Read allowed only for the owner
       allow read: if request.auth != null && request.auth.uid == userId;
 
-      // Писати може тільки сам юзер
-      allow write: if request.auth != null
+      // Create & general write allowed for the owner (excluding Stripe-protected fields)
+      allow create, update: if request.auth != null
         && request.auth.uid == userId
         && (
              request.resource.data.plan == 'free' ||
-             !('plan' in request.resource.data)
+             !('plan' in request.resource.data) ||
+             (resource != null && request.resource.data.plan == resource.data.plan)
            )
-        && !('stripeCustomerId' in request.resource.data)
-        && !('stripeSubscriptionId' in request.resource.data)
-        && !('planExpiry' in request.resource.data)
-        && !('planStarted' in request.resource.data);
+        && !('stripeCustomerId' in request.resource.data && (resource == null || request.resource.data.stripeCustomerId != resource.data.stripeCustomerId))
+        && !('stripeSubscriptionId' in request.resource.data && (resource == null || request.resource.data.stripeSubscriptionId != resource.data.stripeSubscriptionId))
+        && !('planExpiry' in request.resource.data && (resource == null || request.resource.data.planExpiry != resource.data.planExpiry))
+        && !('planStarted' in request.resource.data && (resource == null || request.resource.data.planStarted != resource.data.planStarted));
+
+      allow delete: if request.auth != null && request.auth.uid == userId;
+
+      // Allow a newly registered user to credit their referrer with +2 bonusGenerations
+      allow update: if request.auth != null
+        && request.auth.uid != userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bonusGenerations'])
+        && request.resource.data.bonusGenerations == resource.data.get('bonusGenerations', 0) + 2;
 
       // ── Letter history subcollection ──
       match /letters/{letterId} {

@@ -41,8 +41,8 @@ const Login = () => {
         {/* Logo */}
         <div className="mb-6 md:mb-8 flex justify-center">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src="/android-chrome-192x192.png" alt="AIletter" className="w-9 h-9 md:w-10 md:h-10 rounded-xl" />
-            <span className="text-xl md:text-2xl font-black tracking-tighter text-white">AIletter</span>
+            <img src="/android-chrome-192x192.png" alt="AI-Letter" className="w-9 h-9 md:w-10 md:h-10 rounded-xl" />
+            <span className="text-xl md:text-2xl font-black tracking-tighter text-white">AI-Letter</span>
           </Link>
         </div>
 
