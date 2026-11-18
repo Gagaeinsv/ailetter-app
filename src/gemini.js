@@ -1440,6 +1440,37 @@ Job: ${jobDescription || 'AI Engineer'}`;
   });
 };
 
+export const generateRoleHook = async (roleTitle, fullName, skills, experienceYears, jobDescription, options = {}) => {
+  const lang = options.outputLanguage || 'English';
+  const prompt = `You are a professional technical recruiter and executive CV writer. Generate 2 strong, attention-grabbing opening hooks (intro paragraphs) for a ${roleTitle} cover letter.
+One hook should be bold and metric-driven (focusing on KPIs, business outcomes, and delivery), and the second should be domain-focused highlighting deep expertise in ${roleTitle} methodologies, tools, and workflows.
+Output language must be ${lang}.
+Return a JSON array with exactly two strings:
+[
+  "Bold metric-driven opening...",
+  "Domain & expertise-focused opening..."
+]
+Do not return any markdown formatting outside the JSON array. Output ONLY valid JSON.
+Candidate: ${fullName || 'Candidate'}
+Target Role: ${roleTitle}
+Experience: ${experienceYears || '3+'} years
+Skills: ${skills || roleTitle}
+Job Description: ${jobDescription || roleTitle}`;
+
+  return await tryEveryModel(async (modelId) => {
+    const text = await callGemini({
+      modelId,
+      temperature: 0.7,
+      contents: [prompt]
+    });
+    try {
+      return parseJsonFromModel(text);
+    } catch {
+      return [text, text];
+    }
+  });
+};
+
 export const generateLinkedInColdMessage = async (fullName, senderProfession, recipientName, company, tone, options = {}) => {
   const lang = options.outputLanguage || 'English';
   const prompt = `You are a career coach. Write a highly personalized, high-converting LinkedIn cold message to a recruiter or hiring manager.

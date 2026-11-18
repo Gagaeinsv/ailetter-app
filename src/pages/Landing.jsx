@@ -1118,6 +1118,14 @@ const Landing = () => {
               <Link to="/cover-letter-ai-developer" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Супровідний лист (AI)' : 'AI Developer Cover Letter'}</Link>
               <Link to="/linkedin-cold-message-templates" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Шаблони LinkedIn' : 'LinkedIn Cold Messages'}</Link>
               <Link to="/freelancer-self-introduction" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Фріланс Proposal' : 'Freelancer Pitch'}</Link>
+              <Link to="/cover-letter-project-manager" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист Project Manager' : 'Project Manager'}</Link>
+              <Link to="/cover-letter-product-manager" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист Product Manager' : 'Product Manager'}</Link>
+              <Link to="/cover-letter-qa-engineer" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист QA Engineer' : 'QA Engineer'}</Link>
+              <Link to="/cover-letter-frontend-developer" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист Frontend Dev' : 'Frontend Developer'}</Link>
+              <Link to="/cover-letter-data-analyst" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист Data Analyst' : 'Data Analyst'}</Link>
+              <Link to="/uk" className="hover:text-white transition-colors text-slate-500">UA</Link>
+              <Link to="/de" className="hover:text-white transition-colors text-slate-500">DE</Link>
+              <Link to="/it" className="hover:text-white transition-colors text-slate-500">IT</Link>
             </div>
           </div>
         </div>
