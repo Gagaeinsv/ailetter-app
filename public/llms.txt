@@ -1,0 +1,35 @@
+# AI-Letter
+
+> AI-Letter (`https://ailetter.pro`) is an all-in-one AI job application workspace: tailored cover letter generator, 10-section A4 CV/Resume builder, ATS keyword optimizer, 8-question STAR interview prep coach, and Kanban job tracker. Supports English, Ukrainian, German, and Italian.
+
+## Core Facts
+- **Website:** https://ailetter.pro/
+- **Support Email:** support@ailetter.pro
+- **Pricing:** Free tier (€0/month — 5 AI generations/month, +2 bonus generations per friend referral, CV Maker, ATS keyword scanner, Kanban tracker) and Pro tier (€5.99/month billed monthly, or €3.25/month billed annually at €39/year — unlimited AI generations, 16+ templates, HD PDF & DOCX export without watermarks, automatic follow-up drafts).
+- **Supported Languages:** English (`en`), Ukrainian (`uk`), German (`de`), Italian (`it`).
+- **Full Documentation for LLMs:** https://ailetter.pro/llms-full.txt
+- **Sitemap:** https://ailetter.pro/sitemap.xml
+
+## Main Pages & Free No-Login Tools (English)
+- [AI-Letter Home — Cover Letter Generator & CV Builder](https://ailetter.pro/): Main landing page, feature overview, template samples, pricing, and FAQ.
+- [LinkedIn Easy Apply Message Generator](https://ailetter.pro/linkedin-message): Free tool (no sign-up required) to write concise recruiter notes for LinkedIn Easy Apply from a job description.
+- [Email Subject Line Generator for Job Applications](https://ailetter.pro/subject-line): Free tool (no sign-up required) generating 3 email subject lines (Formal, Direct, Creative).
+- [AI Developer Cover Letter Guide & Generator](https://ailetter.pro/cover-letter-ai-developer): Best practices and AI opening hook generator for AI/ML engineers.
+- [LinkedIn Cold Message Templates & AI Generator](https://ailetter.pro/linkedin-cold-message-templates): Templates and AI writer for direct applications, networking, and referral requests.
+- [Freelancer Self-Introduction & Upwork Pitch Generator](https://ailetter.pro/freelancer-self-introduction): Winning freelance proposal structure and AI pitch generator.
+
+## Role-Specific Cover Letter Guides & Hook Generators
+- [Project Manager & Scrum Master Cover Letter Generator](https://ailetter.pro/cover-letter-project-manager): Agile delivery, Sprint Velocity, Jira, ClickUp, RACI, and budget ownership.
+- [Product Manager & Product Owner Cover Letter Generator](https://ailetter.pro/cover-letter-product-manager): Product strategy, retention, ARR/MRR growth, MoSCoW prioritization, and A/B testing.
+- [QA Engineer & SDET Cover Letter Generator](https://ailetter.pro/cover-letter-qa-engineer): Playwright, Cypress, API testing, CI/CD pipelines, and regression reduction.
+- [Frontend & React Developer Cover Letter Generator](https://ailetter.pro/cover-letter-frontend-developer): React, TypeScript, Next.js, Core Web Vitals, and UI architecture.
+- [Data Analyst & BI Specialist Cover Letter Generator](https://ailetter.pro/cover-letter-data-analyst): SQL, Python, Power BI, Tableau, BigQuery, ETL pipelines, and cohort analysis.
+
+## Multilingual Editions
+- [Ukrainian Edition (Українська)](https://ailetter.pro/uk): Конструктор резюме з ШІ, генератор супровідних листів, ATS-оптимізатор та підготовка до співбесід.
+- [German Edition (Deutsch)](https://ailetter.pro/de): KI-Anschreiben & Lebenslauf Generator, ATS-Optimierung und Bewerbungs-Tracker.
+- [Italian Edition (Italiano)](https://ailetter.pro/it): Generatore di lettere di presentazione e CV con IA, ottimizzatore ATS e tracker candidature.
+
+## Legal
+- [Terms of Service](https://ailetter.pro/terms)
+- [Privacy Policy](https://ailetter.pro/privacy)

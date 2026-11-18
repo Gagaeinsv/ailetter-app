@@ -6,11 +6,13 @@
  * en, uk, de, it + /terms and /privacy):
  * - Correct <html lang="..."> per language edition.
  * - Clean, deduplicated <title>, <meta name="description">, <link rel="canonical">,
- *   <link rel="alternate" hreflang="...">, og:*, twitter:* tags marked with
- *   data-rh="true" so react-helmet-async updates them without duplicates.
- * - Static JSON-LD structured data in <head>.
- * - Pre-rendered semantic HTML content inside <div id="root">...</div> so Googlebot
- *   sees full localized headings, copy, FAQ/rules, and internal links on Wave 1.
+ *   <link rel="alternate" hreflang="...">, LLM discovery link (/llms.txt),
+ *   og:*, twitter:* tags marked with data-rh="true".
+ * - Static @graph JSON-LD (Organization + SoftwareApplication/WebApplication +
+ *   localized FAQPage) in <head> for Google AI Overviews and AI search engines.
+ * - Pre-rendered semantic HTML + Answer-First Q&A sections inside <div id="root">
+ *   so Googlebot, OAI-SearchBot, PerplexityBot, and Gemini read full content
+ *   without executing JavaScript.
  * - Both dist/<route>/index.html and dist/<route>.html for Vercel & Firebase Hosting.
  * - Auto-generated public/sitemap.xml and dist/sitemap.xml listing all 46 URLs.
  */
@@ -28,6 +30,15 @@ const BASE_URL = 'https://ailetter.pro';
 const OG_IMAGE = `${BASE_URL}/android-chrome-512x512.png`;
 const TODAY = new Date().toISOString().slice(0, 10);
 
+const FEATURE_LIST = [
+  'AI Cover Letter Generator with 16+ visual templates',
+  '10-Section Interactive CV & Resume Builder with A4 PDF & DOCX export',
+  'ATS CV Optimizer & Missing Keyword Scanner',
+  '8-Question STAR Interview Preparation Coach',
+  'Kanban Job Application Tracker with Follow-Up Reminders',
+  'Free No-Signup LinkedIn, Email Subject Line, and Pitch Generators',
+];
+
 const HOME_COPY = {
   en: {
     h1: 'Tailor Your CV & Cover Letter in Under 60 Seconds with AI-Letter',
@@ -40,14 +51,6 @@ const HOME_COPY = {
           'ATS CV Optimizer & Keyword Scanner: Upload your CV, paste the job description, uncover missing keyword gaps, and rewrite bullet points with measurable impact.',
           'STAR Interview Preparation: Generate 8 role-specific interview questions and model answers tailored to your resume and target vacancy.',
           'Smart Kanban Job Tracker: Organize job applications (Applied, Interview, Offer, Rejected) with automated follow-up reminders.',
-        ],
-      },
-      {
-        h2: 'Frequently Asked Questions',
-        items: [
-          'Is AI-Letter really free to start? Yes — you get 5 free generations per month with no credit card required.',
-          'How does the ATS Resume Optimizer work? You upload your CV and paste the target vacancy. The AI audits formatting, structure, and missing keywords.',
-          'What languages are supported? English, Ukrainian, Italian, and German.',
         ],
       },
     ],
@@ -63,13 +66,6 @@ const HOME_COPY = {
           'ATS Оптимізатор резюме: перевірка збігу ключових слів під вакансію та покращення досягнень із метриками.',
           'Підготовка до співбесіди за методом STAR: 8 персональних запитань та ідеальних відповідей під конкретну вакансію.',
           'Розумний Kanban-трекер вакансій з автоматичними нагадуваннями про follow-up.',
-        ],
-      },
-      {
-        h2: 'Часті запитання',
-        items: [
-          'Чи справді безкоштовно? Так — 5 безкоштовних генерацій щомісяця без кредитної картки.',
-          'Які мови підтримуються? Українська, English, Deutsch, Italiano.',
         ],
       },
     ],
@@ -105,6 +101,452 @@ const HOME_COPY = {
     ],
   },
 };
+
+const FAQ_HEADINGS = {
+  en: 'Frequently Asked Questions',
+  uk: 'Часті запитання та прямі відповіді',
+  de: 'Häufig gestellte Fragen',
+  it: 'Domande Frequenti',
+};
+
+const HOME_FAQS = {
+  en: [
+    {
+      q: 'What is AI-Letter and how much does it cost?',
+      a: 'AI-Letter is an all-in-one AI cover letter generator, 10-section resume builder, ATS keyword optimizer, STAR interview coach, and Kanban job tracker. You can start free with 5 monthly generations (no credit card required) and earn +2 bonus generations per referral, or upgrade to Pro from €3.25/month billed annually.',
+    },
+    {
+      q: 'How does the AI-Letter ATS Resume Optimizer work?',
+      a: 'Upload your PDF CV and paste the target job description. AI-Letter audits formatting, structure, and keyword overlap, highlights missing hard skills, calculates an ATS match score from 0 to 100, and rewrites bullet points with measurable metrics so your resume passes automated recruiter screening.',
+    },
+    {
+      q: 'Which languages and export formats does AI-Letter support?',
+      a: 'AI-Letter supports English, Ukrainian, German, and Italian interfaces and document generation. Resumes and tailored cover letters export as print-ready A4 PDF and editable DOCX files across 16+ visual templates without layout overlap.',
+    },
+  ],
+  uk: [
+    {
+      q: 'Що таке AI-Letter і скільки він коштує?',
+      a: 'AI-Letter — це ШІ-кабінет для пошуку роботи, який поєднує генератор супровідних листів, конструктор резюме на 10 секцій, ATS-аудитор, підготовку до інтерв’ю за методом STAR та Kanban-трекер вакансій. Безкоштовний план дає 5 генерацій щомісяця без картки (+2 за друга), а Pro-підписка коштує від €3.25/місяць.',
+    },
+    {
+      q: 'Як працює перевірка резюме на ATS в AI-Letter?',
+      a: 'Ви завантажуєте PDF-резюме та вставляєте текст вакансії. Алгоритм аналізує збіг ключових слів, виявляє пропущені технічні вимоги, оцінює структуру від 0 до 100 балів та переписує досягнення з кількісними метриками, щоб CV успішно пройшло автоматичні фільтри рекрутерів.',
+    },
+    {
+      q: 'Які мови та формати експорту підтримує AI-Letter?',
+      a: 'Сервіс повністю працює українською, англійською, німецькою та італійською мовами. Готові резюме та супровідні листи можна експортувати у стандартний формат A4 PDF або DOCX у більш ніж 16 візуальних шаблонах без спотворення верстки.',
+    },
+  ],
+  de: [
+    {
+      q: 'Was ist AI-Letter und was kostet die Nutzung?',
+      a: 'AI-Letter ist eine KI-Bewerbungsplattform mit Anschreiben-Generator, 10-teiligem Lebenslauf-Builder, ATS-Keyword-Scanner, STAR-Interview-Coach und Kanban-Job-Tracker. Im kostenlosen Tarif erhalten Sie 5 Generierungen pro Monat ohne Kreditkarte; Pro startet ab 3,25 € monatlich bei jährlicher Zahlung.',
+    },
+    {
+      q: 'Wie funktioniert der ATS-Lebenslauf-Optimierer?',
+      a: 'Laden Sie Ihren PDF-Lebenslauf hoch und fügen Sie die Stellenanzeige ein. AI-Letter berechnet einen ATS-Match-Score von 0 bis 100, erkennt fehlende Fachbegriffe und formuliert Ihre Erfolge mit messbaren Kennzahlen neu, um automatische Bewerbermanagementsysteme zu bestehen.',
+    },
+    {
+      q: 'Welche Sprachen und Exportformate werden unterstützt?',
+      a: 'AI-Letter unterstützt Deutsch, Englisch, Ukrainisch und Italienisch. Alle Lebensläufe und Anschreiben lassen sich in über 16 professionellen Design-Vorlagen als druckfertiges A4-PDF sowie als DOCX-Datei exportieren.',
+    },
+  ],
+  it: [
+    {
+      q: 'Cos’è AI-Letter e quanto costa?',
+      a: 'AI-Letter è una suite AI per la ricerca di lavoro con generatore di lettere di presentazione, CV maker a 10 sezioni, ottimizzatore ATS, preparazione colloqui STAR e tracker Kanban. Il piano gratuito include 5 generazioni al mese senza carta di credito; il piano Pro parte da 3,25 €/mese.',
+    },
+    {
+      q: 'Come funziona l’ottimizzatore CV per filtri ATS?',
+      a: 'Carichi il tuo CV in PDF e incolli l’offerta di lavoro: AI-Letter assegna un punteggio ATS da 0 a 100, individua le parole chiave mancanti e riscrive i punti elenco con metriche quantitative per superare i filtri automatici dei recruiter.',
+    },
+    {
+      q: 'Quali lingue e formati di esportazione sono supportati?',
+      a: 'AI-Letter supporta Italiano, Inglese, Ucraino e Tedesco. Curriculum e lettere possono essere esportati in PDF formato A4 pronto per la stampa e in formato DOCX scegliendo tra oltre 16 modelli visivi.',
+    },
+  ],
+};
+
+const TOOL_FAQS = {
+  '/linkedin-message': {
+    en: [
+      {
+        q: 'How long should a LinkedIn Easy Apply message be?',
+        a: 'A high-converting LinkedIn recruiter note or Easy Apply message should stay under 300 characters or 3–4 crisp sentences: reference the exact role, name one measurable achievement matching the job description, and close with a polite call to action.',
+      },
+      {
+        q: 'Is the AI-Letter LinkedIn Message Generator free without sign-up?',
+        a: 'Yes. You can paste any job description, optionally enter your name and job title, and generate a tailored LinkedIn message immediately for free with no account required.',
+      },
+      {
+        q: 'Can I generate LinkedIn recruiter notes in other languages?',
+        a: 'Yes. Switch between English, Ukrainian, German, and Italian at any time to generate localized LinkedIn outreach notes tailored to European, Ukrainian, or international hiring managers.',
+      },
+    ],
+    uk: [
+      {
+        q: 'Якою має бути оптимальна довжина повідомлення для LinkedIn Easy Apply?',
+        a: 'Ефективне повідомлення рекрутеру в LinkedIn має містити до 300 символів (2–4 речення): вкажіть назву посади, одне конкретне досягнення з цифрами під вимоги вакансії та короткий заклик до спілкування.',
+      },
+      {
+        q: 'Чи працює LinkedIn генератор без реєстрації та оплати?',
+        a: 'Так, інструмент працює миттєво без створення акаунту та кредитної картки: просто вставте опис вакансії і за кілька секунд отримайте готовий текст для відправки рекрутеру.',
+      },
+      {
+        q: 'Якими мовами можна згенерувати повідомлення для рекрутера?',
+        a: 'Підтримуються українська, англійська, німецька та італійська мови — зручно для подачі як в українські IT-компанії, так і на міжнародні чи європейські вакансії.',
+      },
+    ],
+    de: [
+      {
+        q: 'Wie lang sollte eine LinkedIn Easy Apply Nachricht sein?',
+        a: 'Eine wirkungsvolle LinkedIn-Nachricht an Recruiter umfasst maximal 300 Zeichen in zwei bis drei Sätzen: Nennen Sie die konkrete Position, einen messbaren Erfolg passend zur Stelle und schließen Sie mit einem höflichen Gesprächsimpuls.',
+      },
+      {
+        q: 'Ist der LinkedIn-Nachrichtengenerator ohne Anmeldung kostenlos?',
+        a: 'Ja, das Tool steht kostenlos und ohne Registrierung bereit. Fügen Sie einfach die Stellenbeschreibung ein und kopieren Sie die generierte Nachricht direkt in LinkedIn.',
+      },
+      {
+        q: 'Welche Sprachen werden für LinkedIn-Nachrichten unterstützt?',
+        a: 'Sie können Bewerbungsnachrichten auf Deutsch, Englisch, Ukrainisch und Italienisch erstellen.',
+      },
+    ],
+    it: [
+      {
+        q: 'Quanto deve essere lungo un messaggio LinkedIn Easy Apply?',
+        a: 'Un messaggio efficace su LinkedIn resta sotto i 300 caratteri (2–3 frasi): cita il ruolo specifico, un risultato misurabile pertinente all’annuncio e un breve invito al confronto.',
+      },
+      {
+        q: 'Il generatore di messaggi LinkedIn è gratuito senza registrazione?',
+        a: 'Sì, puoi incollare qualsiasi descrizione di lavoro e generare gratuitamente il messaggio personalizzato senza creare un account.',
+      },
+      {
+        q: 'In quali lingue posso generare il messaggio per i recruiter?',
+        a: 'Il tool supporta Italiano, Inglese, Tedesco e Ucraino.',
+      },
+    ],
+  },
+  '/subject-line': {
+    en: [
+      {
+        q: 'What makes a good email subject line for a job application?',
+        a: 'A strong job application subject line stays under 60 characters and clearly states the role title, your name, and one differentiator (such as years of experience or a core credential) so hiring managers immediately know why to open your email.',
+      },
+      {
+        q: 'How many subject line variations does AI-Letter generate?',
+        a: 'In a single click without signing up, AI-Letter creates three distinct variations tailored to the vacancy: Formal (for enterprise roles), Direct (metrics and title upfront), and Creative (for startups and product teams).',
+      },
+      {
+        q: 'Can I generate the full cover letter alongside the subject line?',
+        a: 'Yes. Once you pick a subject line, click Open AI-Letter to upload your CV and generate the full matching cover letter and ATS score check in under 60 seconds.',
+      },
+    ],
+    uk: [
+      {
+        q: 'Яка тема електронного листа для відгуку на вакансію працює найкраще?',
+        a: 'Найкраща тема листа містить до 60 символів і чітко вказує назву вакансії, ваше ім’я та ключову перевагу (досвід у роках або профільну спеціалізацію), щоб рекрутер відкрив лист серед десятків інших.',
+      },
+      {
+        q: 'Скільки варіантів теми генерує AI-Letter без реєстрації?',
+        a: 'За один клік без входу в акаунт ви отримуєте 3 стилі на вибір: офіційний (Formal) для корпорацій, прямий (Direct) з акцентом на досвід та креативний (Creative) для стартапів.',
+      },
+      {
+        q: 'Чи можна одразу створити повний супровідний лист до цієї теми?',
+        a: 'Так, ви можете перейти в AI-Letter, завантажити PDF-резюме та за 30 секунд згенерувати повний персоналізований лист і перевірити ATS-відповідність.',
+      },
+    ],
+    de: [
+      {
+        q: 'Wie sieht eine optimale E-Mail-Betreffzeile für Bewerbungen aus?',
+        a: 'Eine überzeugende Betreffzeile bleibt unter 60 Zeichen und kombiniert die exakte Stellenbezeichnung, Ihren Namen und ein klares Qualifikationsmerkmal.',
+      },
+      {
+        q: 'Wie viele Varianten erstellt der Betreffzeilen-Generator?',
+        a: 'Kostenlos und ohne Anmeldung erhalten Sie drei Varianten passend zur Stelle: Formell, Direkt und Kreativ.',
+      },
+      {
+        q: 'Kann ich dazu auch das komplette Anschreiben erstellen?',
+        a: 'Ja, im AI-Letter Dashboard erstellen Sie anhand Ihres Lebenslaufs in unter einer Minute das vollständige Anschreiben samt ATS-Check.',
+      },
+    ],
+    it: [
+      {
+        q: 'Come scrivere un oggetto email efficace per una candidatura?',
+        a: 'Un buon oggetto resta sotto i 60 caratteri e indica chiaramente il titolo della posizione, il tuo nome e un elemento distintivo come gli anni di esperienza.',
+      },
+      {
+        q: 'Quante varianti genera lo strumento senza registrazione?',
+        a: 'Genera gratuitamente tre opzioni su misura per l’annuncio: Formale, Diretto e Creativo.',
+      },
+      {
+        q: 'Posso creare anche la lettera di presentazione completa?',
+        a: 'Sì, aprendo AI-Letter puoi caricare il CV e ottenere la lettera completa e l’analisi ATS in meno di 60 secondi.',
+      },
+    ],
+  },
+  '/cover-letter-ai-developer': {
+    en: [
+      {
+        q: 'What should an AI Developer include in a cover letter?',
+        a: 'Focus on concrete frameworks and production outcomes rather than generic passion for AI: cite PyTorch, JAX, Hugging Face, RAG architectures, vector databases (Qdrant, Pinecone), and measurable gains such as API latency or accuracy improvements.',
+      },
+      {
+        q: 'How do I avoid weak clichés in an AI Engineer cover letter?',
+        a: 'Skip openers like "I am writing to apply" or "passionate about AI". Start immediately with a production system you built, an optimization metric (e.g. 35% lower inference cost), or an architectural challenge relevant to the hiring company.',
+      },
+      {
+        q: 'How does the AI-Letter AI Developer Hook Generator work?',
+        a: 'Enter your core AI/ML skills, years of experience, and the target job description to generate two ready-to-use opening hooks (metric-driven and technical) for free without registering.',
+      },
+    ],
+    uk: [
+      {
+        q: 'Що обов’язково вказати в супровідному листі AI / ML розробнику?',
+        a: 'Замість загальних фраз про інтерес до ШІ вкажіть реальний продакшн-стек (PyTorch, Hugging Face, LangChain, RAG, векторні БД Pinecone або Qdrant) та вимірні метрики: зниження затримки інференсу, економію витрат на API або точність моделі.',
+      },
+      {
+        q: 'Як уникнути шаблонних фраз у Cover Letter для AI Engineer?',
+        a: 'Не починайте зі слів «Я пишу, щоб податися...». Почніть одразу з конкретного інженерного кейсу — побудованої RAG-системи, оптимізації GPU-інференсу через Triton/TensorRT або досвіду fine-tuning LLM.',
+      },
+      {
+        q: 'Як працює безкоштовний генератор вступів для AI Developer?',
+        a: 'Введіть ваші AI/ML навички, досвід та текст вакансії — сервіс без реєстрації створить 2 сильні вступні абзаци (метричний та технічний), адаптовані під вимоги компанії.',
+      },
+    ],
+    de: [
+      {
+        q: 'Was gehört in ein Anschreiben für AI & ML Developer?',
+        a: 'Nennen Sie konkrete Technologien wie PyTorch, Hugging Face, LangChain, RAG-Pipelines und Vektordatenbanken (Qdrant, Pinecone) sowie messbare Ergebnisse wie geringere Inferenz-Latenzen oder API-Kostensenkungen.',
+      },
+      {
+        q: 'Welche Einstiege sollten KI-Entwickler vermeiden?',
+        a: 'Vermeiden Sie Standardfloskeln wie „Hiermit bewerbe ich mich“. Starten Sie direkt mit einem produktiven ML-System, MLOps-Skalierung oder einem konkreten Effizienzgewinn.',
+      },
+      {
+        q: 'Kann ich Einleitungen kostenlos ohne Anmeldung generieren?',
+        a: 'Ja, der AI-Developer-Generator erstellt direkt aus Ihren Skills und der Stellenanzeige zwei maßgeschneiderte Einstiege ohne Registrierung.',
+      },
+    ],
+    it: [
+      {
+        q: 'Cosa includere in una lettera di presentazione per AI Developer?',
+        a: 'Evidenzia tecnologie concrete come PyTorch, Hugging Face, LangChain, sistemi RAG e database vettoriali insieme a metriche reali su latenza, accuratezza o riduzione dei costi API.',
+      },
+      {
+        q: 'Come evitare frasi banali nella candidatura AI/ML?',
+        a: 'Evita aperture generiche sulla passione per l’intelligenza artificiale e inizia subito con un progetto MLOps o un sistema RAG portato in produzione.',
+      },
+      {
+        q: 'Il generatore di aperture per AI Developer è gratuito?',
+        a: 'Sì, genera due paragrafi introduttivi personalizzati senza bisogno di registrarsi.',
+      },
+    ],
+  },
+  '/linkedin-cold-message-templates': {
+    en: [
+      {
+        q: 'When should job seekers send a LinkedIn cold message to a recruiter?',
+        a: 'Send a short cold message right after applying for an open role, when requesting an employee referral, or when asking a hiring manager for a 10-minute informational chat. Keeping the note specific to the team increases reply rates significantly.',
+      },
+      {
+        q: 'What types of LinkedIn cold message templates are included?',
+        a: 'AI-Letter provides three proven frameworks — Direct Job Application, Networking / Informational Chat, and Referral Request — plus an AI customizer that adapts the tone (Warm, Professional, or Short) to your target company.',
+      },
+      {
+        q: 'Is the LinkedIn Cold Message Generator free to use?',
+        a: 'Yes, you can pick any template, fill in your role and target company, and generate a personalized cold outreach message without creating an account.',
+      },
+    ],
+    uk: [
+      {
+        q: 'Коли варто писати холодне повідомлення рекрутеру в LinkedIn?',
+        a: 'Найкращий час — одразу після подачі резюме на відкриту вакансію, при запиті на реферальну рекомендацію від співробітника компанії або для короткого нетворкінгу з тимлідом команди.',
+      },
+      {
+        q: 'Які шаблони холодних повідомлень доступні в AI-Letter?',
+        a: 'Доступні 3 готові сценарії (прямий відгук, нетворкінг та запит на реферал) з миттєвою ШІ-персоналізацією під компанію, посаду та обраний тон спілкування.',
+      },
+      {
+        q: 'Чи потрібен платний тариф для генерації повідомлень у LinkedIn?',
+        a: 'Ні, сторінка шаблонів і ШІ-генератор холодних повідомлень працюють повністю безкоштовно та без реєстрації.',
+      },
+    ],
+    de: [
+      {
+        q: 'Wann lohnt sich eine LinkedIn Cold Message an Recruiter?',
+        a: 'Direkt nach dem Absenden einer Bewerbung, für eine gezielte Referral-Anfrage bei Mitarbeitenden oder für ein kurzes Kennenlerngespräch mit dem Fachbereich.',
+      },
+      {
+        q: 'Welche Vorlagen bietet der LinkedIn Cold Message Generator?',
+        a: 'Sie erhalten drei erprobte Vorlagen (Direkte Bewerbung, Networking, Empfehlungsanfrage) inklusive KI-Anpassung an Unternehmen und Tonfall.',
+      },
+      {
+        q: 'Ist der Generator ohne Anmeldung nutzbar?',
+        a: 'Ja, Sie können sofort Nachrichten kostenlos erstellen und kopieren.',
+      },
+    ],
+    it: [
+      {
+        q: 'Quando inviare un messaggio a freddo su LinkedIn a un recruiter?',
+        a: 'Subito dopo aver inviato una candidatura, per richiedere una referenza interna o per proporre una breve chiacchierata conoscitiva al responsabile del team.',
+      },
+      {
+        q: 'Quali modelli di messaggi include AI-Letter?',
+        a: 'Include tre modelli pronti (Candidatura Diretta, Networking e Richiesta Referral) personalizzabili istantaneamente tramite IA.',
+      },
+      {
+        q: 'È gratuito e utilizzabile senza registrazione?',
+        a: 'Sì, puoi personalizzare e copiare i messaggi gratuitamente senza creare un account.',
+      },
+    ],
+  },
+  '/freelancer-self-introduction': {
+    en: [
+      {
+        q: 'How should a freelancer start a self-introduction proposal on Upwork?',
+        a: 'Open with the client’s problem rather than your biography. Replace generic introductions with one sentence showing you read their brief, a concise 2–3 step action plan, and one metric-backed Proof of Work example from a similar project.',
+      },
+      {
+        q: 'What makes a cold freelance pitch convert better?',
+        a: 'Clients scan the first two lines in seconds. Highlighting specific deliverables, relevant niche experience, and a single smart clarifying question sets your proposal apart from copy-paste bids.',
+      },
+      {
+        q: 'Can I generate custom Upwork and client proposals for free?',
+        a: 'Yes. Enter your niche, years of experience, and the client project brief to generate a tailored freelance proposal immediately without signing up.',
+      },
+    ],
+    uk: [
+      {
+        q: 'З чого почати самопрезентацію фрілансера на Upwork чи прямому клієнту?',
+        a: 'Почніть із завдання клієнта, а не зі своєї біографії. У перших двох реченнях покажіть розуміння проблеми проєкту, запропонуйте короткий план дій і додайте релевантний кейс із вимірним результатом.',
+      },
+      {
+        q: 'Що робить фріланс-пропозицію (Proposal) найбільш конверсійною?',
+        a: 'Конкретний Proof of Work (посилання чи цифри минулих проєктів) та 1–2 влучні уточнюючі запитання по брифу клієнта — це миттєво виділяє вас серед шаблонних відгуків.',
+      },
+      {
+        q: 'Чи можна згенерувати персоналізований Upwork-пітч безкоштовно?',
+        a: 'Так, вкажіть вашу спеціалізацію, досвід та опис проєкту замовника, і AI-Letter без реєстрації згенерує готовий супровідний лист для фрілансу.',
+      },
+    ],
+    de: [
+      {
+        q: 'Wie beginnt man eine überzeugende Freelancer-Vorstellung auf Upwork?',
+        a: 'Beginnen Sie mit dem konkreten Problem des Kunden statt mit Ihrem Lebenslauf: Zeigen Sie Projektverständnis in den ersten zwei Sätzen, skizzieren Sie einen Umsetzungsplan und nennen Sie ein passendes Referenzprojekt.',
+      },
+      {
+        q: 'Was erhöht die Antwortquote bei Freelance-Pitches?',
+        a: 'Messbare Projekterfolge (Proof of Work) und ein bis zwei präzise Rückfragen zum Briefing heben Ihr Angebot sofort von Standardtexten ab.',
+      },
+      {
+        q: 'Ist der Freelancer-Angebotsgenerator kostenlos?',
+        a: 'Ja, Sie können ohne Anmeldung direkt maßgeschneiderte Pitches erstellen.',
+      },
+    ],
+    it: [
+      {
+        q: 'Come iniziare una presentazione freelance efficace su Upwork?',
+        a: 'Parti dal problema del cliente e non dalla tua biografia: nelle prime due frasi dimostra di aver letto il brief, proponi un piano d’azione sintetico e cita un risultato misurabile.',
+      },
+      {
+        q: 'Cosa rende più efficace una proposta per clienti freelance?',
+        a: 'Includere prove concrete (Proof of Work) e una o due domande mirate sul progetto distingue subito la tua candidatura.',
+      },
+      {
+        q: 'Il generatore di proposte freelance è gratuito?',
+        a: 'Sì, genera proposte su misura gratuitamente senza registrazione.',
+      },
+    ],
+  },
+};
+
+function buildRoleFaqs(rolePage, lang) {
+  const loc = rolePage.locales[lang] || rolePage.locales.en;
+  const roleName = loc.roleName;
+  const ruleSummary = (loc.rules || []).join(' ');
+
+  if (lang === 'uk') {
+    return [
+      {
+        q: `Як правильно написати супровідний лист для ${roleName}?`,
+        a: `Сильний супровідний лист на позицію ${roleName} починається не з шаблонів, а з конкретних цифр і релевантного стеку. ${loc.rules?.[0] || ''} ${loc.rules?.[1] || ''}`.trim(),
+      },
+      {
+        q: `Які навички та метрики варто підкреслити кандидату на роль ${roleName}?`,
+        a: `Рекрутери насамперед шукають практичний вплив на бізнес і прозорий інструментарій. Зосередьтеся на таких принципах: ${ruleSummary}`,
+      },
+      {
+        q: `Чи можна згенерувати персоналізований вступ для ${roleName} безкоштовно?`,
+        a: `Так. На цій сторінці AI-Letter ви можете без реєстрації вказати свої навички, досвід і текст вакансії, щоб миттєво отримати 2 варіанти вступного абзацу, або створити повне CV та лист у кабінеті (5 безкоштовних генерацій щомісяця).`,
+      },
+    ];
+  }
+  if (lang === 'de') {
+    return [
+      {
+        q: `Wie schreibt man ein überzeugendes Anschreiben als ${roleName}?`,
+        a: `Ein starkes Anschreiben für ${roleName} verzichtet auf Floskeln und beginnt direkt mit messbaren Erfolgen. ${loc.rules?.[0] || ''} ${loc.rules?.[1] || ''}`.trim(),
+      },
+      {
+        q: `Welche Skills und Kennzahlen sollte ein ${roleName} hervorheben?`,
+        a: `Personalverantwortliche achten besonders auf nachweisbaren Business-Impact und praxiserprobte Tools: ${ruleSummary}`,
+      },
+      {
+        q: `Kann ich ein ${roleName}-Anschreiben kostenlos mit KI generieren?`,
+        a: `Ja. Mit dem kostenlosen Generator auf dieser Seite erstellen Sie ohne Anmeldung zwei individuelle Einstiege auf Basis Ihrer Skills und Stellenanzeige oder nutzen im Dashboard 5 kostenlose Vollgenerierungen pro Monat.`,
+      },
+    ];
+  }
+  if (lang === 'it') {
+    return [
+      {
+        q: `Come scrivere una lettera di presentazione efficace per ${roleName}?`,
+        a: `Una lettera vincente per ${roleName} evita frasi generiche e punta subito su risultati concreti e competenze tecniche. ${loc.rules?.[0] || ''} ${loc.rules?.[1] || ''}`.trim(),
+      },
+      {
+        q: `Quali competenze e metriche deve evidenziare un ${roleName}?`,
+        a: `I recruiter cercano impatto misurabile sul business e padronanza degli strumenti di ruolo: ${ruleSummary}`,
+      },
+      {
+        q: `Posso generare gratuitamente l’apertura per ${roleName} con l’IA?`,
+        a: `Sì. Inserisci competenze ed esperienza nel modulo qui sopra per generare subito due aperture personalizzate senza registrazione, oppure accedi a 5 generazioni complete gratis al mese nella dashboard AI-Letter.`,
+      },
+    ];
+  }
+  return [
+    {
+      q: `How do you write a high-converting ${roleName} cover letter?`,
+      a: `A strong ${roleName} cover letter skips generic openers like "I am writing to apply" and leads with measurable delivery outcomes. ${loc.rules?.[0] || ''} ${loc.rules?.[1] || ''}`.trim(),
+    },
+    {
+      q: `What skills and metrics should a ${roleName} highlight?`,
+      a: `Hiring managers evaluate concrete execution impact and relevant domain tooling first. Follow these three guidelines: ${ruleSummary}`,
+    },
+    {
+      q: `Can I generate a tailored ${roleName} cover letter for free with AI-Letter?`,
+      a: `Yes. Use the free generator on this page with no sign-up required to create two tailored opening hooks (metric-driven and domain-focused), or sign in for 5 free full cover letters, CV optimization, and A4 PDF export every month.`,
+    },
+  ];
+}
+
+function buildFaqsForRoute(route) {
+  if (route.basePath === '/terms' || route.basePath === '/privacy') {
+    return [];
+  }
+  if (route.basePath === '/') {
+    return HOME_FAQS[route.lang] || HOME_FAQS.en;
+  }
+  if (TOOL_FAQS[route.basePath]) {
+    const entry = TOOL_FAQS[route.basePath];
+    return entry[route.lang] || entry.en;
+  }
+  const matchedRole = SEO_ROLE_PAGES.find((r) => r.path === route.basePath);
+  if (matchedRole) {
+    return buildRoleFaqs(matchedRole, route.lang);
+  }
+  return [];
+}
 
 function buildUrl(lang, basePath) {
   const cleanBase = basePath === '/' ? '' : basePath;
@@ -254,13 +696,17 @@ function buildBaseRoutesForLang(lang) {
     });
   }
 
-  return basePages.map((page) => ({
-    ...page,
-    lang,
-    routePath: buildRoutePath(lang, page.basePath),
-    canonical: buildUrl(lang, page.basePath),
-    hasAlternates: true,
-  }));
+  return basePages.map((page) => {
+    const route = {
+      ...page,
+      lang,
+      routePath: buildRoutePath(lang, page.basePath),
+      canonical: buildUrl(lang, page.basePath),
+      hasAlternates: true,
+    };
+    route.faqs = buildFaqsForRoute(route);
+    return route;
+  });
 }
 
 const LEGAL_ROUTES = [
@@ -284,6 +730,7 @@ const LEGAL_ROUTES = [
         ],
       },
     ],
+    faqs: [],
     changefreq: 'yearly',
     priority: '0.4',
   },
@@ -307,6 +754,7 @@ const LEGAL_ROUTES = [
         ],
       },
     ],
+    faqs: [],
     changefreq: 'yearly',
     priority: '0.4',
   },
@@ -348,6 +796,7 @@ function buildNavHtml(lang, basePath) {
       ${roleLinks}
       <li><a href="${BASE_URL}/terms">Terms of Service</a></li>
       <li><a href="${BASE_URL}/privacy">Privacy Policy</a></li>
+      <li><a href="${BASE_URL}/llms.txt">AI / LLM Documentation (llms.txt)</a></li>
     </ul>
     <ul>
       ${langLinks}
@@ -368,29 +817,108 @@ function buildBodyContent(route) {
     )
     .join('\n');
 
+  const faqsHtml = route.faqs && route.faqs.length > 0
+    ? `
+      <section aria-label="FAQ">
+        <h2>${escapeHtml(FAQ_HEADINGS[route.lang] || FAQ_HEADINGS.en)}</h2>
+        <dl>
+          ${route.faqs
+            .map(
+              (item) => `
+          <div>
+            <dt><h3>${escapeHtml(item.q)}</h3></dt>
+            <dd><p>${escapeHtml(item.a)}</p></dd>
+          </div>`
+            )
+            .join('\n')}
+        </dl>
+      </section>`
+    : '';
+
   return `<div id="root">
     <main style="max-width:960px;margin:0 auto;padding:48px 20px;font-family:system-ui,-apple-system,sans-serif;color:#f8fafc;background:#0f172a;">
       <h1>${escapeHtml(route.h1)}</h1>
       <p>${escapeHtml(route.lead)}</p>
       ${sectionsHtml}
+      ${faqsHtml}
       ${buildNavHtml(route.lang, route.hasAlternates ? route.basePath : '/')}
     </main>
   </div>`;
 }
 
 function buildJsonLd(route) {
-  const appSchema = {
+  const orgId = `${BASE_URL}/#organization`;
+  const graph = [
+    {
+      '@type': 'Organization',
+      '@id': orgId,
+      name: 'AI-Letter',
+      url: `${BASE_URL}/`,
+      logo: {
+        '@type': 'ImageObject',
+        url: OG_IMAGE,
+        width: 512,
+        height: 512,
+      },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'support@ailetter.pro',
+        contactType: 'customer support',
+        availableLanguage: ['en', 'uk', 'de', 'it'],
+      },
+    },
+    {
+      '@type': route.basePath === '/' ? 'SoftwareApplication' : 'WebApplication',
+      '@id': `${route.canonical}#app`,
+      name: route.title.split('|')[0].trim(),
+      url: route.canonical,
+      inLanguage: route.lang,
+      description: route.description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      isAccessibleForFree: true,
+      availableLanguage: ['en', 'uk', 'de', 'it'],
+      publisher: { '@id': orgId },
+      featureList: FEATURE_LIST,
+      offers: [
+        {
+          '@type': 'Offer',
+          name: 'Free Plan',
+          price: '0',
+          priceCurrency: 'EUR',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Pro Plan (Annual)',
+          price: '3.25',
+          priceCurrency: 'EUR',
+        },
+      ],
+    },
+  ];
+
+  if (route.faqs && route.faqs.length > 0) {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${route.canonical}#faq`,
+      inLanguage: route.lang,
+      mainEntity: route.faqs.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: a,
+        },
+      })),
+    });
+  }
+
+  const payload = {
     '@context': 'https://schema.org',
-    '@type': route.basePath === '/' ? 'SoftwareApplication' : 'WebApplication',
-    name: route.title.split('|')[0].trim(),
-    url: route.canonical,
-    inLanguage: route.lang,
-    description: route.description,
-    applicationCategory: 'BusinessApplication',
-    operatingSystem: 'Web',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    '@graph': graph,
   };
-  return `<script type="application/ld+json">${JSON.stringify(appSchema)}</script>`;
+
+  return `<script type="application/ld+json">${JSON.stringify(payload).replace(/<\/script>/gi, '<\\/script>')}</script>`;
 }
 
 const template = fs.readFileSync(path.join(DIST, 'index.html'), 'utf-8');
@@ -413,6 +941,7 @@ for (const route of ALL_ROUTES) {
     <meta name="description" content="${safeDesc}" data-rh="true" />
     <meta name="robots" content="index, follow" data-rh="true" />
     <link rel="canonical" href="${route.canonical}" data-rh="true" />
+    <link rel="alternate" type="text/plain" href="${BASE_URL}/llms.txt" title="LLM Context" />
 ${hreflangTags}
     <meta property="og:site_name" content="AI-Letter" />
     <meta property="og:type" content="website" />

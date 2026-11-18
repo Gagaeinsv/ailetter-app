@@ -1,0 +1,157 @@
+# AI-Letter — Full Product & Knowledge Context
+
+> AI-Letter (`https://ailetter.pro`) is a web-based AI career suite helping job seekers and freelancers tailor cover letters, build ATS-friendly CVs, audit resumes against job descriptions, practice STAR interviews, and track job applications across English, Ukrainian, German, and Italian.
+
+---
+
+## 1. Product Architecture & Core Modules
+
+### 1.1 AI Cover Letter Generator
+- Generates personalized, cliché-free cover letters in ~30 seconds matched to the candidate's CV profile and target job description.
+- Supports 16+ visual templates with A4 PDF export.
+- Enforces strict anti-cliché rules (avoids weak openings such as "I am writing to apply..." or vague self-labels like "results-driven team player") and integrates concrete metrics and company-specific context.
+- Supports adjustable tone (`Professional`, etc.), length (`Short`, `Standard`, `Detailed`), career level (including `Senior-Executive` strategic mode), and automatic or manual language selection (`Auto`, `English`, `Ukrainian`, `German`, `Italian`).
+
+### 1.2 Interactive CV Maker (Resume Builder)
+- Supports 10 structured resume sections: Contact & Header, Summary/About Me, Work Experience, Projects, Skills, Education, Languages, Certifications, Courses, Awards, Publications, and Interests.
+- Includes voice dictation support, multi-resume management, dynamic localization of template headers (`EN`, `UK`, `DE`, `IT`), dual-column vertical layout ordering, and print-ready A4 PDF & DOCX export.
+- Multimodal AI CV Parser (`parseCV`) extracts structured profile fields from uploaded PDF resumes in their original language.
+
+### 1.3 ATS CV Optimizer & Keyword Scanner
+- Compares a candidate's CV against a pasted job description (`analyzeCV`).
+- Produces a quantitative `atsScore` (0–100) and breakdown (`keywords`, `metrics`, `structure`), separates `matchedKeywords` and `missingKeywords` (filtering out generic fluff), offers actionable CV checklist tips, and rewrites bullet points with measurable impact metrics.
+
+### 1.4 STAR Interview Preparation
+- Generates 8 personalized behavioral and technical interview questions and structured model answers following the **STAR** method (Situation, Task, Action, Result) grounded in the candidate's CV and target vacancy.
+
+### 1.5 Smart Kanban Job Tracker
+- Visual pipeline (`Applied`, `Interview`, `Offer`, `Rejected`) inside the Dashboard.
+- Tracks application dates, notes, and triggers automated follow-up reminders with AI-drafted follow-up messages.
+
+---
+
+## 2. Pricing & Plans
+- **Free Plan (€0 / forever):**
+  - 5 AI generations per month (no credit card required).
+  - +2 bonus generations for each referred friend who signs up.
+  - Access to the Resume CV Maker, basic templates, ATS keyword scanner, and Kanban job tracker.
+  - Unlimited free access to public no-login utilities (LinkedIn Easy Apply message generator, Email Subject Line generator, AI role opening hook generators, Freelancer pitch generator).
+- **Pro Plan (€5.99/month billed monthly, or €3.25/month billed annually at €39/year):**
+  - Unlimited AI cover letter & CV generations.
+  - Magic AI CV Generator from freeform text.
+  - Executive Mode presets for senior leadership applications.
+  - 16+ premium visual templates for CVs and cover letters.
+  - Automated follow-up drafts.
+  - Watermark-free HD PDF and DOCX exports.
+  - Priority AI processing; 1-click cancellation anytime via Stripe.
+
+---
+
+## 3. Role-Specific Cover Letter Best Practices
+
+### AI / ML Developer (`/cover-letter-ai-developer`)
+- Highlight concrete production stack: PyTorch, JAX, Hugging Face, vector databases (Pinecone, Qdrant), RAG pipelines, LangChain, and LLM fine-tuning.
+- Quantify inference and cost impact (e.g., latency reduction via caching, accuracy rate on production queries).
+- Mention MLOps and deployment workflows (Docker, Triton, TensorRT).
+
+### Project Manager & Scrum Master (`/cover-letter-project-manager`)
+- Quantify delivery predictability: Sprint Velocity gains, on-time milestone rates, and team sizes led.
+- Show methodology mastery in context: Agile/Scrum, Kanban, RACI/DACI accountability matrices, MoSCoW prioritization, PDCA, SWOT, and Jira/ClickUp workflows.
+- Position the candidate as a servant leader removing team blockers while protecting scope and budget.
+
+### Product Manager & Product Owner (`/cover-letter-product-manager`)
+- Lead with business outcomes: ARR/MRR growth, Day-7 retention lift, onboarding conversion, or churn reduction.
+- Reference structured product discovery and backlog practices: Customer Journey Maps (CJM), User Stories with Acceptance Criteria, MoSCoW prioritization, and A/B experiments.
+- Connect a concrete feature shipped to a product challenge facing the target employer.
+
+### QA Engineer & SDET (`/cover-letter-qa-engineer`)
+- Quantify automation ROI: regression cycle hours saved, CI feedback speed, and reduction in production bug escape rate.
+- Cover the testing pyramid: E2E automation (Playwright, Cypress, Selenium), API testing (Postman, REST), SQL checks, and CI/CD (GitHub Actions, GitLab CI).
+
+### Frontend & React Developer (`/cover-letter-frontend-developer`)
+- Tie frontend architecture to Core Web Vitals (LCP, INP, CLS), bundle splitting, accessibility (WCAG), and conversion lift.
+- Highlight TypeScript rigor, reusable design systems, React/Next.js, Vite, and automated UI testing.
+
+### Data Analyst & BI Specialist (`/cover-letter-data-analyst`)
+- Focus on business value of insights: reporting hours automated, churn drivers uncovered, ad spend optimization, or revenue lift.
+- Specify analytical stack: advanced SQL, Python (pandas), BigQuery/Snowflake, dbt, Power BI, Looker, or Tableau.
+
+---
+
+## 4. Frequently Asked Questions (Multilingual)
+
+### English
+- **Is AI-Letter really free to start?** Yes — you get 5 free generations per month with no credit card required, plus unlimited access to free no-login tools like LinkedIn Easy Apply note, Subject Line, and role opening hook generators.
+- **How does the ATS Resume Optimizer work?** Upload your CV and paste the target job description. AI-Letter audits formatting, calculates keyword match score, highlights missing hard skills, and rewrites bullet points with quantitative metrics.
+- **What languages does AI-Letter support?** English, Ukrainian (`uk`), German (`de`), and Italian (`it`).
+
+### Українська (Ukrainian)
+- **Чи справді AI-Letter безкоштовний?** Так — ви отримуєте 5 безкоштовних генерацій щомісяця без прив'язки картки та +2 бонусні генерації за кожного запрошеного друга, а також безлімітний доступ до міні-генераторів без реєстрації.
+- **Як працює ATS-оптимізатор резюме?** Ви завантажуєте PDF-резюме та вставляєте текст вакансії. ШІ перевіряє структуру, знаходить пропущені ключові слова та переписує досягнення з конкретними метриками для проходження ATS-фільтрів рекрутерів.
+- **Які мови підтримує сервіс?** Українська, англійська, німецька та італійська.
+
+### Deutsch (German)
+- **Ist AI-Letter kostenlos?** Ja — der Free-Plan bietet 5 kostenlose Generierungen pro Monat ohne Kreditkarte sowie sofort nutzbare Mini-Tools ohne Registrierung.
+- **Wie funktioniert der ATS-Lebenslauf-Optimierer?** Sie laden Ihren Lebenslauf hoch und fügen die Stellenanzeige ein. Die KI prüft Struktur, fehlende Keywords und optimiert Erfolge mit messbaren Ergebnissen.
+
+### Italiano (Italian)
+- **AI-Letter è gratuito?** Sì — il piano gratuito include 5 generazioni al mese senza carta di credito e accesso libero ai generatori rapidi senza registrazione.
+- **Come funziona l'ottimizzatore CV per ATS?** Carichi il CV e incolli l'annuncio di lavoro: l'IA analizza le parole chiave mancanti, calcola il match score e riscrive i punti elenco con metriche concrete.
+
+---
+
+## 5. Complete Canonical URL Directory (46 URLs)
+
+### English (`en`)
+- https://ailetter.pro/
+- https://ailetter.pro/linkedin-message
+- https://ailetter.pro/subject-line
+- https://ailetter.pro/cover-letter-ai-developer
+- https://ailetter.pro/linkedin-cold-message-templates
+- https://ailetter.pro/freelancer-self-introduction
+- https://ailetter.pro/cover-letter-project-manager
+- https://ailetter.pro/cover-letter-product-manager
+- https://ailetter.pro/cover-letter-qa-engineer
+- https://ailetter.pro/cover-letter-frontend-developer
+- https://ailetter.pro/cover-letter-data-analyst
+- https://ailetter.pro/terms
+- https://ailetter.pro/privacy
+
+### Ukrainian (`uk`)
+- https://ailetter.pro/uk
+- https://ailetter.pro/uk/linkedin-message
+- https://ailetter.pro/uk/subject-line
+- https://ailetter.pro/uk/cover-letter-ai-developer
+- https://ailetter.pro/uk/linkedin-cold-message-templates
+- https://ailetter.pro/uk/freelancer-self-introduction
+- https://ailetter.pro/uk/cover-letter-project-manager
+- https://ailetter.pro/uk/cover-letter-product-manager
+- https://ailetter.pro/uk/cover-letter-qa-engineer
+- https://ailetter.pro/uk/cover-letter-frontend-developer
+- https://ailetter.pro/uk/cover-letter-data-analyst
+
+### German (`de`)
+- https://ailetter.pro/de
+- https://ailetter.pro/de/linkedin-message
+- https://ailetter.pro/de/subject-line
+- https://ailetter.pro/de/cover-letter-ai-developer
+- https://ailetter.pro/de/linkedin-cold-message-templates
+- https://ailetter.pro/de/freelancer-self-introduction
+- https://ailetter.pro/de/cover-letter-project-manager
+- https://ailetter.pro/de/cover-letter-product-manager
+- https://ailetter.pro/de/cover-letter-qa-engineer
+- https://ailetter.pro/de/cover-letter-frontend-developer
+- https://ailetter.pro/de/cover-letter-data-analyst
+
+### Italian (`it`)
+- https://ailetter.pro/it
+- https://ailetter.pro/it/linkedin-message
+- https://ailetter.pro/it/subject-line
+- https://ailetter.pro/it/cover-letter-ai-developer
+- https://ailetter.pro/it/linkedin-cold-message-templates
+- https://ailetter.pro/it/freelancer-self-introduction
+- https://ailetter.pro/it/cover-letter-project-manager
+- https://ailetter.pro/it/cover-letter-product-manager
+- https://ailetter.pro/it/cover-letter-qa-engineer
+- https://ailetter.pro/it/cover-letter-frontend-developer
+- https://ailetter.pro/it/cover-letter-data-analyst
