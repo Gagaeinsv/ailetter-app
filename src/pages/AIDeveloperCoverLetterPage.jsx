@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { generateAIDevHook } from '../gemini';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import translations from '../locales/translations';
 import { Loader2, Copy, Check, Terminal, Cpu, Award } from 'lucide-react';
 
@@ -9,8 +10,10 @@ const UI_TO_PROMPT_LANG = { en: 'English', uk: 'Ukrainian', it: 'Italian', de: '
 
 export default function AIDeveloperCoverLetterPage() {
   const { uiLang } = useLanguage();
+  const { user } = useAuth();
   const dict = translations[uiLang] || translations.en;
   const navigate = useNavigate();
+  const langPrefix = uiLang && uiLang !== 'en' ? `/${uiLang}` : '';
 
   const [name, setName] = useState('');
   const [skills, setSkills] = useState('');
@@ -20,6 +23,7 @@ export default function AIDeveloperCoverLetterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [copiedIdx, setCopiedIdx] = useState(null);
+  const [copiedFull, setCopiedFull] = useState(false);
 
   const schema = useMemo(() => ({
     '@context': 'https://schema.org',
@@ -89,7 +93,17 @@ export default function AIDeveloperCoverLetterPage() {
         rule2: 'Фокусуйтеся на бізнес-метриках. Наприклад: "Скоротив витрати на API на 45% завдяки оновленню промптів та тонкому налаштуванню LLaMA".',
         rule3: 'Покажіть досвід розгортання та продакшену (MLOps). Напишіть про контейнеризацію моделей, оптимізацію інференсу та роботу з Triton/TensorRT.',
         exampleTitle: 'Приклад успішного вступу:',
-        exampleText: '«Останні 3 роки я спеціалізуюся на розробці систем генеративного ШІ. У своїй останній ролі я розробив RAG-систему для автоматизації підтримки, яка обробляє понад 50 000 запитів щодня з точністю відповіді 92%. Маючи глибокі знання PyTorch, LangChain та досвід тонкого налаштування LLM (LLaMA-3, Mistral), я готовий допомогти вашій команді оптимізувати конвеєри обробки даних...»'
+        exampleText: '«Останні 3 роки я спеціалізуюся на розробці систем генеративного ШІ. У своїй останній ролі я розробив RAG-систему для автоматизації підтримки, яка обробляє понад 50 000 запитів щодня з точністю відповіді 92%. Маючи глибокі знання PyTorch, LangChain та досвід тонкого налаштування LLM (LLaMA-3, Mistral), я готовий допомогти вашій команді оптимізувати конвеєри обробки даних...»',
+        fullExampleTitle: 'Повний приклад супровідного листа AI Developer:',
+        fullExampleLetter: `Шановний менеджер з найму,
+
+Останні три роки я проєктую та виводжу в продакшн системи генеративного ШІ. На попередній позиції AI Engineer я побудував RAG-пайплайн на базі PyTorch, LangChain та векторної бази Qdrant, який автоматизує понад 50 000 клієнтських запитів щодня з точністю 92% і зменшив навантаження на операторів на 38%.
+
+Для мене AI-інженерія — це не просто виклики API, а контроль затримки, вартості інференсу та якості відповідей. Я налаштував гібридний векторно-лексичний пошук, додав семантичне кешування запитів та розгорнув квантовані LLaMA-3 моделі в Docker через vLLM, що скоротило витрати на GPU-кластер на 45% без втрати релевантності.
+
+У вашій вакансії окремий фокус зроблено на побудові мультиагентних пайплайнів із перевіркою галюцинацій — це задача, з якою я працював безпосередньо на останньому проєкті.
+
+Буду радий обговорити архітектуру ваших ШІ-сервісів на технічній співбесіді.`
       };
     }
     if (uiLang === 'it') {
@@ -101,7 +115,17 @@ export default function AIDeveloperCoverLetterPage() {
         rule2: 'Enfatizza i risultati misurabili. Ad esempio: "Ridotto i costi delle API del 40% tramite tecniche di caching dei prompt e finetuning locale di modelli open-source".',
         rule3: 'Parla di MLOps ed engineering. Descrivi come hai ottimizzato i tempi di inferenza in produzione o come hai gestito pipeline di dati complesse.',
         exampleTitle: 'Esempio di introduzione efficace:',
-        exampleText: '"Negli ultimi 3 anni ho lavorato allo sviluppo di soluzioni IA aziendali basate su modelli linguistici di grandi dimensioni. Nel mio ultimo ruolo, ho progettato un sistema RAG che gestisce oltre 20.000 richieste giornaliere con una precisione del 94%. Grazie alla mia competenza in PyTorch e al finetuning di LLaMA, sono pronto a contribuire..."'
+        exampleText: '"Negli ultimi 3 anni ho lavorato allo sviluppo di soluzioni IA aziendali basate su modelli linguistici di grandi dimensioni. Nel mio ultimo ruolo, ho progettato un sistema RAG che gestisce oltre 20.000 richieste giornaliere con una precisione del 94%. Grazie alla mia competenza in PyTorch e al finetuning di LLaMA, sono pronto a contribuire..."',
+        fullExampleTitle: 'Esempio Completo di Lettera per AI Developer:',
+        fullExampleLetter: `Gentile Hiring Manager,
+
+Negli ultimi tre anni ho progettato e portato in produzione sistemi di intelligenza artificiale generativa su larga scala. Nel mio ultimo ruolo come AI Engineer ho sviluppato una pipeline RAG con PyTorch, LangChain e Qdrant capace di gestire oltre 40.000 richieste giornaliere con un'accuratezza del 93%.
+
+Più che semplici chiamate API, mi concentro su latenza, affidabilità e costi di inferenza. Ho integrato caching semantico, retrieval ibrido e serving ottimizzato con Docker e TensorRT su modelli LLaMA-3 fine-tuned, riducendo i costi GPU del 42% e mantenendo risposte tracciabili.
+
+La vostra attenzione all'orchestrazione di agenti AI affidabili rispecchia esattamente i sistemi su cui lavoro ogni giorno.
+
+Resto volentieri a disposizione per approfondire l'architettura durante un colloquio tecnico.`
       };
     }
     if (uiLang === 'de') {
@@ -113,7 +137,17 @@ export default function AIDeveloperCoverLetterPage() {
         rule2: 'Betonen Sie messbare Ergebnisse. Beispiel: "API-Kosten durch Prompt-Caching und Fine-Tuning lokaler LLaMA-Modelle um 40 % gesenkt".',
         rule3: 'Erwähnen Sie MLOps & Skalierung. Beschreiben Sie, wie Sie Modelle in die Produktion gebracht und Inferenz-Latenzen optimiert haben.',
         exampleTitle: 'Beispiel für einen starken Einstieg:',
-        exampleText: '"In den letzten drei Jahren habe ich mich auf die Entwicklung und das Deployment von Generative-AI-Systemen spezialisiert. Zuletzt habe ich eine RAG-Pipeline aufgebaut, die täglich über 30.000 Kundenanfragen mit einer Präzision von 91% automatisiert beantwortet. Mit tiefen Kenntnissen in PyTorch..."'
+        exampleText: '"In den letzten drei Jahren habe ich mich auf die Entwicklung und das Deployment von Generative-AI-Systemen spezialisiert. Zuletzt habe ich eine RAG-Pipeline aufgebaut, die täglich über 30.000 Kundenanfragen mit einer Präzision von 91% automatisiert beantwortet. Mit tiefen Kenntnissen in PyTorch..."',
+        fullExampleTitle: 'Vollständiges Muster-Anschreiben für AI Developer:',
+        fullExampleLetter: `Sehr geehrte Damen und Herren,
+
+in den letzten drei Jahren habe ich Generative-AI-Systeme entwickelt und produktiv skaliert. In meiner letzten Rolle als AI Engineer konzipierte ich eine RAG-Pipeline mit PyTorch, LangChain und Qdrant, die täglich über 35.000 Kundenanfragen mit 92 % Genauigkeit automatisiert beantwortet.
+
+Statt bloßer API-Wrapper optimiere ich Latenzen, Evaluierung und Betriebskosten: Durch semantisches Prompt-Caching, hybrides Retrieval und quantisiertes LLaMA-3-Serving im Docker-Cluster senkte ich unsere Inferenzkosten um 40 % bei deutlich stabilerer Antwortqualität.
+
+Ihr Fokus auf verlässliche Agent-Workflows mit klarer Evaluierung passt exakt zu den Produktionssystemen, die ich zuletzt verantwortet habe.
+
+Ich freue mich auf ein technisches Gespräch mit Ihrem AI-Team.`
       };
     }
     // Default English
@@ -125,7 +159,17 @@ export default function AIDeveloperCoverLetterPage() {
       rule2: 'Highlight metrics and efficiency. For example: "Reduced LLM API latency by 35% through query caching and prompt optimization".',
       rule3: 'Discuss MLOps and production experience. Mention how you deployed models, managed pipelines, or optimized GPU inference using Triton/TensorRT.',
       exampleTitle: 'Example of a successful opening:',
-      exampleText: '"For the past three years, I have specialized in building and deploying generative AI systems. In my last role, I designed a production RAG system that automates 40,000+ support queries daily with a 93% accuracy rate. Leveraging PyTorch, LangChain, and extensive experience fine-tuning open-source LLMs (LLaMA-3, Mistral)..."'
+      exampleText: '"For the past three years, I have specialized in building and deploying generative AI systems. In my last role, I designed a production RAG system that automates 40,000+ support queries daily with a 93% accuracy rate. Leveraging PyTorch, LangChain, and extensive experience fine-tuning open-source LLMs (LLaMA-3, Mistral)..."',
+      fullExampleTitle: 'Full AI Developer Cover Letter Sample (Copy & Customize):',
+      fullExampleLetter: `Dear Hiring Manager,
+
+For the past three years, I have built and deployed production generative AI systems that solve measurable business bottlenecks. In my previous role as an AI Engineer, I architected a retrieval-augmented generation (RAG) pipeline with PyTorch, LangChain, and Qdrant that handles 40,000+ customer queries daily with a 93% groundedness accuracy rate.
+
+Moving AI prototypes into reliable production requires strict control over latency, evaluation, and GPU cost. I built an automated regression eval suite, paired semantic prompt caching with hybrid vector-BM25 search, and served quantized LLaMA-3 weights behind vLLM in Docker, cutting inference API costs by 42% and P95 latency by 35%.
+
+Your job description emphasizes reliable multi-step agent execution with strict hallucination guardrails — the exact production problem I have spent the last 18 months refining.
+
+I welcome the opportunity to discuss your AI roadmap and model infrastructure in a technical call.`
     };
   }, [uiLang]);
 
@@ -305,6 +349,50 @@ export default function AIDeveloperCoverLetterPage() {
             {guideText.exampleText}
           </div>
         </div>
+
+        <div className="bg-[#1e293b]/50 border border-indigo-500/25 rounded-3xl p-6 space-y-4 shadow-xl">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-black text-white">
+              {guideText.fullExampleTitle}
+            </h3>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(guideText.fullExampleLetter);
+                setCopiedFull(true);
+                setTimeout(() => setCopiedFull(false), 2000);
+              }}
+              className="text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 text-[11px] font-bold transition-colors"
+            >
+              {copiedFull ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+              {copiedFull ? (dict.copied || 'Copied!') : (uiLang === 'uk' ? 'Копіювати весь лист' : 'Copy Full Example')}
+            </button>
+          </div>
+          <div className="bg-[#0f172a]/80 border border-white/5 rounded-2xl p-5 font-serif text-slate-200 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
+            {guideText.fullExampleLetter}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              localStorage.setItem('preloaded_template', JSON.stringify({
+                profession: 'AI / ML Developer',
+                jobDescription: 'Target Role: AI / ML Engineer\nCore Skills: Python, PyTorch, LLMs, RAG, LangChain, Vector Databases, Docker, MLOps',
+              }));
+              window.scrollTo(0, 0);
+              navigate(user ? '/dashboard' : '/login');
+            }}
+            className="w-full py-3 px-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-indigo-600/20"
+          >
+            {uiLang === 'uk' ? 'Адаптувати цей лист під моє CV →' : 'Customize This Letter with My CV →'}
+          </button>
+        </div>
+
+        <nav aria-label="Related AI-Letter Tools" className="pt-6 border-t border-slate-800/80 text-xs text-slate-400 flex flex-wrap gap-2">
+          <Link to={langPrefix || '/'} className="px-3 py-1.5 rounded-lg bg-slate-800/70 hover:bg-slate-700 text-indigo-300 transition-colors">AI-Letter Home</Link>
+          <Link to={`${langPrefix}/ats-resume-checker`} className="px-3 py-1.5 rounded-lg bg-indigo-500/20 border border-indigo-500/30 hover:bg-indigo-500/30 text-indigo-300 font-semibold transition-colors">ATS Resume Checker 🔥</Link>
+          <Link to={`${langPrefix}/cover-letter-project-manager`} className="px-3 py-1.5 rounded-lg bg-slate-800/70 hover:bg-slate-700 text-slate-300 transition-colors">Project Manager</Link>
+          <Link to={`${langPrefix}/cover-letter-qa-engineer`} className="px-3 py-1.5 rounded-lg bg-slate-800/70 hover:bg-slate-700 text-slate-300 transition-colors">QA Engineer</Link>
+        </nav>
       </div>
     </div>
   );

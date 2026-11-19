@@ -459,6 +459,115 @@ const TOOL_FAQS = {
       },
     ],
   },
+  '/ats-resume-checker': {
+    en: [
+      {
+        q: 'Is the AI-Letter ATS Resume Checker free without sign-up?',
+        a: 'Yes. You can upload your PDF resume or paste your CV text against any job description for free with no registration required, and receive an ATS match score (0–100) plus missing keywords or a 6-second recruiter roast.',
+      },
+      {
+        q: 'What is the Brutal 6-Second Recruiter Roast mode?',
+        a: 'Roast mode evaluates your CV from the perspective of a senior technical recruiter skimming for 6 seconds: it flags clichés, weak duty lists, and missing metrics, and creates a shareable PNG score card.',
+      },
+      {
+        q: 'Does the ATS optimizer invent fake metrics or numbers?',
+        a: 'No. Whenever your resume lacks quantitative results, AI-Letter inserts honest bracketed placeholders like [X%] so you fill in your real numbers without fabricating data.',
+      },
+    ],
+    uk: [
+      {
+        q: 'Чи безкоштовна перевірка резюме на ATS без реєстрації?',
+        a: 'Так. Ви можете завантажити PDF або вставити текст резюме та одразу отримати оцінку ATS (0–100), список пропущених ключових слів або чесний 6-секундний розбір від рекрутера без входу в акаунт.',
+      },
+      {
+        q: 'Що таке режим «Прожарка резюме (CV Roast)»?',
+        a: 'Це оцінка вашого CV очима сеньйор-рекрутера за перші 6 секунд: система вказує на слабкі формулювання, брак цифр і формує готову PNG-картку з результатом.',
+      },
+      {
+        q: 'Чи вигадує ШІ фейкові відсотки в прикладах покращення?',
+        a: 'Ні. Якщо в резюме бракує вимірних результатів, оптимізатор ставить чесні підказки [X%], щоб ви вписали лише свої реальні досягнення.',
+      },
+    ],
+    de: [
+      {
+        q: 'Ist der ATS-Lebenslauf-Check ohne Anmeldung kostenlos?',
+        a: 'Ja. Laden Sie Ihren PDF-Lebenslauf hoch oder fügen Sie Text ein und erhalten Sie sofort Ihren ATS-Score (0–100), fehlende Keywords oder den 6-Sekunden-Recruiter-Roast ohne Registrierung.',
+      },
+      {
+        q: 'Was bietet der Brutal 6-Second Recruiter Roast?',
+        a: 'Der Roast-Modus bewertet Ihren Lebenslauf aus Sicht eines erfahrenen Tech-Recruiters in 6 Sekunden, deckt Floskeln auf und erstellt eine teilbare PNG-Score-Card.',
+      },
+      {
+        q: 'Erfindet der ATS-Checker falsche Kennzahlen?',
+        a: 'Nein. Fehlende Zahlen werden transparent mit Platzhaltern wie [X%] markiert.',
+      },
+    ],
+    it: [
+      {
+        q: 'La verifica CV ATS è gratuita senza registrazione?',
+        a: 'Sì. Carica il tuo CV in PDF o incolla il testo per ottenere gratuitamente il punteggio ATS (0–100), le parole chiave mancanti o il giudizio recruiter in 6 secondi senza registrarti.',
+      },
+      {
+        q: 'Cos’è la modalità Recruiter Roast in 6 secondi?',
+        a: 'Simula la lettura rapida di un recruiter senior in 6 secondi, segnalando punti deboli, frasi generiche e mancanza di metriche con scheda PNG scaricabile.',
+      },
+      {
+        q: 'L’IA inventa numeri falsi durante l’ottimizzazione?',
+        a: 'Mai: usa segnaposto [X%] dove mancano dati reali per garantire la massima trasparenza.',
+      },
+    ],
+  },
+};
+
+const ATS_CHECKER_PRERENDER = {
+  en: {
+    title: 'Free ATS Resume Checker & Recruiter CV Roast | AI-Letter',
+    description: 'Scan your PDF resume against any job description for free. Get an instant ATS score (0–100), missing keywords, or a 6-second recruiter roast.',
+    h1: 'Free ATS Resume Checker & Brutal 6-Second CV Roast',
+    lead: 'Upload your PDF CV or paste text to check ATS keyword match (0–100), uncover missing hard skills, or get a candid 6-second recruiter critique with a shareable score card.',
+    h2: 'What the Free ATS Checker Evaluates',
+    items: [
+      'ATS Keyword Overlap: detects matched and missing hard skills directly against the target job description.',
+      'Impact & Metrics Audit: flags vague duties and shows concrete bullet rewrites without fabricating numbers.',
+      '6-Second Recruiter Roast Mode: honest feedback on clarity, formatting, and quick wins with PNG card export.',
+    ],
+  },
+  uk: {
+    title: 'Безкоштовна перевірка резюме на ATS та CV Roast | AI-Letter',
+    description: 'Перевірте PDF-резюме під вакансію безкоштовно та без реєстрації. Отримайте ATS-бал (0–100), пропущені ключові слова та чесний розбір від рекрутера.',
+    h1: 'Безкоштовна перевірка резюме на ATS та чесний розбір від рекрутера',
+    lead: 'Завантажте PDF-резюме або вставте текст, щоб перевірити збіг ключових слів під вакансію (0–100) або отримати 6-секундний розбір від рекрутера без реєстрації.',
+    h2: 'Що перевіряє безкоштовний ATS-сканер',
+    items: [
+      'Збіг ключових слів ATS: показує знайдені та пропущені хард-скіли порівняно з текстом вакансії.',
+      'Оцінка метрик і досягнень: підказує, як посилити формулювання без вигаданих цифр.',
+      'Режим CV Roast за 6 секунд: чесний фідбек рекрутера та PNG-картка результату в 1 клік.',
+    ],
+  },
+  de: {
+    title: 'Kostenloser ATS-Lebenslauf-Check & Recruiter Roast | AI-Letter',
+    description: 'Prüfen Sie Ihren PDF-Lebenslauf kostenlos gegen jede Stellenanzeige: ATS-Score (0–100), fehlende Keywords und direktes 6-Sekunden-Recruiter-Feedback.',
+    h1: 'Kostenloser ATS-Lebenslauf-Check & 6-Sekunden Recruiter Roast',
+    lead: 'Laden Sie Ihren PDF-Lebenslauf hoch oder fügen Sie Text ein: ATS-Match-Score (0–100), fehlende Fachbegriffe und ehrliches Recruiter-Feedback ohne Anmeldung.',
+    h2: 'Was der kostenlose ATS-Checker prüft',
+    items: [
+      'Keyword-Abgleich: erkennt übereinstimmende und fehlende Hard Skills aus der Stellenanzeige.',
+      'Messbare Erfolge & Struktur: konkrete Verbesserungsvorschläge ohne erfundene Kennzahlen.',
+      '6-Sekunden Recruiter Roast: direktes Feedback inklusive teilbarer PNG-Score-Card.',
+    ],
+  },
+  it: {
+    title: 'Verifica CV ATS Gratuita & Recruiter Roast | AI-Letter',
+    description: 'Scansiona gratuitamente il tuo CV in PDF senza registrazione: punteggio ATS (0–100), parole chiave mancanti e valutazione critica in 6 secondi.',
+    h1: 'Verifica CV ATS Gratuita & Recruiter Roast in 6 Secondi',
+    lead: 'Carica il tuo CV in PDF o incolla il testo per ottenere punteggio ATS (0–100), parole chiave mancanti e una critica schietta da recruiter senza registrazione.',
+    h2: 'Cosa analizza il Checker ATS gratuito',
+    items: [
+      'Match delle parole chiave ATS rispetto ai requisiti tecnici dell’annuncio di lavoro.',
+      'Audit di metriche e struttura con esempi di riscrittura senza numeri inventati.',
+      'Modalità Recruiter Roast in 6 secondi con scheda PNG scaricabile.',
+    ],
+  },
 };
 
 function buildRoleFaqs(rolePage, lang) {
@@ -567,6 +676,7 @@ function buildRoutePath(lang, basePath) {
 function buildBaseRoutesForLang(lang) {
   const dict = translations[lang] || translations.en;
   const homeCopy = HOME_COPY[lang] || HOME_COPY.en;
+  const atsCopy = ATS_CHECKER_PRERENDER[lang] || ATS_CHECKER_PRERENDER.en;
 
   const basePages = [
     {
@@ -578,6 +688,21 @@ function buildBaseRoutesForLang(lang) {
       sections: homeCopy.sections,
       changefreq: 'weekly',
       priority: '1.0',
+    },
+    {
+      basePath: '/ats-resume-checker',
+      title: atsCopy.title,
+      description: atsCopy.description,
+      h1: atsCopy.h1,
+      lead: atsCopy.lead,
+      sections: [
+        {
+          h2: atsCopy.h2,
+          items: atsCopy.items,
+        },
+      ],
+      changefreq: 'weekly',
+      priority: '0.95',
     },
     {
       basePath: '/linkedin-message',
@@ -690,6 +815,9 @@ function buildBaseRoutesForLang(lang) {
           h2: loc.exampleTitle,
           items: [loc.exampleText],
         },
+        ...(loc.fullExampleLetter
+          ? [{ h2: loc.fullExampleTitle || loc.exampleTitle, items: [loc.fullExampleLetter] }]
+          : []),
       ],
       changefreq: 'weekly',
       priority: '0.8',
@@ -775,6 +903,7 @@ function escapeHtml(str) {
 
 function buildNavHtml(lang, basePath) {
   const dict = translations[lang] || translations.en;
+  const atsNavTitle = (ATS_CHECKER_PRERENDER[lang] || ATS_CHECKER_PRERENDER.en).title;
   const roleLinks = SEO_ROLE_PAGES.map((p) => {
     const loc = p.locales[lang] || p.locales.en;
     return `<li><a href="${buildUrl(lang, p.path)}">${escapeHtml(loc.roleName)}</a></li>`;
@@ -788,6 +917,7 @@ function buildNavHtml(lang, basePath) {
   <nav aria-label="AI-Letter Tools &amp; Resources">
     <ul>
       <li><a href="${buildUrl(lang, '/')}">${escapeHtml(dict.seoHomeTitle)}</a></li>
+      <li><a href="${buildUrl(lang, '/ats-resume-checker')}">${escapeHtml(atsNavTitle)}</a></li>
       <li><a href="${buildUrl(lang, '/linkedin-message')}">${escapeHtml(dict.seoLinkedInTitle)}</a></li>
       <li><a href="${buildUrl(lang, '/subject-line')}">${escapeHtml(dict.seoSubjectTitle)}</a></li>
       <li><a href="${buildUrl(lang, '/cover-letter-ai-developer')}">${escapeHtml(dict.seoAIDevTitle)}</a></li>

@@ -255,19 +255,38 @@ const Dashboard = () => {
     }
   }, [profile, user]);
 
-  // ── Preload template from landing page template library ──
+  // ── Preload template from landing page template library or Job Clipper bookmarklet ──
   useEffect(() => {
     try {
+      const params = new URLSearchParams(window.location.search);
+      const urlJd = params.get('jd');
+      const clippedJd = urlJd || localStorage.getItem('clipped_jd');
+      if (clippedJd && clippedJd.trim()) {
+        setJobDescription(clippedJd.trim());
+        localStorage.removeItem('clipped_jd');
+        if (urlJd) {
+          params.delete('jd');
+          params.delete('src');
+          const nextSearch = params.toString();
+          window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}`);
+        }
+        setActiveTab('cover-letter');
+        setTimeout(() => showNotification('Job description clipped & loaded ⚡'), 400);
+      }
+
       const preloaded = localStorage.getItem('preloaded_template');
       if (preloaded) {
         const data = JSON.parse(preloaded);
-        if (data.profession) {
-          setContactInfo(prev => ({ ...prev, profession: data.profession }));
-        }
+        setContactInfo(prev => ({
+          ...prev,
+          ...(data.profession ? { profession: data.profession } : {}),
+          ...(data.cvText && !prev.summary ? { summary: String(data.cvText).slice(0, 6000) } : {}),
+        }));
         if (data.jobDescription) {
           setJobDescription(data.jobDescription);
         }
         localStorage.removeItem('preloaded_template');
+        setActiveTab('cover-letter');
         setTimeout(() => showNotification('Template preloaded successfully! ⚡'), 400);
       }
     } catch (e) {

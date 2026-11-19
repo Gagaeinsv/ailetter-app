@@ -661,7 +661,7 @@ const Landing = () => {
                   className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25 text-sm">
                   {user ? t('openApp') : t('ctaButton')} <IconRocket />
                 </Link>
-                <p className="text-xs text-gray-500">{t('ctaSubtext')}</p></div><div className="fu fu5 flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-6"><span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{uiLang === 'uk' ? 'Без реєстрації:' : 'Try instant AI tools:'}</span><Link to="/linkedin-message" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">LinkedIn Note ↗</Link><Link to="/subject-line" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">Email Subject ↗</Link><Link to="/freelancer-self-introduction" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">Upwork Pitch ↗</Link>
+                <p className="text-xs text-gray-500">{t('ctaSubtext')}</p></div><div className="fu fu5 flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-6"><span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{uiLang === 'uk' ? 'Без реєстрації:' : 'Try instant AI tools:'}</span><Link to="/ats-resume-checker" className="text-[11px] font-black text-amber-300 hover:text-amber-200 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-lg transition-colors">{uiLang === 'uk' ? 'Перевірка CV / Roast 🔥' : 'ATS Resume Checker 🔥'}</Link><Link to="/linkedin-message" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">LinkedIn Note ↗</Link><Link to="/subject-line" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">Email Subject ↗</Link><Link to="/freelancer-self-introduction" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">Upwork Pitch ↗</Link>
               </div>
               {user && (
                 <div className="fu fu4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-green-300 text-xs font-bold mb-6">
@@ -792,7 +792,7 @@ const Landing = () => {
           {[
             { icon: '📄', title: t('letterT'), desc: t('letterD'), href: user ? '/dashboard' : '/login' },
             { icon: '📝', title: t('cvMakerT'), desc: t('cvMakerD'), href: user ? '/dashboard' : '/login' },
-            { icon: '📊', title: t('atsT'), desc: t('atsD'), href: user ? '/dashboard' : '/login' },
+            { icon: '📊', title: t('atsT'), desc: t('atsD'), href: '/ats-resume-checker' },
             { icon: '🎤', title: t('interviewT'), desc: t('interviewD'), href: user ? '/dashboard' : '/login' },
             { icon: '💼', title: t('trackerT'), desc: t('trackerD'), href: user ? '/dashboard' : '/login' },
             { icon: '✉️', title: t('outreachT'), desc: t('outreachD'), href: '/linkedin-message' },
@@ -1113,6 +1113,7 @@ const Landing = () => {
             <div className="flex flex-wrap justify-end gap-x-5 gap-y-2">
               <Link to="/terms" className="hover:text-gray-400 transition-colors">{t('terms')}</Link>
               <Link to="/privacy" className="hover:text-gray-400 transition-colors">{t('privacy')}</Link>
+              <Link to="/ats-resume-checker" className="hover:text-amber-300 transition-colors text-amber-400 font-semibold">{uiLang === 'uk' ? 'ATS Чекер' : 'ATS Resume Checker'}</Link>
               <Link to="/linkedin-message" className="hover:text-indigo-400 transition-colors text-indigo-600">{t('linkedinGen')}</Link>
               <Link to="/subject-line" className="hover:text-indigo-400 transition-colors text-indigo-600">Subject Line</Link>
               <Link to="/cover-letter-ai-developer" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Супровідний лист (AI)' : 'AI Developer Cover Letter'}</Link>

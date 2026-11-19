@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { generateRoleHook } from '../gemini';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import translations from '../locales/translations';
 import { SEO_ROLE_PAGES } from '../constants/seoRolePages';
@@ -11,6 +12,7 @@ const UI_TO_PROMPT_LANG = { en: 'English', uk: 'Ukrainian', it: 'Italian', de: '
 
 export default function RoleCoverLetterPage({ roleConfig }) {
   const { uiLang, setUiLang } = useLanguage();
+  const { user } = useAuth();
   const dict = translations[uiLang] || translations.en;
   const loc = roleConfig.locales[uiLang] || roleConfig.locales.en;
   const navigate = useNavigate();
@@ -23,6 +25,26 @@ export default function RoleCoverLetterPage({ roleConfig }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [copiedIdx, setCopiedIdx] = useState(null);
+  const [copiedFull, setCopiedFull] = useState(false);
+
+  const handleCopyFull = () => {
+    if (!loc.fullExampleLetter) return;
+    navigator.clipboard.writeText(loc.fullExampleLetter);
+    setCopiedFull(true);
+    setTimeout(() => setCopiedFull(false), 2000);
+  };
+
+  const handleCustomizeFull = () => {
+    localStorage.setItem(
+      'preloaded_template',
+      JSON.stringify({
+        profession: loc.roleName,
+        jobDescription: `Target Role: ${loc.roleName}\nCore Skills: ${loc.skillsPlaceholder}`,
+      })
+    );
+    window.scrollTo(0, 0);
+    navigate(user ? '/dashboard' : '/login');
+  };
 
   const schema = useMemo(() => ({
     '@context': 'https://schema.org',
@@ -276,6 +298,34 @@ export default function RoleCoverLetterPage({ roleConfig }) {
             {loc.exampleText}
           </div>
         </div>
+
+        {loc.fullExampleLetter && (
+          <div className="bg-[#1e293b]/50 border border-indigo-500/25 rounded-3xl p-6 space-y-4 shadow-xl">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-black text-white">
+                {loc.fullExampleTitle || 'Full Cover Letter Sample'}
+              </h3>
+              <button
+                type="button"
+                onClick={handleCopyFull}
+                className="text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 text-[11px] font-bold transition-colors"
+              >
+                {copiedFull ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+                {copiedFull ? (dict.copied || 'Copied!') : (uiLang === 'uk' ? 'Копіювати весь лист' : 'Copy Full Example')}
+              </button>
+            </div>
+            <div className="bg-[#0f172a]/80 border border-white/5 rounded-2xl p-5 font-serif text-slate-200 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
+              {loc.fullExampleLetter}
+            </div>
+            <button
+              type="button"
+              onClick={handleCustomizeFull}
+              className="w-full py-3 px-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-indigo-600/20"
+            >
+              {uiLang === 'uk' ? 'Адаптувати цей лист під моє CV →' : 'Customize This Letter with My CV →'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Internal Navigation between Tools & Roles */}
@@ -286,6 +336,9 @@ export default function RoleCoverLetterPage({ roleConfig }) {
         <div className="flex flex-wrap gap-2">
           <Link to={langPrefix || '/'} className="px-3 py-1.5 rounded-lg bg-slate-800/70 hover:bg-slate-700 text-indigo-300 transition-colors">
             AI-Letter Home
+          </Link>
+          <Link to={`${langPrefix}/ats-resume-checker`} className="px-3 py-1.5 rounded-lg bg-indigo-500/20 border border-indigo-500/30 hover:bg-indigo-500/30 text-indigo-300 font-semibold transition-colors">
+            ATS Resume Checker 🔥
           </Link>
           <Link to={`${langPrefix}/cover-letter-ai-developer`} className="px-3 py-1.5 rounded-lg bg-slate-800/70 hover:bg-slate-700 text-slate-300 transition-colors">
             AI Developer

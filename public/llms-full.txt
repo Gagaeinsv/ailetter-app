@@ -17,16 +17,19 @@
 - Includes voice dictation support, multi-resume management, dynamic localization of template headers (`EN`, `UK`, `DE`, `IT`), dual-column vertical layout ordering, and print-ready A4 PDF & DOCX export.
 - Multimodal AI CV Parser (`parseCV`) extracts structured profile fields from uploaded PDF resumes in their original language.
 
-### 1.3 ATS CV Optimizer & Keyword Scanner
-- Compares a candidate's CV against a pasted job description (`analyzeCV`).
-- Produces a quantitative `atsScore` (0–100) and breakdown (`keywords`, `metrics`, `structure`), separates `matchedKeywords` and `missingKeywords` (filtering out generic fluff), offers actionable CV checklist tips, and rewrites bullet points with measurable impact metrics.
+### 1.3 ATS CV Optimizer, Keyword Scanner & Brutal Recruiter CV Roast
+- Available both inside the Dashboard (`analyzeCV`) and publicly without registration at `/ats-resume-checker` (`en`, `/uk`, `/de`, `/it`).
+- Compares a candidate's PDF or pasted CV against a target job description.
+- Produces a quantitative `atsScore` (0–100) and breakdown (`keywords`, `metrics`, `structure`), separates `matchedKeywords` and `missingKeywords`, offers actionable CV checklist tips, and rewrites bullet points using `[X%]` placeholders when real metrics are missing.
+- **Brutal 6-Second Recruiter Roast Mode:** evaluates resumes candidly as a senior technical recruiter, highlighting top rejections and quick wins with a downloadable PNG shareable score card.
 
 ### 1.4 STAR Interview Preparation
 - Generates 8 personalized behavioral and technical interview questions and structured model answers following the **STAR** method (Situation, Task, Action, Result) grounded in the candidate's CV and target vacancy.
 
-### 1.5 Smart Kanban Job Tracker
+### 1.5 Smart Kanban Job Tracker & 1-Click Job Clipper Bookmarklet
 - Visual pipeline (`Applied`, `Interview`, `Offer`, `Rejected`) inside the Dashboard.
 - Tracks application dates, notes, and triggers automated follow-up reminders with AI-drafted follow-up messages.
+- Includes a browser **1-Click Job Clipper Bookmarklet** allowing candidates to clip any job posting directly from LinkedIn, Djinni, Indeed, Work.ua, or Upwork into AI-Letter.
 
 ---
 
@@ -100,10 +103,11 @@
 
 ---
 
-## 5. Complete Canonical URL Directory (46 URLs)
+## 5. Complete Canonical URL Directory (50 URLs)
 
 ### English (`en`)
 - https://ailetter.pro/
+- https://ailetter.pro/ats-resume-checker
 - https://ailetter.pro/linkedin-message
 - https://ailetter.pro/subject-line
 - https://ailetter.pro/cover-letter-ai-developer
@@ -119,6 +123,7 @@
 
 ### Ukrainian (`uk`)
 - https://ailetter.pro/uk
+- https://ailetter.pro/uk/ats-resume-checker
 - https://ailetter.pro/uk/linkedin-message
 - https://ailetter.pro/uk/subject-line
 - https://ailetter.pro/uk/cover-letter-ai-developer
@@ -132,6 +137,7 @@
 
 ### German (`de`)
 - https://ailetter.pro/de
+- https://ailetter.pro/de/ats-resume-checker
 - https://ailetter.pro/de/linkedin-message
 - https://ailetter.pro/de/subject-line
 - https://ailetter.pro/de/cover-letter-ai-developer
@@ -145,6 +151,7 @@
 
 ### Italian (`it`)
 - https://ailetter.pro/it
+- https://ailetter.pro/it/ats-resume-checker
 - https://ailetter.pro/it/linkedin-message
 - https://ailetter.pro/it/subject-line
 - https://ailetter.pro/it/cover-letter-ai-developer

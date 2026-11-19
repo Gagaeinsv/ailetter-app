@@ -12,6 +12,7 @@
 
 ## Main Pages & Free No-Login Tools (English)
 - [AI-Letter Home — Cover Letter Generator & CV Builder](https://ailetter.pro/): Main landing page, feature overview, template samples, pricing, and FAQ.
+- [Free ATS Resume Checker & Brutal Recruiter CV Roast](https://ailetter.pro/ats-resume-checker): Free no-sign-up PDF/text CV scanner giving ATS match score (0–100), missing keywords, 6-second recruiter roast mode, and downloadable PNG score card.
 - [LinkedIn Easy Apply Message Generator](https://ailetter.pro/linkedin-message): Free tool (no sign-up required) to write concise recruiter notes for LinkedIn Easy Apply from a job description.
 - [Email Subject Line Generator for Job Applications](https://ailetter.pro/subject-line): Free tool (no sign-up required) generating 3 email subject lines (Formal, Direct, Creative).
 - [AI Developer Cover Letter Guide & Generator](https://ailetter.pro/cover-letter-ai-developer): Best practices and AI opening hook generator for AI/ML engineers.

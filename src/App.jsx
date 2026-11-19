@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect, useRef, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
+import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import Landing from './pages/Landing';
@@ -13,6 +14,7 @@ import AIDeveloperCoverLetterPage from './pages/AIDeveloperCoverLetterPage';
 import LinkedInColdMessagesPage from './pages/LinkedInColdMessagesPage';
 import FreelancerSelfIntroductionPage from './pages/FreelancerSelfIntroductionPage';
 import RoleCoverLetterPage from './pages/RoleCoverLetterPage';
+import ATSCheckerPage from './pages/ATSCheckerPage';
 import { SEO_ROLE_PAGES, PREFIXED_LANGS, SUPPORTED_SEO_LANGS } from './constants/seoRolePages';
 import translations from './locales/translations';
 
@@ -70,6 +72,25 @@ const buildCanonicalUrl = (lang, basePath) => {
     return `${BASE_URL}${cleanBase || '/'}`;
   }
   return `${BASE_URL}/${lang}${cleanBase}`;
+};
+
+const ATS_CHECKER_SEO = {
+  en: {
+    title: 'Free ATS Resume Checker & Recruiter CV Roast | AI-Letter',
+    description: 'Scan your PDF resume against any job description for free. Get an instant ATS score (0–100), missing keywords, or a 6-second recruiter roast.',
+  },
+  uk: {
+    title: 'Безкоштовна перевірка резюме на ATS та CV Roast | AI-Letter',
+    description: 'Перевірте PDF-резюме під вакансію безкоштовно та без реєстрації. Отримайте ATS-бал (0–100), пропущені ключові слова та чесний розбір від рекрутера.',
+  },
+  de: {
+    title: 'Kostenloser ATS-Lebenslauf-Check & Recruiter Roast | AI-Letter',
+    description: 'Prüfen Sie Ihren PDF-Lebenslauf kostenlos gegen jede Stellenanzeige: ATS-Score (0–100), fehlende Keywords und direktes 6-Sekunden-Recruiter-Feedback.',
+  },
+  it: {
+    title: 'Verifica CV ATS Gratuita & Recruiter Roast | AI-Letter',
+    description: 'Scansiona gratuitamente il tuo CV in PDF senza registrazione: punteggio ATS (0–100), parole chiave mancanti e valutazione critica in 6 secondi.',
+  },
 };
 
 const PageSEO = () => {
@@ -134,6 +155,13 @@ const PageSEO = () => {
         title: dict.seoFreelancerTitle,
         description: dict.seoFreelancerDesc,
         canonical: buildCanonicalUrl(canonicalLang, '/freelancer-self-introduction'),
+        ogImage: OG_IMAGE,
+        index: true,
+      },
+      '/ats-resume-checker': {
+        title: (ATS_CHECKER_SEO[effectiveLang] || ATS_CHECKER_SEO.en).title,
+        description: (ATS_CHECKER_SEO[effectiveLang] || ATS_CHECKER_SEO.en).description,
+        canonical: buildCanonicalUrl(canonicalLang, '/ats-resume-checker'),
         ogImage: OG_IMAGE,
         index: true,
       },
@@ -241,6 +269,10 @@ function App() {
     if (ref) {
       localStorage.setItem('referrer_uid', ref);
     }
+    const jd = params.get('jd');
+    if (jd) {
+      localStorage.setItem('clipped_jd', jd.slice(0, 6000));
+    }
   }, []);
   return (
     <HelmetProvider>
@@ -251,6 +283,7 @@ function App() {
             <Routes>
               {ROUTE_PREFIXES.flatMap((prefix) => [
                 <Route key={`${prefix}-home`} path={prefix || '/'} element={<Landing />} />,
+                <Route key={`${prefix}-ats`} path={`${prefix}/ats-resume-checker`} element={<ATSCheckerPage />} />,
                 <Route key={`${prefix}-linkedin`} path={`${prefix}/linkedin-message`} element={<LinkedInGeneratorPage />} />,
                 <Route key={`${prefix}-subject`} path={`${prefix}/subject-line`} element={<SubjectLineGeneratorPage />} />,
                 <Route key={`${prefix}-aidev`} path={`${prefix}/cover-letter-ai-developer`} element={<AIDeveloperCoverLetterPage />} />,
@@ -272,6 +305,7 @@ function App() {
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Router>
+          <Analytics />
         </LanguageProvider>
       </AuthProvider>
     </HelmetProvider>

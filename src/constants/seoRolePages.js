@@ -24,6 +24,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Example of a High-Converting PM Opening:',
         exampleText: '"Your engineering roadmap demands predictable cross-team delivery without sacrificing release quality. Over the past 4 years as an Agile Project Manager, I orchestrated 3 distributed squads (22 engineers & QA) in Jira and ClickUp, boosting Sprint Velocity by 28% and cutting critical release blockers in half."',
+        fullExampleTitle: 'Full Project Manager Cover Letter Sample (Copy & Customize):',
+        fullExampleLetter: `Dear Hiring Manager,
+
+Your engineering roadmap demands predictable cross-team delivery without sacrificing release quality. Over the past four years as an Agile Project Manager, I have led three distributed squads (22 engineers, designers, and QA specialists) using Jira and ClickUp, boosting Sprint Velocity by 28% and delivering 96% of quarterly milestones on schedule.
+
+In my previous role at FinCore Systems, our mobile banking rewrite stalled due to unclear ownership and scope creep. I introduced a lightweight RACI accountability matrix across product, backend, and compliance stakeholders, split epics strictly into sub-12-hour sprint tasks, and ran focused 15-minute Daily Scrums paired with PDCA retrospectives. Within two quarters, release cycle times dropped from 6 weeks to 10 days while keeping the €420k annual budget 7% under target.
+
+What draws me to your team right now is your upcoming multi-region API migration. Coordinating complex dependencies across time zones without overloading engineers is where structured risk planning (SWOT) and servant leadership make the biggest difference.
+
+I would welcome a brief conversation to discuss how I can remove delivery blockers for your squads in Q1.`,
       },
       uk: {
         roleName: 'Project Manager / Scrum Master',
@@ -41,6 +51,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Приклад сильного вступу для PM:',
         exampleText: '«Вам потрібен Project Manager, який забезпечить прогнозований реліз продукту без вигорання команди та зриву дедлайнів. За останні 4 роки я керував двома крос-функціональними командами (18 спеціалістів) у Jira та ClickUp, підвищивши Sprint Velocity на 30% і скоротивши Time-to-Market на 3 тижні.»',
+        fullExampleTitle: 'Повний приклад супровідного листа Project Manager:',
+        fullExampleLetter: `Шановний менеджер з найму,
+
+Вам потрібен Project Manager, який забезпечить прогнозований реліз продукту без вигорання команди та зриву дедлайнів. За останні чотири роки я керував двома крос-функціональними командами (18 спеціалістів: розробники, QA, дизайнери) у Jira та ClickUp, підвищивши Sprint Velocity на 30% і забезпечивши вчасне закриття 95% спринтів.
+
+На попередньому проєкті в SaaS-компанії релізи постійно затримувалися через розмиту відповідальність між командами та неконтрольовані зміни скоупу. Я впровадив матрицю RACI, розбив великі задачі на чіткі підзадачі тривалістю до 12 годин та налагодив щоденні 15-хвилинні синхронізації з регулярними ретроспективами за циклом PDCA. За два квартали Time-to-Market скоротився на 3 тижні, а бюджет розробки залишився в межах плану.
+
+Мене особливо зацікавив ваш фокус на масштабуванні платіжної інфраструктури на ринок ЄС. Уміння заздалегідь прораховувати ризики та знімати блокери для технічної команди допоможе пройти цей етап максимально ритмічно.
+
+Буду радий короткій розмові, щоб обговорити актуальні задачі вашого беклогу.`,
       },
       de: {
         roleName: 'Project Manager / Scrum Master',
@@ -58,6 +78,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Beispiel für einen starken Einstieg:',
         exampleText: '"Sie suchen einen Project Manager, der komplexe digitale Roadmaps termingerecht und im Budgetrahmen ins Ziel bringt. In den letzten 4 Jahren habe ich drei verteilte Agile-Teams (20 Entwickler) mit Jira und RACI-Strukturen gesteuert und die Release-Geschwindigkeit um 28 % erhöht."',
+        fullExampleTitle: 'Vollständiges Muster-Anschreiben für Project Manager:',
+        fullExampleLetter: `Sehr geehrte Damen und Herren,
+
+Sie suchen einen Project Manager, der komplexe digitale Roadmaps termingerecht und im Budgetrahmen ins Ziel bringt. In den letzten vier Jahren habe ich drei verteilte Agile-Teams (20 Entwickler, QA und Produktdesign) mit Jira und ClickUp gesteuert, die Sprint Velocity um 28 % erhöht und 96 % aller Quartalsziele pünktlich geliefert.
+
+In meiner bisherigen Position bei FinCore standen mehrere Produkt-Releases aufgrund unklarer Zuständigkeiten still. Durch Einführung einer klaren RACI-Matrix, konsequentes MoSCoW-Backlog-Management und strukturierte 15-Minuten-Daily-Scrums nach PDCA-Prinzip verkürzte sich der Release-Zyklus innerhalb von sechs Monaten von sechs Wochen auf zehn Tage — bei 7 % Budgeteinsparung.
+
+Besonders reizt mich Ihr geplanter Ausbau der Plattform-Schnittstellen im DACH-Raum. Gerne unterstütze ich Ihre Teams dabei, technische Abhängigkeiten frühzeitig abzusichern und Hindernisse aus dem Weg zu räumen.
+
+Über ein kurzes Kennenlerngespräch freue ich mich sehr.`,
       },
       it: {
         roleName: 'Project Manager / Scrum Master',
@@ -75,6 +105,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Esempio di apertura efficace:',
         exampleText: '"Cercate un Project Manager capace di trasformare roadmap complesse in rilasci puntuali. Negli ultimi 4 anni ho guidato 3 team cross-funzionali (22 persone) su Jira e ClickUp, aumentando la Sprint Velocity del 28% e riducendo i ritardi di rilascio."',
+        fullExampleTitle: 'Esempio Completo di Lettera per Project Manager:',
+        fullExampleLetter: `Gentile Hiring Manager,
+
+Cercate un Project Manager capace di trasformare roadmap complesse in rilasci puntuali senza compromettere la qualità tecnica. Negli ultimi quattro anni ho guidato tre team cross-funzionali (22 tra sviluppatori, QA e designer) su Jira e ClickUp, aumentando la Sprint Velocity del 28% e rispettando il 96% delle scadenze trimestrali.
+
+Nel mio precedente ruolo in FinCore, i rilasci rallentavano a causa di priorità poco chiare tra prodotto e ingegneria. Ho introdotto una matrice RACI condivisa, suddiviso le attività con il metodo MoSCoW e ottimizzato i cicli Scrum con retrospettive PDCA. In due trimestri il tempo di rilascio è sceso da sei settimane a dieci giorni, restando sotto il budget previsto.
+
+Seguo con interesse l'espansione dei vostri servizi cloud e sarei lieto di portare un metodo pratico per rimuovere i colli di bottiglia operativi fin dal primo mese.
+
+Resto a disposizione per un breve colloquio conoscitivo.`,
       },
     },
   },
@@ -98,6 +138,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Example of a High-Converting Product Manager Opening:',
         exampleText: '"Increasing activation without adding onboarding friction is one of the toughest levers in B2B SaaS. At FinFlow, I redesigned our self-serve onboarding funnel using cohort analytics and A/B experiments, lifting Day-7 retention by 19% and adding €180k in net-new ARR."',
+        fullExampleTitle: 'Full Product Manager Cover Letter Sample (Copy & Customize):',
+        fullExampleLetter: `Dear Hiring Manager,
+
+Increasing user activation without adding onboarding friction is one of the toughest levers in B2B SaaS. At FinFlow, I redesigned our self-serve onboarding funnel using SQL cohort analytics and A/B experiments, lifting Day-7 retention by 19% and adding €180k in net-new ARR within two quarters.
+
+Rather than shipping features based on opinions, I partner closely with engineering and design from discovery through launch. When customer interviews showed 40% of new sign-ups stalled before connecting their billing workspace, I mapped the Customer Journey (CJM), prioritized quick fixes via MoSCoW, and wrote clear User Stories with testable Acceptance Criteria. That single release cut time-to-first-value from 18 minutes to under 3 minutes.
+
+Your recent push into self-serve mid-market teams aligns directly with the discovery and pricing experimentation work I enjoy most. I would love to apply that same product rigor to accelerate conversion across your core funnel.
+
+Let us schedule a 20-minute call to walk through how I would approach your upcoming roadmap goals.`,
       },
       uk: {
         roleName: 'Product Manager / Product Owner',
@@ -115,6 +165,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Приклад сильного вступу для Product Owner / PM:',
         exampleText: '«Масштабування SaaS-продукту вимагає балансу між швидкістю гіпотез та утриманням користувачів. На попередній позиції Product Owner я перебудував воронку онбордингу через A/B тести та CJM-аудит, що підняло активацію нових юзерів на 24% та принесло +18% до MRR за два квартали.»',
+        fullExampleTitle: 'Повний приклад супровідного листа Product Manager / PO:',
+        fullExampleLetter: `Шановний менеджер з найму,
+
+Масштабування SaaS-продукту вимагає балансу між швидкістю перевірки гіпотез та реальним утриманням користувачів. На попередній позиції Product Owner у FinFlow я перебудував воронку онбордингу на базі когортного SQL-аналізу та A/B тестів, що підняло активацію нових юзерів на 24% та принесло +18% до MRR за два квартали.
+
+Замість того щоб просто «наповнювати беклог», я веду фічі від інтерв’ю з користувачами до вимірювання ефекту після релізу. Коли аудит Customer Journey Map показав масовий відтік на кроці налаштування профілю, я провів пріоритизацію змін за MoSCoW, деталізував User Stories із чіткими Acceptance Criteria і разом із командою скоротив шлях до першої цінності продукту з 15 до 3 хвилин.
+
+Ваш фокус на виході в self-serve сегмент малого бізнесу ідеально збігається з моїм досвідом продуктового зростання та монетизації.
+
+Готовий обговорити ваші продуктові метрики та ідеї для першого кварталу на короткій співбесіді.`,
       },
       de: {
         roleName: 'Product Manager / Product Owner',
@@ -128,10 +188,20 @@ export const SEO_ROLE_PAGES = [
         rules: [
           'Nennen Sie harte Produkt-KPIs: Conversion-Steigerung, Retention-Verbesserung, Churn-Reduktion oder Umsatzwachstum.',
           'Belegen Sie strukturiertes Arbeiten mit User Stories, Acceptance Criteria, MoSCoW-Priorisierung und Customer Journey Maps.',
-          'Gehen Sie auf eine konkrete Produkt-Herausforderung des Zielunternehmens ein statt generischer Floskeln.',
+          'Gehen Sie auf eine konkrete Produkt-Herausforderung des Zielunternehmens statt generischer Floskeln.',
         ],
         exampleTitle: 'Beispiel für einen starken Einstieg:',
         exampleText: '"Wachstum entsteht dort, wo Nutzerbedürfnisse auf klare Geschäftsziele treffen. In meiner letzten Rolle als Product Manager habe ich das Self-Serve-Onboarding mittels A/B-Tests neu aufgesetzt, die Aktivierung um 22 % gesteigert und den Churn spürbar gesenkt."',
+        fullExampleTitle: 'Vollständiges Muster-Anschreiben für Product Manager:',
+        fullExampleLetter: `Sehr geehrte Damen und Herren,
+
+nachhaltiges Produktwachstum entsteht dort, wo echte Nutzerbedürfnisse auf messbare Geschäftsziele treffen. In meiner letzten Position als Product Manager bei FinFlow habe ich das Self-Serve-Onboarding auf Basis von SQL-Kohorten und A/B-Tests neu strukturiert und die Aktivierung um 22 % gesteigert.
+
+Als Product Owner begleite ich Themen von der Discovery bis zum Release. Nachdem Nutzerinterviews zeigten, dass fast 40 % der Testkunden vor der ersten Integration abbrachen, erstellte ich eine aktualisierte Customer Journey Map, priorisierte Maßnahmen nach MoSCoW und formulierte präzise User Stories mit klaren Acceptance Criteria. So sank die Time-to-Value von 18 auf unter 3 Minuten.
+
+Ihre geplante Expansion im B2B-Self-Serve-Bereich passt hervorragend zu meiner Erfahrung mit datengetriebenen Produkt-Experimenten.
+
+Gerne bespreche ich in einem kurzen Gespräch, wie ich Ihre Produkt-KPIs im kommenden Quartal voranbringen kann.`,
       },
       it: {
         roleName: 'Product Manager / Product Owner',
@@ -149,6 +219,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Esempio di apertura efficace:',
         exampleText: '"Aumentare la retention senza complicare l\'esperienza utente è la chiave dello scaling SaaS. Nel mio ultimo ruolo da Product Manager ho riprogettato il flusso di onboarding tramite A/B test, aumentando l\'attivazione del 21% in un trimestre."',
+        fullExampleTitle: 'Esempio Completo di Lettera per Product Manager:',
+        fullExampleLetter: `Gentile Hiring Manager,
+
+Aumentare la retention senza aggiungere attrito all'esperienza utente è una delle leve più importanti nello scaling SaaS. Nel mio ultimo ruolo da Product Manager in FinFlow ho riprogettato l'onboarding self-serve tramite analisi SQL per coorti e A/B test, portando l'attivazione al settimo giorno a crescere del 21% e aggiungendo €180k di nuovo ARR.
+
+Invece di gestire solo ticket, affianco ingegneria e design dalla discovery al rilascio. Quando le interviste agli utenti hanno rivelato un calo del 40% al primo setup, ho mappato la Customer Journey Map, ridefinito le priorità con il metodo MoSCoW e scritto User Stories con Acceptance Criteria verificabili, riducendo il time-to-value sotto i tre minuti.
+
+La vostra espansione verso il segmento PMI self-serve rispecchia perfettamente i progetti di crescita su cui ho ottenuto i risultati migliori.
+
+Sarei felice di confrontarmi in una breve call sui vostri obiettivi di roadmap.`,
       },
     },
   },
@@ -172,6 +252,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Example of a High-Converting QA Opening:',
         exampleText: '"Fast CI/CD releases fall apart when regression testing takes two days. Over the last 3 years as a QA Automation Engineer, I architected a parallel Playwright + TypeScript test suite integrated into GitHub Actions, slashing regression cycles from 14 hours to 22 minutes with 94% critical-path coverage."',
+        fullExampleTitle: 'Full QA Engineer Cover Letter Sample (Copy & Customize):',
+        fullExampleLetter: `Dear Hiring Manager,
+
+Fast CI/CD releases fall apart when manual regression takes two full days. Over the last three years as a QA Automation Engineer, I built a parallel Playwright and TypeScript test suite integrated into GitHub Actions, slashing regression cycles from 14 hours to 22 minutes while covering 94% of checkout and auth flows.
+
+Beyond UI automation, I inspect quality across the entire stack. In my current role at CloudPay, I automated REST API contract validation in Postman/Newman, wrote SQL integrity checks for billing edge cases, and partnered with developers during sprint grooming to catch requirement gaps before a single line of code was written. Together, those practices reduced our production bug-escape rate by 60% over one year.
+
+I noticed your engineering job listing highlights scaling automated end-to-end coverage without flaking pipelines. Cleaning up brittle selectors and stabilizing parallel CI test runs is something I genuinely enjoy solving.
+
+I would appreciate the chance to discuss how I can help your team ship daily releases with confidence.`,
       },
       uk: {
         roleName: 'QA Engineer / SDET',
@@ -189,6 +279,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Приклад сильного вступу для QA Engineer:',
         exampleText: '«Швидкі релізи неможливі, якщо ручна регресія гальмує команду на два дні. За останні 3 роки на позиції QA Engineer я побудував автотести на Playwright + Postman у GitHub Actions, що скоротило цикл регресії з 12 годин до 20 хвилин і знизило кількість критичних багів у продакшені на 65%.»',
+        fullExampleTitle: 'Повний приклад супровідного листа QA Engineer:',
+        fullExampleLetter: `Шановний менеджер з найму,
+
+Швидкі релізи неможливі, якщо ручна регресія щоразу гальмує команду на два дні. За останні три роки на позиції QA Automation Engineer я побудував паралельний набір E2E автотестів на Playwright + TypeScript у GitHub Actions, що скоротив цикл регресії з 12 годин до 20 хвилин і покрив 94% критичних бізнес-сценаріїв.
+
+Окрім UI-тестування, я працюю з усією пірамідою якості. У поточній компанії CloudPay я налаштував автоматичну перевірку REST API через Postman, впровадив SQL-перевірки цілісності транзакцій і почав брати участь у рев’ю вимог ще до старту розробки. Це дозволило скоротити кількість багів у продакшені на 65% за рік.
+
+У вашій вакансії окремий акцент зроблено на стабільності пайплайнів і зменшенні нестабільних (flaky) тестів. Саме оптимізація локаторів та ізоляція тестових даних у CI/CD — моя сильна сторона.
+
+Буду радий познайомитися на інтерв’ю й обговорити процеси тестування у вашій команді.`,
       },
       de: {
         roleName: 'QA Engineer / SDET',
@@ -206,6 +306,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Beispiel für einen starken Einstieg:',
         exampleText: '"Schnelle Release-Zyklen scheitern oft an langsamen Regressionstests. In meinen letzten drei Jahren als QA Automation Engineer habe ich eine parallele Playwright-Suite in GitHub Actions aufgebaut und die Testlaufzeit von 10 Stunden auf 18 Minuten gesenkt."',
+        fullExampleTitle: 'Vollständiges Muster-Anschreiben für QA Engineers:',
+        fullExampleLetter: `Sehr geehrte Damen und Herren,
+
+schnelle Release-Zyklen scheitern häufig an manuellen Regressionstests, die ganze Entwicklerteams ausbremsen. In den letzten drei Jahren als QA Automation Engineer habe ich eine parallele Playwright- und TypeScript-Suite direkt in GitHub Actions integriert und die Regressionszeit von 12 Stunden auf 20 Minuten verkürzt.
+
+Neben der UI-Automatisierung decke ich API-Vertragstests mit Postman/Newman sowie SQL-Datenbankprüfungen ab. Durch konsequentes Shift-Left-Testing bereits im Sprint-Refinement konnten wir in meiner bisherigen Rolle bei CloudPay die Fehlerquote in Produktion innerhalb eines Jahres um 60 % senken.
+
+Besonders spannend finde ich Ihren Fokus auf stabile, flakiness-freie CI/CD-Pipelines. Gerne unterstütze ich Ihr Engineering-Team dabei, tägliche Deployments zuverlässig abzusichern.
+
+Ich freue mich auf ein kurzes Gespräch über Ihre aktuelle Teststrategie.`,
       },
       it: {
         roleName: 'QA Engineer / SDET',
@@ -223,6 +333,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Esempio di apertura efficace:',
         exampleText: '"Rilasci rapidi e qualità stabile richiedono test automatici affidabili. Negli ultimi 3 anni come QA Automation Engineer ho realizzato una suite Playwright integrata in CI/CD che ha ridotto i tempi di regressione da 12 ore a 25 minuti."',
+        fullExampleTitle: 'Esempio Completo di Lettera per QA Engineer:',
+        fullExampleLetter: `Gentile Hiring Manager,
+
+Rilasci rapidi e qualità costante richiedono test automatici affidabili. Negli ultimi tre anni come QA Automation Engineer ho progettato una suite parallela in Playwright e TypeScript integrata in GitHub Actions, riducendo i cicli di regressione da 12 ore a 22 minuti con una copertura del 94% sui flussi critici.
+
+Oltre all'automazione UI, seguo l'intera piramide di test: validazione delle API REST con Postman, controlli di integrità su database SQL e analisi preventiva dei requisiti insieme agli sviluppatori prima dello sviluppo. In CloudPay questo approccio ha ridotto i bug in produzione del 60% in un anno.
+
+Ho notato che cercate esperienza nella stabilizzazione dei test E2E su pipeline CI/CD veloci, un ambito in cui posso portare valore immediato.
+
+Resto volentieri disponibile per un colloquio tecnico.`,
       },
     },
   },
@@ -246,6 +366,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Example of a High-Converting Frontend Opening:',
         exampleText: '"Slow bundle loads quietly kill user conversion before your product gets a fair chance. In my previous role as a Senior Frontend Developer, I migrated a legacy React dashboard to TypeScript + code-split Vite chunks, cutting LCP by 48% and boosting mobile sign-up completion by 17%."',
+        fullExampleTitle: 'Full Frontend Developer Cover Letter Sample (Copy & Customize):',
+        fullExampleLetter: `Dear Hiring Manager,
+
+Slow bundle loads quietly kill user conversion before your product gets a fair chance. In my previous role as a Frontend Developer, I migrated a legacy React dashboard to strict TypeScript with route-level code splitting in Vite, cutting Largest Contentful Paint (LCP) by 48% and boosting mobile sign-up completion by 17%.
+
+Clean frontend architecture means both fast users and fast engineering teams. At ShopPulse, I built a shared accessible component library (React, Tailwind CSS, WCAG AA) backed by React Testing Library and Playwright smoke checks, reducing UI regressions across four product squads while doubling feature delivery speed.
+
+Testing your public web app earlier this week, I noticed a clear opportunity to speed up initial hydration and refine mobile filter responsiveness — both areas I have tackled directly in production.
+
+I would love to speak with your engineering lead about how I can help elevate your React + TypeScript codebase.`,
       },
       uk: {
         roleName: 'Frontend / React Developer',
@@ -263,6 +393,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Приклад сильного вступу для Frontend Developer:',
         exampleText: '«Повільний інтерфейс знижує конверсію ще до того, як користувач оцінить продукт. На останньому проєкті я перевів спадкову адмін-панель на React + TypeScript і впровадив code splitting у Vite, що прискорило LCP на 45% та зменшило кількість UI-багів на 40%.»',
+        fullExampleTitle: 'Повний приклад супровідного листа Frontend Developer:',
+        fullExampleLetter: `Шановний менеджер з найму,
+
+Повільний інтерфейс знижує конверсію ще до того, як користувач оцінить можливості продукту. На попередній позиції Frontend Developer у ShopPulse я перевів спадкову панель керування на React + TypeScript та впровадив code splitting у Vite, що прискорило LCP на 45% і збільшило кількість завершених реєстрацій із мобільних пристроїв на 17%.
+
+Для мене якісний фронтенд — це баланс між UX для користувача та зручною архітектурою для команди. Я створив спільну бібліотеку доступних UI-компонентів на React та Tailwind CSS із покриттям тестами, що скоротило час розробки нових сторінок удвічі та прибрало дублювання коду між трьома продуктовими командами.
+
+Я протестував ваш вебдодаток перед подачею й побачив кілька точок оптимізації початкового рендерингу та мобільної адаптивності, які зможу закрити в перші ж тижні роботи.
+
+Буду радий обговорити ваш стек і технічні задачі на співбесіді.`,
       },
       de: {
         roleName: 'Frontend / React Developer',
@@ -280,6 +420,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Beispiel für einen starken Einstieg:',
         exampleText: '"Langsame Ladezeiten kosten Nutzer, noch bevor das Produkt überzeugt. Als Frontend Developer habe ich ein bestehendes React-Dashboard auf TypeScript und modulares Vite-Chunking umgestellt und dabei den LCP um 46 % beschleunigt."',
+        fullExampleTitle: 'Vollständiges Muster-Anschreiben für Frontend Developer:',
+        fullExampleLetter: `Sehr geehrte Damen und Herren,
+
+lange Ladezeiten kosten wertvolle Nutzer, noch bevor ein Produkt überzeugen kann. In meiner letzten Rolle als Frontend Developer habe ich ein bestehendes React-Dashboard auf striktes TypeScript und modulares Vite-Code-Splitting umgestellt — dadurch sank der LCP um 46 % und die mobile Abschlussrate stieg um 17 %.
+
+Bei ShopPulse habe ich zudem eine wiederverwendbare UI-Komponentenbibliothek (React, Tailwind CSS, WCAG-konform) aufgebaut und mit automatisierten UI-Tests abgesichert. So konnten vier Produkt-Teams neue Features doppelt so schnell und mit deutlich weniger UI-Fehlern ausliefern.
+
+Beim Testen Ihrer Web-Plattform ist mir aufgefallen, wie viel Potenzial noch in der Optimierung der mobilen Performance und Initial-Bundles steckt — genau meine Stärke.
+
+Ich freue mich auf ein technisches Gespräch mit Ihrem Frontend-Lead.`,
       },
       it: {
         roleName: 'Frontend / React Developer',
@@ -297,6 +447,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Esempio di apertura efficace:',
         exampleText: '"Interfacce lente penalizzano sia la SEO che la conversione. Nel mio ultimo ruolo come Frontend Developer ho migrato una dashboard React a TypeScript con code splitting su Vite, riducendo l\'LCP del 45% e migliorando il completamento delle registrazioni su mobile."',
+        fullExampleTitle: 'Esempio Completo di Lettera per Frontend Developer:',
+        fullExampleLetter: `Gentile Hiring Manager,
+
+Interfacce lente penalizzano sia il posizionamento SEO che la conversione degli utenti. Nel mio ultimo ruolo come Frontend Developer in ShopPulse ho migrato una dashboard React legacy a TypeScript con code splitting su Vite, riducendo l'LCP del 46% e aumentando del 17% il completamento delle registrazioni su mobile.
+
+Per garantire velocità di sviluppo a lungo termine ho progettato una libreria di componenti accessibili in React e Tailwind CSS, riducendo le regressioni visive tra quattro team di prodotto e velocizzando il rilascio delle nuove funzionalità.
+
+Provando la vostra applicazione web questa settimana, ho notato opportunità concrete per ottimizzare l'idratazione iniziale e la fluidità su mobile.
+
+Sarei lieto di confrontarmi con il vostro Tech Lead su come contribuire al vostro codebase React.`,
       },
     },
   },
@@ -320,6 +480,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Example of a High-Converting Data Analyst Opening:',
         exampleText: '"Dashboards only create value when they change a business decision. Over the past 3 years as a Product Data Analyst, I built automated SQL + BigQuery cohort models and Power BI executive views that exposed a 22% churn drop-off and helped save €140k in annual marketing spend."',
+        fullExampleTitle: 'Full Data Analyst Cover Letter Sample (Copy & Customize):',
+        fullExampleLetter: `Dear Hiring Manager,
+
+Dashboards only create value when they change a business decision. Over the past three years as a Product Data Analyst, I built automated SQL and BigQuery cohort models alongside Power BI executive views that exposed a 22% trial drop-off and helped save €140k in annual acquisition spend.
+
+At RetailMetrics, finance and marketing teams spent 25 hours each week reconciling conflicting spreadsheets. I unified our event tracking in dbt and Python (pandas), built a single source of truth in BigQuery, and delivered clean self-serve Tableau reports that executives could read without SQL knowledge. Reporting latency dropped from 5 days to real-time daily refreshes.
+
+Your job description mentions uniting subscription retention metrics with marketing attribution. Translating noisy cross-channel data into actionable unit economics is where I do my best work.
+
+I look forward to discussing how I can turn your raw data into faster revenue decisions.`,
       },
       uk: {
         roleName: 'Data Analyst / BI Specialist',
@@ -337,6 +507,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Приклад сильного вступу для Data Analyst:',
         exampleText: '«Дашборд має цінність лише тоді, коли допомагає прийняти вигідніше рішення. За 3 роки роботи Data Analyst я автоматизував ETL-звітність на SQL і BigQuery та побудував когортні звіти в Power BI, що виявили вузьке місце у воронці та заощадили компанії 18% рекламного бюджету.»',
+        fullExampleTitle: 'Повний приклад супровідного листа Data Analyst:',
+        fullExampleLetter: `Шановний менеджер з найму,
+
+Дашборд має цінність лише тоді, коли допомагає бізнесу прийняти вигідніше рішення. За три роки роботи Data Analyst я автоматизував когортну аналітику на SQL і BigQuery та побудував управлінські звіти в Power BI, що виявили точку втрати 22% користувачів і допомогли заощадити 18% річного маркетингового бюджету.
+
+На попередньому місці роботи фінансовий і маркетинговий відділи щотижня витрачали по 20 годин на ручне зведення суперечливих Excel-таблиць. Я об’єднав джерела подій за допомогою Python (pandas) та SQL-вітрин, створив єдине джерело правди в BigQuery і налаштував прозорі BI-звіти для керівників без технічного бекграунду.
+
+У вашій вакансії згадується потреба поєднати продуктові метрики утримання з маркетинговою атрибуцією — саме на побудові такої наскрізної аналітики я спеціалізуюся останні роки.
+
+Буду радий обговорити ваші задачі з даними на співбесіді.`,
       },
       de: {
         roleName: 'Data Analyst / BI Specialist',
@@ -354,6 +534,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Beispiel für einen starken Einstieg:',
         exampleText: '"Daten stiften erst dann Wert, wenn sie bessere Entscheidungen ermöglichen. In den letzten 3 Jahren als Data Analyst habe ich automatisierte SQL- und Power-BI-Modelle aufgebaut, die monatlich 25 Stunden manuelles Reporting eingespart und die Marketing-Effizienz um 16 % gesteigert haben."',
+        fullExampleTitle: 'Vollständiges Muster-Anschreiben für Data Analysts:',
+        fullExampleLetter: `Sehr geehrte Damen und Herren,
+
+Dashboards stiften erst dann Wert, wenn sie zu besseren Geschäftsentscheidungen führen. In den letzten drei Jahren als Data Analyst habe ich automatisierte SQL- und BigQuery-Kohortenmodelle sowie Power-BI-Reports entwickelt, die einen 22-prozentigen Trial-Drop-off aufdeckten und 140.000 € an jährlichen Akquisekosten einsparten.
+
+Bei RetailMetrics verbrachten Fachabteilungen jede Woche über 20 Stunden mit widersprüchlichen Excel-Tabellen. Durch saubere Datenmodellierung mit Python (pandas) und SQL schuf ich eine einheitliche Datenbasis und intuitive Self-Service-Berichte für das Management — statt fünf Tagen Wartezeit standen Kennzahlen täglich aktuell bereit.
+
+Ihre Ausschreibung legt großen Wert auf die Verknüpfung von Retention-Daten und Marketing-Attribution — genau dieses Zusammenspiel reizt mich besonders.
+
+Gerne zeige ich im Gespräch, wie ich Ihre Datenlandschaft gezielt weiterentwickeln kann.`,
       },
       it: {
         roleName: 'Data Analyst / BI Specialist',
@@ -371,6 +561,16 @@ export const SEO_ROLE_PAGES = [
         ],
         exampleTitle: 'Esempio di apertura efficace:',
         exampleText: '"Una dashboard crea valore solo quando guida una decisione concreta. Negli ultimi 3 anni come Data Analyst ho progettato pipeline SQL e report Power BI che hanno ridotto di 20 ore mensili il reporting manuale e migliorato il ROI delle campagne del 15%."',
+        fullExampleTitle: 'Esempio Completo di Lettera per Data Analyst:',
+        fullExampleLetter: `Gentile Hiring Manager,
+
+Una dashboard crea valore solo quando guida una decisione concreta di business. Negli ultimi tre anni come Product Data Analyst ho costruito modelli di coorte automatizzati in SQL e BigQuery con vista esecutiva in Power BI, individuando un abbandono del 22% nel funnel e ottimizzando il budget marketing del 16%.
+
+In RetailMetrics i team dedicavano oltre 20 ore settimanali a riconciliare fogli di calcolo disallineati. Ho unificato i flussi dati con Python (pandas) e query SQL strutturate, offrendo al management report affidabili e aggiornati ogni mattina senza dipendere da estrazioni manuali.
+
+La vostra ricerca di un profilo capace di unire metriche di retention e attribuzione marketing rispecchia esattamente il tipo di analisi su cui lavoro quotidianamente.
+
+Resto a disposizione per un colloquio conoscitivo.`,
       },
     },
   },

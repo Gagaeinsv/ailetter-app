@@ -1511,3 +1511,112 @@ Output ONLY the proposal text. Do not include placeholders like [Price], quotes,
     });
   });
 };
+
+export const roastCV = async (cvText, cvFilePart, jobDescription = '', options = {}) => {
+  const lang = options.outputLanguage || 'English';
+  const cleanCv = String(cvText || '').trim().slice(0, 6000);
+  const cleanJd = String(jobDescription || '').trim().slice(0, 3500);
+  const requireMultimodal = Boolean(cvFilePart) && (!cleanCv || cleanCv.length < 100);
+
+  const promptText = `You are a blunt, seasoned Senior Technical Recruiter performing a brutal 6-second resume screen. Give honest, sharp, high-value critique without sugarcoating, while staying constructive and specific.
+
+Output language for ALL string values (except JSON keys): ${lang}.
+Return ONLY a valid JSON object matching this exact schema:
+{
+  "atsScore": <integer 0-100>,
+  "atsBreakdown": {
+    "keywords": <integer 0-100>,
+    "metrics": <integer 0-100>,
+    "structure": <integer 0-100>
+  },
+  "verdictBadge": "2-4 word sharp verdict (e.g. 'Interview Ready', 'Fluff Overload', 'Needs Hard Metrics')",
+  "recruiterFirstImpression": "1-2 blunt sentences on what a recruiter notices in the first 6 seconds.",
+  "roastCritiques": [
+    "Sharp, concrete critique 1 referencing an actual gap or cliché in the CV",
+    "Sharp, concrete critique 2",
+    "Sharp, concrete critique 3"
+  ],
+  "quickWins": [
+    "Actionable fix 1",
+    "Actionable fix 2",
+    "Actionable fix 3"
+  ],
+  "matchedKeywords": ["up to 6 matched hard skills"],
+  "missingKeywords": ["up to 5 missing hard skills if JD provided"],
+  "bulletPoints": [
+    {
+      "original": "Weak original bullet or summary line from CV",
+      "optimized": "Stronger rewrite using [X%] / [N] placeholders if real numbers are missing"
+    }
+  ]
+}
+
+CRITICAL RULES:
+- NEVER invent fake numbers, percentages, or companies not in the CV. If metrics are missing, use bracketed placeholders like [X%] or [N] so the candidate knows what to insert.
+- Be specific to the candidate's actual resume text or uploaded PDF.
+- matchedKeywords / missingKeywords must be real hard skills/tools only (no soft skills).
+
+${cleanCv ? `Candidate CV Text:\n${cleanCv}\n` : 'Analyze the attached CV PDF document.'}
+${cleanJd ? `\nTarget Job Description:\n${cleanJd}` : '\n(No specific Job Description provided — evaluate general market competitiveness and ATS readability.)'}`;
+
+  const contents = [promptText, ...(cvFilePart ? [cvFilePart] : [])];
+
+  return await tryEveryModel(async (modelId) => {
+    const text = await callGemini({
+      modelId,
+      temperature: 0.45,
+      maxOutputTokens: 2500,
+      contents,
+      responseMimeType: "application/json",
+    });
+    const raw = parseJsonFromModel(text);
+    const clamp = (n, fallback = 50) => {
+      const v = Number(n);
+      return Number.isFinite(v) ? Math.max(0, Math.min(100, Math.round(v))) : fallback;
+    };
+    return {
+      atsScore: clamp(raw?.atsScore, 55),
+      atsBreakdown: {
+        keywords: clamp(raw?.atsBreakdown?.keywords, 50),
+        metrics: clamp(raw?.atsBreakdown?.metrics, 45),
+        structure: clamp(raw?.atsBreakdown?.structure, 60),
+      },
+      verdictBadge: String(raw?.verdictBadge || 'Needs Polish').trim(),
+      recruiterFirstImpression: String(raw?.recruiterFirstImpression || '').trim(),
+      roastCritiques: Array.isArray(raw?.roastCritiques) ? raw.roastCritiques.map(s => String(s || '').trim()).filter(Boolean).slice(0, 4) : [],
+      quickWins: Array.isArray(raw?.quickWins) ? raw.quickWins.map(s => String(s || '').trim()).filter(Boolean).slice(0, 4) : [],
+      matchedKeywords: Array.isArray(raw?.matchedKeywords) ? raw.matchedKeywords.map(s => String(s || '').trim()).filter(Boolean).slice(0, 6) : [],
+      missingKeywords: Array.isArray(raw?.missingKeywords) ? raw.missingKeywords.map(s => String(s || '').trim()).filter(Boolean).slice(0, 5) : [],
+      bulletPoints: Array.isArray(raw?.bulletPoints)
+        ? raw.bulletPoints.map(bp => ({
+            original: String(bp?.original || '').trim(),
+            optimized: String(bp?.optimized || '').trim(),
+          })).filter(bp => bp.original && bp.optimized).slice(0, 3)
+        : [],
+    };
+  }, { requireMultimodal });
+};
+
+export const analyzePublicCV = async ({ cvText = '', cvFilePart = null, jobDescription = '', mode = 'ats', outputLanguage = 'English' }) => {
+  if (mode === 'roast') {
+    return await roastCV(cvText, cvFilePart, jobDescription, { outputLanguage });
+  }
+
+  let parsedProfile = null;
+  const cleanCv = String(cvText || '').trim();
+  if (cvFilePart && cleanCv.length < 100) {
+    parsedProfile = await parseCV(cvFilePart);
+  } else {
+    parsedProfile = {
+      profession: '',
+      summary: cleanCv.slice(0, 6000),
+      skills: [],
+      experience: cleanCv.slice(0, 6000),
+      education: '',
+      certifications: [],
+    };
+  }
+
+  const analysis = await analyzeCV(parsedProfile, jobDescription, { outputLanguage });
+  return { ...analysis, parsedProfile };
+};

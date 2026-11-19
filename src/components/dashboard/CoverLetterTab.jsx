@@ -11,6 +11,7 @@ import {
 import { Loader2, Copy, Sparkles, FileText, Download, Lock, RefreshCw, Save, Check, PenLine, Settings2, Linkedin } from 'lucide-react';
 import LinkedInModal from './LinkedInModal';
 import JobUrlInput from './JobUrlInput';
+import JobClipperCard from './JobClipperCard';
 import AISuggestions from './AISuggestions';
 import ATSScore from './ATSScore';
 import ReviewModal from './ReviewModal';
@@ -258,6 +259,7 @@ const CoverLetterTab = (props) => {
           <div className="flex-1 flex flex-col min-h-[200px]">
             <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 ml-1">{dict.jobSection || 'JOB DESCRIPTION'}</label>
             <JobUrlInput onParsed={(text) => setJobDescription(text)} />
+            <JobClipperCard uiLang={uiLang} showNotification={showNotification} />
             <textarea
               className="flex-1 w-full bg-[#1e293b] border border-[#334155] rounded-2xl p-4 text-sm text-slate-200 focus:border-indigo-500 outline-none resize-none placeholder-slate-600 transition-all leading-relaxed custom-scrollbar"
               placeholder={dict.jobPlaceholder || "Paste the job description here..."}
