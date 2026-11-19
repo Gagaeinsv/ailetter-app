@@ -190,7 +190,13 @@ const Dashboard = () => {
     try {
       localStorage.setItem(key, JSON.stringify(savedCvs));
     } catch (e) {
-      console.warn('Failed to save CVs list to cache:', e);
+      console.warn('Failed to save CVs list to cache, retrying without raw PDF base64:', e);
+      try {
+        const lightweight = savedCvs.map(({ cvFile: _omit, ...rest }) => rest);
+        localStorage.setItem(key, JSON.stringify(lightweight));
+      } catch (innerErr) {
+        console.warn('Failed to save lightweight CVs list to cache:', innerErr);
+      }
     }
   }, [savedCvs, user]);
 
@@ -210,7 +216,7 @@ const Dashboard = () => {
   };
 
   const handleSelectSavedCv = (cv) => {
-    setCvFile(cv.cvFile);
+    setCvFile(cv.cvFile || null);
     setFileName(cv.fileName);
     if (cv.parsedData) {
       const updated = { ...contactInfo, ...cv.parsedData };
@@ -297,10 +303,12 @@ const Dashboard = () => {
       setShowCvSuggestion(true);
       return;
     }
-    const totalAchievementsLength = (contactInfo.experience || [])
-      .flatMap(e => e.achievements || [])
-      .join(" ").length;
-    const skillsLength = (contactInfo.skills || []).join(" ").length;
+    const expList = Array.isArray(contactInfo.experience) ? contactInfo.experience : [];
+    const expStrLen = typeof contactInfo.experience === 'string' ? contactInfo.experience.length : 0;
+    const totalAchievementsLength = expList
+      .flatMap(e => (e && Array.isArray(e.achievements) ? e.achievements : []))
+      .join(" ").length + expStrLen;
+    const skillsLength = (Array.isArray(contactInfo.skills) ? contactInfo.skills : []).join(" ").length;
     
     if (totalAchievementsLength + skillsLength < 150) {
       setShowCvSuggestion(true);
@@ -430,7 +438,7 @@ const Dashboard = () => {
     if (!jobDescription) return alert('Paste job description');
     if (planLoading) return showNotification('Checking plan...');
 
-    const isAdmin = user?.email === 'gagatinsv@gmail.com';
+    const isAdmin = ['gagatinsv@gmail.com', 'gagarinsv@gmail.com', 'haharinserhii@gmail.com'].includes(user?.email);
     const totalAllowed = 5 + (bonusGenerations || 0);
     if (!isAdmin && !isPro && getMonthlyCount() >= totalAllowed) {
       setShowUpgrade(true);
@@ -514,7 +522,7 @@ const Dashboard = () => {
         font-family: sans-serif; pointer-events: none;
         z-index: 1000; white-space: nowrap;
       `;
-      watermarkEl.innerHTML = 'Generated with <b>AIletter.app</b> (Free Plan)';
+      watermarkEl.innerHTML = 'Generated with <b>ailetter.pro</b> (Free Plan)';
       element.style.position = 'relative';
       element.appendChild(watermarkEl);
     }

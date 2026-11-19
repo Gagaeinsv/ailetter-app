@@ -7,7 +7,11 @@ module.exports = async function geminiGenerateHandler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { modelId, temperature, maxOutputTokens, contents, responseMimeType } = req.body;
+  const { modelId, temperature, maxOutputTokens, contents, responseMimeType } = req.body || {};
+
+  if (!Array.isArray(contents) || contents.length === 0) {
+    return res.status(400).json({ error: { message: "Invalid contents payload" } });
+  }
 
   if (modelId && modelId.startsWith("groq/")) {
     const groqApiKey = process.env.GROQ_API_KEY;
@@ -15,12 +19,23 @@ module.exports = async function geminiGenerateHandler(req, res) {
       return res.status(500).json({ error: "Groq API key not configured" });
     }
 
-    const groqModel = modelId.replace("groq/", "");
+    const hasInlineData = contents.some(
+      (part) => part && typeof part === "object" && Boolean(part.inlineData)
+    );
     const textPrompt = contents.map((part) => {
       if (typeof part === "string") return part;
-      if (part.text) return part.text;
+      if (part && part.text) return part.text;
       return "";
     }).filter(Boolean).join("\n\n");
+
+    if (hasInlineData && textPrompt.length < 1200) {
+      return res.status(400).json({
+        error: { message: "Groq model does not support PDF/binary inlineData inputs" },
+      });
+    }
+
+    const groqModel = modelId.replace("groq/", "");
+    const wantsArray = /JSON array|\[\s*\{/i.test(textPrompt);
 
     try {
       const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
@@ -31,7 +46,7 @@ module.exports = async function geminiGenerateHandler(req, res) {
         ],
         temperature: typeof temperature === "number" ? temperature : 0.7,
         max_tokens: typeof maxOutputTokens === "number" ? maxOutputTokens : 4000,
-        ...(responseMimeType === "application/json" ? { response_format: { type: "json_object" } } : {})
+        ...(responseMimeType === "application/json" && !wantsArray ? { response_format: { type: "json_object" } } : {})
       };
 
       const response = await fetch(groqUrl, {

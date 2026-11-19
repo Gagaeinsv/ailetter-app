@@ -34,11 +34,13 @@ async function callGemini({ modelId, temperature, maxOutputTokens, contents, res
   return candidate?.content?.parts?.[0]?.text ?? "";
 }
 
-async function tryModel(modelFn) {
+async function tryModel(modelFn, options = {}) {
+  const { requireMultimodal = false } = options;
+  const pool = requireMultimodal ? MODELS.filter((m) => !m.id.startsWith("groq/")) : MODELS;
   let modelIndex = 0;
   let lastError = null;
-  while (modelIndex < MODELS.length) {
-    const current = MODELS[modelIndex];
+  while (modelIndex < pool.length) {
+    const current = pool[modelIndex];
     try {
       console.log(`Using model: ${current.id}`);
       return await modelFn(current.id, current.temp);
@@ -46,7 +48,7 @@ async function tryModel(modelFn) {
       lastError = error;
       console.warn(`${current.id} failed:`, error);
       modelIndex++;
-      if (modelIndex < MODELS.length) {
+      if (modelIndex < pool.length) {
         await sleep(1000);
         continue;
       }
@@ -60,17 +62,19 @@ async function tryModel(modelFn) {
 }
 
 /** Try each model in order (for flaky parse / empty tokens); rotates on every failure */
-async function tryEveryModel(modelFn) {
+async function tryEveryModel(modelFn, options = {}) {
+  const { requireMultimodal = false } = options;
+  const pool = requireMultimodal ? MODELS.filter((m) => !m.id.startsWith("groq/")) : MODELS;
   let lastError = null;
-  for (let i = 0; i < MODELS.length; i++) {
-    const current = MODELS[i];
+  for (let i = 0; i < pool.length; i++) {
+    const current = pool[i];
     try {
       console.log(`tryEveryModel using: ${current.id}`);
       return await modelFn(current.id, current.temp);
     } catch (error) {
       lastError = error;
       console.warn(`${current.id} failed (tryEveryModel):`, error);
-      if (i + 1 < MODELS.length) await sleep(600);
+      if (i + 1 < pool.length) await sleep(600);
     }
   }
   
@@ -94,7 +98,13 @@ export const generateLetter = async (userProfile, jobDescription, cvFilePart, se
 - Full Name: ${userProfile.fullName || "Not provided"}
 - Current Role: ${userProfile.profession || "Not provided"}
 - Location: ${userProfile.location || "Not specified"}
+- Summary / Bio: ${userProfile.summary || "Not provided"}
 - Key Skills: ${Array.isArray(userProfile.skills) ? userProfile.skills.join(", ") : (userProfile.skills || "Not provided")}
+- Key Projects: ${
+    Array.isArray(userProfile.projects) && userProfile.projects.length > 0
+      ? userProfile.projects.map(p => `${p.name}${p.technologies ? ` (${p.technologies})` : ''}: ${p.description || ''}`).join(" | ")
+      : "None provided"
+  }
 - Recent Experience: ${
     Array.isArray(userProfile.experience)
       ? userProfile.experience.map(e =>
@@ -168,20 +178,11 @@ The letter must sound like a real person wrote it. Not a template. Not a robot.
 ══════════════════════════════════════════
 OPENING SENTENCE PROTOCOL — CRITICAL:
 ══════════════════════════════════════════
-The FIRST sentence after the salutation MUST NOT be a generic greeting. It must be a dynamic hook engineered strictly from the Job Description and Candidate Profile.
-
-Analyze the candidate's data and CHOOSE ONE of the following three frameworks for the opening sentence. Fill in the brackets with highly specific details from the candidate's CV and target job description:
-
-FRAMEWORK 1: THE "NUMBERS FIRST" HOOK (Use if CV has strong metrics)
-Format: "[Metric 1], [Metric 2], and [Metric 3] — that is how I delivered [Result] at [Past Company], and it's the exact approach I want to bring to [Target Company]."
-Example: "18 months, 170+ tasks, and a cross-functional team of 8 — that is the scale of project delivery I am ready to bring to Zobele."
-
-FRAMEWORK 2: THE "DIRECT ADDRESS" HOOK (Use if JD emphasizes a specific pain point)
-Format: "You need someone who can [Major JD Requirement] without [Common Risk/Pain point]. Over the past [X] years, I have built a track record of doing exactly that."
-Example: "You need a Project Manager who can take a complex digital product from planning to final release without dropping a single deadline — that has been my daily reality for the past two years."
-
-FRAMEWORK 3: THE "PHILOSOPHY" HOOK (Use for juniors or if CV lacks metrics)
-Format: "Driving [Core Domain of the Job] isn't just about [Basic Task] — it requires [Advanced Skill from JD]. That has been the foundation of my work and studies."
+The FIRST sentence after the salutation must sound natural, human, and directly relevant to the role — never robotic or formulaic.
+- Open with ONE of these approaches:
+  1) Strongest relevant result or project from the CV tied directly to the target team's core challenge.
+  2) A concise bridge connecting the candidate's domain specialization with a concrete requirement or initiative mentioned in the Job Description.
+  3) For junior candidates without metrics: a direct, thoughtful statement on the specific engineering/business problem the role solves and relevant hands-on project proof.
 
 FORBIDDEN OPENINGS (CRITICAL! NEVER USE):
 - NO GERUNDS as the first word: "Managing...", "Successfully...", "Guiding...", "Leveraging..."
@@ -239,6 +240,13 @@ ${candidateProfile}
   `.trim();
 
   const contents = [promptText, ...(cvFilePart ? [cvFilePart] : [])];
+  const hasParsedSkills = Array.isArray(userProfile.skills)
+    ? userProfile.skills.length > 0
+    : Boolean(userProfile.skills && String(userProfile.skills).trim());
+  const hasParsedExp = Array.isArray(userProfile.experience)
+    ? userProfile.experience.length > 0
+    : Boolean(userProfile.experience && String(userProfile.experience).trim());
+  const requireMultimodal = Boolean(cvFilePart) && (!hasParsedSkills || !hasParsedExp);
 
   return await tryModel(async (modelId, temp) => {
     let text = await callGemini({
@@ -253,7 +261,7 @@ ${candidateProfile}
     text = text.replace(/\n{0,2}(sincerely|best regards|kind regards|yours faithfully|cordiali saluti|met vriendelijke groet|mit freundlichen grüßen|з повагою|щиро ваш)[,.]?\s*\n[\w\s\-'.]+$/gi, "").trim();
 
     return text;
-  });
+  }, { requireMultimodal });
 };
 
 export const parseCV = async (cvFilePart) => {
@@ -300,12 +308,13 @@ JSON Schema format:
   "interests": ["Interest 1", "Interest 2", "Extract all interests"]
 }`;
 
-  return await tryEveryModel(async (modelId, temp) => {
+  return await tryEveryModel(async (modelId) => {
     const text = await callGemini({
       modelId,
-      temperature: typeof temp === "number" ? temp : 0.2,
-      maxOutputTokens: 4000,
+      temperature: 0.15,
+      maxOutputTokens: 8192,
       contents: [promptText, cvFilePart],
+      responseMimeType: "application/json",
     });
     const obj = parseJsonFromModel(text);
     if (!obj || typeof obj !== "object") throw new Error("Invalid CV parse shape");
@@ -331,45 +340,20 @@ JSON Schema format:
       interests: Array.isArray(obj.interests) ? obj.interests : [],
     };
     return normalized;
-  });
+  }, { requireMultimodal: true });
 };
 
 export const analyzeCVQuality = async (profile) => {
   if (!profile) return { isLackingDetail: true };
-  
-  const totalAchievementsLength = (profile.experience || [])
-    .flatMap(e => e.achievements || [])
-    .join(" ").length;
-  const skillsLength = (profile.skills || []).join(" ").length;
-  
-  if (totalAchievementsLength + skillsLength < 120) {
-    return { isLackingDetail: true };
-  }
-  
-  const promptText = `Analyze this candidate profile and determine if it is too brief/laconic or lacks achievements/metrics for writing a personalized cover letter.
-  Candidate profile:
-  - Role: ${profile.profession || "Not specified"}
-  - Skills: ${(profile.skills || []).join(", ")}
-  - Experience: ${(profile.experience || []).map(e => `${e.title} at ${e.company}: ${(e.achievements || []).join("; ")}`).join(" | ")}
-  
-  If the profile lacks details, achievements, or has less than 2 jobs with bullet points, return JSON: { "isLackingDetail": true }.
-  Otherwise, if it has good achievements and descriptions, return JSON: { "isLackingDetail": false }.
-  Respond with JSON only.`;
 
-  try {
-    const result = await callGemini({
-      modelId: "gemini-2.5-flash",
-      temperature: 0.1,
-      maxOutputTokens: 100,
-      contents: [promptText],
-      responseMimeType: "application/json"
-    });
-    const textCleaned = result.replace(/```json|```/g, "").trim();
-    const obj = JSON.parse(textCleaned);
-    return { isLackingDetail: !!obj.isLackingDetail };
-  } catch (e) {
-    return { isLackingDetail: totalAchievementsLength + skillsLength < 250 };
-  }
+  const expList = Array.isArray(profile.experience) ? profile.experience : [];
+  const expStringLen = typeof profile.experience === 'string' ? profile.experience.length : 0;
+  const totalAchievementsLength = expList
+    .flatMap(e => (e && Array.isArray(e.achievements) ? e.achievements : []))
+    .join(" ").length + expStringLen;
+  const skillsLength = (Array.isArray(profile.skills) ? profile.skills : []).join(" ").length;
+
+  return { isLackingDetail: totalAchievementsLength + skillsLength < 200 };
 };
 
 export const parseVoiceCV = async (dictatedText) => {
@@ -404,12 +388,13 @@ Return ONLY raw JSON — no markdown, no backticks, no explanation.
 Transcribed text:
 ${dictatedText}`;
 
-  return await tryEveryModel(async (modelId, temp) => {
+  return await tryEveryModel(async (modelId) => {
     const text = await callGemini({
       modelId,
-      temperature: typeof temp === "number" ? temp : 0.2,
+      temperature: 0.15,
       maxOutputTokens: 4000,
       contents: [promptText],
+      responseMimeType: "application/json",
     });
     const obj = parseJsonFromModel(text);
     if (!obj || typeof obj !== "object") throw new Error("Invalid voice parse shape");
@@ -461,16 +446,30 @@ export const extractCompanyName = async (jobDescription) => {
   try {
     const patterns = [
       /^(?:company\s*name|company|employer|работодатель|компанія|firma|unternehmen)\s*:\s*([^\n]+)/im,
-      /^(?:about|про|über)\s+([a-zA-Z0-9а-яіїєґ\s]+)\s*:/im,
-      /^(?:join|приєднуйтесь\s+до|join\s+the)\s+([a-zA-Z0-9а-яіїєґ\s]+)\s+team/im,
+      /^(?:about|про|über)\s+([a-zA-Z0-9а-яіїєґ\s&.-]+)\s*:/im,
+      /^(?:join|приєднуйтесь\s+до|join\s+the)\s+([a-zA-Z0-9а-яіїєґ\s&.-]+)\s+team/im,
+      /\b(?:at|for|with|в компанію|у компанію|в|у)\s+([A-ZА-ЯІЇЄҐ][A-Za-zА-Яа-яІіЇїЄєҐґ0-9&.\- ]{1,35})/,
     ];
 
     for (const pattern of patterns) {
       const match = text.match(pattern);
       if (match && match[1]) {
-        const candidate = match[1].trim().replace(/["'.*]/g, '');
+        const candidate = match[1].trim().replace(/["'.*]+$/, '').split(/\s+(?:is|are|looking|we|and|in|on|for)\b/i)[0].trim();
         if (candidate.length > 1 && candidate.length < 50) {
           return candidate;
+        }
+      }
+    }
+
+    const firstLine = (text.split('\n').map(l => l.trim()).find(Boolean) || '').slice(0, 100);
+    if (firstLine) {
+      const roleAtMatch = firstLine.match(/^.+?\s+(?:at|@)\s+([A-ZА-ЯІЇЄҐ][A-Za-zА-Яа-яІіЇїЄєҐґ0-9&.\- ]{1,35})$/);
+      if (roleAtMatch?.[1]) return roleAtMatch[1].trim();
+      const dashParts = firstLine.split(/\s+[—–-]\s+|\s+\|\s+/);
+      if (dashParts.length === 2) {
+        const rhs = dashParts[1].trim();
+        if (rhs.length > 1 && rhs.length < 40 && /^[A-ZА-ЯІЇЄҐ]/.test(rhs)) {
+          return rhs;
         }
       }
     }
@@ -478,26 +477,7 @@ export const extractCompanyName = async (jobDescription) => {
     console.warn("Regex text company parsing failed:", err);
   }
 
-  // 3. Fallback to LLM Prompt Extraction
-  try {
-    const promptText = `Extract the company name from this job description. Return ONLY the company name, nothing else. If you cannot find it, return "Unknown".
-
-Job description:
-${text.substring(0, 700)}`;
-
-    return await tryModel(async (modelId) => {
-      const responseText = await callGemini({
-        modelId,
-        temperature: 0.1,
-        maxOutputTokens: 50,
-        contents: [promptText],
-      });
-      return responseText.trim().replace(/["'.]/g, '') || "Unknown";
-    });
-  } catch (err) {
-    console.warn("LLM company extraction failed:", err);
-    return "Unknown";
-  }
+  return "Unknown";
 };
 
 export const integrateKeyword = async (coverLetter, jobDescription, keyword) => {
@@ -530,6 +510,7 @@ Return ONLY valid JSON. No markdown code blocks (like \`\`\`json), no explanatio
       temperature: 0.3,
       maxOutputTokens: 1024,
       contents: [promptText],
+      responseMimeType: "application/json",
     });
     
     // Clean JSON response
@@ -1223,6 +1204,7 @@ Cover Letter snippet: ${(coverLetter || "").substring(0, 400)}
       temperature: 0.7,
       maxOutputTokens: 1024,
       contents: [promptText],
+      responseMimeType: "application/json",
     });
     return parseJsonFromModel(text);
   });
@@ -1246,7 +1228,13 @@ const normalizeCVPayload = (raw, profile, jobDescription) => {
   if (jobDescription && profile) {
     const cvText = `
 Profession: ${profile?.profession || ""}
+Summary: ${profile?.summary || ""}
 Skills: ${Array.isArray(profile?.skills) ? profile.skills.join(", ") : (profile?.skills || "")}
+Projects: ${
+      Array.isArray(profile?.projects)
+        ? profile.projects.map(p => `${p?.name || ""} ${p?.technologies || ""} ${p?.description || ""}`).join(" | ")
+        : ""
+    }
 Experience: ${
       Array.isArray(profile?.experience)
         ? profile.experience.map(e =>
@@ -1309,7 +1297,13 @@ export const analyzeCV = async (userProfile, jobDescription, options = {}) => {
   
   const candidateProfile = `
 - Profession: ${userProfile?.profession || "Not provided"}
+- Summary: ${userProfile?.summary || "Not provided"}
 - Skills: ${Array.isArray(userProfile?.skills) ? userProfile.skills.join(", ") : (userProfile?.skills || "Not provided")}
+- Projects: ${
+    Array.isArray(userProfile?.projects) && userProfile.projects.length > 0
+      ? userProfile.projects.map(p => `${p?.name || ""}${p?.technologies ? ` (${p.technologies})` : ""}: ${p?.description || ""}`).join(" | ")
+      : "None"
+  }
 - Experience achievements: ${
     Array.isArray(userProfile?.experience)
       ? userProfile.experience.map(e =>
@@ -1365,24 +1359,25 @@ TIPS (tips):
 
 BULLET POINTS OPTIMIZATION (bulletPoints):
 - Take exactly 2-3 of the candidate's achievements and optimize them.
-- If achievements are weak, rewrite them to weave in top missing keywords and introduce realistic metrics/numbers (e.g. increase by X%, reduce time by Y, manage Z stakeholders).
+- NEVER invent fake numbers or percentages not present in the CV. If an achievement lacks numbers, either use a clear bracketed placeholder like [X%] / [N] so the candidate knows where to fill in their real figure, or strengthen the action verb and business outcome using facts from the CV.
 - Keep each optimized bullet point concise and action-oriented.
 
 ${langRule}
 
 Candidate CV Profile:
-${candidateProfile.substring(0, 1500)}
+${candidateProfile.substring(0, 6000)}
 
 Job Description:
-${jd.substring(0, 1500)}
+${jd.substring(0, 5000)}
   `.trim();
 
-  return await tryEveryModel(async (modelId, temp) => {
+  return await tryEveryModel(async (modelId) => {
     const text = await callGemini({
       modelId,
-      temperature: typeof temp === "number" ? temp : 0.15,
+      temperature: 0.15,
       maxOutputTokens: 2500,
       contents: [promptText],
+      responseMimeType: "application/json",
     });
     const parsed = parseJsonFromModel(text);
     return normalizeCVPayload(parsed, userProfile, jd);
@@ -1426,7 +1421,8 @@ Job: ${jobDescription || 'AI Engineer'}`;
     const text = await callGemini({
       modelId,
       temperature: 0.7,
-      contents: [prompt]
+      contents: [prompt],
+      responseMimeType: "application/json",
     });
     try {
       return parseJsonFromModel(text);
@@ -1461,7 +1457,8 @@ Job Description: ${jobDescription || roleTitle}`;
     const text = await callGemini({
       modelId,
       temperature: 0.7,
-      contents: [prompt]
+      contents: [prompt],
+      responseMimeType: "application/json",
     });
     try {
       return parseJsonFromModel(text);
