@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { analyzePublicCV } from '../gemini';
 import { useLanguage } from '../context/LanguageContext';
@@ -219,7 +219,27 @@ export default function ATSCheckerPage() {
   const [fileName, setFileName] = useState('');
   const [cvText, setCvText] = useState('');
   const [jobDescription, setJobDescription] = useState('');
+  const [clippedSource, setClippedSource] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlJd = params.get('jd');
+      const urlMode = params.get('mode');
+      const urlSrc = params.get('src');
+      if (urlMode === 'roast' || urlMode === 'ats') {
+        setMode(urlMode);
+      }
+      if (urlJd && urlJd.trim()) {
+        setJobDescription(urlJd.trim().slice(0, 6000));
+        if (urlSrc) setClippedSource(urlSrc.trim().slice(0, 80));
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    } catch {
+      // Ignore malformed query strings
+    }
+  }, []);
   const [downloadingPng, setDownloadingPng] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
@@ -451,9 +471,14 @@ export default function ATSCheckerPage() {
 
         {/* Job Description */}
         <div>
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2 mb-1.5">
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center flex-wrap gap-2 mb-1.5">
             <span>{t.jdLabel}</span>
             {mode === 'roast' && <span className="text-[10px] text-slate-500 lowercase font-medium">{t.jdOptional}</span>}
+            {clippedSource && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-semibold text-emerald-300 normal-case">
+                ⚡ Loaded from {clippedSource}
+              </span>
+            )}
           </label>
           <textarea
             rows={4}

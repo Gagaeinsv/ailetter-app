@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "AI-Letter — 1-Click ATS Resume Checker & Cover Letter",
+  "short_name": "AI-Letter",
+  "version": "1.0.0",
+  "description": "Extract any job posting from LinkedIn, Indeed, StepStone, or Djinni in 1 click to run a free ATS resume check or generate a tailored cover letter.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "AI-Letter: ATS Check & Cover Letter",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.linkedin.com/jobs/*",
+        "*://*.indeed.com/*",
+        "*://*.stepstone.de/*",
+        "*://*.stepstone.at/*",
+        "*://*.xing.com/jobs/*",
+        "*://*.glassdoor.com/*",
+        "*://*.glassdoor.de/*",
+        "*://djinni.co/jobs/*",
+        "*://jobs.dou.ua/*",
+        "*://www.work.ua/jobs/*",
+        "*://robota.ua/*"
+      ],
+      "js": [
+        "extractor.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

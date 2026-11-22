@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Letter Job Clipper</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="header">
+        <div class="brand-wrap">
+          <img src="icons/icon48.png" alt="AI-Letter" class="logo" />
+          <div>
+            <div class="title">AI-Letter</div>
+            <div class="subtitle">ATS Checker &amp; Cover Letter</div>
+          </div>
+        </div>
+        <span id="langBadge" class="badge">EN</span>
+      </header>
+
+      <div id="statusBox" class="status">Reading current tab...</div>
+
+      <label class="label" for="jdInput">
+        <span>Extracted Job Description</span>
+        <span id="charCount" class="muted">0 chars</span>
+      </label>
+      <textarea
+        id="jdInput"
+        rows="6"
+        placeholder="Open any job posting (LinkedIn, Indeed, StepStone, Djinni, or company careers page) or paste text here..."
+      ></textarea>
+
+      <div class="actions">
+        <button id="btnAts" type="button" class="btn btn-primary">
+          📊 Free ATS Score Check (No Sign-Up)
+        </button>
+        <button id="btnRoast" type="button" class="btn btn-roast">
+          🔥 Brutal 6s CV Roast
+        </button>
+        <button id="btnLetter" type="button" class="btn btn-secondary">
+          ✉️ Generate Tailored Cover Letter
+        </button>
+      </div>
+
+      <footer class="footer">
+        <span>Works on any job site · Free to start</span>
+        <a href="https://ailetter.pro" target="_blank" rel="noopener noreferrer">ailetter.pro</a>
+      </footer>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
