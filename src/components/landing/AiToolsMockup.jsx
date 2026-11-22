@@ -257,7 +257,7 @@ const AiToolsMockup = ({ t, activeTab, onChangeTab }) => {
   };
 
   return (
-    <div className="bg-[#0f172a] rounded-2xl overflow-hidden border border-white/10 shadow-2xl" style={{ height: TOTAL_H, maxHeight: TOTAL_H }}>
+    <div translate="no" className="notranslate bg-[#0f172a] rounded-2xl overflow-hidden border border-white/10 shadow-2xl" style={{ height: TOTAL_H, maxHeight: TOTAL_H }}>
       {/* Window chrome */}
       <div className="bg-[#1e293b] border-b border-white/[0.06] px-4 flex items-center gap-2" style={{ height: CHROME_H }}>
         <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />

@@ -67,7 +67,7 @@ const HeroMockup = () => {
   const isActive    = isTyping || isDone;
 
   return (
-    <div style={{
+    <div translate="no" className="notranslate" style={{
       background: '#0f172a',
       borderRadius: 14,
       overflow: 'hidden',

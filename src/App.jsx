@@ -260,6 +260,51 @@ const NotFoundPage = () => (
   </div>
 );
 
+class AppErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error('AppErrorBoundary caught error:', error, info);
+    const msg = error?.message || '';
+    if (/Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError/i.test(msg)) {
+      if (sessionStorage.getItem('chunk_reload_once') !== '1') {
+        sessionStorage.setItem('chunk_reload_once', '1');
+        window.location.reload();
+      }
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center p-6 font-sans">
+          <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm">
+            <h1 className="text-xl font-black text-slate-900 mb-2">Something went wrong</h1>
+            <p className="text-sm text-slate-600 mb-6">
+              A temporary rendering error occurred. Reload the page to continue.
+            </p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold transition-colors cursor-pointer"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const ROUTE_PREFIXES = ['', ...PREFIXED_LANGS.map((l) => `/${l}`)];
 
 function App() {
@@ -278,33 +323,35 @@ function App() {
     <HelmetProvider>
       <AuthProvider>
         <LanguageProvider>
-          <Router>
-            <PageSEO />
-            <Routes>
-              {ROUTE_PREFIXES.flatMap((prefix) => [
-                <Route key={`${prefix}-home`} path={prefix || '/'} element={<Landing />} />,
-                <Route key={`${prefix}-ats`} path={`${prefix}/ats-resume-checker`} element={<ATSCheckerPage />} />,
-                <Route key={`${prefix}-linkedin`} path={`${prefix}/linkedin-message`} element={<LinkedInGeneratorPage />} />,
-                <Route key={`${prefix}-subject`} path={`${prefix}/subject-line`} element={<SubjectLineGeneratorPage />} />,
-                <Route key={`${prefix}-aidev`} path={`${prefix}/cover-letter-ai-developer`} element={<AIDeveloperCoverLetterPage />} />,
-                <Route key={`${prefix}-licold`} path={`${prefix}/linkedin-cold-message-templates`} element={<LinkedInColdMessagesPage />} />,
-                <Route key={`${prefix}-freelancer`} path={`${prefix}/freelancer-self-introduction`} element={<FreelancerSelfIntroductionPage />} />,
-                ...SEO_ROLE_PAGES.map((rolePage) => (
-                  <Route
-                    key={`${prefix}-${rolePage.slug}`}
-                    path={`${prefix}${rolePage.path}`}
-                    element={<RoleCoverLetterPage roleConfig={rolePage} />}
-                  />
-                )),
-              ])}
-              <Route path="/login" element={<Login />} />
-              <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
-              <Route path="/dashboard" element={<DashboardRoute />} />
-              <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Router>
+          <AppErrorBoundary>
+            <Router>
+              <PageSEO />
+              <Routes>
+                {ROUTE_PREFIXES.flatMap((prefix) => [
+                  <Route key={`${prefix}-home`} path={prefix || '/'} element={<Landing />} />,
+                  <Route key={`${prefix}-ats`} path={`${prefix}/ats-resume-checker`} element={<ATSCheckerPage />} />,
+                  <Route key={`${prefix}-linkedin`} path={`${prefix}/linkedin-message`} element={<LinkedInGeneratorPage />} />,
+                  <Route key={`${prefix}-subject`} path={`${prefix}/subject-line`} element={<SubjectLineGeneratorPage />} />,
+                  <Route key={`${prefix}-aidev`} path={`${prefix}/cover-letter-ai-developer`} element={<AIDeveloperCoverLetterPage />} />,
+                  <Route key={`${prefix}-licold`} path={`${prefix}/linkedin-cold-message-templates`} element={<LinkedInColdMessagesPage />} />,
+                  <Route key={`${prefix}-freelancer`} path={`${prefix}/freelancer-self-introduction`} element={<FreelancerSelfIntroductionPage />} />,
+                  ...SEO_ROLE_PAGES.map((rolePage) => (
+                    <Route
+                      key={`${prefix}-${rolePage.slug}`}
+                      path={`${prefix}${rolePage.path}`}
+                      element={<RoleCoverLetterPage roleConfig={rolePage} />}
+                    />
+                  )),
+                ])}
+                <Route path="/login" element={<Login />} />
+                <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
+                <Route path="/dashboard" element={<DashboardRoute />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Router>
+          </AppErrorBoundary>
           <Analytics />
         </LanguageProvider>
       </AuthProvider>
