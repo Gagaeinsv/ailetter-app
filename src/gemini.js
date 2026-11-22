@@ -1,8 +1,11 @@
 const MODELS = [
-  { id: "gemini-2.5-flash",      temp: 0.7 },
-  { id: "groq/llama-3.3-70b-versatile", temp: 0.7 },
-  { id: "gemini-2.5-flash-lite", temp: 0.6 },
-  { id: "gemini-2.5-pro",        temp: 0.7 },
+  { id: "gemini-3.5-flash-lite",        temp: 0.7 }, // 15 RPM / 500 RPD
+  { id: "gemini-3.1-flash-lite",        temp: 0.7 }, // 15 RPM / 500 RPD
+  { id: "groq/llama-3.3-70b-versatile", temp: 0.7 }, // Text-only fallback
+  { id: "gemini-3.8-flash",             temp: 0.7 }, // 5 RPM / 20 RPD
+  { id: "gemini-3.6-flash",             temp: 0.7 }, // 5 RPM / 20 RPD
+  { id: "gemini-2.5-flash",             temp: 0.7 }, // 5 RPM / 20 RPD
+  { id: "gemini-2.5-flash-lite",        temp: 0.6 }, // 10 RPM / 20 RPD
 ];
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -31,7 +34,11 @@ async function callGemini({ modelId, temperature, maxOutputTokens, contents, res
     throw error;
   }
 
-  return candidate?.content?.parts?.[0]?.text ?? "";
+  const parts = candidate?.content?.parts || [];
+  const textParts = parts
+    .filter((p) => typeof p?.text === "string" && !p.thought)
+    .map((p) => p.text);
+  return textParts.length > 0 ? textParts.join("") : (parts[0]?.text ?? "");
 }
 
 async function tryModel(modelFn, options = {}) {
