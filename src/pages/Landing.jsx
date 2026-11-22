@@ -1,6 +1,11 @@
 // src/pages/Landing.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  ShieldCheck, CreditCard, FileText, Zap, Sliders, Target,
+  BarChart3, Mic, Briefcase, Send, ArrowRight, Check, X,
+  Code2, Palette, TrendingUp, Flame, ChevronDown, Menu
+} from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
@@ -10,34 +15,27 @@ import AiToolsMockup from '../components/landing/AiToolsMockup';
 const styles = `
   @keyframes landingScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
   .landing-scroll { animation: landingScroll 22s linear infinite; }
-  .bg-grid {
-    background-size: 40px 40px;
+  .bg-grid-light {
+    background-size: 36px 36px;
     background-image:
-      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px);
   }
-  .glass {
-    background: rgba(30,41,59,0.5);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-  .text-glow { text-shadow: 0 0 30px rgba(99,102,241,0.4); }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-  .fu { animation: fadeUp 0.55s ease forwards; opacity: 0; }
-  .fu1 { animation-delay: 0.05s; }
-  .fu2 { animation-delay: 0.15s; }
-  .fu3 { animation-delay: 0.28s; }
-  .fu4 { animation-delay: 0.42s; }
-  .fu5 { animation-delay: 0.55s; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  .fu { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+  .fu1 { animation-delay: 0.04s; }
+  .fu2 { animation-delay: 0.12s; }
+  .fu3 { animation-delay: 0.22s; }
+  .fu4 { animation-delay: 0.34s; }
+  .fu5 { animation-delay: 0.44s; }
 `;
 
-const IconCheck   = () => <svg className="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>;
-const IconX       = () => <svg className="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>;
-const IconRocket  = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>;
-const IconMenu    = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
-const IconClose   = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
-const IconChevron = ({ open }) => <svg className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>;
+const IconCheck   = () => <Check className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={2.5} />;
+const IconX       = () => <X className="w-4 h-4 text-rose-500 shrink-0" strokeWidth={2.5} />;
+const IconRocket  = () => <ArrowRight className="w-4 h-4" strokeWidth={2.25} />;
+const IconMenu    = () => <Menu className="w-5 h-5" />;
+const IconClose   = () => <X className="w-5 h-5" />;
+const IconChevron = ({ open }) => <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />;
 
 const Stars = ({ n = 5 }) => (
   <div className="flex gap-0.5">
@@ -394,7 +392,7 @@ const TRANSLATIONS = {
     copyAll: "Copia tutti i punti",
     exportPdf: "Esporta CV PDF",
     cvMakerT: "Costruttore di CV con IA",
-    cvMakerD: "Crea un curriculum premium da zero oificalo istantaneamente dal testo libero. Modelli pronti per la stampa.",
+    cvMakerD: "Crea un curriculum premium da zero o crealo istantaneamente dal testo libero. Modelli pronti per la stampa.",
     pricingTitle: "Prezzi Semplici e Trasparenti",
     pricingSub: "Scegli il piano più adatto ai tuoi obiettivi di carriera. Risparmia oltre il 45% con il piano annuale.",
     pricingMonthly: "Mensile",
@@ -483,15 +481,17 @@ const TRANSLATIONS = {
 const FaqItem = ({ q, a, id }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div 
+    <div
       id={id}
-      className={`border rounded-xl transition-all duration-200 ${open ? 'border-indigo-500/30 bg-indigo-500/5' : 'border-white/5 bg-white/[0.015]'}`}
+      className={`border rounded-xl transition-all duration-200 ${
+        open ? 'border-indigo-300 bg-indigo-50/40' : 'border-slate-200 bg-white hover:border-slate-300'
+      }`}
     >
       <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
-        <span className="font-semibold text-sm text-white">{q}</span>
-        <span className={`shrink-0 ${open ? 'text-indigo-400' : 'text-gray-600'}`}><IconChevron open={open} /></span>
+        <span className="font-bold text-sm text-slate-900">{q}</span>
+        <span className={`shrink-0 ${open ? 'text-indigo-600' : 'text-slate-400'}`}><IconChevron open={open} /></span>
       </button>
-      <div className={open ? "px-5 pb-4 text-sm text-gray-400 leading-relaxed block" : "hidden"}>{a}</div>
+      <div className={open ? "px-5 pb-4 text-sm text-slate-600 leading-relaxed block" : "hidden"}>{a}</div>
     </div>
   );
 };
@@ -586,195 +586,346 @@ const Landing = () => {
 
   const t = k => TRANSLATIONS[uiLang]?.[k] || TRANSLATIONS.en[k] || k;
   const faqs = FAQS[uiLang] || FAQS.en;
+  const langPrefix = uiLang && uiLang !== 'en' ? `/${uiLang}` : '';
+  const atsPath = `${langPrefix}/ats-resume-checker`;
+
+  const navCopy = {
+    en: {
+      ats: 'ATS Checker',
+      features: 'Features',
+      templates: 'Templates',
+      pricing: 'Pricing',
+      atsCta: 'Free ATS Resume Check',
+      noSignupLabel: 'No sign-up tools:',
+      tryTool: 'Open tool',
+      bottomTitle: 'Ready for your next interview?',
+      bottomSub: 'Audit your resume against any job description, fix missing keywords, and draft your cover letter in minutes.',
+    },
+    uk: {
+      ats: 'ATS Чекер',
+      features: 'Можливості',
+      templates: 'Шаблони',
+      pricing: 'Тарифи',
+      atsCta: 'Перевірити CV на ATS',
+      noSignupLabel: 'Без реєстрації:',
+      tryTool: 'Відкрити',
+      bottomTitle: 'Готові до наступної співбесіди?',
+      bottomSub: 'Перевірте резюме під реальну вакансію, закрийте пропущені ключові слова та згенеруйте супровідний лист за хвилини.',
+    },
+    de: {
+      ats: 'ATS-Check',
+      features: 'Funktionen',
+      templates: 'Vorlagen',
+      pricing: 'Preise',
+      atsCta: 'Kostenloser ATS-Check',
+      noSignupLabel: 'Ohne Anmeldung:',
+      tryTool: 'Öffnen',
+      bottomTitle: 'Bereit für Ihr nächstes Gespräch?',
+      bottomSub: 'Prüfen Sie Ihren Lebenslauf gegen jede Stellenanzeige, schließen Sie Keyword-Lücken und erstellen Sie ein Anschreiben in Minuten.',
+    },
+    it: {
+      ats: 'Test ATS',
+      features: 'Funzioni',
+      templates: 'Modelli',
+      pricing: 'Prezzi',
+      atsCta: 'Test ATS Gratuito',
+      noSignupLabel: 'Senza registrazione:',
+      tryTool: 'Apri',
+      bottomTitle: 'Pronto per il prossimo colloquio?',
+      bottomSub: 'Confronta il tuo CV con l’offerta di lavoro, aggiungi le parole chiave mancanti e prepara la tua lettera in pochi minuti.',
+    },
+  };
+  const nc = navCopy[uiLang] || navCopy.en;
+
+  const toolItems = [
+    { key: 'letter', icon: FileText, title: t('letterT'), desc: t('letterD'), href: user ? '/dashboard' : '/login' },
+    { key: 'cvmaker', icon: Sliders, title: t('cvMakerT'), desc: t('cvMakerD'), href: user ? '/dashboard' : '/login' },
+    { key: 'ats', icon: BarChart3, title: t('atsT'), desc: t('atsD'), href: atsPath },
+    { key: 'interview', icon: Mic, title: t('interviewT'), desc: t('interviewD'), href: user ? '/dashboard' : '/login' },
+    { key: 'tracker', icon: Briefcase, title: t('trackerT'), desc: t('trackerD'), href: user ? '/dashboard' : '/login' },
+    { key: 'outreach', icon: Send, title: t('outreachT'), desc: t('outreachD'), href: `${langPrefix}/linkedin-message` },
+  ];
+
+  const templateIcons = {
+    dev: Code2,
+    design: Palette,
+    marketing: TrendingUp,
+  };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white font-sans overflow-x-hidden">
-      <div className="fixed inset-0 bg-grid opacity-[0.15] pointer-events-none z-0" />
-      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="fixed top-1/4 right-0 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
-
+    <div className="min-h-screen bg-white text-slate-900 font-sans overflow-x-hidden antialiased">
       {/* HEADER */}
-      <header className="fixed w-full top-0 z-50 border-b border-white/[0.06] bg-[#0f172a]/85 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-black tracking-tighter text-base">
-            <img src="/android-chrome-192x192.png" alt="AI-Letter" className="w-7 h-7 rounded-lg" />
-            AI-Letter
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <LanguageSwitcher value={uiLang} onChange={setUiLang} />
-            <Link to="/linkedin-message" className="px-3 py-2 text-xs font-bold text-[#38bdf8] hover:text-white hover:bg-[#0077b5]/10 rounded-lg transition-all border border-[#0077b5]/20">
-              LinkedIn ↗
-            </Link>
+      <header className="fixed w-full top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-6">
+          <Link to={langPrefix || '/'} className="flex items-center gap-2.5 font-black tracking-tight text-slate-900 text-base shrink-0">
+            <img src="/android-chrome-192x192.png" alt="AI-Letter" className="w-7 h-7 rounded-lg border border-slate-200" />
+            <span>AI-Letter</span>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-slate-600">
+            <Link to={atsPath} className="hover:text-slate-900 transition-colors">{nc.ats}</Link>
+            <a href="#features" className="hover:text-slate-900 transition-colors">{nc.features}</a>
+            <a href="#templates" className="hover:text-slate-900 transition-colors">{nc.templates}</a>
+            <a href="#pricing" className="hover:text-slate-900 transition-colors">{nc.pricing}</a>
+          </nav>
+
+          <div className="hidden md:flex items-center gap-3 shrink-0">
+            <LanguageSwitcher value={uiLang} onChange={setUiLang} variant="light" />
             {user ? (
-              <Link id="open-app-header-btn" to="/dashboard" className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all">
-                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black">{user.displayName?.[0]?.toUpperCase() || 'U'}</div>
+              <Link
+                id="open-app-header-btn"
+                to="/dashboard"
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+              >
+                <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black">
+                  {user.displayName?.[0]?.toUpperCase() || 'U'}
+                </span>
                 {t('openApp')}
               </Link>
             ) : (
-              <Link id="login-header-btn" to="/login" className="px-4 py-2 bg-white text-[#0f172a] rounded-lg text-xs font-black uppercase tracking-widest hover:bg-gray-100 transition-all">{t('login')}</Link>
+              <Link
+                id="login-header-btn"
+                to="/login"
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+              >
+                {t('login')}
+              </Link>
             )}
           </div>
-          <button onClick={() => setMobileMenuOpen(o => !o)} className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(o => !o)}
+            aria-label="Toggle Menu"
+            className="md:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
+          >
             {mobileMenuOpen ? <IconClose /> : <IconMenu />}
           </button>
         </div>
+
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#1e293b]/95 backdrop-blur-xl border-t border-white/[0.06] px-4 py-4 space-y-3">
+          <div className="md:hidden bg-white border-t border-slate-200 px-4 py-4 space-y-3 shadow-lg">
             <div className="flex gap-2">
               {['en', 'uk', 'it', 'de'].map(lang => (
-                <button key={lang} onClick={() => { setUiLang(lang); setMobileMenuOpen(false); }}
-                  className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase transition-all ${uiLang === lang ? 'bg-indigo-600 text-white' : 'text-gray-400 bg-white/5 hover:bg-white/10'}`}>
+                <button
+                  key={lang}
+                  type="button"
+                  onClick={() => { setUiLang(lang); setMobileMenuOpen(false); }}
+                  className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase transition-all ${
+                    uiLang === lang ? 'bg-slate-900 text-white' : 'text-slate-600 bg-slate-100 hover:bg-slate-200'
+                  }`}
+                >
                   {lang === 'uk' ? 'UA' : lang.toUpperCase()}
                 </button>
               ))}
             </div>
-            <Link to="/linkedin-message" onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center w-full py-3 bg-[#0077b5]/10 border border-[#0077b5]/20 text-[#38bdf8] rounded-xl text-sm font-bold">
-              LinkedIn Easy Apply Generator ↗
+            <Link
+              to={atsPath}
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center w-full py-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-sm font-bold"
+            >
+              {nc.atsCta}
             </Link>
             {user ? (
-              <Link id="open-app-mobile-btn" to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 rounded-xl text-sm font-black uppercase tracking-widest">{t('openApp')}</Link>
+              <Link
+                id="open-app-mobile-btn"
+                to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 text-white rounded-xl text-sm font-bold uppercase tracking-wider"
+              >
+                {t('openApp')}
+              </Link>
             ) : (
-              <Link id="login-mobile-btn" to="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center w-full py-3 bg-white text-[#0f172a] rounded-xl text-sm font-black uppercase tracking-widest">{t('login')}</Link>
+              <Link
+                id="login-mobile-btn"
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center w-full py-3 bg-slate-900 text-white rounded-xl text-sm font-bold uppercase tracking-wider"
+              >
+                {t('login')}
+              </Link>
             )}
           </div>
         )}
       </header>
 
       {/* HERO */}
-      <section className="relative pt-20 md:pt-16 z-10">
+      <section className="relative pt-24 md:pt-28 pb-16 md:pb-24 bg-grid-light border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 py-12 md:py-16 lg:py-20">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
             <div className="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
-              <div className="fu fu1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-[10px] font-bold uppercase tracking-widest mb-5">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+              <div className="fu fu1 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-200/80 bg-indigo-50 text-indigo-700 text-[11px] font-bold uppercase tracking-wider mb-5">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
                 {t('badge')}
               </div>
-              <h1 className="fu fu2 text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.08] tracking-tight mb-5">
-                <span className="text-white block">{t('heroTitle1')}</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-glow block">{t('heroTitle2')}</span>
-                <span className="text-white block">{t('heroTitle3')}</span>
+
+              <h1 className="fu fu2 text-4xl sm:text-5xl lg:text-[54px] font-black leading-[1.08] tracking-tight text-slate-900 mb-5">
+                <span className="block">{t('heroTitle1')}</span>
+                <span className="text-indigo-600 block">{t('heroTitle2')}</span>
+                <span className="block">{t('heroTitle3')}</span>
               </h1>
-              <p className="fu fu3 text-gray-400 text-base md:text-lg leading-relaxed mb-8 max-w-md mx-auto lg:mx-0">{t('heroSubtitle')}</p>
-              <div className="fu fu4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-6">
-                <Link id="hero-cta-btn" to={user ? '/dashboard' : '/login'}
-                  className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25 text-sm">
+
+              <p className="fu fu3 text-slate-600 text-base md:text-lg leading-relaxed mb-7 max-w-lg mx-auto lg:mx-0">
+                {t('heroSubtitle')}
+              </p>
+
+              <div className="fu fu4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-4">
+                <Link
+                  id="hero-cta-btn"
+                  to={user ? '/dashboard' : '/login'}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 font-bold text-white bg-slate-900 rounded-xl hover:bg-slate-800 active:scale-[0.99] transition-all shadow-sm text-sm"
+                >
                   {user ? t('openApp') : t('ctaButton')} <IconRocket />
                 </Link>
-                <p className="text-xs text-gray-500">{t('ctaSubtext')}</p></div><div className="fu fu5 flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-6"><span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{uiLang === 'uk' ? 'Без реєстрації:' : 'Try instant AI tools:'}</span><Link to="/ats-resume-checker" className="text-[11px] font-black text-amber-300 hover:text-amber-200 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-lg transition-colors">{uiLang === 'uk' ? 'Перевірка CV / Roast 🔥' : 'ATS Resume Checker 🔥'}</Link><Link to="/linkedin-message" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">LinkedIn Note ↗</Link><Link to="/subject-line" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">Email Subject ↗</Link><Link to="/freelancer-self-introduction" className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors">Upwork Pitch ↗</Link>
+                <Link
+                  to={atsPath}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 font-bold text-slate-800 bg-white border border-slate-300 rounded-xl hover:border-slate-400 hover:bg-slate-50 transition-all text-sm"
+                >
+                  <Flame className="w-4 h-4 text-amber-600" />
+                  {nc.atsCta}
+                </Link>
               </div>
+
+              <p className="fu fu4 text-xs text-slate-500 font-medium mb-5">{t('ctaSubtext')}</p>
+
+              <div className="fu fu5 flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                <span className="text-[11px] font-semibold text-slate-400 mr-1">{nc.noSignupLabel}</span>
+                <Link to={`${langPrefix}/linkedin-message`} className="text-[11px] font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 px-2.5 py-1 rounded-lg transition-colors">
+                  LinkedIn Note
+                </Link>
+                <Link to={`${langPrefix}/subject-line`} className="text-[11px] font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 px-2.5 py-1 rounded-lg transition-colors">
+                  Email Subject
+                </Link>
+                <Link to={`${langPrefix}/freelancer-self-introduction`} className="text-[11px] font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 px-2.5 py-1 rounded-lg transition-colors">
+                  Upwork Pitch
+                </Link>
+              </div>
+
               {user && (
-                <div className="fu fu4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-green-300 text-xs font-bold mb-6">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                  {t('welcomeBack')}, {user.displayName?.split(' ')[0] || 'User'} 👋
+                <div className="fu fu5 mt-5 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                  {t('welcomeBack')}, {user.displayName?.split(' ')[0] || 'User'}
                 </div>
               )}
             </div>
-            <div className="fu fu3 w-full lg:flex-1 lg:max-w-[640px] overflow-hidden">
-              <div className="relative rounded-2xl p-[1.5px]" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }}>
-                <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-20 pointer-events-none" style={{ background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)' }} />
-                <div className="relative rounded-2xl overflow-hidden bg-[#0f172a]" style={{ maxHeight: 420 }}>
-                  <HeroMockup />
-                </div>
+
+            <div className="fu fu3 w-full lg:flex-1 lg:max-w-[620px]">
+              <div className="rounded-2xl border border-slate-200 shadow-2xl shadow-slate-900/10 overflow-hidden bg-[#0f172a]" style={{ maxHeight: 420 }}>
+                <HeroMockup />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* TRUST ASSURANCES / KEY METRICS */}
-      <section className="py-8 border-y border-white/[0.05] bg-[#0f172a]/60 relative overflow-hidden z-10">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-wrap justify-around items-center gap-6 text-center text-xs font-bold text-gray-400 tracking-wider">
+      {/* TRUST ASSURANCES */}
+      <section className="py-7 bg-slate-50 border-b border-slate-200/80">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-wrap justify-around items-center gap-6 text-xs font-semibold text-slate-700">
           <div className="flex items-center gap-2">
-            <span className="text-indigo-400 text-lg">🛡️</span>
+            <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
             <span>{t('assurancePrivacy')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-indigo-400 text-lg">💳</span>
+            <CreditCard className="w-4 h-4 text-indigo-600 shrink-0" />
             <span>{t('assuranceNoCard')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-indigo-400 text-lg">📄</span>
+            <FileText className="w-4 h-4 text-indigo-600 shrink-0" />
             <span>{t('assuranceA4')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-indigo-400 text-lg">⚡</span>
+            <Zap className="w-4 h-4 text-indigo-600 shrink-0" />
             <span>{t('assuranceAts')}</span>
           </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="py-20 px-4 md:px-6 relative z-10 max-w-7xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-black text-center mb-16 tracking-tight">{t('howItWorksTitle')}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="py-20 px-4 md:px-6 max-w-7xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-black text-center text-slate-900 mb-14 tracking-tight">
+          {t('howItWorksTitle')}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { key: 'step1', icon: '⚡', title: t('step1T'), desc: t('step1D') },
-            { key: 'step2', icon: '🛠️', title: t('step2T'), desc: t('step2D') },
-            { key: 'step3', icon: '🎯', title: t('step3T'), desc: t('step3D') },
-          ].map((step, idx) => (
-            <div key={step.key} className="glass rounded-2xl p-6 border border-white/5 relative hover:border-indigo-500/20 transition-all duration-300">
-              <span className="absolute -top-4 left-6 w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-black text-sm text-white">
-                {idx + 1}
-              </span>
-              <div className="text-3xl mb-4 mt-2">{step.icon}</div>
-              <h3 className="text-lg font-black text-white mb-2">{step.title}</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">{step.desc}</p>
-            </div>
-          ))}
+            { key: 'step1', num: '01', icon: Zap, title: t('step1T'), desc: t('step1D') },
+            { key: 'step2', num: '02', icon: Sliders, title: t('step2T'), desc: t('step2D') },
+            { key: 'step3', num: '03', icon: Target, title: t('step3T'), desc: t('step3D') },
+          ].map((step) => {
+            const StepIcon = step.icon;
+            return (
+              <div key={step.key} className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-slate-300 transition-colors shadow-sm">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                    <StepIcon className="w-5 h-5" />
+                  </div>
+                  <span className="font-mono text-xs font-bold text-slate-400">{step.num}</span>
+                </div>
+                <h3 className="text-base font-extrabold text-slate-900 mb-2">{step.title}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">{step.desc}</p>
+              </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* AI TOOLS SECTION (INLINE INTERACTIVE SUITE DEMO) */}
-      <section className="py-20 md:py-28 px-4 md:px-6 max-w-7xl mx-auto z-10 relative">
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-glow text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-indigo-200">
-            {t('aiTitle')}
-          </h2>
-          <p className="text-gray-400 text-sm sm:text-base mt-4 max-w-2xl mx-auto leading-relaxed">
-            {t('aiSubtitle')}
-          </p>
-        </div>
-
-        {/* Inline Interactive Suite Demo */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-[#1e293b]/20 rounded-3xl p-6 md:p-8 border border-white/5 shadow-2xl relative overflow-hidden">
-          {/* Subtle background glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
-
-          {/* Left: Interactive Info Cards / Controls */}
-          <div className="lg:col-span-5 flex flex-col justify-center space-y-3 relative z-10">
-            {[
-              { key: 'letter', icon: '📄', title: t('letterT'), desc: t('letterD'), tint: 'from-indigo-500/10 to-transparent border-indigo-500/10' },
-              { key: 'cvmaker', icon: '📝', title: t('cvMakerT'), desc: t('cvMakerD'), tint: 'from-fuchsia-500/10 to-transparent border-fuchsia-500/10' },
-              { key: 'ats', icon: '📊', title: t('atsT'), desc: t('atsD'), tint: 'from-emerald-500/10 to-transparent border-emerald-500/10' },
-              { key: 'interview', icon: '🎤', title: t('interviewT'), desc: t('interviewD'), tint: 'from-purple-500/10 to-transparent border-purple-500/10' },
-              { key: 'tracker', icon: '💼', title: t('trackerT'), desc: t('trackerD'), tint: 'from-amber-500/10 to-transparent border-amber-500/10' },
-              { key: 'outreach', icon: '✉️', title: t('outreachT'), desc: t('outreachD'), tint: 'from-sky-500/10 to-transparent border-sky-500/10' },
-            ].map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                onClick={() => handleDemoTabChange(item.key)}
-                className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-start gap-4 ${
-                  demoTab === item.key
-                    ? 'bg-[#1e293b]/50 border-white/10 shadow-lg shadow-black/20 scale-[1.01]'
-                    : 'border-transparent bg-white/[0.01] hover:bg-white/[0.02] opacity-60 hover:opacity-100'
-                }`}
-              >
-                <div className="text-2xl shrink-0 mt-0.5">{item.icon}</div>
-                <div>
-                  <h3 className="text-xs font-black text-white">{item.title}</h3>
-                  <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">{item.desc}</p>
-                </div>
-              </button>
-            ))}
+      {/* INTERACTIVE PRODUCT SUITE (single unified feature showcase) */}
+      <section id="features" className="py-20 md:py-24 px-4 md:px-6 bg-slate-50 border-y border-slate-200/80">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 md:mb-14">
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
+              {t('aiTitle')}
+            </h2>
+            <p className="text-slate-600 text-sm sm:text-base mt-3 max-w-2xl mx-auto leading-relaxed">
+              {t('aiSubtitle')}
+            </p>
           </div>
 
-          {/* Right: Mockup Window */}
-          <div className="lg:col-span-7 relative z-10 w-full flex items-center">
-            <div className="w-full relative rounded-2xl p-[1.5px] bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
-              <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-10 pointer-events-none bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500" />
-              <div className="relative rounded-2xl overflow-hidden bg-[#0b1120]" style={{ height: 420 }}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-white rounded-3xl p-5 md:p-8 border border-slate-200 shadow-sm">
+            <div className="lg:col-span-5 flex flex-col justify-center space-y-2">
+              {toolItems.map((item) => {
+                const ItemIcon = item.icon;
+                const isActive = demoTab === item.key;
+                return (
+                  <div
+                    key={item.key}
+                    onClick={() => handleDemoTabChange(item.key)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDemoTabChange(item.key); } }}
+                    className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 flex items-start gap-3.5 cursor-pointer ${
+                      isActive
+                        ? 'bg-slate-50 border-indigo-600 shadow-sm'
+                        : 'border-transparent bg-transparent hover:bg-slate-50/70'
+                    }`}
+                  >
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                      isActive ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      <ItemIcon className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="text-sm font-bold text-slate-900">{item.title}</h3>
+                        {isActive && (
+                          <Link
+                            to={item.href}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 hover:text-indigo-700 shrink-0"
+                          >
+                            <span>{nc.tryTool}</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="lg:col-span-7 flex items-center">
+              <div className="w-full rounded-2xl border border-slate-200 shadow-xl overflow-hidden bg-[#0b1120]" style={{ height: 420 }}>
                 <AiToolsMockup t={t} activeTab={demoTab} onChangeTab={handleDemoTabChange} />
               </div>
             </div>
@@ -782,95 +933,70 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* BENTO FEATURE DETAILS */}
-      <section className="py-20 px-4 md:px-6 relative z-10 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-black mb-4">{t('bentoTitle')}</h2>
-          <p className="text-gray-400 text-sm max-w-xl mx-auto">{t('bentoSubtitle')}</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { icon: '📄', title: t('letterT'), desc: t('letterD'), href: user ? '/dashboard' : '/login' },
-            { icon: '📝', title: t('cvMakerT'), desc: t('cvMakerD'), href: user ? '/dashboard' : '/login' },
-            { icon: '📊', title: t('atsT'), desc: t('atsD'), href: '/ats-resume-checker' },
-            { icon: '🎤', title: t('interviewT'), desc: t('interviewD'), href: user ? '/dashboard' : '/login' },
-            { icon: '💼', title: t('trackerT'), desc: t('trackerD'), href: user ? '/dashboard' : '/login' },
-            { icon: '✉️', title: t('outreachT'), desc: t('outreachD'), href: '/linkedin-message' },
-          ].map((feat, idx) => (
-            <div key={idx} className="glass rounded-2xl p-6 border border-white/5 hover:border-indigo-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
-              <div>
-                <div className="text-3xl mb-4">{feat.icon}</div>
-                <h3 className="text-base font-bold text-white mb-2">{feat.title}</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">{feat.desc}</p>
-              </div>
-              <div className="mt-6"><Link to={feat.href} className="inline-flex items-center text-xs text-indigo-400 font-bold tracking-wider uppercase gap-1 group-hover:text-indigo-300"><span>{uiLang === 'uk' ? 'Спробувати' : 'Try Tool'}</span><span>→</span></Link>
-
-
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* TEMPLATE LIBRARY */}
-      <section className="py-20 px-4 md:px-6 relative z-10 max-w-7xl mx-auto border-t border-white/[0.04]">
+      <section id="templates" className="py-20 px-4 md:px-6 max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-black mb-4">{t('templateLibraryTitle')}</h2>
-          <p className="text-gray-400 text-sm max-w-xl mx-auto">{t('templateLibrarySub')}</p>
+          <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-3 tracking-tight">{t('templateLibraryTitle')}</h2>
+          <p className="text-slate-600 text-sm max-w-xl mx-auto">{t('templateLibrarySub')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {/* Left Side: Category Tabs Selector */}
-          <div className="lg:col-span-4 flex flex-col justify-center space-y-3">
-            {SAMPLE_TEMPLATES.map((tmpl) => (
-              <button
-                key={tmpl.key}
-                type="button"
-                onClick={() => setActiveTemplate(tmpl.key)}
-                className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center gap-3 ${
-                  activeTemplate === tmpl.key
-                    ? 'bg-[#1e293b]/60 border-indigo-500/30 text-white shadow-lg'
-                    : 'border-transparent bg-white/[0.01] hover:bg-white/[0.02] text-gray-400 hover:text-white'
-                }`}
-              >
-                <span className="text-2xl shrink-0">{tmpl.icon}</span>
-                <div className="min-w-0">
-                  <h3 className="text-sm font-bold truncate">{tmpl.title[uiLang] || tmpl.title.en}</h3>
-                  <p className="text-[10px] text-gray-500 truncate mt-0.5">{tmpl.desc}</p>
-                </div>
-              </button>
-            ))}
+          <div className="lg:col-span-4 flex flex-col justify-center space-y-2.5">
+            {SAMPLE_TEMPLATES.map((tmpl) => {
+              const TmplIcon = templateIcons[tmpl.key] || FileText;
+              const isActive = activeTemplate === tmpl.key;
+              return (
+                <button
+                  key={tmpl.key}
+                  type="button"
+                  onClick={() => setActiveTemplate(tmpl.key)}
+                  className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center gap-3.5 ${
+                    isActive
+                      ? 'bg-slate-900 border-slate-900 text-white shadow-md'
+                      : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                  }`}
+                >
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                    isActive ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    <TmplIcon className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-bold truncate">{tmpl.title[uiLang] || tmpl.title.en}</h3>
+                    <p className={`text-[11px] truncate mt-0.5 ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>{tmpl.desc}</p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
-          {/* Right Side: A4 Page Mockup Letter View */}
           <div className="lg:col-span-8 flex flex-col">
             {(() => {
               const current = SAMPLE_TEMPLATES.find(x => x.key === activeTemplate) || SAMPLE_TEMPLATES[0];
               const letterText = current.text[uiLang] || current.text.en;
               return (
-                <div className="flex-1 flex flex-col bg-white text-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-white/5">
-                  {/* Top Header bar with custom styling */}
-                  <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between text-white">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-black text-sm uppercase">
-                        {t('logo')?.[0] || 'A'}
+                <div className="flex-1 flex flex-col bg-white text-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+                  <div className="bg-slate-900 px-6 py-4 flex items-center justify-between gap-4 text-white">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center font-black text-xs uppercase shrink-0">
+                        {current.company?.[0] || 'A'}
                       </div>
-                      <div>
-                        <h4 className="font-bold text-sm">Template: {current.title[uiLang] || current.title.en}</h4>
-                        <p className="text-[10px] text-indigo-200">Ready to customize for {current.company}</p>
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-sm truncate">Template: {current.title[uiLang] || current.title.en}</h4>
+                        <p className="text-[11px] text-slate-300 truncate">Ready to customize for {current.company}</p>
                       </div>
                     </div>
-                    
+
                     <button
+                      type="button"
                       onClick={() => handleUseTemplate(current)}
-                      className="px-4 py-2 bg-white text-indigo-600 hover:bg-indigo-50 rounded-lg text-xs font-black uppercase tracking-wider transition-all active:scale-[0.98] shadow-md"
+                      className="px-4 py-2 bg-white text-slate-900 hover:bg-slate-100 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active:scale-[0.98] shrink-0"
                     >
                       {t('customizeTemplate')}
                     </button>
                   </div>
 
-                  {/* Body Cover Letter content */}
-                  <div className="p-6 md:p-8 font-serif text-[11px] md:text-xs leading-relaxed text-slate-800 flex-1 whitespace-pre-wrap max-h-[320px] overflow-y-auto custom-scrollbar">
+                  <div className="p-6 md:p-8 font-serif text-xs md:text-[13px] leading-relaxed text-slate-800 flex-1 whitespace-pre-wrap max-h-[340px] overflow-y-auto">
                     {letterText}
                   </div>
                 </div>
@@ -881,110 +1007,116 @@ const Landing = () => {
       </section>
 
       {/* COMPARISON BLOCK */}
-      <section className="py-20 px-4 md:px-6 relative z-10 max-w-4xl mx-auto border-t border-white/[0.04]">
-        <h2 className="text-3xl font-black text-center mb-16 tracking-tight">{t('compareTitle')}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-          {/* Old Way */}
-          <div className="bg-[#1e293b]/10 border border-rose-500/10 rounded-3xl p-6 md:p-8 space-y-6">
-            <h3 className="text-lg font-black text-rose-400 flex items-center gap-2">
-              <span className="text-xl">❌</span> {t('oldWay')}
-            </h3>
-            <div className="space-y-4">
-              {[t('compare1'), t('compare2'), t('compare3'), t('compare4')].map((item, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <IconX />
-                  <p className="text-xs text-gray-400 leading-relaxed">{item}</p>
-                </div>
-              ))}
+      <section className="py-20 px-4 md:px-6 bg-slate-50 border-y border-slate-200/80">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-black text-center text-slate-900 mb-14 tracking-tight">{t('compareTitle')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 space-y-5">
+              <h3 className="text-base font-extrabold text-slate-500 flex items-center gap-2">
+                <X className="w-4 h-4 text-rose-500" strokeWidth={2.5} />
+                {t('oldWay')}
+              </h3>
+              <div className="space-y-4">
+                {[t('compare1'), t('compare2'), t('compare3'), t('compare4')].map((item, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <IconX />
+                    <p className="text-xs text-slate-600 leading-relaxed">{item}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* New Way */}
-          <div className="bg-indigo-600/[0.03] border border-indigo-500/15 rounded-3xl p-6 md:p-8 space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
-            <h3 className="text-lg font-black text-indigo-400 flex items-center gap-2">
-              <span className="text-xl">✨</span> {t('newWay')}
-            </h3>
-            <div className="space-y-4">
-              {[t('compare1New'), t('compare2New'), t('compare3New'), t('compare4New')].map((item, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <IconCheck />
-                  <p className="text-xs text-slate-200 leading-relaxed font-bold">{item}</p>
-                </div>
-              ))}
+            <div className="bg-white border-2 border-indigo-600 rounded-3xl p-6 md:p-8 space-y-5 shadow-md shadow-indigo-900/5">
+              <h3 className="text-base font-extrabold text-indigo-700 flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600" strokeWidth={2.5} />
+                {t('newWay')}
+              </h3>
+              <div className="space-y-4">
+                {[t('new1'), t('new2'), t('new3'), t('new4')].map((item, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <IconCheck />
+                    <p className="text-xs text-slate-900 leading-relaxed font-semibold">{item}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* PRICING SECTION */}
-      <section className="py-20 px-4 md:px-6 relative z-10 max-w-5xl mx-auto border-t border-white/[0.04]">
+      <section id="pricing" className="py-20 px-4 md:px-6 max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-black mb-4">{t('pricingTitle')}</h2>
-          <p className="text-gray-400 text-sm max-w-xl mx-auto">{t('pricingSub')}</p>
-          
-          {/* Switcher */}
-          <div className="inline-flex items-center gap-2 mt-6 bg-[#1e293b] p-1 rounded-xl border border-white/5">
-            <button 
+          <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-3 tracking-tight">{t('pricingTitle')}</h2>
+          <p className="text-slate-600 text-sm max-w-xl mx-auto">{t('pricingSub')}</p>
+
+          <div className="inline-flex items-center gap-1 mt-6 bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button
+              type="button"
               onClick={() => setBillingPeriod('monthly')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${billingPeriod === 'monthly' ? 'bg-[#6366f1] text-white' : 'text-slate-400 hover:text-white'}`}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                billingPeriod === 'monthly' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              }`}
             >
               {t('pricingMonthly')}
             </button>
-            <button 
+            <button
+              type="button"
               onClick={() => setBillingPeriod('yearly')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${billingPeriod === 'yearly' ? 'bg-[#6366f1] text-white' : 'text-slate-400 hover:text-white'}`}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                billingPeriod === 'yearly' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              }`}
             >
               <span>{t('pricingYearly')}</span>
-              <span className="bg-emerald-500/20 text-emerald-400 text-[8px] px-1.5 py-0.5 rounded-full font-black border border-emerald-500/10">{t('pricingSaveText')}</span>
+              <span className="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                {t('pricingSaveText')}
+              </span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto">
           {/* Card 1: Free */}
-          <div className="glass rounded-3xl p-8 border border-white/5 flex flex-col justify-between hover:border-white/10 transition-all duration-300">
+          <div className="bg-white rounded-3xl p-8 border border-slate-200 flex flex-col justify-between shadow-sm">
             <div>
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h3 className="text-lg font-black text-white">{t('pricingFreeName')}</h3>
-                  <p className="text-slate-500 text-[10px] mt-1 uppercase tracking-wider">Start building now</p>
-                </div>
-              </div>
-              
-              <div className="mb-6 flex items-baseline gap-1">
-                <span className="text-4xl font-black text-white">{t('pricingFreePrice')}</span>
-                <span className="text-xs text-slate-400">/ {t('pricingFreePeriod')}</span>
+              <div className="mb-6">
+                <h3 className="text-lg font-extrabold text-slate-900">{t('pricingFreeName')}</h3>
+                <p className="text-slate-500 text-[11px] mt-1 uppercase tracking-wider font-semibold">Start building now</p>
               </div>
 
-              <div className="h-px bg-white/5 my-6" />
+              <div className="mb-6 flex items-baseline gap-1.5">
+                <span className="text-4xl font-black text-slate-900">{t('pricingFreePrice')}</span>
+                <span className="text-xs text-slate-500 font-medium">/ {t('pricingFreePeriod')}</span>
+              </div>
 
-              <ul className="space-y-3.5 text-xs text-slate-300">
-                <li className="flex items-center gap-2">
+              <div className="h-px bg-slate-100 my-6" />
+
+              <ul className="space-y-3.5 text-xs text-slate-700">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>5 {uiLang === 'uk' ? 'генерацій на місяць' : 'generations per month'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'Конструктор резюме (CV Maker)' : 'Resume CV Maker (manual editing)'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'Базові шаблони дизайну' : 'Basic templates library'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'ATS аналіз ключових слів' : 'ATS keyword scanner'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'Канбан-трекер вакансій' : 'Smart Kanban job tracker'}</span>
                 </li>
-                <li className="flex items-center gap-2 text-emerald-400 font-bold">
+                <li className="flex items-center gap-2.5 text-emerald-700 font-bold">
                   <IconCheck /> <span>{uiLang === 'uk' ? '+2 додаткові генерації за кожного друга' : '+2 bonus generations per friend invited'}</span>
                 </li>
               </ul>
             </div>
 
             <div className="mt-8">
-              <Link 
-                to={user ? '/dashboard' : '/login'} 
-                className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all border border-white/5"
+              <Link
+                to={user ? '/dashboard' : '/login'}
+                className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
               >
                 {t('pricingStartBtn')}
               </Link>
@@ -992,78 +1124,81 @@ const Landing = () => {
           </div>
 
           {/* Card 2: Pro */}
-          <div className="bg-[#6366f1]/[0.02] border-2 border-[#6366f1]/50 rounded-3xl p-8 flex flex-col justify-between hover:border-[#6366f1]/80 transition-all duration-300 relative">
-            <div className="absolute top-0 right-6 -translate-y-1/2 bg-[#6366f1] text-white text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg shadow-[#6366f1]/20 border border-white/10">
+          <div className="bg-white border-2 border-indigo-600 rounded-3xl p-8 flex flex-col justify-between shadow-xl shadow-indigo-900/5 relative">
+            <div className="absolute top-0 right-6 -translate-y-1/2 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
               {t('pricingPopular')}
             </div>
-            
+
             <div>
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h3 className="text-lg font-black text-indigo-400">{t('pricingProName')}</h3>
-                  <p className="text-slate-500 text-[10px] mt-1 uppercase tracking-wider">Unleash the full AI capability</p>
-                </div>
+              <div className="mb-6">
+                <h3 className="text-lg font-extrabold text-indigo-600">{t('pricingProName')}</h3>
+                <p className="text-slate-500 text-[11px] mt-1 uppercase tracking-wider font-semibold">Full AI Suite Access</p>
               </div>
 
-              <div className="mb-1 flex items-baseline gap-1">
-                <span className="text-4xl font-black text-white">
+              <div className="mb-1 flex items-baseline gap-1.5">
+                <span className="text-4xl font-black text-slate-900">
                   {billingPeriod === 'yearly' ? t('pricingProYearlyPrice') : t('pricingProMonthlyPrice')}
                 </span>
-                <span className="text-xs text-slate-400">/ {t('pricingProPeriod')}</span>
+                <span className="text-xs text-slate-500 font-medium">/ {t('pricingProPeriod')}</span>
               </div>
-              <p className="text-[10px] text-slate-400 italic">
+              <p className="text-[11px] text-slate-500">
                 {billingPeriod === 'yearly' ? t('pricingProBillNotice') : (uiLang === 'uk' ? 'Сплачується щомісячно' : 'Billed monthly')}
               </p>
 
-              <div className="h-px bg-white/5 my-6" />
+              <div className="h-px bg-slate-100 my-6" />
 
-              <ul className="space-y-3.5 text-xs text-slate-200 font-medium">
-                <li className="flex items-center gap-2 font-bold text-white">
+              <ul className="space-y-3.5 text-xs text-slate-700 font-medium">
+                <li className="flex items-center gap-2.5 font-bold text-slate-900">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'Безлімітні генерації ШІ' : 'Unlimited AI letter & CV generations'}</span>
                 </li>
-                <li className="flex items-center gap-2 text-indigo-300 font-bold">
+                <li className="flex items-center gap-2.5 text-indigo-700 font-bold">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'ШІ Авто-заповнення резюме з тексту' : 'Magic AI CV Generator (from freeform text)'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'Режим Executive (PRO)' : 'Executive Mode presets for senior roles'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'Преміальні шаблони CV та листів' : 'Premium resume & letter visual templates'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'ШІ супровідні листи нагадування (Follow-up)' : 'Auto-scheduled Follow-up drafts'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'Експорт без водяних знаків' : 'High-definition export without watermarks'}</span>
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2.5">
                   <IconCheck /> <span>{uiLang === 'uk' ? 'Пріоритетний доступ до ШІ' : 'Priority access & advanced models'}</span>
                 </li>
               </ul>
             </div>
 
             <div className="mt-8">
-              <Link 
-                to={user ? '/dashboard' : '/login'} 
-                className="w-full py-3 bg-[#6366f1] hover:bg-[#5458ee] text-white rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#6366f1]/25 border border-white/5"
+              <Link
+                to={user ? '/dashboard' : '/login'}
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm"
               >
                 <span>{t('pricingUpgradeBtn')}</span>
               </Link>
             </div>
           </div>
         </div>
+
+        <p className="text-xs text-slate-500 text-center mt-6 flex items-center justify-center gap-1.5">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>{uiLang === 'uk' ? 'Скасування в 1 клік будь-коли · Захищена оплата Stripe' : 'Cancel anytime in 1 click · Secure Stripe checkout'}</span>
+        </p>
       </section>
 
       {/* FAQ */}
-      <section className="py-20 px-4 md:px-6 relative z-10">
-            <p className="text-[10px] text-slate-400 text-center mt-2.5">{uiLang === 'uk' ? '🔒 Скасування в 1 клік будь-коли · Захищена оплата Stripe' : '🔒 Cancel anytime in 1 click · Secure Stripe checkout'}</p><div className="max-w-2xl mx-auto animate-fade-in">
-          <h2 className="text-3xl font-black text-center mb-12 tracking-tight">{t('faqTitle')}</h2>
+      <section className="py-20 px-4 md:px-6 bg-slate-50 border-y border-slate-200/80">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl font-black text-center text-slate-900 mb-10 tracking-tight">{t('faqTitle')}</h2>
           <div className="space-y-3">
             {faqs.map((item, i) => (
-              <FaqItem 
-                key={i} 
-                q={item.q} 
-                a={item.a} 
+              <FaqItem
+                key={i}
+                q={item.q}
+                a={item.a}
                 id={`faq-item-${i}`}
               />
             ))}
@@ -1072,61 +1207,70 @@ const Landing = () => {
       </section>
 
       {/* BOTTOM CTA */}
-      <section className="py-20 px-4 md:px-6 relative z-10">
-        <div className="max-w-xl mx-auto text-center">
-          <div className="glass rounded-3xl p-8 md:p-10 border border-indigo-500/15 relative overflow-hidden">
-            <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-2xl" />
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/30 text-lg">✦</div>
-            <h2 className="text-2xl md:text-3xl font-black mb-3 text-white">Ready to Land Your Dream Job?</h2>
-            <p className="text-gray-400 mb-6 text-xs leading-relaxed max-w-sm mx-auto">
-              Join thousands of job hunters who optimize CVs, generate tailored letters, and track applications on auto-pilot.
+      <section className="py-20 px-4 md:px-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-slate-900 text-white rounded-3xl p-8 md:p-12 text-center shadow-xl">
+            <h2 className="text-2xl md:text-3xl font-black mb-3 tracking-tight">{nc.bottomTitle}</h2>
+            <p className="text-slate-300 mb-7 text-sm leading-relaxed max-w-lg mx-auto">
+              {nc.bottomSub}
             </p>
-            <Link id="bottom-cta-btn" to={user ? '/dashboard' : '/login'}
-              className="inline-flex items-center gap-2 px-7 py-3.5 font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/25 text-sm">
-              {user ? t('openApp') : t('ctaButton')} <IconRocket />
-            </Link>
-            <p className="text-[10px] text-gray-500 mt-4">{t('ctaSubtext')}</p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                id="bottom-cta-btn"
+                to={user ? '/dashboard' : '/login'}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 font-bold text-slate-900 bg-white rounded-xl hover:bg-slate-100 transition-all text-sm"
+              >
+                {user ? t('openApp') : t('ctaButton')} <IconRocket />
+              </Link>
+              <Link
+                to={atsPath}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 font-bold text-white bg-white/10 border border-white/15 rounded-xl hover:bg-white/15 transition-all text-sm"
+              >
+                {nc.atsCta}
+              </Link>
+            </div>
+            <p className="text-xs text-slate-400 mt-5">{t('ctaSubtext')}</p>
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/[0.05] bg-[#0f172a] pt-10 pb-6 px-4 md:px-6 z-10 relative">
+      <footer className="border-t border-slate-200 bg-slate-50 pt-10 pb-8 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-            <div className="flex items-center gap-2 font-black tracking-tighter text-base">
-              <img src="/android-chrome-192x192.png" alt="AI-Letter" className="w-7 h-7 rounded-lg" />
+            <div className="flex items-center gap-2 font-black tracking-tight text-slate-900 text-base">
+              <img src="/android-chrome-192x192.png" alt="AI-Letter" className="w-7 h-7 rounded-lg border border-slate-200" />
               AI-Letter
             </div>
-            <p className="text-gray-600 text-xs">{t('footerDesc')}</p>
-            <div className="flex items-center gap-5 text-xs text-gray-500">
-              <Link to="/linkedin-message" className="hover:text-white transition-colors">LinkedIn Tool</Link>
-              <Link to="/subject-line" className="hover:text-white transition-colors">Subject Lines</Link>
-              <a href="mailto:support@ailetter.pro" className="hover:text-white transition-colors">support@ailetter.pro</a>
+            <p className="text-slate-500 text-xs">{t('footerDesc')}</p>
+            <div className="flex items-center gap-5 text-xs text-slate-600">
+              <Link to="/linkedin-message" className="hover:text-slate-900 transition-colors">LinkedIn Tool</Link>
+              <Link to="/subject-line" className="hover:text-slate-900 transition-colors">Subject Lines</Link>
+              <a href="mailto:support@ailetter.pro" className="hover:text-slate-900 transition-colors">support@ailetter.pro</a>
               <a href="https://www.producthunt.com/products/ailetter-2/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-ailetter&#0045;2" target="_blank" rel="noopener noreferrer">
-                <img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1173518&theme=neutral" alt="AI-Letter on Product Hunt" style={{ width: '120px', height: '26px' }} width="120" height="26" />
+                <img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1173518&theme=light" alt="AI-Letter on Product Hunt" style={{ width: '120px', height: '26px' }} width="120" height="26" />
               </a>
             </div>
           </div>
-          <div className="border-t border-white/[0.05] pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-700">
+          <div className="border-t border-slate-200 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
             <span>© 2026 AI-Letter. All rights reserved.</span>
             <div className="flex flex-wrap justify-end gap-x-5 gap-y-2">
-              <Link to="/terms" className="hover:text-gray-400 transition-colors">{t('terms')}</Link>
-              <Link to="/privacy" className="hover:text-gray-400 transition-colors">{t('privacy')}</Link>
-              <Link to="/ats-resume-checker" className="hover:text-amber-300 transition-colors text-amber-400 font-semibold">{uiLang === 'uk' ? 'ATS Чекер' : 'ATS Resume Checker'}</Link>
-              <Link to="/linkedin-message" className="hover:text-indigo-400 transition-colors text-indigo-600">{t('linkedinGen')}</Link>
-              <Link to="/subject-line" className="hover:text-indigo-400 transition-colors text-indigo-600">Subject Line</Link>
-              <Link to="/cover-letter-ai-developer" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Супровідний лист (AI)' : 'AI Developer Cover Letter'}</Link>
-              <Link to="/linkedin-cold-message-templates" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Шаблони LinkedIn' : 'LinkedIn Cold Messages'}</Link>
-              <Link to="/freelancer-self-introduction" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Фріланс Proposal' : 'Freelancer Pitch'}</Link>
-              <Link to="/cover-letter-project-manager" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист Project Manager' : 'Project Manager'}</Link>
-              <Link to="/cover-letter-product-manager" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист Product Manager' : 'Product Manager'}</Link>
-              <Link to="/cover-letter-qa-engineer" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист QA Engineer' : 'QA Engineer'}</Link>
-              <Link to="/cover-letter-frontend-developer" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист Frontend Dev' : 'Frontend Developer'}</Link>
-              <Link to="/cover-letter-data-analyst" className="hover:text-indigo-400 transition-colors text-indigo-600">{uiLang === 'uk' ? 'Лист Data Analyst' : 'Data Analyst'}</Link>
-              <Link to="/uk" className="hover:text-white transition-colors text-slate-500">UA</Link>
-              <Link to="/de" className="hover:text-white transition-colors text-slate-500">DE</Link>
-              <Link to="/it" className="hover:text-white transition-colors text-slate-500">IT</Link>
+              <Link to="/terms" className="hover:text-slate-900 transition-colors">{t('terms')}</Link>
+              <Link to="/privacy" className="hover:text-slate-900 transition-colors">{t('privacy')}</Link>
+              <Link to="/ats-resume-checker" className="text-amber-700 hover:text-amber-900 transition-colors font-semibold">{uiLang === 'uk' ? 'ATS Чекер' : 'ATS Resume Checker'}</Link>
+              <Link to="/linkedin-message" className="text-indigo-600 hover:text-indigo-800 transition-colors">{t('linkedinGen')}</Link>
+              <Link to="/subject-line" className="text-indigo-600 hover:text-indigo-800 transition-colors">Subject Line</Link>
+              <Link to="/cover-letter-ai-developer" className="text-indigo-600 hover:text-indigo-800 transition-colors">{uiLang === 'uk' ? 'Супровідний лист (AI)' : 'AI Developer Cover Letter'}</Link>
+              <Link to="/linkedin-cold-message-templates" className="text-indigo-600 hover:text-indigo-800 transition-colors">{uiLang === 'uk' ? 'Шаблони LinkedIn' : 'LinkedIn Cold Messages'}</Link>
+              <Link to="/freelancer-self-introduction" className="text-indigo-600 hover:text-indigo-800 transition-colors">{uiLang === 'uk' ? 'Фріланс Proposal' : 'Freelancer Pitch'}</Link>
+              <Link to="/cover-letter-project-manager" className="text-indigo-600 hover:text-indigo-800 transition-colors">{uiLang === 'uk' ? 'Лист Project Manager' : 'Project Manager'}</Link>
+              <Link to="/cover-letter-product-manager" className="text-indigo-600 hover:text-indigo-800 transition-colors">{uiLang === 'uk' ? 'Лист Product Manager' : 'Product Manager'}</Link>
+              <Link to="/cover-letter-qa-engineer" className="text-indigo-600 hover:text-indigo-800 transition-colors">{uiLang === 'uk' ? 'Лист QA Engineer' : 'QA Engineer'}</Link>
+              <Link to="/cover-letter-frontend-developer" className="text-indigo-600 hover:text-indigo-800 transition-colors">{uiLang === 'uk' ? 'Лист Frontend Dev' : 'Frontend Developer'}</Link>
+              <Link to="/cover-letter-data-analyst" className="text-indigo-600 hover:text-indigo-800 transition-colors">{uiLang === 'uk' ? 'Лист Data Analyst' : 'Data Analyst'}</Link>
+              <Link to="/uk" className="hover:text-slate-900 transition-colors text-slate-600 font-semibold">UA</Link>
+              <Link to="/de" className="hover:text-slate-900 transition-colors text-slate-600 font-semibold">DE</Link>
+              <Link to="/it" className="hover:text-slate-900 transition-colors text-slate-600 font-semibold">IT</Link>
             </div>
           </div>
         </div>
