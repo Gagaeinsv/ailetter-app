@@ -1143,4 +1143,18 @@ ${sitemapEntries}
 fs.writeFileSync(path.join(PUBLIC, 'sitemap.xml'), sitemapXml, 'utf-8');
 fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemapXml, 'utf-8');
 
+// Also emit static SPA shells for private/auth app routes so Vercel cleanUrls serves 200 OK directly
+const SPA_APP_ROUTES = ['dashboard', 'login', 'onboarding'];
+const spaShellHtml = template
+  .replace(/<meta name="robots"[^>]*>/gi, '')
+  .replace(/<head>/i, '<head>\n  <meta name="robots" content="noindex, nofollow" />');
+
+for (const appRoute of SPA_APP_ROUTES) {
+  const outDir = path.join(DIST, appRoute);
+  fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(path.join(outDir, 'index.html'), spaShellHtml, 'utf-8');
+  fs.writeFileSync(path.join(DIST, `${appRoute}.html`), spaShellHtml, 'utf-8');
+  console.log(`✓ Generated SPA shell /${appRoute} (noindex)`);
+}
+
 console.log(`\nPrerender done — ${ALL_ROUTES.length} routes + sitemap.xml generated (${TODAY}).`);
