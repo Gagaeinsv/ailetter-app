@@ -25,7 +25,7 @@ const TemplateIconic = ({ contact, text, date }) => (
   <div className="h-[290mm] w-[210mm] bg-[#ffffff] text-[#000000] font-sans p-12 relative flex flex-col mx-auto overflow-hidden">
     <div className="text-center mb-8 border-b-2 border-[#111827] pb-6">
       <h1 className="text-4xl font-thin mb-2 uppercase text-[#111827]">{contact.fullName}</h1>
-      <div className="flex justify-center gap-4 text-[10px] font-bold text-[#6b7280]"><span>✉️ {contact.email}</span><span>📱 {contact.phone}</span><span>📍 {contact.location}</span></div>
+      <div className="flex justify-center gap-3 text-[10px] font-bold text-[#6b7280]"><span>{contact.email}</span><span>·</span><span>{contact.phone}</span><span>·</span><span>{contact.location}</span></div>
     </div>
     <div className="max-w-2xl mx-auto flex-1 flex flex-col overflow-hidden">
       <p className="text-[10px] font-bold text-[#9ca3af] mb-6 text-right">{date}</p>
@@ -129,8 +129,8 @@ const TemplateIconicInline = ({ contact, text, date }) => (
   <div style={{ background: '#ffffff', fontFamily: 'sans-serif', padding: '48px' }}>
     <div style={{ textAlign: 'center', marginBottom: '32px', borderBottom: '2px solid #111827', paddingBottom: '24px' }}>
       <h1 style={{ fontSize: '32px', fontWeight: 100, textTransform: 'uppercase', color: '#111827', margin: '0 0 10px' }}>{contact.fullName}</h1>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '11px', fontWeight: 700, color: '#6b7280' }}>
-        <span>✉️ {contact.email}</span><span>📱 {contact.phone}</span><span>📍 {contact.location}</span>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', fontSize: '11px', fontWeight: 700, color: '#6b7280' }}>
+        <span>{contact.email}</span><span>·</span><span>{contact.phone}</span><span>·</span><span>{contact.location}</span>
       </div>
     </div>
     <p style={{ fontSize: '10px', fontWeight: 700, color: '#9ca3af', textAlign: 'right', marginBottom: '24px' }}>{date}</p>
@@ -193,36 +193,45 @@ const TemplateMinimalInline = ({ contact, text, date }) => (
 
 // ── ADDITIONAL INLINE TEMPLATES ──────────────────────────────────────────────
 
+// Dev Clean (replaces dark Nova with crisp tech/engineering sheet)
 const TemplateNovaInline = ({ contact, text, date }) => (
-  <div style={{ background: '#0f172a', fontFamily: 'sans-serif', color: 'white' }}>
-    <div style={{ padding: '32px 40px', borderBottom: '1px solid #1e293b' }}>
-      <h1 style={{ fontSize: '28px', fontWeight: 900, letterSpacing: '-0.02em', margin: '0 0 4px', background: 'linear-gradient(135deg, #818cf8, #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{contact.fullName}</h1>
-      <p style={{ fontSize: '11px', fontWeight: 700, color: '#818cf8', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 16px' }}>{contact.profession}</p>
-      <div style={{ display: 'flex', gap: '16px', fontSize: '10px', color: '#64748b' }}>
-        <span>{contact.email}</span><span>·</span><span>{contact.phone}</span><span>·</span><span>{contact.location}</span>
+  <div style={{ background: '#ffffff', fontFamily: 'system-ui, -apple-system, sans-serif', color: '#0f172a', padding: '44px 48px' }}>
+    <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: '10px', color: '#0f766e', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '14px' }}>
+      // COVER LETTER · {date}
+    </div>
+    <div style={{ borderLeft: '4px solid #0f766e', paddingLeft: '18px', marginBottom: '26px' }}>
+      <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em', margin: '0 0 4px' }}>{contact.fullName}</h1>
+      <p style={{ fontSize: '12px', fontWeight: 700, color: '#0f766e', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 10px' }}>{contact.profession}</p>
+      <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '10px', color: '#475569' }}>
+        <span>{contact.email}</span><span>|</span><span>{contact.phone}</span><span>|</span><span>{contact.location}</span>
       </div>
     </div>
-    <div style={{ padding: '32px 40px 48px' }}>
-      <p style={{ fontSize: '10px', color: '#475569', fontWeight: 700, marginBottom: '24px' }}>{date}</p>
-      <div style={{ fontSize: '13px', lineHeight: 1.8, whiteSpace: 'pre-wrap', color: '#cbd5e1', textAlign: 'justify' }}>{text}</div>
-      <div style={{ marginTop: '32px', fontWeight: 700, color: '#818cf8' }}>{contact.fullName}</div>
-    </div>
+    <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '24px', fontSize: '13px', lineHeight: 1.85, whiteSpace: 'pre-wrap', color: '#1e293b', textAlign: 'justify' }}>{text}</div>
+    <div style={{ marginTop: '32px', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: '12px', fontWeight: 700, color: '#0f766e' }}>— {contact.fullName}</div>
   </div>
 );
 
+// Swiss Grid (replaces Breeze with asymmetric 25/75 editorial layout)
 const TemplateBreezeInline = ({ contact, text, date }) => (
-  <div style={{ background: '#f0fdf4', fontFamily: 'sans-serif' }}>
-    <div style={{ padding: '32px 40px', background: '#16a34a', color: 'white' }}>
-      <h1 style={{ fontSize: '26px', fontWeight: 900, margin: '0 0 4px' }}>{contact.fullName}</h1>
-      <p style={{ fontSize: '11px', fontWeight: 600, opacity: 0.85, margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{contact.profession}</p>
-      <div style={{ display: 'flex', gap: '16px', fontSize: '10px', opacity: 0.8 }}>
-        <span>{contact.email}</span><span>{contact.phone}</span><span>{contact.location}</span>
+  <div style={{ display: 'flex', background: '#ffffff', fontFamily: 'system-ui, -apple-system, sans-serif', color: '#111827', minHeight: '100%' }}>
+    <div style={{ width: '26%', padding: '48px 22px', borderRight: '1px solid #e2e8f0', background: '#f8fafc', flexShrink: 0 }}>
+      <div style={{ width: '28px', height: '4px', background: '#111827', marginBottom: '20px' }} />
+      <p style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.16em', color: '#64748b', margin: '0 0 4px' }}>Date</p>
+      <p style={{ fontSize: '11px', fontWeight: 600, color: '#0f172a', margin: '0 0 24px' }}>{date}</p>
+
+      <p style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.16em', color: '#64748b', margin: '0 0 8px' }}>Candidate</p>
+      <div style={{ fontSize: '10px', lineHeight: 1.7, color: '#334155', wordBreak: 'break-word' }}>
+        <p style={{ margin: '0 0 4px', fontWeight: 700, color: '#0f172a' }}>{contact.fullName}</p>
+        <p style={{ margin: '0 0 4px' }}>{contact.email}</p>
+        <p style={{ margin: '0 0 4px' }}>{contact.phone}</p>
+        <p style={{ margin: 0 }}>{contact.location}</p>
       </div>
     </div>
-    <div style={{ padding: '32px 40px 48px' }}>
-      <p style={{ fontSize: '10px', color: '#16a34a', fontWeight: 700, marginBottom: '24px' }}>{date}</p>
-      <div style={{ fontSize: '13px', lineHeight: 1.8, whiteSpace: 'pre-wrap', color: '#166534', textAlign: 'justify' }}>{text}</div>
-      <div style={{ marginTop: '32px', fontWeight: 700, color: '#15803d' }}>{contact.fullName}</div>
+    <div style={{ flex: 1, padding: '48px 44px' }}>
+      <h1 style={{ fontSize: '30px', fontWeight: 900, letterSpacing: '-0.03em', color: '#0f172a', margin: '0 0 6px', lineHeight: 1.05 }}>{contact.fullName}</h1>
+      <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: '#64748b', margin: '0 0 28px', paddingBottom: '18px', borderBottom: '2px solid #0f172a' }}>{contact.profession}</p>
+      <div style={{ fontSize: '13px', lineHeight: 1.85, whiteSpace: 'pre-wrap', color: '#1e293b', textAlign: 'justify' }}>{text}</div>
+      <div style={{ marginTop: '36px', fontSize: '13px', fontWeight: 800, color: '#0f172a' }}>{contact.fullName}</div>
     </div>
   </div>
 );
@@ -263,47 +272,46 @@ const TemplateNordicInline = ({ contact, text, date }) => (
   </div>
 );
 
+// Berlin DIN 5008 (DACH formal Anschreiben structure)
 const TemplateBerlinInline = ({ contact, text, date }) => (
-  <div style={{ background: '#ffffff', fontFamily: 'sans-serif' }}>
-    <div style={{ display: 'flex' }}>
-      <div style={{ width: '8px', background: '#dc2626', flexShrink: 0 }} />
-      <div style={{ flex: 1, padding: '40px 40px 24px' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: 900, color: '#111827', margin: '0 0 4px', textTransform: 'uppercase' }}>{contact.fullName}</h1>
-        <p style={{ fontSize: '11px', color: '#dc2626', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 16px' }}>{contact.profession}</p>
-        <div style={{ display: 'flex', gap: '16px', fontSize: '10px', color: '#6b7280' }}>
-          <span>{contact.email}</span><span>{contact.phone}</span><span>{contact.location}</span>
-        </div>
+  <div style={{ background: '#ffffff', fontFamily: 'system-ui, -apple-system, sans-serif', color: '#111827', padding: '44px 52px' }}>
+    <div style={{ fontSize: '9px', color: '#6b7280', borderBottom: '1px solid #e5e7eb', paddingBottom: '6px', marginBottom: '20px', letterSpacing: '0.03em' }}>
+      {[contact.fullName, contact.location, contact.phone, contact.email].filter(Boolean).join(' · ')}
+    </div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '2px solid #b91c1c', paddingBottom: '16px', marginBottom: '26px' }}>
+      <div>
+        <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#111827', margin: '0 0 4px', letterSpacing: '-0.02em' }}>{contact.fullName}</h1>
+        <p style={{ fontSize: '11px', color: '#b91c1c', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', margin: 0 }}>{contact.profession}</p>
+      </div>
+      <div style={{ textAlign: 'right', fontSize: '11px', fontWeight: 600, color: '#4b5563' }}>
+        {contact.location ? `${contact.location}, ` : ''}{date}
       </div>
     </div>
-    <div style={{ borderTop: '1px solid #f3f4f6', padding: '28px 48px 48px' }}>
-      <p style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 700, marginBottom: '20px' }}>{date}</p>
-      <div style={{ fontSize: '13px', lineHeight: 1.8, whiteSpace: 'pre-wrap', color: '#374151', textAlign: 'justify' }}>{text}</div>
-      <div style={{ marginTop: '32px', fontWeight: 700, color: '#111827' }}>{contact.fullName}</div>
-    </div>
+    <div style={{ fontSize: '13px', lineHeight: 1.8, whiteSpace: 'pre-wrap', color: '#1f2937', textAlign: 'justify' }}>{text}</div>
+    <div style={{ marginTop: '36px', fontWeight: 700, fontSize: '13px', color: '#111827' }}>{contact.fullName}</div>
   </div>
 );
 
+// Onyx Monolith (luxury black-gold header card on crisp printable white paper)
 const TemplateOnyxInline = ({ contact, text, date }) => (
-  <div style={{ background: '#111827', fontFamily: 'sans-serif', color: 'white' }}>
-    <div style={{ padding: '40px 48px', background: 'linear-gradient(135deg, #1f2937, #111827)', borderBottom: '1px solid #f59e0b' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  <div style={{ background: '#ffffff', fontFamily: 'Georgia, serif', color: '#1f2937', padding: '36px 44px 48px' }}>
+    <div style={{ padding: '28px 32px', background: '#111827', color: '#ffffff', borderRadius: '10px', borderBottom: '4px solid #f59e0b', marginBottom: '28px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '30px', fontWeight: 900, margin: '0 0 4px', color: '#f9fafb', letterSpacing: '-0.02em' }}>{contact.fullName}</h1>
-          <p style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', margin: 0 }}>{contact.profession}</p>
+          <h1 style={{ fontSize: '28px', fontWeight: 700, margin: '0 0 4px', color: '#f59e0b', letterSpacing: '0.02em' }}>{contact.fullName}</h1>
+          <p style={{ fontSize: '11px', color: '#e2e8f0', fontFamily: 'sans-serif', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', margin: '0 0 10px' }}>{contact.profession}</p>
+          <div style={{ fontFamily: 'sans-serif', display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '10px', color: '#94a3b8' }}>
+            <span>{contact.email}</span><span>·</span><span>{contact.phone}</span><span>·</span><span>{contact.location}</span>
+          </div>
         </div>
-        <div style={{ width: '48px', height: '48px', background: '#f59e0b', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '18px', color: '#111827' }}>
+        <div style={{ width: '46px', height: '46px', border: '2px solid #f59e0b', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '18px', color: '#f59e0b', flexShrink: 0 }}>
           {contact.fullName?.[0] || 'A'}
         </div>
       </div>
     </div>
-    <div style={{ padding: '32px 48px 48px' }}>
-      <div style={{ display: 'flex', gap: '20px', fontSize: '10px', color: '#6b7280', marginBottom: '24px' }}>
-        <span>{contact.email}</span><span>·</span><span>{contact.phone}</span><span>·</span><span>{contact.location}</span>
-      </div>
-      <p style={{ fontSize: '10px', color: '#4b5563', fontWeight: 700, marginBottom: '20px' }}>{date}</p>
-      <div style={{ fontSize: '13px', lineHeight: 1.8, whiteSpace: 'pre-wrap', color: '#d1d5db', textAlign: 'justify' }}>{text}</div>
-      <div style={{ marginTop: '32px', fontWeight: 700, color: '#f59e0b' }}>{contact.fullName}</div>
-    </div>
+    <p style={{ fontFamily: 'sans-serif', fontSize: '10px', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px' }}>{date}</p>
+    <div style={{ fontSize: '13.5px', lineHeight: 1.85, whiteSpace: 'pre-wrap', color: '#1f2937', textAlign: 'justify' }}>{text}</div>
+    <div style={{ marginTop: '36px', fontWeight: 700, fontSize: '14px', color: '#111827', borderTop: '1px solid #e5e7eb', paddingTop: '14px' }}>{contact.fullName}</div>
   </div>
 );
 
@@ -372,22 +380,22 @@ const TemplateMilanoInline = ({ contact, text, date }) => (
   </div>
 );
 
+// Executive Frame (replaces Sydney with double architectural consulting frame)
 const TemplateSydneyInline = ({ contact, text, date }) => (
-  <div style={{ background: '#ffffff', fontFamily: 'sans-serif' }}>
-    <div style={{ padding: '0', background: 'linear-gradient(135deg, #0369a1 0%, #0891b2 100%)' }}>
-      <div style={{ padding: '40px 48px' }}>
-        <h1 style={{ fontSize: '30px', fontWeight: 800, color: '#ffffff', margin: '0 0 4px', letterSpacing: '-0.02em' }}>{contact.fullName}</h1>
-        <p style={{ fontSize: '12px', color: '#bae6fd', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 20px' }}>{contact.profession}</p>
-        <div style={{ display: 'flex', gap: '20px', fontSize: '10px', color: '#e0f2fe', flexWrap: 'wrap' }}>
-          <span>{contact.email}</span><span>·</span><span>{contact.phone}</span><span>·</span><span>{contact.location}</span>
+  <div style={{ background: '#ffffff', fontFamily: 'system-ui, -apple-system, sans-serif', padding: '24px', color: '#1e293b' }}>
+    <div style={{ border: '1px solid #cbd5e1', padding: '4px' }}>
+      <div style={{ border: '1.5px solid #1e3a5f', padding: '32px 40px 40px' }}>
+        <div style={{ textAlign: 'center', borderBottom: '1px solid #cbd5e1', paddingBottom: '18px', marginBottom: '24px' }}>
+          <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#1e3a5f', margin: '0 0 4px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{contact.fullName}</h1>
+          <p style={{ fontSize: '11px', color: '#475569', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', margin: '0 0 10px' }}>{contact.profession}</p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', fontSize: '10px', color: '#64748b', flexWrap: 'wrap' }}>
+            <span>{contact.email}</span><span>·</span><span>{contact.phone}</span><span>·</span><span>{contact.location}</span>
+          </div>
         </div>
+        <p style={{ fontSize: '10px', color: '#64748b', fontWeight: 700, marginBottom: '20px', textAlign: 'right' }}>{date}</p>
+        <div style={{ fontSize: '13px', lineHeight: 1.85, whiteSpace: 'pre-wrap', color: '#1e293b', textAlign: 'justify' }}>{text}</div>
+        <div style={{ marginTop: '34px', fontWeight: 700, color: '#1e3a5f', fontSize: '13.5px' }}>{contact.fullName}</div>
       </div>
-      <div style={{ height: '6px', background: 'linear-gradient(90deg, #06b6d4, #0ea5e9, #38bdf8)' }} />
-    </div>
-    <div style={{ padding: '32px 48px 48px' }}>
-      <p style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, marginBottom: '24px' }}>{date}</p>
-      <div style={{ fontSize: '13px', lineHeight: 1.8, whiteSpace: 'pre-wrap', color: '#334155', textAlign: 'justify' }}>{text}</div>
-      <div style={{ marginTop: '32px', fontWeight: 700, color: '#0369a1', fontSize: '14px' }}>{contact.fullName}</div>
     </div>
   </div>
 );
@@ -417,27 +425,26 @@ const TemplateAtlasInline = ({ contact, text, date }) => (
   </div>
 );
 
+// Atelier Editorial (replaces neon-purple Pearl with refined ivory & burgundy monogram)
 const TemplatePearlInline = ({ contact, text, date }) => (
-  <div style={{ background: '#fdf4ff', fontFamily: 'sans-serif' }}>
-    <div style={{ padding: '44px 52px', borderBottom: '2px solid #e879f9' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  <div style={{ background: '#fcfbf9', fontFamily: 'Georgia, serif', color: '#292524', padding: '44px 52px' }}>
+    <div style={{ paddingBottom: '24px', borderBottom: '1px solid #881337', marginBottom: '26px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '28px', fontWeight: 300, color: '#581c87', margin: '0 0 6px', letterSpacing: '0.05em' }}>{contact.fullName}</h1>
-          <p style={{ fontSize: '11px', color: '#a855f7', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', margin: 0 }}>{contact.profession}</p>
+          <h1 style={{ fontSize: '28px', fontWeight: 400, color: '#1c1917', margin: '0 0 6px', letterSpacing: '0.03em' }}>{contact.fullName}</h1>
+          <p style={{ fontFamily: 'sans-serif', fontSize: '10px', color: '#881337', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', margin: 0 }}>{contact.profession}</p>
         </div>
-        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #e879f9, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 700, color: 'white' }}>
+        <div style={{ width: '44px', height: '44px', borderRadius: '50%', border: '1.5px solid #881337', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 600, color: '#881337', flexShrink: 0 }}>
           {contact.fullName?.[0] || 'A'}
         </div>
       </div>
-      <div style={{ display: 'flex', gap: '16px', fontSize: '10px', color: '#a78bfa', marginTop: '16px', flexWrap: 'wrap' }}>
+      <div style={{ fontFamily: 'sans-serif', display: 'flex', gap: '14px', fontSize: '10px', color: '#78716c', marginTop: '14px', flexWrap: 'wrap' }}>
         <span>{contact.email}</span><span>·</span><span>{contact.phone}</span><span>·</span><span>{contact.location}</span>
       </div>
     </div>
-    <div style={{ padding: '32px 52px 52px' }}>
-      <p style={{ fontSize: '10px', color: '#d8b4fe', fontWeight: 700, marginBottom: '24px' }}>{date}</p>
-      <div style={{ fontSize: '13px', lineHeight: 1.9, whiteSpace: 'pre-wrap', color: '#3b0764', textAlign: 'justify' }}>{text}</div>
-      <div style={{ marginTop: '36px', fontWeight: 600, color: '#a855f7', fontSize: '14px' }}>{contact.fullName}</div>
-    </div>
+    <p style={{ fontFamily: 'sans-serif', fontSize: '10px', color: '#a8a29e', fontWeight: 700, marginBottom: '22px' }}>{date}</p>
+    <div style={{ fontSize: '13.5px', lineHeight: 1.9, whiteSpace: 'pre-wrap', color: '#292524', textAlign: 'justify' }}>{text}</div>
+    <div style={{ marginTop: '36px', fontStyle: 'italic', color: '#881337', fontSize: '15px' }}>{contact.fullName}</div>
   </div>
 );
 

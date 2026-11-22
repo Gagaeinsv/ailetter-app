@@ -250,10 +250,13 @@ export default function CVMakerTab({
   };
 
   const renderTemplateSection = (secId, templateId) => {
-    const isClassic = templateId === 'classic' || templateId === 'milano' || templateId === 'onyx' || templateId === 'photo-classic';
+    const isClassic = templateId === 'classic' || templateId === 'milano' || templateId === 'onyx' || templateId === 'photo-classic' || templateId === 'atelier';
     const isNova = templateId === 'nova';
+    const isSwiss = templateId === 'swiss';
     const isNordic = templateId === 'nordic';
+    const isBerlin = templateId === 'berlin';
     const isMilano = templateId === 'milano';
+    const isAtelier = templateId === 'atelier';
     const isOnyx = templateId === 'onyx';
     
     let accentColorClass = 'text-indigo-600';
@@ -283,12 +286,19 @@ export default function CVMakerTab({
       accentColorClass = 'text-indigo-600';
       headingBorderClass = 'border-slate-200';
     } else if (isNova) {
-      accentColorClass = 'text-indigo-400';
-      headingBorderClass = 'border-indigo-500/20';
-      skillBg = 'bg-slate-800 text-indigo-300';
-      skillBorder = 'border-slate-700';
-      listTextClass = 'text-slate-300';
-      companyClass = 'text-indigo-400 italic';
+      accentColorClass = 'text-teal-700';
+      headingBorderClass = 'border-teal-200';
+      skillBg = 'bg-teal-50 text-teal-800';
+      skillBorder = 'border-teal-200';
+      listTextClass = 'text-slate-700';
+      companyClass = 'text-teal-700';
+    } else if (isSwiss) {
+      accentColorClass = 'text-slate-900';
+      headingBorderClass = 'border-slate-900';
+      skillBg = 'bg-slate-100 text-slate-900';
+      skillBorder = 'border-slate-300';
+      listTextClass = 'text-slate-700';
+      companyClass = 'text-slate-600';
     } else if (isNordic) {
       accentColorClass = 'text-sky-700';
       headingBorderClass = 'border-sky-100';
@@ -296,13 +306,27 @@ export default function CVMakerTab({
       skillBorder = 'border-sky-100';
       listTextClass = 'text-slate-600';
       companyClass = 'text-sky-600';
+    } else if (isBerlin) {
+      accentColorClass = 'text-red-700';
+      headingBorderClass = 'border-red-200';
+      skillBg = 'bg-slate-100 text-slate-800';
+      skillBorder = 'border-slate-200';
+      listTextClass = 'text-slate-700';
+      companyClass = 'text-slate-700';
     } else if (isMilano) {
       accentColorClass = 'text-amber-800';
       headingBorderClass = 'border-amber-600/20';
       skillBg = 'bg-amber-500/10 text-amber-900';
       skillBorder = 'border-amber-600/20';
-      listTextClass = 'text-amber-955';
+      listTextClass = 'text-amber-950';
       companyClass = 'text-amber-800 italic';
+    } else if (isAtelier) {
+      accentColorClass = 'text-rose-900';
+      headingBorderClass = 'border-rose-900/20';
+      skillBg = 'bg-rose-50 text-rose-900';
+      skillBorder = 'border-rose-200';
+      listTextClass = 'text-stone-700';
+      companyClass = 'text-rose-800 italic';
     } else if (isOnyx) {
       accentColorClass = 'text-slate-900';
       headingBorderClass = 'border-slate-300';
@@ -318,7 +342,7 @@ export default function CVMakerTab({
           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} ${templateId === 'milano' ? 'border-b border-amber-600/20 pb-0.5' : ''}`}>
             {t.summary}
           </h4>
-          <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955/80 italic' : 'text-slate-600'} leading-relaxed font-medium`}>
+          <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'milano' ? 'text-amber-950/80 italic' : templateId === 'atelier' ? 'text-stone-700' : 'text-slate-600'} leading-relaxed font-medium`}>
             {cvData.summary}
           </p>
         </div>
@@ -335,8 +359,8 @@ export default function CVMakerTab({
             {cvData.experience.map((exp, idx) => (
               <div key={idx} className="cv-avoid-break space-y-1">
                 <div className="flex justify-between items-baseline">
-                  <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className={`font-black ${templateId === 'nova' ? 'text-white' : 'text-slate-900'}`}>{exp.title}</h5>
-                  <span style={{ fontSize: 'var(--cv-font-meta)' }} className={`font-bold ${templateId === 'nova' ? 'text-slate-400' : 'text-slate-500'} whitespace-nowrap`}>{exp.duration}</span>
+                  <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-black text-slate-900">{exp.title}</h5>
+                  <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500 whitespace-nowrap">{exp.duration}</span>
                 </div>
                 <h6 style={{ fontSize: 'var(--cv-font-meta)' }} className={`font-black uppercase tracking-wider ${companyClass}`}>{exp.company}</h6>
                 <ul className="list-disc pl-4 mt-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
@@ -365,22 +389,22 @@ export default function CVMakerTab({
             {cvData.projects.map((proj, idx) => (
               <div key={idx} className="cv-avoid-break space-y-1">
                 <div className="flex justify-between items-baseline">
-                  <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className={`font-black ${templateId === 'nova' ? 'text-white' : 'text-slate-900'}`}>
+                  <h5 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-black text-slate-900">
                     {proj.name}
                     {proj.link && (
-                      <a href={proj.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-400 hover:underline text-[9px] font-bold">
-                        🔗 {uiLang === 'uk' ? 'Посилання' : 'Link'}
+                      <a href={proj.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-600 hover:underline text-[9px] font-bold">
+                        {uiLang === 'uk' ? 'Посилання' : 'Link'}
                       </a>
                     )}
                   </h5>
                   {proj.technologies && (
-                    <span style={{ fontSize: 'var(--cv-font-meta)' }} className={`font-bold ${templateId === 'nova' ? 'text-slate-400' : 'text-slate-500'} whitespace-nowrap`}>
+                    <span style={{ fontSize: 'var(--cv-font-meta)' }} className="font-bold text-slate-500 whitespace-nowrap">
                       {proj.technologies}
                     </span>
                   )}
                 </div>
                 {proj.description && (
-                  <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955' : 'text-slate-600'} leading-relaxed font-semibold`}>
+                  <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'milano' ? 'text-amber-950' : templateId === 'atelier' ? 'text-stone-700' : 'text-slate-600'} leading-relaxed font-semibold`}>
                     {proj.description}
                   </p>
                 )}
@@ -462,7 +486,7 @@ export default function CVMakerTab({
           <h4 style={{ fontSize: 'var(--cv-font-section-title)' }} className={`font-black uppercase tracking-widest ${accentColorClass} border-b ${headingBorderClass} pb-0.5`}>
             {t.education}
           </h4>
-          <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955' : 'text-slate-600'} leading-relaxed font-semibold`}>
+          <p style={{ fontSize: 'var(--cv-font-body)' }} className={`${templateId === 'milano' ? 'text-amber-950' : templateId === 'atelier' ? 'text-stone-700' : 'text-slate-600'} leading-relaxed font-semibold`}>
             {cvData.education}
           </p>
         </div>
@@ -494,7 +518,7 @@ export default function CVMakerTab({
           </h4>
           <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
             {cvData.languages.map((l, idx) => (
-              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className={`font-semibold ${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955' : 'text-slate-700'}`}>{l}</li>
+              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className={`font-semibold ${templateId === 'milano' ? 'text-amber-950' : templateId === 'atelier' ? 'text-stone-700' : 'text-slate-700'}`}>{l}</li>
             ))}
           </ul>
         </div>
@@ -509,7 +533,7 @@ export default function CVMakerTab({
           </h4>
           <ul className="list-disc pl-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-list-gap)' }}>
             {cvData.certifications.map((c, idx) => (
-              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className={`font-semibold ${templateId === 'nova' ? 'text-slate-300' : templateId === 'milano' ? 'text-amber-955' : 'text-slate-700'}`}>{c}</li>
+              <li key={idx} style={{ fontSize: 'var(--cv-font-body)' }} className={`font-semibold ${templateId === 'milano' ? 'text-amber-950' : templateId === 'atelier' ? 'text-stone-700' : 'text-slate-700'}`}>{c}</li>
             ))}
           </ul>
         </div>
@@ -522,7 +546,7 @@ export default function CVMakerTab({
   const previewRef = useRef();
 
   const getSheetStyle = () => {
-    const isClassic = selectedTemplate === 'classic' || selectedTemplate === 'milano' || selectedTemplate === 'onyx' || selectedTemplate === 'photo-classic';
+    const isClassic = selectedTemplate === 'classic' || selectedTemplate === 'milano' || selectedTemplate === 'onyx' || selectedTemplate === 'photo-classic' || selectedTemplate === 'atelier';
     let padding = '40px 48px';
     let sectionGap = '24px';
     let itemGap = '16px';
@@ -563,15 +587,15 @@ export default function CVMakerTab({
     let background = '#ffffff';
     let color = '#0f172a';
     
-    if (selectedTemplate === 'nova') {
-      background = '#0f172a';
-      color = '#f1f5f9';
-    } else if (selectedTemplate === 'milano') {
-      background = '#fffbf0';
+    if (selectedTemplate === 'milano') {
+      background = '#fffef7';
       color = '#451a03';
     } else if (selectedTemplate === 'nordic') {
       background = '#f8fafc';
       color = '#1e293b';
+    } else if (selectedTemplate === 'atelier') {
+      background = '#fcfbf9';
+      color = '#1c1917';
     }
     
     return {
@@ -1621,10 +1645,13 @@ export default function CVMakerTab({
                     { id: 'classic', label: 'Iconic (Classic)', pro: false },
                     { id: 'minimal', label: 'Minimal', pro: false },
                     { id: 'photo-modern', label: 'Breeze (Photo)', pro: false },
-                    { id: 'nova', label: 'Nova (Dark)', pro: false },
+                    { id: 'nova', label: 'Dev Clean', pro: false },
+                    { id: 'swiss', label: 'Swiss Grid', pro: false },
                     { id: 'nordic', label: 'Nordic ✦ PRO', pro: true },
+                    { id: 'berlin', label: 'Berlin DIN ✦ PRO', pro: true },
                     { id: 'milano', label: 'Milano ✦ PRO', pro: true },
-                    { id: 'onyx', label: 'Onyx ✦ PRO', pro: true },
+                    { id: 'atelier', label: 'Atelier ✦ PRO', pro: true },
+                    { id: 'onyx', label: 'Onyx Monolith ✦ PRO', pro: true },
                     { id: 'photo-classic', label: 'Executive Photo ✦ PRO', pro: true }
                   ].map(item => (
                     <button
@@ -1711,13 +1738,13 @@ export default function CVMakerTab({
                     {/* Header */}
                     <div className="border-b-4 border-indigo-600 pb-4 flex items-center justify-between gap-4">
                       <div>
-                        <h2 style={{ fontSize: 'var(--cv-font-title)', lineHeight: '1.1' }} className="font-black text-slate-955 uppercase tracking-tight mb-1">{cvData.fullName || 'Alex Morgan'}</h2>
+                        <h2 style={{ fontSize: 'var(--cv-font-title)', lineHeight: '1.1' }} className="font-black text-slate-900 uppercase tracking-tight mb-1">{cvData.fullName || 'Alex Morgan'}</h2>
                         <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-extrabold text-indigo-600 uppercase tracking-wider mb-2">{cvData.profession || 'Product Manager'}</h4>
-                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="flex flex-wrap gap-x-4 gap-y-1.5 font-bold text-slate-500">
-                          {cvData.email && <span>✉ {cvData.email}</span>}
-                          {cvData.phone && <span>📞 {cvData.phone}</span>}
-                          {cvData.location && <span>📍 {cvData.location}</span>}
-                          {cvData.linkedin && <span className="text-indigo-600 font-semibold">{cvData.linkedin}</span>}
+                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="flex flex-wrap gap-x-3 gap-y-1 font-bold text-slate-500">
+                          {cvData.email && <span>{cvData.email}</span>}
+                          {cvData.phone && <span>· {cvData.phone}</span>}
+                          {cvData.location && <span>· {cvData.location}</span>}
+                          {cvData.linkedin && <span className="text-indigo-600 font-semibold">· {cvData.linkedin}</span>}
                         </div>
                       </div>
                       {cvData.photo && (
@@ -1864,29 +1891,114 @@ export default function CVMakerTab({
                   </div>
                 )}
 
-                {/* TEMPLATE 6: NOVA DARK MODE (FREE) */}
+                {/* TEMPLATE 6: DEV CLEAN (FREE, PRINTABLE TECH CV) */}
                 {selectedTemplate === 'nova' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-left font-sans text-slate-300">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-left font-sans text-slate-800">
                     {/* Header */}
-                    <div className="border-b border-indigo-500/30 pb-4 flex items-center justify-between gap-4">
+                    <div className="border-l-4 border-teal-700 pl-4 pb-3 border-b border-slate-200 flex items-center justify-between gap-4">
                       <div>
-                        <h2 style={{ fontSize: 'var(--cv-font-title)', lineHeight: '1.1' }} className="font-black text-white uppercase tracking-tight mb-1">{cvData.fullName || 'Alex Morgan'}</h2>
-                        <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-extrabold text-indigo-400 uppercase tracking-wider mb-2">{cvData.profession || 'Product Manager'}</h4>
-                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="flex flex-wrap gap-x-4 gap-y-1.5 font-bold text-slate-400">
-                          {cvData.email && <span>✉ {cvData.email}</span>}
-                          {cvData.phone && <span>📞 {cvData.phone}</span>}
-                          {cvData.location && <span>📍 {cvData.location}</span>}
-                          {cvData.linkedin && <span className="text-indigo-400 font-semibold">{cvData.linkedin}</span>}
+                        <p style={{ fontSize: 'var(--cv-font-meta)' }} className="font-mono font-bold text-teal-700 uppercase tracking-widest mb-1">// CURRICULUM VITAE</p>
+                        <h2 style={{ fontSize: 'var(--cv-font-title)', lineHeight: '1.1' }} className="font-black text-slate-900 tracking-tight mb-1">{cvData.fullName || 'Alex Morgan'}</h2>
+                        <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-extrabold text-teal-700 uppercase tracking-wider mb-2">{cvData.profession || 'Product Manager'}</h4>
+                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="font-mono flex flex-wrap gap-x-3 gap-y-1 font-semibold text-slate-600">
+                          {cvData.email && <span>{cvData.email}</span>}
+                          {cvData.phone && <span>| {cvData.phone}</span>}
+                          {cvData.location && <span>| {cvData.location}</span>}
+                          {cvData.linkedin && <span className="text-teal-700 font-bold">| {cvData.linkedin}</span>}
                         </div>
                       </div>
                       {cvData.photo && (
-                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-indigo-400 shrink-0">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-teal-700 shrink-0">
                           <img src={cvData.photo} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                       )}
                     </div>
 
                     {sectionOrder.map(secId => renderTemplateSection(secId, 'nova'))}
+                  </div>
+                )}
+
+                {/* TEMPLATE 6B: SWISS GRID (FREE, ASYMMETRIC 25/75 EDITORIAL) */}
+                {selectedTemplate === 'swiss' && (
+                  <div className="grid grid-cols-12 gap-6 text-left font-sans text-slate-900">
+                    <div className="col-span-4 border-r border-slate-200 pr-5 space-y-5" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }}>
+                      <div>
+                        <div className="w-8 h-1 bg-slate-900 mb-3" />
+                        {cvData.photo && (
+                          <div className="w-20 h-20 overflow-hidden border border-slate-300 mb-3">
+                            <img src={cvData.photo} alt="Profile" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <p style={{ fontSize: 'var(--cv-font-meta)' }} className="font-black uppercase tracking-widest text-slate-400 mb-1.5">Contact</p>
+                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="space-y-1 font-semibold text-slate-700 break-words">
+                          {cvData.email && <p>{cvData.email}</p>}
+                          {cvData.phone && <p>{cvData.phone}</p>}
+                          {cvData.location && <p>{cvData.location}</p>}
+                          {cvData.linkedin && <p className="text-slate-900 font-bold">{cvData.linkedin}</p>}
+                        </div>
+                      </div>
+                      {sectionOrder.filter(s => s === 'skills' || s === 'languages' || s === 'certifications' || s === 'interests').map(secId => renderTemplateSection(secId, 'swiss'))}
+                    </div>
+                    <div className="col-span-8 space-y-5" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }}>
+                      <div className="border-b-2 border-slate-900 pb-3">
+                        <h2 style={{ fontSize: 'var(--cv-font-title)', lineHeight: '1.05' }} className="font-black text-slate-900 tracking-tight mb-1">{cvData.fullName || 'Alex Morgan'}</h2>
+                        <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-slate-500 uppercase tracking-widest">{cvData.profession || 'Product Manager'}</h4>
+                      </div>
+                      {sectionOrder.filter(s => s !== 'skills' && s !== 'languages' && s !== 'certifications' && s !== 'interests').map(secId => renderTemplateSection(secId, 'swiss'))}
+                    </div>
+                  </div>
+                )}
+
+                {/* TEMPLATE 7B: BERLIN DIN (PRO, GERMAN LEBENSLAUF STYLE) */}
+                {selectedTemplate === 'berlin' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-left font-sans text-slate-900">
+                    <div className="border-b-2 border-red-700 pb-4 flex justify-between items-start gap-4">
+                      <div>
+                        <p style={{ fontSize: 'var(--cv-font-meta)' }} className="text-slate-400 font-bold uppercase tracking-widest mb-1">Lebenslauf / Curriculum Vitae</p>
+                        <h2 style={{ fontSize: 'var(--cv-font-title)' }} className="font-black text-slate-900 tracking-tight mb-0.5">{cvData.fullName || 'Alex Morgan'}</h2>
+                        <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-bold text-red-700 uppercase tracking-widest mb-2">{cvData.profession || 'Product Manager'}</h4>
+                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="flex flex-wrap gap-x-3 gap-y-1 text-slate-600 font-semibold">
+                          {cvData.email && <span>{cvData.email}</span>}
+                          {cvData.phone && <span>· {cvData.phone}</span>}
+                          {cvData.location && <span>· {cvData.location}</span>}
+                          {cvData.linkedin && <span className="text-red-700">· {cvData.linkedin}</span>}
+                        </div>
+                      </div>
+                      {cvData.photo && (
+                        <div className="w-20 h-24 overflow-hidden border border-slate-300 shrink-0">
+                          <img src={cvData.photo} alt="Profile" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'berlin'))}
+                  </div>
+                )}
+
+                {/* TEMPLATE 8B: ATELIER EDITORIAL (PRO, IVORY & BURGUNDY SERIF) */}
+                {selectedTemplate === 'atelier' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cv-section-gap)' }} className="text-left font-serif text-stone-800">
+                    <div className="border-b border-rose-900 pb-4 flex items-center justify-between gap-4">
+                      <div>
+                        <h2 style={{ fontSize: 'var(--cv-font-title)' }} className="font-normal tracking-wide text-stone-900 mb-1">{cvData.fullName || 'Alex Morgan'}</h2>
+                        <h4 style={{ fontSize: 'var(--cv-font-subtitle)' }} className="font-sans font-bold text-rose-900 uppercase tracking-widest mb-2">{cvData.profession || 'Product Manager'}</h4>
+                        <div style={{ fontSize: 'var(--cv-font-meta)' }} className="font-sans flex flex-wrap gap-x-3 gap-y-1 text-stone-500 font-semibold">
+                          {cvData.email && <span>{cvData.email}</span>}
+                          {cvData.phone && <span>· {cvData.phone}</span>}
+                          {cvData.location && <span>· {cvData.location}</span>}
+                          {cvData.linkedin && <span className="text-rose-900">· {cvData.linkedin}</span>}
+                        </div>
+                      </div>
+                      {cvData.photo ? (
+                        <div className="w-16 h-16 rounded-full overflow-hidden border border-rose-900 shrink-0">
+                          <img src={cvData.photo} alt="Profile" className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-full border-2 border-rose-900 flex items-center justify-center text-rose-900 font-semibold text-lg shrink-0">
+                          {(cvData.fullName || 'A')[0]}
+                        </div>
+                      )}
+                    </div>
+                    {sectionOrder.map(secId => renderTemplateSection(secId, 'atelier'))}
                   </div>
                 )}
 

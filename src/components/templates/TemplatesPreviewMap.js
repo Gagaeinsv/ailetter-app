@@ -3,6 +3,11 @@ import {
   TemplateNordicInline,
   TemplateBerlinInline,
   TemplateOnyxInline,
+  TemplateTokyoInline,
+  TemplateMilanoInline,
+  TemplateSydneyInline,
+  TemplateAtlasInline,
+  TemplatePearlInline,
   TemplateGenericProInline
 } from "./Templates";
 
@@ -26,19 +31,19 @@ export const renderTemplate = (id, props) => {
       return <TemplateOnyxInline {...props} />;
 
     case "tokyo":
-      return <TemplateGenericProInline {...props} accent="#7c3aed" bg="#fafafa" />;
+      return <TemplateTokyoInline {...props} />;
 
     case "milano":
-      return <TemplateGenericProInline {...props} accent="#d97706" bg="#fffbf0" />;
+      return <TemplateMilanoInline {...props} />;
 
     case "sydney":
-      return <TemplateGenericProInline {...props} accent="#0369a1" bg="#f0f9ff" />;
+      return <TemplateSydneyInline {...props} />;
 
     case "atlas":
-      return <TemplateGenericProInline {...props} accent="#9333ea" bg="#fdf4ff" />;
+      return <TemplateAtlasInline {...props} />;
 
     case "pearl":
-      return <TemplateGenericProInline {...props} accent="#e11d48" bg="#fff1f2" />;
+      return <TemplatePearlInline {...props} />;
 
     default:
       return <TemplateGenericProInline {...props} />;
