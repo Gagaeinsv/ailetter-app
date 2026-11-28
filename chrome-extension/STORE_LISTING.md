@@ -12,19 +12,19 @@
 
 ### Detailed Description (copy-paste into Chrome Web Store)
 ```text
-Stop copying and pasting job descriptions between tabs.
+Stop copying and pasting job descriptions between browser tabs.
 
-AI-Letter adds a lightweight 1-click clipper to LinkedIn, Indeed, StepStone, Xing, Glassdoor, Djinni, DOU, and Work.ua — plus works on any company careers page (Greenhouse, Lever, Workday, Ashby) via the toolbar icon.
+AI-Letter adds a lightweight 1-click job clipper to major job boards and works on any company careers page via the toolbar icon.
 
 What you can do in 1 click:
-• Free ATS Resume Check (No Sign-Up): Instantly compare your CV against the open job posting to get your ATS match score (0–100), missing hard-skill keywords, and actionable bullet fixes.
-• Brutal 6-Second Recruiter Roast: Skip generic HR advice and get direct, honest feedback on what weakens your CV — with a downloadable score card.
-• Tailored Cover Letter & Anschreiben Generator: Open AI-Letter with the job description pre-filled and generate a customized cover letter in English, German (Anschreiben), Italian, or Ukrainian in under 30 seconds.
+• Free ATS Resume Check: Compare your CV against the open job posting to see your ATS match score (0–100), missing hard-skill keywords, and actionable bullet fixes.
+• 6-Second Recruiter Roast: Get direct, honest feedback on what weakens your CV, with a downloadable score card.
+• Tailored Cover Letter Generator: Open AI-Letter with the job description pre-filled and create a customized cover letter in English, German, Italian, or Ukrainian in under 30 seconds.
 
 Built for speed and privacy:
-• Only reads page text when you click a button on a job posting.
-• Never tracks your browsing history or sells data.
-• Dismissible floating widget — zero clutter on non-job pages.
+• Reads page text only when you click a button on a job posting.
+• Never tracks browsing history or sells user data.
+• Dismissible floating widget with zero clutter on non-job pages.
 ```
 
 ---
