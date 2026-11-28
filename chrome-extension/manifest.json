@@ -3,7 +3,7 @@
   "name": "AI-Letter — 1-Click ATS Resume Checker & Cover Letter",
   "short_name": "AI-Letter",
   "version": "1.0.0",
-  "description": "Extract any job posting from LinkedIn, Indeed, StepStone, or Djinni in 1 click to run a free ATS resume check or generate a tailored cover letter.",
+  "description": "Extract any job from LinkedIn, Indeed, StepStone, or Djinni in 1 click for a free ATS resume check or tailored cover letter.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
